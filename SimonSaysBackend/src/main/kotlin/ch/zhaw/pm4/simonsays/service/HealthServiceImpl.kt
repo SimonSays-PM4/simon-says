@@ -4,7 +4,7 @@ import ch.zhaw.pm4.simonsays.api.types.Health
 import org.springframework.stereotype.Service
 
 @Service
-class HealthServiceImpl {
+class HealthServiceImpl: HealthService{
 
-    fun showHealth() = Health("up")
+    override fun showHealth() = Health("up")
 }
