@@ -5,6 +5,7 @@ on:
 
 env:
   JAVA_VERSION: 17
+  JAVA_DIST: corretto
   GRADLE_VERSION: 8.5
 
 jobs:
@@ -20,6 +21,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DIST }}
       - name: gradle setup
         uses: gradle/actions/setup-gradle@v3
         with:
