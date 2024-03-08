@@ -35,12 +35,15 @@ jobs:
           gradle-version: ${{ env.GRADLE_VERSION }}
       - name: gradle build
         run: ./gradlew build
+      - name: test
+        run: pwd && ls -la
       - name: upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: backend
           path: build/libs
           retention-days: 1
+          if-no-files-found: error
   image-build:
     defaults:
       run:
