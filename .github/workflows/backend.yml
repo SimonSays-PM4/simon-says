@@ -65,16 +65,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: latest
-      - name: test
-        run: pwd && ls -la
       - name: build and push docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          labels: ${{ steps.image-meta.outputs.labels }}
-          # todo: make this dynamic
-          tags: ${{ steps.image-meta.outputs.tags }}
 
 
 
