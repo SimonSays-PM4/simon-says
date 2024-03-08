@@ -29,8 +29,6 @@ jobs:
           gradle-version: ${{ env.GRADLE_VERSION }}
       - name: gradle build
         run: ./gradlew build
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v5.2.0
       - name: archive build artifacts
         uses: actions/upload-artifact@v4
         with:
