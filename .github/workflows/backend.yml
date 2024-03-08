@@ -1,0 +1,18 @@
+name: ci/cd backend pipeline
+
+on:
+  - push
+
+env:
+  JAVA_VERSION: 17
+
+jobs:
+  maven-build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
+      - name: setup Gradle
+        uses: gradle/gradle-build-action@v3
+      - name: build with Gradle
+        run: ./gradlew build
