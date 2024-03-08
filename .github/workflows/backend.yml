@@ -8,12 +8,13 @@ env:
 
 jobs:
   maven-build:
+    defaults:
+      run:
+        working-directory: SimonSaysBackend
     runs-on: ubuntu-22.04
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
-      - name: change to backend directory
-        run: cd SimonSaysBackend
       - name: setup Gradle
         uses: gradle/gradle-build-action@v3
       - name: build with Gradle
