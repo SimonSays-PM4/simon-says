@@ -61,6 +61,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: extract metadata for docker image
         uses: docker/metadata-action@v5.5.1
+        id: image-meta
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: latest
@@ -71,7 +72,7 @@ jobs:
         with:
           context: .
           push: true
-          labels: ${{ steps.meta.outputs.labels }}
+          labels: ${{ steps.image-meta.outputs.labels }}
           # todo: make this dynamic
           tags: ${{ steps.meta.outputs.tags }}
 
