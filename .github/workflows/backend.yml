@@ -4,9 +4,15 @@ on:
   - push
 
 env:
+  # JAVA env
   JAVA_VERSION: 17
   JAVA_DIST: corretto
   GRADLE_VERSION: 8.5
+  # DOCKER env
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/backend
+
+
 
 jobs:
   gradle-build:
@@ -29,8 +35,41 @@ jobs:
           gradle-version: ${{ env.GRADLE_VERSION }}
       - name: gradle build
         run: ./gradlew build
-      - name: archive build artifacts
+      - name: upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: backend
-          path: target/
+          path: build/libs
+          retention-days: 1
+  image-build:
+    defaults:
+      run:
+        working-directory: SimonSaysBackend
+    runs-on: ubuntu-22.04
+    steps:
+      - name: download artifacts
+        uses: actions/download-artifact@v4
+      - name: setup docker buildx
+        uses: docker/setup-buildx-action@v3
+      - name: docker login
+        uses: ocker/login-action@v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: extract metadata for docker image
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: build and push docker image
+        uses: docker/build-push-action@v5.2.0
+        with:
+          context: .
+          push: false
+          labels: ${{ steps.meta.outputs.labels }}
+          # todo: make this dynamic
+          tags: ":latest"
+
+
+
+
