@@ -12,13 +12,12 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}/backend
 
-
+defaults:
+  run:
+    working-directory: SimonSaysBackend
 
 jobs:
   gradle-build:
-    defaults:
-      run:
-        working-directory: SimonSaysBackend
     runs-on: ubuntu-22.04
     steps:
       - name: checkout sources
@@ -45,9 +44,6 @@ jobs:
           retention-days: 1
           if-no-files-found: error
   image-build:
-    defaults:
-      run:
-        working-directory: SimonSaysBackend
     runs-on: ubuntu-22.04
     needs: [gradle-build]
     steps:
