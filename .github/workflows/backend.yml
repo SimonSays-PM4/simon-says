@@ -68,13 +68,13 @@ jobs:
       - name: test
         run: pwd && ls -la
       - name: build and push docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v5.2.0
         with:
           context: .
           push: true
           labels: ${{ steps.image-meta.outputs.labels }}
           # todo: make this dynamic
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.image-meta.outputs.tags }}
 
 
 
