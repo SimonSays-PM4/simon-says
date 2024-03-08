@@ -4,6 +4,8 @@ on:
   - push
 
 env:
+  # GENERAL
+  BACKEND_DIRECTORY: SimonSaysBackend
   # JAVA env
   JAVA_VERSION: 17
   JAVA_DIST: corretto
@@ -11,6 +13,7 @@ env:
   # DOCKER env
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}/backend
+
 
 defaults:
   run:
@@ -66,9 +69,9 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: latest
       - name: build and push docker image
-        uses: docker/build-push-action@5.2.0
+        uses: docker/build-push-action@v5.2.0
         with:
-          context: .
+          context: ./${{ env.BACKEND_DIRECTORY }}
           push: true
           tags: ${{ steps.image-meta.outputs.tags }}
           labels: ${{ steps.image-meta.outputs.labels }}
