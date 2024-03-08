@@ -51,8 +51,6 @@ jobs:
         uses: actions/checkout@v4
       - name: download artifacts
         uses: actions/download-artifact@v4
-        with:
-          path: target
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: docker login
@@ -71,7 +69,6 @@ jobs:
       - name: build and push docker image
         uses: docker/build-push-action@v5.2.0
         with:
-          context: .
           push: false
           labels: ${{ steps.meta.outputs.labels }}
           # todo: make this dynamic
