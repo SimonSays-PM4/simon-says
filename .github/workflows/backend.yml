@@ -68,7 +68,7 @@ jobs:
       - name: test
         run: pwd && ls -la
       - name: build and push docker image
-        uses: docker/build-push-action@v5.2.0
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
