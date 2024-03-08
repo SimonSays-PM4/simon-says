@@ -5,9 +5,10 @@ on:
 
 env:
   JAVA_VERSION: 17
+  GRADLE_VERSION: 8.5
 
 jobs:
-  maven-build:
+  gradle-build:
     defaults:
       run:
         working-directory: SimonSaysBackend
@@ -15,7 +16,13 @@ jobs:
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
-      - name: setup Gradle
-        uses: gradle/gradle-build-action@v3
-      - name: build with Gradle
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: gradle setup
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+      - name: gradle build
         run: ./gradlew build
