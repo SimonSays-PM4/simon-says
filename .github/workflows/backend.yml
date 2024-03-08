@@ -62,6 +62,7 @@ jobs:
         uses: docker/metadata-action@v5.5.1
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: latest
       - name: build and push docker image
         uses: docker/build-push-action@v5.2.0
         with:
@@ -69,7 +70,7 @@ jobs:
           push: false
           labels: ${{ steps.meta.outputs.labels }}
           # todo: make this dynamic
-          tags: ":latest"
+          tags: ${{ steps.meta.outputs.tags }}
 
 
 
