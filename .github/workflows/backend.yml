@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: gradle-build
-        uses: "./.github/workflows/templates/gradlebuild"
+        uses: ./.github/actions/gradle-build
   image-build:
     runs-on: ubuntu-22.04
     needs: [gradle-build]
