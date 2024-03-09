@@ -10,7 +10,6 @@ runs:
   steps:
     - name: setup java
       uses: actions/setup-java@v4
-      working-directory: ${{ inputs.working-directory }}
       with:
         java-version: ${{ env.JAVA_VERSION }}
         distribution: ${{ env.JAVA_DIST }}
