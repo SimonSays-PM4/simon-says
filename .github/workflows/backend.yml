@@ -1,4 +1,4 @@
-name: ci/cd backend pipeline
+name: default backend pipeline running on each commit
 
 on:
   - push

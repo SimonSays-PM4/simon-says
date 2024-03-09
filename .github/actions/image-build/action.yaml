@@ -11,7 +11,7 @@ inputs:
     required: true
     description: name of the docker image
   tags:
-    required: false
+    required: true
     description: tags for the docker image, if not set, the tags are extracted from the metadata
   github-token:
     required: true
@@ -35,10 +35,11 @@ runs:
       id: image-meta
       with:
         images: ${{ inputs.registry }}/${{ inputs.image-name }}
+        tags: ${{ inputs.tags }}
     - name: build and push docker image
       uses: docker/build-push-action@v5.2.0
       with:
         context: ./${{ inputs.working-directory }}
         push: true
-        tags: ${{ inputs.tags || steps.image-meta.outputs.tags }}
+        tags: ${{ steps.image-meta.outputs.tags }}
         labels: ${{ steps.image-meta.outputs.labels }}
