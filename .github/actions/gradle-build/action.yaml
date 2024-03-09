@@ -8,8 +8,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: checkout sources
-      uses: actions/checkout@v4
     - name: setup java
       uses: actions/setup-java@v4
       working-directory: ${{ inputs.working-directory }}

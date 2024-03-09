@@ -25,6 +25,8 @@ jobs:
   gradle-build:
     runs-on: ubuntu-22.04
     steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
       - name: gradle-build
         uses: ./.github/actions/gradle-build
   image-build:
