@@ -12,7 +12,10 @@ runs:
       uses: azure/setup-helm@v4.1.0
     - name: update helm dependencies
       run: helm dependency update ${{ inputs.helm-directory }}
+      shell: bash
     - name: helm lint
       run: helm lint ${{ inputs.helm-directory }}
+      shell: bash
     - name: helm package
       run: helm package ${{ inputs.helm-directory }}
+      shell: bash
