@@ -21,9 +21,6 @@ runs:
     - name: gradle build
       working-directory: ${{ inputs.working-directory }}
       run: |-
-        pwd
-        ls -la
-        cd ${{ inputs.working-directory }}
         ./gradlew build
       shell: bash
     - name: upload build artifacts
