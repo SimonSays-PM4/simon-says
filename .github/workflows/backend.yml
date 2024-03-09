@@ -24,33 +24,9 @@ env:
 jobs:
   gradle-build:
     runs-on: ubuntu-22.04
-    defaults:
-      run:
-        working-directory: SimonSaysBackend
     steps:
-      - name: checkout sources
-        uses: actions/checkout@v4
-      - name: setup java
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DIST }}
-          cache: gradle
-      - name: gradle setup
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: ${{ env.GRADLE_VERSION }}
-      - name: gradle build
-        run: ./gradlew build
-      - name: upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: SimonSaysBackend
-          # action ignores default working directory
-          # see https://github.com/actions/upload-artifact/issues/294
-          path: SimonSaysBackend/build/libs
-          retention-days: 1
-          if-no-files-found: error
+      - name: gradle-build
+        uses: "./.github/workflows/templates/gradlebuild"
   image-build:
     runs-on: ubuntu-22.04
     needs: [gradle-build]
@@ -108,7 +84,7 @@ jobs:
       - name: checkout sources
         uses: actions/checkout@v4
       - name: setup kubectl
-        uses: azure/setup-kubectl@v3
+        uses: azure/setup-kubectl@v4
       - name: configure kubectl
         run: |-
          kubectl config set-credentials sa --token=${{ secrets.K8S_TOKEN }}
