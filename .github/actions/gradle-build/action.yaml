@@ -16,12 +16,13 @@ runs:
         cache: gradle
     - name: gradle setup
       uses: gradle/actions/setup-gradle@v3
-      working-directory: ${{ inputs.working-directory }}
       with:
         gradle-version: ${{ env.GRADLE_VERSION }}
     - name: gradle build
       working-directory: ${{ inputs.working-directory }}
-      run: ./gradlew build
+      run: |-
+        cd ${{ inputs.working-directory }}
+        ./gradlew build
       shell: bash
     - name: upload build artifacts
       uses: actions/upload-artifact@v4
