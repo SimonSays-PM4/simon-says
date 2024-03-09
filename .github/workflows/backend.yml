@@ -43,7 +43,7 @@ jobs:
           working-directory: ${{ env.BACKEND_DIRECTORY }}
           registry: ${{ env.REGISTRY }}
           image-name: ${{ env.IMAGE_NAME }}
-          tag: latest
+          tags: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   test-helm-chart:

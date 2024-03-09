@@ -35,7 +35,6 @@ runs:
       id: image-meta
       with:
         images: ${{ inputs.registry }}/${{ inputs.image-name }}
-        tags: latest
     - name: build and push docker image
       uses: docker/build-push-action@v5.2.0
       with:
