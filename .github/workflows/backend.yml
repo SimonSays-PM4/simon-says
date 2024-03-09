@@ -105,7 +105,7 @@ jobs:
   #    #    CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   deploy-helm-ci:
     runs-on: ubuntu-22.04
-    needs: [image-build]
+    #needs: [image-build]
     steps:
       - name: setup kubectl
         uses: azure/setup-kubectl@v3
