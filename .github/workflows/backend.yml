@@ -51,18 +51,11 @@ jobs:
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
-      - name: configure git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-      - name: setup helm
-        uses: azure/setup-helm@v4.1.0
-      - name: update helm dependencies
-        run: helm dependency update ${{ env.HELM_DIRECTORY }}
-      - name: helm lint
-        run: helm lint ${{ env.HELM_DIRECTORY }}
-      - name: helm package
-        run: helm package ${{ env.HELM_DIRECTORY }}
+      - name: test helm
+        uses: ./.github/actions/helm-test
+        with:
+          helm-directory: ${{ env.HELM_DIRECTORY }}
+
   deploy-helm-ci:
     runs-on: ubuntu-22.04
     needs: [image-build]
@@ -70,19 +63,14 @@ jobs:
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
-      - name: setup kubectl
-        uses: azure/setup-kubectl@v3
-      - name: configure kubectl
-        run: |-
-         kubectl config set-credentials sa --token=${{ secrets.K8S_TOKEN }}
-         kubectl config set-cluster default --server=${{ env.K8S_API }}
-         kubectl config set-context sa/default --user=sa --cluster=default --namespace=${{ env.K8S_NAMESPACE }}
-         kubectl config use-context sa/default
-      - name: upgrading helm release
-        run: |-
-          helm package ${{ env.HELM_DIRECTORY }}
-          package=$(find . -name "${CHART_NAME}*.tgz")
-          helm upgrade ${{ env.HELM_RELEASE_NAME }} $package  -f ${{ env.HELM_DIRECTORY }}/values-stage.yaml --install -n ${{ env.K8S_NAMESPACE }} --wait
-
+      - name: deploy
+        uses: ./.github/actions/helm-release
+        with:
+          helm-directory: ${{ env.HELM_DIRECTORY }}
+          k8s-token: ${{ secrets.K8S_TOKEN }}
+          k8s-api: ${{ env.K8S_API }}
+          k8s-namespace: ${{ env.K8S_NAMESPACE }}
+          helm-release-name: ${{ env.HELM_RELEASE_NAME }}
+          helm-values-file: values-stage.yaml
 
 
