@@ -1,0 +1,5 @@
+apiVersion: v2
+name: simon-says
+description: deploys the frontend as well as the backend for simonsays
+type: application
+version: 0.0.1

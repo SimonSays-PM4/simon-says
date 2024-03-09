@@ -13,6 +13,8 @@ env:
   # DOCKER env
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}/backend
+  # HELM env
+  HELM_DIRECTORY: helm
 
 
 defaults:
@@ -68,8 +70,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: latest
-      - name: test
-        run: ls -la && pwd
       - name: build and push docker image
         uses: docker/build-push-action@v5.2.0
         with:
@@ -77,6 +77,27 @@ jobs:
           push: true
           tags: ${{ steps.image-meta.outputs.tags }}
           labels: ${{ steps.image-meta.outputs.labels }}
+  publish-helm-chart:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
+      - name: configure git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - name: setup helm
+        uses: azure/setup-helm@v4.1.0
+      - name: update helm dependencies
+        run: helm dependency update ${{ env.HELM_DIRECTORY }}
+      - name: helm lint
+        run: helm lint ${{ env.HELM_DIRECTORY }}
+      # TODO: make helm release when running with git tag
+      #- name: Run chart-releaser
+      #  uses: helm/chart-releaser-action@v1.6.0
+      #  env:
+      #    CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
 
 
 
