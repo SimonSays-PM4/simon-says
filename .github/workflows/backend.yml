@@ -22,87 +22,87 @@ env:
 
 
 jobs:
-  gradle-build:
-    runs-on: ubuntu-22.04
-    defaults:
-      run:
-        working-directory: SimonSaysBackend
-    steps:
-      - name: checkout sources
-        uses: actions/checkout@v4
-      - name: setup java
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DIST }}
-          cache: gradle
-      - name: gradle setup
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: ${{ env.GRADLE_VERSION }}
-      - name: gradle build
-        run: ./gradlew build
-      - name: upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: SimonSaysBackend
-          # action ignores default working directory
-          # see https://github.com/actions/upload-artifact/issues/294
-          path: SimonSaysBackend/build/libs
-          retention-days: 1
-          if-no-files-found: error
-  image-build:
-    runs-on: ubuntu-22.04
-    needs: [gradle-build]
-    defaults:
-      run:
-        working-directory: SimonSaysBackend
-    steps:
-      - name: checkout sources
-        uses: actions/checkout@v4
-      - name: download artifacts
-        uses: actions/download-artifact@v4
-      - name: setup docker buildx
-        uses: docker/setup-buildx-action@v3
-      - name: docker login
-        uses: docker/login-action@v3.0.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: extract metadata for docker image
-        uses: docker/metadata-action@v5.5.1
-        id: image-meta
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: latest
-      - name: build and push docker image
-        uses: docker/build-push-action@v5.2.0
-        with:
-          context: ./${{ env.BACKEND_DIRECTORY }}
-          push: true
-          tags: ${{ steps.image-meta.outputs.tags }}
-          labels: ${{ steps.image-meta.outputs.labels }}
-  publish-helm-chart:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: checkout sources
-        uses: actions/checkout@v4
-      - name: configure git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-      - name: setup helm
-        uses: azure/setup-helm@v4.1.0
-      - name: update helm dependencies
-        run: helm dependency update ${{ env.HELM_DIRECTORY }}
-      - name: helm lint
-        run: helm lint ${{ env.HELM_DIRECTORY }}
-      # TODO: make helm release when running with git tag
-      #- name: Run chart-releaser
-      #  uses: helm/chart-releaser-action@v1.6.0
-      #  env:
-      #    CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  #gradle-build:
+  #  runs-on: ubuntu-22.04
+  #  defaults:
+  #    run:
+  #      working-directory: SimonSaysBackend
+  #  steps:
+  #    - name: checkout sources
+  #      uses: actions/checkout@v4
+  #    - name: setup java
+  #      uses: actions/setup-java@v4
+  #      with:
+  #        java-version: ${{ env.JAVA_VERSION }}
+  #        distribution: ${{ env.JAVA_DIST }}
+  #        cache: gradle
+  #    - name: gradle setup
+  #      uses: gradle/actions/setup-gradle@v3
+  #      with:
+  #        gradle-version: ${{ env.GRADLE_VERSION }}
+  #    - name: gradle build
+  #      run: ./gradlew build
+  #    - name: upload build artifacts
+  #      uses: actions/upload-artifact@v4
+  #      with:
+  #        name: SimonSaysBackend
+  #        # action ignores default working directory
+  #        # see https://github.com/actions/upload-artifact/issues/294
+  #        path: SimonSaysBackend/build/libs
+  #        retention-days: 1
+  #        if-no-files-found: error
+  #image-build:
+  #  runs-on: ubuntu-22.04
+  #  needs: [gradle-build]
+  #  defaults:
+  #    run:
+  #      working-directory: SimonSaysBackend
+  #  steps:
+  #    - name: checkout sources
+  #      uses: actions/checkout@v4
+  #    - name: download artifacts
+  #      uses: actions/download-artifact@v4
+  #    - name: setup docker buildx
+  #      uses: docker/setup-buildx-action@v3
+  #    - name: docker login
+  #      uses: docker/login-action@v3.0.0
+  #      with:
+  #        registry: ${{ env.REGISTRY }}
+  #        username: ${{ github.actor }}
+  #        password: ${{ secrets.GITHUB_TOKEN }}
+  #    - name: extract metadata for docker image
+  #      uses: docker/metadata-action@v5.5.1
+  #      id: image-meta
+  #      with:
+  #        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+  #        tags: latest
+  #    - name: build and push docker image
+  #      uses: docker/build-push-action@v5.2.0
+  #      with:
+  #        context: ./${{ env.BACKEND_DIRECTORY }}
+  #        push: true
+  #        tags: ${{ steps.image-meta.outputs.tags }}
+  #        labels: ${{ steps.image-meta.outputs.labels }}
+  #publish-helm-chart:
+  #  runs-on: ubuntu-22.04
+  #  steps:
+  #    - name: checkout sources
+  #      uses: actions/checkout@v4
+  #    - name: configure git
+  #      run: |
+  #        git config user.name "$GITHUB_ACTOR"
+  #        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+  #    - name: setup helm
+  #      uses: azure/setup-helm@v4.1.0
+  #    - name: update helm dependencies
+  #      run: helm dependency update ${{ env.HELM_DIRECTORY }}
+  #    - name: helm lint
+  #      run: helm lint ${{ env.HELM_DIRECTORY }}
+  #    # TODO: make helm release when running with git tag
+  #    #- name: Run chart-releaser
+  #    #  uses: helm/chart-releaser-action@v1.6.0
+  #    #  env:
+  #    #    CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   deploy-helm-ci:
     runs-on: ubuntu-22.04
     needs: [image-build]
@@ -117,7 +117,9 @@ jobs:
          kubectl config use-context sa/default
       - name: upgrading helm release
         run: |-
-          helm upgrade ${{ env.HELM_RELEASE_NAME }}  ${{ env.HELM_DIRECTORY }} -f ${{ env.HELM_DIRECTORY }}/values-ci.yaml --install -n ${{ env.K8S_NAMESPACE }} --wait
+          helm package ${{ env.HELM_DIRECTORY }}
+          package=$(find . -name "${CHART_NAME}*.tgz")
+          helm upgrade ${{ env.HELM_RELEASE_NAME }} $package  -f ${{ env.HELM_DIRECTORY }}/values-stage.yaml --install -n ${{ env.K8S_NAMESPACE }} --wait
 
 
 
