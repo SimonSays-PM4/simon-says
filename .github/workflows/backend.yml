@@ -1,8 +1,13 @@
 name: default backend pipeline running on each commit
 
 on:
-  - push
-
+  push:
+  workflow_dispatch:
+    inputs:
+      run_optional_job:
+        description: 'Run optional job? (true/false)'
+        required: false
+        default: 'false'
 env:
   # GENERAL
   BACKEND_DIRECTORY: SimonSaysBackend
@@ -60,6 +65,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [image-build]
     environment: staging
+    if: github.ref == 'refs/heads/main' || ${{ github.event.inputs.run_optional_job == 'true' }}
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
@@ -72,5 +78,6 @@ jobs:
           k8s-namespace: ${{ env.K8S_NAMESPACE }}
           helm-release-name: ${{ env.HELM_RELEASE_NAME }}
           helm-values-file: values-stage.yaml
+
 
 
