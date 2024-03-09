@@ -15,15 +15,18 @@ env:
   IMAGE_NAME: ${{ github.repository }}/backend
   # HELM env
   HELM_DIRECTORY: helm
+  HELM_RELEASE_NAME: simonsays-backend
+  # K8S env
+  K8S_API: https://pm4.init-lab.ch/k8s/clusters/local
+  K8S_NAMESPACE: simonsays-stage
 
-
-defaults:
-  run:
-    working-directory: SimonSaysBackend
 
 jobs:
   gradle-build:
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: SimonSaysBackend
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
@@ -51,6 +54,9 @@ jobs:
   image-build:
     runs-on: ubuntu-22.04
     needs: [gradle-build]
+    defaults:
+      run:
+        working-directory: SimonSaysBackend
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
@@ -97,7 +103,21 @@ jobs:
       #  uses: helm/chart-releaser-action@v1.6.0
       #  env:
       #    CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
+  deploy-helm-ci:
+    runs-on: ubuntu-22.04
+    needs: [image-build]
+    steps:
+      - name: setup kubectl
+        uses: azure/setup-kubectl@v3
+      - name: configure kubectl
+        run: |-
+         kubectl config set-credentials sa --token=${{ secrets.K8S_TOKEN }}
+         kubectl config set-cluster default --server=${{ env.K8S_API }}
+         kubectl config set-context sa/default --user=sa --cluster=default --namespace=${{ env.K8S_NAMESPACE }}
+         kubectl config use-context sa/default
+      - name: upgrading helm release
+        run: |-
+          helm upgrade ${{ env.HELM_RELEASE_NAME }}  ${{ env.HELM_DIRECTORY }} -f ${{ env.HELM_DIRECTORY }}/values-ci.yaml --install -n ${{ env.K8S_NAMESPACE }} --wait
 
 
 
