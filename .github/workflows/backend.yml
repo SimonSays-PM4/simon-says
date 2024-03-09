@@ -107,6 +107,8 @@ jobs:
     runs-on: ubuntu-22.04
     #needs: [image-build]
     steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
       - name: setup kubectl
         uses: azure/setup-kubectl@v3
       - name: configure kubectl
