@@ -68,6 +68,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: latest
+      - name: test
+        run: ls -la && pwd
       - name: build and push docker image
         uses: docker/build-push-action@v5.2.0
         with:
