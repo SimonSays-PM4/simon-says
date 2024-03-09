@@ -13,7 +13,10 @@ inputs:
   tags:
     required: false
     description: tags for the docker image, if not set, the tags are extracted from the metadata
-    
+  github-token:
+    required: true
+    description: github token
+
 runs:
   using: "composite"
   steps:
@@ -26,7 +29,7 @@ runs:
       with:
         registry: ${{ inputs.registry }}
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ inputs.github-token }}
     - name: extract metadata for docker image
       uses: docker/metadata-action@v5.5.1
       id: image-meta

@@ -44,6 +44,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           image-name: ${{ env.IMAGE_NAME }}
           tag: latest
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   test-helm-chart:
     runs-on: ubuntu-22.04
@@ -70,7 +71,7 @@ jobs:
       - name: checkout sources
         uses: actions/checkout@v4
       - name: setup kubectl
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v3
       - name: configure kubectl
         run: |-
          kubectl config set-credentials sa --token=${{ secrets.K8S_TOKEN }}
