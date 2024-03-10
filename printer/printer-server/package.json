@@ -1,0 +1,26 @@
+{
+  "name": "printer-server",
+  "version": "1.0.0",
+  "description": "A basic printer server that acts as gateway/bridge between on site printers and the backend",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "ts-node --transpile-only src/main.ts",
+    "build-id": "node create.build.id.js",
+    "patch": "npx auto-version --patch",
+    "minor": "npx auto-version --minor",
+    "major": "npx auto-version --major"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.25",
+    "auto-version-js": "^0.3.10",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "@network-utils/arp-lookup": "^2.1.0",
+    "dotenv": "^16.4.5",
+    "node-thermal-printer": "^4.4.2"
+  }
+}
