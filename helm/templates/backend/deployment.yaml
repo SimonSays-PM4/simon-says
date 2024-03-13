@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.backend.deployment.name }}
+  labels:
+    app: {{ .Values.backend.deployment.name }}
+spec:
+  replicas: {{ .Values.backend.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.backend.deployment.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.backend.deployment.name }}
+      annotations:
+        {{- if .Values.backend.deployment.forceRedeploy }}
+        forceReDeploy: {{ randAlphaNum 5 | quote }}
+        {{- end }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.backend.deployment.image.pullSecret }}
+      containers:
+      - name: {{ .Values.backend.deployment.name }}
+        image: "{{ .Values.backend.deployment.image.repository }}:{{ .Values.backend.deployment.image.tag | default .Chart.Version }}"
+        imagePullPolicy: {{ .Values.backend.deployment.image.pullPolicy }}
+        {{- if .Values.backend.config.activeProfiles }}
+        env:
+          - name: SPRING_CONFIG_LOCATION
+            value: 'classpath:/,file:/config/'
+          - name: SPRING_PROFILES_ACTIVE
+            value: {{ .Values.backend.config.activeProfiles }}
+        volumeMounts:
+          - mountPath: /config/application-environment-config.yaml
+            name: application-environment-volume
+            readOnly: true
+            subPath: application-environment-config.yaml
+        ports:
+          - containerPort: {{ .Values.backend.deployment.port }}
+        resources:
+            requests:
+                cpu: {{ .Values.backend.deployment.resources.requests.cpu }}
+                memory: {{ .Values.backend.deployment.resources.requests.memory }}
+            limits:
+                cpu: {{ .Values.backend.deployment.resources.limits.cpu }}
+                memory: {{ .Values.backend.deployment.resources.limits.memory }}
+      volumes:
+        - name: application-environment-volume
+          configMap:
+            name: {{ .Values.backend.deployment.name }}-env-config
+            items:
+              - key: application-environment-config.yaml
+                path: application-environment-config.yaml
+        {{- end }}

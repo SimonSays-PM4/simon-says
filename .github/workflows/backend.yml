@@ -1,13 +1,7 @@
 name: default backend pipeline running on each commit
 
 on:
-  push:
-  workflow_dispatch:
-    inputs:
-      run_optional_job:
-        description: 'Run optional job? (true/false)'
-        required: false
-        default: 'false'
+  - push
 env:
   # GENERAL
   BACKEND_DIRECTORY: SimonSaysBackend

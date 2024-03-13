@@ -1,0 +1,29 @@
+backend:
+  deployment:
+    name: simonsays-backend
+    replicas: 1
+    forceRedeploy: false
+    image:
+      repository: "ghcr.io/simonsays-pm4/simon-says/backend"
+      pullSecret: "ghcrio"
+      pullPolicy: "IfNotPresent"
+    resources:
+      requests:
+        memory: "250Mi"
+        cpu: "200m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+    port: 8080
+  service:
+    name: simonsays-backend
+    targetPort: 8080
+    port: 8080
+  config:
+    applicationConfig:
+      test: testa
+  ingress:
+    host: simonsays-backend-prod.pm4.init-lab.ch
+    ingressClassName: "traefik"
+    path: /
+    pathType: "Prefix"

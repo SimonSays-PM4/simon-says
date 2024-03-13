@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simonsays-backend
+spec:
+  ingressClassName: {{ .Values.backend.ingress.ingressClassName}}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: {{ .Values.backend.service.name }}
+                port:
+                  number: {{ .Values.backend.service.port }}
+            path: {{ .Values.backend.ingress.path }}
+            pathType: {{ .Values.backend.ingress.pathType }}
