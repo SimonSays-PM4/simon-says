@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [image-build]
     environment: staging
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
