@@ -33,6 +33,7 @@ jobs:
   image-build:
     runs-on: ubuntu-22.04
     needs: [gradle-build]
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
@@ -59,7 +60,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [image-build]
     environment: staging
-    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
