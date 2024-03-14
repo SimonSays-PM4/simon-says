@@ -14,10 +14,10 @@ runs:
         java-version: ${{ env.JAVA_VERSION }}
         distribution: ${{ env.JAVA_DIST }}
         cache: gradle
-    - name: gradle setup
-      uses: gradle/actions/setup-gradle@v3
-      with:
-        gradle-version: ${{ env.GRADLE_VERSION }}
+    #- name: gradle setup
+    #  uses: gradle/actions/setup-gradle@v3
+    #  with:
+     #   gradle-version: ${{ env.GRADLE_VERSION }}
     - name: gradle build
       working-directory: ${{ inputs.working-directory }}
       run: |-
