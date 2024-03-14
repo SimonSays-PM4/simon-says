@@ -1,7 +1,7 @@
 name: backend manual stage deploy
 
 on:
-  workflow_dispatch:
+  workflow_dispatch
 env:
   # GENERAL
   BACKEND_DIRECTORY: SimonSaysBackend

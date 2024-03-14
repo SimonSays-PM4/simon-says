@@ -1,3 +1,4 @@
+{{- if .Values.backend.config}}
 {{- if .Values.backend.config.applicationConfig}}
 kind: ConfigMap
 apiVersion: v1
@@ -9,7 +10,8 @@ data:
     {{- if kindIs "string" . }}
     {{- . | nindent 4 }}
     {{- else }}
-    {{- toYaml . | nindent 4 }}  
+    {{- toYaml . | nindent 4 }}
     {{- end }}
+{{- end}}
 {{- end}}
 {{- end}}

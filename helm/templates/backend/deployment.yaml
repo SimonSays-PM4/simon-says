@@ -24,6 +24,7 @@ spec:
       - name: {{ .Values.backend.deployment.name }}
         image: "{{ .Values.backend.deployment.image.repository }}:{{ .Values.backend.deployment.image.tag | default .Chart.Version }}"
         imagePullPolicy: {{ .Values.backend.deployment.image.pullPolicy }}
+        {{- if and .Values.backend.config }}
         {{- if or .Values.backend.config.applicationConfig .Values.backend.config.activeProfiles }}
         env:
           {{- if .Values.backend.config.applicationConfig }}
@@ -42,6 +43,7 @@ spec:
             subPath: application-environment-config.yaml
         {{- end }}
         {{- end }}
+        {{- end }}
         ports:
           - containerPort: {{ .Values.backend.deployment.port }}
         resources:
@@ -51,6 +53,7 @@ spec:
             limits:
                 cpu: {{ .Values.backend.deployment.resources.limits.cpu }}
                 memory: {{ .Values.backend.deployment.resources.limits.memory }}
+      {{- if .Values.backend.config }}
       {{- if .Values.backend.config.applicationConfig }}
       volumes:
         - name: application-environment-volume
@@ -59,4 +62,5 @@ spec:
             items:
               - key: application-environment-config.yaml
                 path: application-environment-config.yaml
+        {{- end }}
         {{- end }}

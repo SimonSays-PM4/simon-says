@@ -21,7 +21,9 @@ backend:
     port: 8080
   #config:
   #  applicationConfig:
-  #    your-spring-config
+  #    logging:
+  #      level:
+  #        root: INFO
   ingress:
     host: simonsays-backend-prod.pm4.init-lab.ch
     ingressClassName: "traefik"
