@@ -24,17 +24,24 @@ spec:
       - name: {{ .Values.backend.deployment.name }}
         image: "{{ .Values.backend.deployment.image.repository }}:{{ .Values.backend.deployment.image.tag | default .Chart.Version }}"
         imagePullPolicy: {{ .Values.backend.deployment.image.pullPolicy }}
-        {{- if .Values.backend.config.activeProfiles }}
+        {{- if or .Values.backend.config.applicationConfig .Values.backend.config.activeProfiles }}
         env:
+          {{- if .Values.backend.config.applicationConfig }}
           - name: SPRING_CONFIG_LOCATION
             value: 'classpath:/,file:/config/'
+          {{- end }}
+        {{- if .Values.backend.config.activeProfiles }}
           - name: SPRING_PROFILES_ACTIVE
             value: {{ .Values.backend.config.activeProfiles }}
+        {{- end }}
+        {{- if .Values.backend.config.applicationConfig }}
         volumeMounts:
           - mountPath: /config/application-environment-config.yaml
             name: application-environment-volume
             readOnly: true
             subPath: application-environment-config.yaml
+        {{- end }}
+        {{- end }}
         ports:
           - containerPort: {{ .Values.backend.deployment.port }}
         resources:
@@ -44,6 +51,7 @@ spec:
             limits:
                 cpu: {{ .Values.backend.deployment.resources.limits.cpu }}
                 memory: {{ .Values.backend.deployment.resources.limits.memory }}
+      {{- if .Values.backend.config.applicationConfig }}
       volumes:
         - name: application-environment-volume
           configMap:

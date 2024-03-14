@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.spring") version "1.9.22"
+    jacoco
 }
 
 group = "ch.zhaw.pm4"
@@ -41,4 +42,21 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.test{
+    // // report is always generated after tests run
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    // tests are required to run before generating the report
+    dependsOn(tasks.test)
+    reports{
+        xml.required = true
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.11"
 }

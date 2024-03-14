@@ -1,0 +1,40 @@
+name: pipeline running on each commit
+
+on:
+  - push
+env:
+  # GENERAL
+  BACKEND_DIRECTORY: SimonSaysBackend
+  # JAVA env
+  JAVA_VERSION: 17
+  JAVA_DIST: corretto
+  # DOCKER env
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/backend
+  # HELM env
+  HELM_DIRECTORY: helm
+  HELM_RELEASE_NAME: simonsays
+  # K8S env
+  K8S_API: https://pm4.init-lab.ch/k8s/clusters/local
+  K8S_NAMESPACE: simonsays-stage
+
+
+jobs:
+  gradle-build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
+      - name: gradle-build
+        uses: ./.github/actions/gradle-build
+        with:
+          working-directory: ${{ env.BACKEND_DIRECTORY }}
+  test-helm-chart:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
+      - name: test helm
+        uses: ./.github/actions/helm-test
+        with:
+          helm-directory: ${{ env.HELM_DIRECTORY }}

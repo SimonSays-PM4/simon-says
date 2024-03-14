@@ -19,9 +19,9 @@ backend:
     name: simonsays-backend
     targetPort: 8080
     port: 8080
-  config:
-    applicationConfig:
-      test: testa
+  #config:
+  #  applicationConfig:
+  #    your-spring-config
   ingress:
     host: simonsays-backend-prod.pm4.init-lab.ch
     ingressClassName: "traefik"
