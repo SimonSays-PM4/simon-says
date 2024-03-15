@@ -1,4 +1,4 @@
-```txt
+```text
    _____ _                      _____                                                      
   / ___/(_)___ ___  ____  ____ / ___/____ ___  _______                                     
   \__ \/ / __ `__ \/ __ \/ __ \\__ \/ __ `/ / / / ___/                                     
@@ -21,7 +21,7 @@ This directory contains source code important to the printer-system of SimonSays
 
 ## Architecture
 
-```txt
+```text
                         -----------------
                         |               |
                         | printer-queue |
