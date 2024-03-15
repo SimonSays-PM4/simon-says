@@ -2,6 +2,7 @@
   "name": "printer-server",
   "version": "1.0.0",
   "description": "A basic printer server that acts as gateway/bridge between on site printers and the backend",
+  "private": true,
   "scripts": {
     "dev": "nodemon",
     "start": "ts-node --transpile-only src/main.ts",
@@ -21,6 +22,7 @@
   "dependencies": {
     "@network-utils/arp-lookup": "^2.1.0",
     "dotenv": "^16.4.5",
-    "node-thermal-printer": "^4.4.2"
+    "node-thermal-printer": "^4.4.2",
+    "printer-api": "file:../printer-api"
   }
 }

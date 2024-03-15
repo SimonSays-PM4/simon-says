@@ -1,17 +1,17 @@
-import { PrintQueueJobDto, PrintQueueJobUpdateDto, PrintQueuesDto } from "./rest-dtos";
+import { PrintQueueJobDto, PrintQueueJobUpdateDto, PrintQueuesDto } from "./dtos";
 
 export class RestApi {
-    readonly baseUrl: string;
-    readonly printServerId: string;
+    readonly printerQueueServerBaseUrl: string;
+    readonly printerServerId: string;
 
-    constructor() {
-        this.baseUrl = process.env.PRINTER_QUEUE_SERVER_BASE_URL!;
-        this.printServerId = process.env.PRINTER_QUEUE_SERVER_ID!;
+    constructor(printerQueueServerBaseUrl: string, printerServerId: string) {
+        this.printerQueueServerBaseUrl = printerQueueServerBaseUrl;
+        this.printerServerId = printerServerId;
     }
 
     // GET  /v1/printer-server/{id}/print-queues
     async getPrintQueues(): Promise<PrintQueuesDto> {
-        const response = await this.loggedFetch(`${this.baseUrl}/v1/printer-server/${this.printServerId}/print-queues`);
+        const response = await this.loggedFetch(`${this.printerQueueServerBaseUrl}/rest-api/v1/printer-server/${this.printerServerId}/print-queues`);
         return await response.json() as PrintQueuesDto;
     }
 
@@ -19,13 +19,19 @@ export class RestApi {
     // or
     // GET /v1/printer-server/{id}/print-queues/{id}/jobs/{id}
     async getPrintQueueJob(queueId: string, jobId: string | 'next'): Promise<PrintQueueJobDto> {
-        const response = await this.loggedFetch(`${this.baseUrl}/v1/printer-server/${this.printServerId}/print-queues/${queueId}/jobs/${jobId}`);
+        const response = await this.loggedFetch(`${this.printerQueueServerBaseUrl}/rest-api/v1/printer-server/${this.printerServerId}/print-queues/${queueId}/jobs/${jobId}`);
         return await response.json() as PrintQueueJobDto;
+    }
+
+    // GET /v1/printer-server/{id}/print-queues/{id}/jobs
+    async getPrintQueueJobs(queueId: string): Promise<PrintQueueJobDto[]> {
+        const response = await this.loggedFetch(`${this.printerQueueServerBaseUrl}/rest-api/v1/printer-server/${this.printerServerId}/print-queues/${queueId}/jobs`);
+        return await response.json() as PrintQueueJobDto[];
     }
 
     // PUT /v1/printer-server/{id}/print-queues/{id}/jobs/{id}
     async updatePrintQueueJob(queueId: string, jobId: string, jobUpdate: PrintQueueJobUpdateDto): Promise<void> {
-        await this.loggedFetch(`${this.baseUrl}/v1/printer-server/${this.printServerId}/print-queues/${queueId}/jobs/${jobId}`, {
+        await this.loggedFetch(`${this.printerQueueServerBaseUrl}/rest-api/v1/printer-server/${this.printerServerId}/print-queues/${queueId}/jobs/${jobId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'

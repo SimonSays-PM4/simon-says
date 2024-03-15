@@ -1,31 +1,32 @@
-import arp from "@network-utils/arp-lookup";
+import { buildId } from '../build/build-id.json';
+import { PrinterServer } from './printer-server';
 
-import { ThermalPrinter, PrinterTypes} from "node-thermal-printer";
+console.log(`
+_____ _                      _____                                                   
+/ ___/(_)___ ___  ____  ____ / ___/____ ___  _______                                  
+\\__ \\/ / __  __ \\/ __ \\/ __ \\\\__ \\/ __  / / / / ___/                                  
+___/ / / / / / / / /_/ / / / /__/ / /_/ / /_/ (__  )                                   
+/____/_/_/ /_/ /_/\\____/_/ /_/____/\\__,_/\\__, /____/                                    
+                 ____       _       __/____/           _____                          
+                / __ \\_____(_)___  / /____  _____     / ___/___  ______   _____  _____
+               / /_/ / ___/ / __ \\/ __/ _ \\/ ___/_____\\__ \\/ _ \\/ ___/ | / / _ \\/ ___/
+              / ____/ /  / / / / / /_/  __/ /  /_____/__/ /  __/ /   | |/ /  __/ /    
+             /_/   /_/  /_/_/ /_/\\__/\\___/_/        /____/\\___/_/    |___/\\___/_/             
 
-(async () => {
+Version: ${buildId}
+`);
+
+console.log('Starting printer server...');
+const printServer = new PrinterServer();
+console.log('[ok] Printer server started');
 
 
-let mac = await arp.toMAC("192.168.1.84");
-console.log("MAC: ", mac);
-let ip = await arp.toIP("50:57:9c:d2:12:53");
-console.log("IP: ", ip);
+// We also want to attempt to gracefully shut down the server when the process is terminated
+function stopServerSignalHandler() {
+    printServer.disconnect()
+    process.exit()
+}
 
-let printer = new ThermalPrinter({
-    type: PrinterTypes.EPSON,
-    interface: 'tcp://192.168.1.84',
-});
-
-let isConnected = await printer.isPrinterConnected();
-console.log("Is printer connected: ", isConnected);
-/*
-printer.alignCenter();
-await printer.printImage("./assets/cereal-guy-meme-face.png");
-printer.newLine();
-printer.println("De fucking Drucker funktioniert :D");
-printer.newLine();
-printer.printQR("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-printer.cut();
-let result = await printer.execute();
-console.log("Print result: ", result);*/
-
-})();
+process.on('SIGINT', stopServerSignalHandler)
+process.on('SIGTERM', stopServerSignalHandler)
+process.on('SIGQUIT', stopServerSignalHandler)
