@@ -1,6 +1,6 @@
 import { PrinterTypes, ThermalPrinter } from "node-thermal-printer";
 import arp from "@network-utils/arp-lookup";
-import { PrintQueueJobDto } from "printer-api/src/dtos";
+import { PrintQueueJobDto } from "printer-api-lib/src/dtos";
 
 export class Printer {
     readonly mac: string;

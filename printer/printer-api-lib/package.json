@@ -1,5 +1,5 @@
 {
-  "name": "printer-api",
+  "name": "printer-api-lib",
   "version": "1.0.0",
   "description": "The API interface to the printer-queue-server usable by frontends and nodejs",
   "private": true,

@@ -23,6 +23,6 @@
     "@network-utils/arp-lookup": "^2.1.0",
     "dotenv": "^16.4.5",
     "node-thermal-printer": "^4.4.2",
-    "printer-api": "file:../printer-api"
+    "printer-api-lib": "file:../printer-api-lib"
   }
 }

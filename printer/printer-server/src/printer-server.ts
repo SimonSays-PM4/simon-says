@@ -1,5 +1,5 @@
-import { SocketApi } from 'printer-api/src/socket-api';
-import { PrintQueueDto, PrintQueuesDto } from 'printer-api/src/dtos';
+import { SocketApi } from 'printer-api-lib/src/socket-api';
+import { PrintQueueDto, PrintQueuesDto } from 'printer-api-lib/src/dtos';
 import { PrinterQueue } from './printer-queue';
 
 export class PrinterServer {
