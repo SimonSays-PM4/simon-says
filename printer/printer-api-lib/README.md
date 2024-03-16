@@ -18,12 +18,12 @@ The api exposes a REST but also a socket.io interface for communication.
 
 ## Getting Started with Printer API
 
-To add the printer-api to your project, run the following command:
+To add the printer-api-lib to your project, run the following command:
 
 ```bash
-npm install --link <path to printer-api>
+npm install --link <path to printer-api-lib>
 ```
 
-Since the printer-api is not published to npm, the package is only available locally. The `--link` flag creates a symlink to the printer-api package in your project's `node_modules` folder.
+Since the printer-api-lib is not published to npm, the package is only available locally. The `--link` flag creates a symlink to the printer-api-lib package in your project's `node_modules` folder.
 
-Because the printer-api is written in TypeScript, you need to have a TypeScript compiler installed in your project.
+Because the printer-api-lib is written in TypeScript, you need to have a TypeScript compiler installed in your project.
