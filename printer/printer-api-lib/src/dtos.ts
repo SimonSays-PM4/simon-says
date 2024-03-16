@@ -1,18 +1,18 @@
 /*
 Terminology:
    ________________              _______________              _________
-  |                |  n     1   |               |  n     n   |         |
+  |                |  1     n   |               |  n     n   |         |
   | Printer Server |  ------->  | Printer Queue |  ------->  | Printer |
   |________________|            |_______________|            |_________|
-                                                  \ n
+                                                  \ 1
                                                    \
-                                                    \    1    _______
+                                                    \    n    _______
                                                       ---->  |       |
                                                              |  Job  |
                                                              |_______|
 
     One printer can in theory be connected to multiple queues, however this is not advices and may 
-    cause unknown behavior on print conflicts.
+    cause unknown behavior on simultaneous prints.
 */
 
 /** 
