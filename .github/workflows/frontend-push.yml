@@ -29,26 +29,12 @@ jobs:
         with:
           working-directory: ${{ env.FRONTEND_DIRECTORY }}
           node-version: ${{ env.NODE_VERSION }}
-      - name: image-build
-        uses: ./.github/actions/image-build
-        with:
-          working-directory: ${{ env.FRONTEND_DIRECTORY }}
-          registry: ${{ env.REGISTRY }}
-          image-name: ${{ env.IMAGE_NAME }}
-          tags: latest
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-  #image-build:
-  #  runs-on: ubuntu-22.04
-  #  needs: [npm-build]
-  #  steps:
-  #    - name: checkout sources
-  #      uses: actions/checkout@v4
-  ##test-helm-chart:
-  #  runs-on: ubuntu-22.04
-  #  steps:
-  #    - name: checkout sources
-  #      uses: actions/checkout@v4
-  #    - name: test helm
-  #      uses: ./.github/actions/helm-test
-  #      with:
-  #        helm-directory: ${{ env.HELM_DIRECTORY }}
+  test-helm-chart:
+   runs-on: ubuntu-22.04
+   steps:
+     - name: checkout sources
+       uses: actions/checkout@v4
+     - name: test helm
+       uses: ./.github/actions/helm-test
+       with:
+         helm-directory: ${{ env.HELM_DIRECTORY }}
