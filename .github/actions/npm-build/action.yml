@@ -32,12 +32,3 @@ runs:
       shell: bash
       run: |-
           npm test
-    - name: upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ inputs.working-directory }}
-        # action ignores default working directory
-        # see https://github.com/actions/upload-artifact/issues/294
-        path: ${{ inputs.working-directory }}/dist
-        retention-days: 1
-        if-no-files-found: error
