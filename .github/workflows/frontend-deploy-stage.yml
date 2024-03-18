@@ -39,7 +39,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
   deploy-helm-ci:
     runs-on: ubuntu-22.04
-    needs: [image-build]
+    needs: [npm-build]
     environment: staging
     steps:
       - name: checkout sources
