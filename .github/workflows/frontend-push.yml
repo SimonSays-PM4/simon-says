@@ -6,7 +6,7 @@ env:
   # GENERAL
   FRONTEND_DIRECTORY: frontend
   # NPM env
-  NODE_VERSION: 21
+  NODE_VERSION: 20
   # DOCKER env
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}/frontend
