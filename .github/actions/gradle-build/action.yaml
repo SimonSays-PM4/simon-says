@@ -1,0 +1,30 @@
+name: gradle-build
+description: executes gradle build and uploads build artifacts
+inputs:
+  working-directory:
+    required: true
+    description: directory of gradle sources
+
+runs:
+  using: "composite"
+  steps:
+    - name: setup java
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DIST }}
+        cache: gradle
+    - name: gradle build
+      working-directory: ${{ inputs.working-directory }}
+      run: |-
+        ./gradlew build
+      shell: bash
+    - name: upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.working-directory }}
+        # action ignores default working directory
+        # see https://github.com/actions/upload-artifact/issues/294
+        path: ${{ inputs.working-directory }}/build/libs
+        retention-days: 1
+        if-no-files-found: error

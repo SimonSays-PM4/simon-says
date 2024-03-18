@@ -1,0 +1,10 @@
+backend:
+  deployment:
+    forceRedeploy: true
+    image:
+      tag: "latest"
+      pullPolicy: "Always"
+  #config:
+  #  activeProfiles: stage
+  ingress:
+    host: simonsays-backend-stage.pm4.init-lab.ch
