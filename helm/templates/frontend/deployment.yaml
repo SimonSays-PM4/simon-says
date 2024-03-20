@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.frontend.deployment.name }}
+  labels:
+    app: {{ .Values.frontend.deployment.name }}
+spec:
+  replicas: {{ .Values.frontend.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.frontend.deployment.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.frontend.deployment.name }}
+      annotations:
+        {{- if .Values.frontend.deployment.forceRedeploy }}
+        forceReDeploy: {{ randAlphaNum 5 | quote }}
+        {{- end }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.frontend.deployment.image.pullSecret }}
+      containers:
+      - name: {{ .Values.frontend.deployment.name }}
+        image: "{{ .Values.frontend.deployment.image.repository }}:{{ .Values.frontend.deployment.image.tag | default .Chart.Version }}"
+        imagePullPolicy: {{ .Values.frontend.deployment.image.pullPolicy }}
+        ports:
+          - containerPort: {{ .Values.frontend.deployment.port }}
+        resources:
+            requests:
+                cpu: {{ .Values.frontend.deployment.resources.requests.cpu }}
+                memory: {{ .Values.frontend.deployment.resources.requests.memory }}
+            limits:
+                cpu: {{ .Values.frontend.deployment.resources.limits.cpu }}
+                memory: {{ .Values.frontend.deployment.resources.limits.memory }}
