@@ -1,7 +1,8 @@
-name: frontend running on each commit
+name: frontend manual stage deploy
 
 on:
-  - push
+  workflow_dispatch
+
 env:
   # GENERAL
   FRONTEND_DIRECTORY: frontend
