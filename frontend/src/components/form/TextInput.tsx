@@ -1,4 +1,5 @@
 import * as React from "react";
+import { FieldValues, UseFormRegister } from "react-hook-form";
 
 export interface ITextInputProps {
     id: string;
@@ -8,6 +9,7 @@ export interface ITextInputProps {
     classNames?: string;
     disabled?: boolean;
     isRequired?: boolean;
+    register: UseFormRegister<FieldValues>;
 }
 
 export const TextInput: React.FC<ITextInputProps> = ({
@@ -18,6 +20,7 @@ export const TextInput: React.FC<ITextInputProps> = ({
     placeholderValue,
     disabled = false,
     isRequired = false,
+    register
 }) => {
     return (
         <div className={"sm:grid sm:grid-flow-row sm:grid-cols-1 sm:items-end " + (classNames ?? "")} key={id + defaultValue}>
@@ -35,6 +38,7 @@ export const TextInput: React.FC<ITextInputProps> = ({
                         disabled={disabled}
                         placeholder={placeholderValue}
                         aria-required={isRequired}
+                        {...register(id, { required: isRequired, disabled: disabled, value: defaultValue })}
                     />
                 </div>
             </div>
