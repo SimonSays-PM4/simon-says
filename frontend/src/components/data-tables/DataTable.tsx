@@ -2,8 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { ColumnType } from "../../models/ColumnType"
 import { Button } from "../Button"
 
-type IDataTableTypeProps = {
-}
+type IDataTableTypeProps = {}
 
 type IDataTableProps<T> = {
     rows: T[]
@@ -45,7 +44,7 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-default-200">
-                                {rows.slice(0, 3).map((row, idx) => {
+                                {rows.map((row, idx) => {
                                     return (
                                         <tr key={idx}>
                                             {columns.map((column, idx) => {
