@@ -1,0 +1,21 @@
+name: helm-test
+description: tests and packages the helm chart
+inputs:
+  helm-directory:
+    required: true
+    description: directory of docker sources
+
+runs:
+  using: composite
+  steps:
+    - name: setup helm
+      uses: azure/setup-helm@v4.1.0
+    - name: update helm dependencies
+      run: helm dependency update ${{ inputs.helm-directory }}
+      shell: bash
+    - name: helm lint
+      run: helm lint ${{ inputs.helm-directory }}
+      shell: bash
+    - name: helm package
+      run: helm package ${{ inputs.helm-directory }}
+      shell: bash

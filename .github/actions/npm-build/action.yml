@@ -1,0 +1,34 @@
+name: npm-build
+description: executes npm build and uploads build artifacts
+inputs:
+  working-directory:
+    required: true
+    description: directory of npm sources
+  node-version:
+    required: true
+    description: node version to use
+
+runs:
+  using: "composite"
+  steps:
+    - name: setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'npm'
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+    - name: npm ci
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |-
+        npm ci
+    - name: npm build
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |-
+          npm run build
+    - name: npm test
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |-
+          npm test

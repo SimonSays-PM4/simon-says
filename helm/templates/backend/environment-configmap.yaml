@@ -1,0 +1,17 @@
+{{- if .Values.backend.config}}
+{{- if .Values.backend.config.applicationConfig}}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Values.backend.deployment.name}}-env-config
+{{- with .Values.backend.config.applicationConfig }}
+data:
+  application-environment-config.yaml: |-
+    {{- if kindIs "string" . }}
+    {{- . | nindent 4 }}
+    {{- else }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- end}}
+{{- end}}
+{{- end}}
