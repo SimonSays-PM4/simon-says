@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Navigation } from "../components/Navigation";
 import { ActivePageType } from "../enums/ActivePageType";
-import { Topbar } from "../components/Topbar";
+import { Header } from "../components/Header";
 
 export interface IMainLayoutProps {
     children: React.ReactNode;
@@ -15,7 +15,7 @@ export const MainLayout: React.FC<IMainLayoutProps> = ({ children, activePageTyp
 
             <div role="main" className="flex-1 flex flex-col overflow-y-auto items-center h-full">
                 <div className="w-full h-full">
-                    <Topbar />
+                    <Header />
 
                     <div className="flex-1 flex items-stretch px-[10px] sm:px-[40px] pb:[42px] pt-[20px] md:pt-[42px] h-[92%] mx-2 md:mx-0">{children}</div>
                 </div>
