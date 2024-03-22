@@ -10,6 +10,6 @@ class EventServiceImpl: EventService {
                 name = "Testevent",
                 password = "Test12345!",
                 numberOfTables = 12
-        );
+        )
     }
 }

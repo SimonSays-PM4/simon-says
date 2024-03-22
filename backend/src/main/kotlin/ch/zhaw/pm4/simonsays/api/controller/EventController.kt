@@ -22,6 +22,6 @@ class EventController(
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun createEvent(@RequestBody request: EventCreateDTO): EventDTO {
-        return eventService.createEvent();
+        return eventService.createEvent()
     }
 }
