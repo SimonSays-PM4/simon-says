@@ -35,11 +35,6 @@ export const Navigation: React.FC<INavigationProps> = ({ activePageType }) => {
                         link="/events"
                         isActive={activePageType === ActivePageType.EventList}
                     />
-                    <NavigationItem
-                        text="Dev"
-                        link="/dev"
-                        isActive={activePageType === ActivePageType.Development}
-                    />
                 </div>
             </div>
         </nav>

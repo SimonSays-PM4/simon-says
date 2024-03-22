@@ -24,7 +24,7 @@ export const TextInput: React.FC<ITextInputProps> = ({
 }) => {
     return (
         <div className={"sm:grid sm:grid-flow-row sm:grid-cols-1 sm:items-end " + (classNames ?? "")} key={id + defaultValue}>
-            <label htmlFor={id} className="block text-sm font-medium text-gray-700 sm:mt-px pt-2 mb-2">
+            <label htmlFor={id} className="mb-2 block text-sm font-medium text-default-900">
                 {label} {isRequired ? " *" : ""}
             </label>
 
@@ -33,7 +33,7 @@ export const TextInput: React.FC<ITextInputProps> = ({
                     <input
                         id={id}
                         className={
-                            "w-full h-12 tracking-[0.4px] leading-[18px] sm:leading-[18px] shadow-sm bg-[#F6F6F6] border-none hover:border-none focus:border-none sm:text-sm rounded-md pl-3 pr-10 disabled:opacity-60 opacity-100 disabled:ring-0"
+                            "form-input rounded-lg border border-default-200 px-4 py-2.5"
                         }
                         disabled={disabled}
                         placeholder={placeholderValue}
