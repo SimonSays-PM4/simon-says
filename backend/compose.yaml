@@ -5,10 +5,10 @@ services:
     platform: linux/x86_64
     image: mysql:8.0.33
     environment:
-      MYSQL_ROOT_PASSWORD: $dbRootPassword
-      MYSQL_DATABASE: $dbName
-      MYSQL_USER: $dbUser
-      MYSQL_PASSWORD: $dbPassword
+      MYSQL_ROOT_PASSWORD: micha
+      MYSQL_DATABASE: micha
+      MYSQL_USER: micha
+      MYSQL_PASSWORD: micha
     ports:
       - "3306:3306"
     volumes:
@@ -19,9 +19,9 @@ services:
     platform: linux/x86_64
     build: .
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/$dbName
-      SPRING_DATASOURCE_USERNAME: $dbUser
-      SPRING_DATASOURCE_PASSWORD: $dbPassword
+      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/micha
+      SPRING_DATASOURCE_USERNAME: micha
+      SPRING_DATASOURCE_PASSWORD: micha
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SPRING_SQL_INIT_MODE: always
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
