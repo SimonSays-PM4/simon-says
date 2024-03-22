@@ -2,8 +2,10 @@ package ch.zhaw.pm4.simonsays.entity
 
 import jakarta.persistence.*
 
+
 @Entity
-class Event(
+@NoArgAnnotation
+data class Event(
         @Column(nullable = false)
         val name: String,
 

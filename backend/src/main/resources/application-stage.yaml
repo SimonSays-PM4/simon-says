@@ -12,3 +12,4 @@ spring:
     password: micha
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+debug: on

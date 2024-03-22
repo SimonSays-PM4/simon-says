@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("api/event")
 class EventController(
-        private val eventService: EventService,
-        private val eventRepository: EventRepository
+        private val eventService: EventService
 ) {
 
     @Operation(summary = "Creates new event")
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun createEvent(@RequestBody request: EventCreateDTO): EventDTO {
+        //TODO req übergeben
         return eventService.createEvent()
     }
 }
