@@ -3,8 +3,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
   datasource:
     url: jdbc:mysql://localhost:3306/micha
     username: micha
     password: micha
     driver-class-name: com.mysql.cj.jdbc.Driver
+
