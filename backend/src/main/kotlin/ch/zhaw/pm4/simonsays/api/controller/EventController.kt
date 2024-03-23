@@ -23,7 +23,6 @@ class EventController(
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun createEvent(@RequestBody request: EventCreateDTO): EventDTO {
-        //TODO req übergeben
-        return eventService.createEvent()
+        return eventService.createEvent(request)
     }
 }
