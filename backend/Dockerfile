@@ -1,5 +1,5 @@
 # this dockerfile is used to build the backend of the application
-FROM eclipse-temurin:17
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
