@@ -14,24 +14,5 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     restart: always
-
-  app:
-    platform: linux/x86_64
-    build: .
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/micha
-      SPRING_DATASOURCE_USERNAME: micha
-      SPRING_DATASOURCE_PASSWORD: micha
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
-      SPRING_SQL_INIT_MODE: always
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_PROFILES_ACTIVE: stage
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
-    depends_on:
-      - db
-    ports:
-      - "8080:8080"
-    restart: always
-
 volumes:
   db_data:
