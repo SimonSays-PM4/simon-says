@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `micha` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `micha`;
+CREATE DATABASE IF NOT EXISTS `simonsays` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `simonsays`;
 SET NAMES utf8;
 SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
