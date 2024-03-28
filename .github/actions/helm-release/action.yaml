@@ -43,7 +43,7 @@ runs:
       run: |-
         helm dependency update ${{ inputs.helm-directory }}
         helm package ${{ inputs.helm-directory }}
-        package=$(find . -name "${CHART_NAME}*.tgz")
+        package=$(find . -name "*.tgz" ! -path "./charts/*")
         # print helm upgrade command for debugging
         echo helm upgrade ${{ inputs.helm-release-name }} $package  -f ${{ inputs.helm-directory }}/${{ inputs.helm-values-file }}  --set mysql.auth.rootPassword=${{inputs.mysql-root-password}}  --set mysql.auth.password=${{inputs.mysql-password}} --install -n ${{ inputs.k8s-namespace  }} --wait
         helm upgrade ${{ inputs.helm-release-name }} $package  -f ${{ inputs.helm-directory }}/${{ inputs.helm-values-file }}  --set mysql.auth.rootPassword=${{inputs.mysql-root-password}}  --set mysql.auth.password=${{inputs.mysql-password}} --install -n ${{ inputs.k8s-namespace  }} --wait
