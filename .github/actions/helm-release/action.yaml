@@ -19,6 +19,12 @@ inputs:
   helm-values-file:
     required: true
     description: value file
+  mysql-root-password:
+    required: true
+    description: mysql root password
+  mysql-password:
+    required: true
+    description: mysql password
 
 runs:
   using: "composite"
@@ -35,6 +41,7 @@ runs:
     - name: upgrading helm release
       shell: bash
       run: |-
-        helm package ${{ inputs.helm-directory }}
-        package=$(find . -name "${CHART_NAME}*.tgz")
-        helm upgrade ${{ inputs.helm-release-name }} $package  -f ${{ inputs.helm-directory }}/${{ inputs.helm-values-file }} --install -n ${{ inputs.k8s-namespace  }} --wait
+        helm dependency update ${{ inputs.helm-directory }}
+        helm package ${{ inputs.helm-directory }} -d output
+        package=$(find output -name "*.tgz")
+        helm upgrade ${{ inputs.helm-release-name }} $package  -f ${{ inputs.helm-directory }}/${{ inputs.helm-values-file }}  --set mysql.auth.rootPassword=${{inputs.mysql-root-password}}  --set mysql.auth.password=${{inputs.mysql-password}} --install -n ${{ inputs.k8s-namespace  }} --wait

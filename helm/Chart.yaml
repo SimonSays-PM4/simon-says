@@ -3,3 +3,7 @@ name: simon-says
 description: deploys the frontend as well as the backend for simonsays
 type: application
 version: 0.0.1
+dependencies:
+  - name: mysql
+    version: 10.1.0
+    repository: https://charts.bitnami.com/bitnami
