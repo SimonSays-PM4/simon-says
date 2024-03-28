@@ -48,23 +48,13 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                     return (
                                         <tr key={idx}>
                                             {columns.map((column, idx) => {
-                                                const tableData = row[column.key] as string
+                                                const tableData = row[column.key] as string;
 
-                                                if (column.key == "name") {
-                                                    return (
-                                                        <td className="min-w-[190px] whitespace-nowrap px-5 py-3" key={tableData + idx}>
-                                                            <div className="flex items-center gap-2">
-                                                                <h4 className="text-sm font-medium text-default-800">{tableData}</h4>
-                                                            </div>
-                                                        </td>
-                                                    )
-                                                } else {
-                                                    return (
-                                                        <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
-                                                            {tableData}
-                                                        </td>
-                                                    )
-                                                }
+                                                return (
+                                                    <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
+                                                        {tableData}
+                                                    </td>
+                                                );
                                             })}
 
                                             <td className="flex min-h-[60px] items-end ml-auto">
@@ -72,7 +62,7 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                                 <Button buttonText="Löschen" className="my-2 mx-2" onClick={() => onDeleteClick(row)} />
                                             </td>
                                         </tr>
-                                    )
+                                    );
                                 })}
                             </tbody>
                         </table>
