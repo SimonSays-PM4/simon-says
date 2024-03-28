@@ -17,7 +17,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebTestClient
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
