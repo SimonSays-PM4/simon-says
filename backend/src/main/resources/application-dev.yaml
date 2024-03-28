@@ -9,7 +9,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/simonsays
     username: simon
-    password: pREEW0Gr6833gbyD
+    password: simonsays
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 debug: on

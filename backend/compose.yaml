@@ -5,10 +5,10 @@ services:
     platform: linux/x86_64
     image: mysql:8.0.33
     environment:
-      MYSQL_ROOT_PASSWORD: micha
-      MYSQL_DATABASE: micha
-      MYSQL_USER: micha
-      MYSQL_PASSWORD: micha
+      MYSQL_ROOT_PASSWORD: simonsays
+      MYSQL_DATABASE: simonsays
+      MYSQL_USER: simonsays
+      MYSQL_PASSWORD: simonsays
     ports:
       - "3306:3306"
     volumes:
