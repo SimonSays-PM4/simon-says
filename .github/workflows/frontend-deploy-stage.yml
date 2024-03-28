@@ -1,7 +1,8 @@
-name: frontend running on each commit
+name: frontend manual stage deploy
 
 on:
-  - push
+  workflow_dispatch
+
 env:
   # GENERAL
   FRONTEND_DIRECTORY: frontend
@@ -53,3 +54,5 @@ jobs:
           k8s-namespace: ${{ env.K8S_NAMESPACE }}
           helm-release-name: ${{ env.HELM_RELEASE_NAME }}
           helm-values-file: values-stage.yaml
+          mysql-root-password: ${{ secrets.MYSQL_ROOT_PASSWORD_STAGING }}
+          mysql-password: ${{ secrets.MYSQL_PASSWORD_STAGING }}

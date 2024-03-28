@@ -1,9 +1,9 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import App from "../src/App";
+import { HomePage } from "../src/pages/HomePage";
 
-test("renders hello world text", () => {
-    render(<App />);
-    const linkElement = screen.getByText(/Hello world!/i);
-    expect(linkElement).toBeInTheDocument();
+test("renders home page title", () => {
+    render(<HomePage />);
+    const h1Element = screen.getByText(/Home Page/i);
+    expect(h1Element).toBeInTheDocument();
 });
