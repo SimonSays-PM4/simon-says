@@ -41,7 +41,7 @@ runs:
     - name: upgrading helm release
       shell: bash
       run: |-
-        helm dependency update
+        helm dependency update ${{ inputs.helm-directory }}
         helm package ${{ inputs.helm-directory }}
         package=$(find . -name "${CHART_NAME}*.tgz")
         helm upgrade ${{ inputs.helm-release-name }} $package  -f ${{ inputs.helm-directory }}/${{ inputs.helm-values-file }}  --set mysql.auth.rootPassword=${{inputs.mysql-root-password}}  --set mysql.auth.password=${{inputs.mysql-password}} --install -n ${{ inputs.k8s-namespace  }} --wait
