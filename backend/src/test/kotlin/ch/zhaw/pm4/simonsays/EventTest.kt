@@ -9,6 +9,7 @@ import ch.zhaw.pm4.simonsays.service.EventService
 import ch.zhaw.pm4.simonsays.service.EventServiceImpl
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,12 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-/*
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-@ExtendWith(SpringExtension::class)
-class EventTest {
 
+class EventTest {
     @MockkBean(relaxed = true)
     protected lateinit var eventRepo: EventRepository
 
@@ -30,6 +27,7 @@ class EventTest {
     @BeforeEach
     fun setup() {
         // mockkStatic("kotlinx.coroutines.reactor.MonoKt")
+        eventRepo = mockk(relaxed = true);
         eventService = EventServiceImpl(eventRepo, EventMapperImpl())
     }
 
@@ -51,4 +49,4 @@ class EventTest {
         ), eventService.createEvent(eventCreateDTO))
     }
 
-}*/
+}
