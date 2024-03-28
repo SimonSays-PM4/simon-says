@@ -1,0 +1,129 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "SimonSays",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Generated server url"
+        }
+    ],
+    "paths": {
+        "/api/event": {
+            "post": {
+                "tags": [
+                    "event-controller"
+                ],
+                "summary": "Creates new event",
+                "operationId": "createEvent",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EventCreateDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EventDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/health": {
+            "get": {
+                "tags": [
+                    "health"
+                ],
+                "summary": "shows health",
+                "operationId": "health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Health"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "EventCreateDTO": {
+                "required": [
+                    "name",
+                    "numberOfTables",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name for the event"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Event description"
+                    },
+                    "numberOfTables": {
+                        "type": "integer",
+                        "description": "Number of tables available at the event",
+                        "format": "int64"
+                    }
+                }
+            },
+            "EventDTO": {
+                "required": [
+                    "name",
+                    "numberOfTables",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name for the event"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Event description"
+                    },
+                    "numberOfTables": {
+                        "type": "integer",
+                        "description": "Number of tables available at the event",
+                        "format": "int64"
+                    }
+                }
+            },
+            "Health": {
+                "required": [
+                    "state"
+                ],
+                "type": "object",
+                "properties": {
+                    "state": {
+                        "type": "string",
+                        "description": "Shows the state of the application."
+                    }
+                }
+            }
+        }
+    }
+}

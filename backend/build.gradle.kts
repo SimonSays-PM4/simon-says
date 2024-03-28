@@ -5,6 +5,8 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.spring") version "1.9.22"
+    kotlin("plugin.noarg") version "1.7.10"
+    kotlin("kapt") version "1.9.10"
     jacoco
 }
 
@@ -26,11 +28,17 @@ dependencies {
     //implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation ("org.mapstruct:mapstruct:1.5.5.Final")
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
+    kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("com.ninja-squad:springmockk:4.0.2")
+    implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.1")
+    runtimeOnly ("com.mysql:mysql-connector-j")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.7")
+    testImplementation("org.testcontainers:mysql:1.19.7")
     implementation("io.socket:socket.io-server:4.1.2")
 }
 
@@ -61,3 +69,9 @@ tasks.jacocoTestReport {
 jacoco {
     toolVersion = "0.8.11"
 }
+
+noArg {
+    // Specify annotations to identify classes that need a no-arg constructor
+    annotation("ch.zhaw.pm4.simonsays.entity.NoArgAnnotation")
+}
+

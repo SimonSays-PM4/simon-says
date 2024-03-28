@@ -55,3 +55,7 @@ frontend:
     ingressClassName: "traefik"
     path: /
     pathType: "Prefix"
+mysql:
+  auth:
+    username: "simon"
+    database: "simonsays"

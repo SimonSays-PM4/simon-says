@@ -1,0 +1,1 @@
+org.springframework.test.context.TestExecutionListener=ch.zhaw.pm4.simonsays.config.MySqlTestExecutionListener
