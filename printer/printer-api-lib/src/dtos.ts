@@ -15,6 +15,26 @@ Terminology:
     cause unknown behavior on simultaneous prints.
 */
 
+/**
+ * GET rest-api/v1/printer-servers
+ * or can also be used as socket.io subscription
+ * socket-api/v1/printer-servers
+ */
+export type PrinterServersDto = PrinterServerDto[]
+
+/**
+ * GET rest-api/v1/printer-servers/{id}
+ * or can also be used as socket.io subscription
+ * socket-api/v1/printer-servers/{id}
+ */
+export interface PrinterServerDto {
+    id: string,
+    /** A human readable name mainly used for human debugging ;) */
+    name: string,
+    /** All queues that are connected to this printer server */
+    queues: PrintQueueDto[],
+}
+
 /** 
  * GET rest-api/v1/printer-server/{id}/print-queues
  * or can also be used as socket.io subscription
@@ -22,6 +42,11 @@ Terminology:
  */
 export type PrintQueuesDto = PrintQueueDto[]
 
+/**
+ * GET rest-api/v1/printer-server/{id}/print-queues/{id}
+ * or can also be used as socket.io subscription
+ * socket-api/v1/printer-server/{id}/print-queues/{id}
+ */
 export interface PrintQueueDto {
     id: string,
     /** A human readable name mainly used for human debugging ;) */
@@ -91,11 +116,15 @@ export interface PrintQueueJobDto {
     qrCode?: string,
     /** Printed centered at the bottom of the receipt */
     footer?: string,
+    /** The creation datetime of the print job (in ms since epoch) */
+    creationDateTime: number,
+    /** The last time the job was updated (in ms since epoch) */
+    lastUpdateDateTime: number,
 }
 
 /**
  * Get all jobs since ever
- * GET /v1/printer-server/{id}/print-queues/{id}/jobs
+ * GET rest-api/v1/printer-server/{id}/print-queues/{id}/jobs
  * 
  * or subscribe to all job changes
  * socket-api/v1/printer-server/{id}/print-queues/{id}/jobs
@@ -104,7 +133,7 @@ export interface PrintQueueJobDto {
 export type PrintQueueJobsDto = PrintQueueJobDto[]
 
 
-// PUT /v1/printer-server/{id}/print-queues/{id}/jobs/{id}
+// PUT rest-api/v1/printer-server/{id}/print-queues/{id}/jobs/{id}
 // or also used as socket.io event
 export interface PrintQueueJobUpdateDto {
     id: string,

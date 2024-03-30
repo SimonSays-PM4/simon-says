@@ -13,3 +13,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 debug: on
+
+# The printer-queue-server application configuration
+printer-queue-server:
+  # List of frontend origins allowed to communicate with the printer server
+  frontend-origins:
+    # TODO: Add the URL of your deployed frontend here
+    - https://stage.simon-says.ch

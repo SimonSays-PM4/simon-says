@@ -29,6 +29,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
+    implementation("io.socket:socket.io-server:4.1.2")
     kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -39,7 +40,6 @@ dependencies {
     runtimeOnly ("com.mysql:mysql-connector-j")
     testImplementation("org.testcontainers:junit-jupiter:1.19.7")
     testImplementation("org.testcontainers:mysql:1.19.7")
-    implementation("io.socket:socket.io-server:4.1.2")
 }
 
 tasks.withType<KotlinCompile> {
