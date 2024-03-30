@@ -22,7 +22,7 @@ class EventIntegrationTest : IntegrationTest() {
         val event = EventCreateDTO("integrationevent", "integrationeventpassword", 2)
         val eventDto = EventDTO("integrationevent", 2)
         // when/then
-        mockMvc.post("/api/event") {
+        mockMvc.post("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(event)
         }
