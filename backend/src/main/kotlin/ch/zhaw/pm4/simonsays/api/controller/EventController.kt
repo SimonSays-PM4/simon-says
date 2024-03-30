@@ -2,7 +2,6 @@ package ch.zhaw.pm4.simonsays.api.controller
 
 import ch.zhaw.pm4.simonsays.api.types.EventCreateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
-import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.service.EventService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.HttpStatus
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("api/event")
+@RequestMapping("rest-api/v1/event")
 class EventController(
         private val eventService: EventService
 ) {
