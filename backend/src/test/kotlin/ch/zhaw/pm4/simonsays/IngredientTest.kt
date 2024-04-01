@@ -1,0 +1,66 @@
+package ch.zhaw.pm4.simonsays
+
+import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapperImpl
+import ch.zhaw.pm4.simonsays.api.types.IngredientCreateDTO
+import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
+import ch.zhaw.pm4.simonsays.entity.Ingredient
+import ch.zhaw.pm4.simonsays.repository.IngredientRepository
+import ch.zhaw.pm4.simonsays.service.IngredientService
+import ch.zhaw.pm4.simonsays.service.IngredientServiceImpl
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
+class IngredientTest {
+    @MockkBean(relaxed = true)
+    protected lateinit var ingredientRepository: IngredientRepository
+
+    private lateinit var ingredientService: IngredientService
+
+    @BeforeEach
+    fun setup() {
+        ingredientRepository = mockk(relaxed = true);
+        ingredientService = IngredientServiceImpl(ingredientRepository, IngredientMapperImpl())
+    }
+
+    @Test
+    fun `Test event creation`() {
+        every { ingredientRepository.save(any()) } returns Ingredient(
+            "Testingredient", 1
+        )
+        val ingredientCreateDTO = IngredientCreateDTO(
+            "Testingredient"
+        )
+        Assertions.assertEquals(
+            IngredientDTO(
+            1, "Testingredient"
+        ), ingredientService.createIngredient(ingredientCreateDTO))
+    }
+    @Test
+    fun `Test event list`() {
+        every { ingredientRepository.findAll() } returns
+            listOf(Ingredient("Testingredient", 1), Ingredient("Testingredient2", 2))
+
+        Assertions.assertEquals(
+            listOf(IngredientDTO(1, "Testingredient"), IngredientDTO(2, "Testingredient2")), ingredientService.listIngredients())
+    }
+    @Test
+    fun `Test event get`() {
+        every { ingredientRepository.findById(any()).get() } returns Ingredient(
+            "Testingredient", 1
+        )
+        Assertions.assertEquals(
+            IngredientDTO(
+                1, "Testingredient"
+            ), ingredientService.getIngredient(1))
+    }
+    @Test
+    fun `Test event deletion`() {
+        every { ingredientRepository.delete(any()) } returns Unit
+        Assertions.assertEquals(
+           Unit, ingredientService.deleteIngredient(1))
+    }
+}
