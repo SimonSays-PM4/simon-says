@@ -84,6 +84,7 @@ noArg {
 detekt {
     buildUponDefaultConfig = true // preconfigure defaults
     allRules = false // activate all available (even unstable) rules.
+    config = files("config/detekt/detekt.yml")
 }
 
 

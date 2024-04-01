@@ -18,7 +18,7 @@ jobs:
         uses: ./.github/actions/gradle-build
         with:
           working-directory: ${{ env.BACKEND_DIRECTORY }}
-      - name: detekt
+      - name: detekt-kotlin-static-code-analysis
         uses: alaegin/Detekt-Action@v1.23.5
         with:
           github_token: ${{ secrets.github_token }}
