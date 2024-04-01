@@ -32,6 +32,19 @@ class IngredientIntegrationTest : IntegrationTest() {
             }
     }
     @Test
+    fun `should get ingredient not found`() {
+        // when/then
+        mockMvc.get("/rest-api/v1/ingredient/404")
+            .andDo { print() }
+            .andExpect {
+                status { isNotFound() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json("{\"status\":404,\"message\":\"Ingredient not found with ID: 404\",\"errors\":null}")
+                }
+            }
+    }
+    @Test
     @Order(1)
     fun `should add new ingredient`() {
         val ingredient = IngredientCreateDTO("integrationingredient")

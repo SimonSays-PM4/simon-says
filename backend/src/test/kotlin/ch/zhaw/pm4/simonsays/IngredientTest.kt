@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.IngredientCreateDTO
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
+import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.service.IngredientService
 import ch.zhaw.pm4.simonsays.service.IngredientServiceImpl
@@ -13,6 +14,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Optional.empty
 
 class IngredientTest {
     @MockkBean(relaxed = true)
@@ -22,7 +24,7 @@ class IngredientTest {
 
     @BeforeEach
     fun setup() {
-        ingredientRepository = mockk(relaxed = true);
+        ingredientRepository = mockk(relaxed = true)
         ingredientService = IngredientServiceImpl(ingredientRepository, IngredientMapperImpl())
     }
 
@@ -57,10 +59,32 @@ class IngredientTest {
                 1, "Testingredient"
             ), ingredientService.getIngredient(1))
     }
+
+    @Test
+    fun `Test event get not found`() {
+        every { ingredientRepository.findById(any()) } returns empty()
+        Assertions.assertThrows(
+            ResourceNotFoundException::class.java,
+            { ingredientService.getIngredient(1) },
+            "Ingredient not found with ID: 1"
+        )
+    }
+
+
     @Test
     fun `Test event deletion`() {
         every { ingredientRepository.delete(any()) } returns Unit
         Assertions.assertEquals(
            Unit, ingredientService.deleteIngredient(1))
+    }
+
+    @Test
+    fun `Test event deletion not found`() {
+        every { ingredientRepository.findById(any()) } returns empty()
+        Assertions.assertThrows(
+            ResourceNotFoundException::class.java,
+            { ingredientService.getIngredient(1) },
+            "Ingredient not found with ID: 1"
+        )
     }
 }
