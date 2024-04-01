@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/Button";
-import { TextInput } from "../components/form/TextInput";
+import { FormInput } from "../components/form/FormInput";
 import { FieldValues, useForm } from "react-hook-form";
+import { AppContext } from "../providers/AppContext";
+import React from "react";
+import { LoginInfo } from "../models/LoginInfo";
 
 export const LoginPage: React.FC = () => {
+    const { setLoginInfo } = React.useContext(AppContext);
     const navigate = useNavigate();
 
     const {
@@ -11,7 +15,11 @@ export const LoginPage: React.FC = () => {
         handleSubmit,
     } = useForm();
 
-    const onSubmit = (data: FieldValues) => console.log(data);
+    const onSubmit = (data: FieldValues) => {
+        console.log(data);
+        setLoginInfo(new LoginInfo(true, "Test-User"));
+        navigate("/");
+    }
 
     return (
         <main
@@ -25,13 +33,12 @@ export const LoginPage: React.FC = () => {
                     </h1>
                     <div className="grid h-fit mt-6">
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <TextInput id={"Code"} label={"Code"} register={register} />
+                            <FormInput id={"Code"} label={"Code"} register={register} type="text" />
 
                             <Button
                                 buttonText="Login"
                                 type="submit"
                                 className="mt-6"
-                                onClick={() => { navigate("/") }}
                             />
                         </form>
                     </div>

@@ -21,11 +21,6 @@ export const Navigation: React.FC<INavigationProps> = ({ activePageType }) => {
             <div className="flex justify-center md:justify-center mb-4 md:mb-0 md:absolute md:top-1/2 md:translate-y-[-50%] w-full md:w-[100px] mt-4 md:mt-0">
                 <div className="flex flex-row justify-around md:max-w-none md:flex-col md:flex-1 mt-2 mx-[10px] md:mx-0 md:mt-6 w-full md:px-2 md:space-y-3">
                     <NavigationItem
-                        text="Login"
-                        link="/login"
-                        isActive={false}
-                    />
-                    <NavigationItem
                         text="Home"
                         link="/"
                         isActive={activePageType === ActivePageType.Home}
