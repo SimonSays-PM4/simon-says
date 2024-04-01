@@ -15,4 +15,8 @@ class OpenApiConfig{
                             .version("1.0.0")
 
             )
+
+    private suspend fun test() {
+        println("test")
+    }
 }
