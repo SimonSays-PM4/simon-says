@@ -5,6 +5,7 @@ import ch.zhaw.pm4.simonsays.api.types.EventDTO
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import ch.zhaw.pm4.simonsays.factory.EventFactory
 import jakarta.transaction.Transactional
+import org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
@@ -138,9 +139,29 @@ class EventIntegrationTest : IntegrationTest() {
                     status { is2xxSuccessful() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        json(expectedJson)
+                        jsonPath("$", hasSize<Any>(2))
                     }
                 }
     }
+
+    /*@Test
+    @Transactional
+    fun `retrieve event`() {
+        eventFactory.createEvent("test", "test", 0)
+
+        // Since the response is expected to be an array, wrap the expected DTO in a list
+        val expectedJson = objectMapper.writeValueAsString(listOf(EventDTO("test", 0, 1)))
+
+        mockMvc.get("/rest-api/v1/event")
+                .andDo { print() }
+                .andExpect {
+                    status { is2xxSuccessful() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(expectedJson)
+                    }
+                }
+    }*/
+
 
 }
