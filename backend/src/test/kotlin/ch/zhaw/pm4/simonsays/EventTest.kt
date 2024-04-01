@@ -13,10 +13,6 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
 class EventTest {
     @MockkBean(relaxed = true)
@@ -36,7 +32,8 @@ class EventTest {
         every { eventRepo.save(any()) } returns Event(
             "Testevent",
                 "Testeventpassword",
-                15
+                15,
+                1
         )
         val eventCreateDTO = EventCreateDTO(
                 "Testevent",
@@ -45,8 +42,27 @@ class EventTest {
         )
         Assertions.assertEquals(EventDTO(
                 "Testevent",
-                15
+                15,
+                1
         ), eventService.createEvent(eventCreateDTO))
+    }
+
+    @Test
+    fun `Test event fetching`() {
+        every { eventRepo.findAll() } returns mutableListOf(
+                Event(
+                      "testevent",
+                        "password",
+                        3
+                ),
+                Event(
+                    "testevent2",
+                        "password",
+                        2
+                )
+        )
+        val events: List<EventDTO> = eventService.getEvents()
+        Assertions.assertEquals(2, events.count())
     }
 
 }

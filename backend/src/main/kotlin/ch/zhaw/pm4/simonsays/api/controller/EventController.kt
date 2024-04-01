@@ -4,8 +4,11 @@ import ch.zhaw.pm4.simonsays.api.types.EventCreateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
 import ch.zhaw.pm4.simonsays.service.EventService
 import io.swagger.v3.oas.annotations.Operation
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,14 +17,19 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("rest-api/v1/event")
-class EventController(
-        private val eventService: EventService
-) {
+class EventController(private val eventService: EventService) {
 
     @Operation(summary = "Creates new event")
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
-    fun createEvent(@RequestBody request: EventCreateDTO): EventDTO {
+    fun createEvent(@RequestBody @Valid request: EventCreateDTO): EventDTO {
         return eventService.createEvent(request)
+    }
+
+    @Operation(summary = "Read all events")
+    @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun getEvents(): List<EventDTO> {
+        return  eventService.getEvents()
     }
 }

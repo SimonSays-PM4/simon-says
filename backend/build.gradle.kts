@@ -40,8 +40,7 @@ dependencies {
     runtimeOnly ("com.mysql:mysql-connector-j")
     testImplementation("org.testcontainers:junit-jupiter:1.19.7")
     testImplementation("org.testcontainers:mysql:1.19.7")
-
-
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 tasks.withType<KotlinCompile> {
