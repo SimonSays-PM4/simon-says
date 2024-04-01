@@ -23,4 +23,3 @@ jobs:
         with:
           github_token: ${{ secrets.github_token }}
           detekt_config: backend/config/detekt/detekt-pipeline.yml
-          reviewdog_reporter: github-pr-review
