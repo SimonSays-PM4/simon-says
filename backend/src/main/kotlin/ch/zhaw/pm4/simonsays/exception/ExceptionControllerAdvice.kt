@@ -1,12 +1,11 @@
 package ch.zhaw.pm4.simonsays.exception
 
-import ch.zhaw.pm4.simonsays.entity.NoArgAnnotation
-import jakarta.persistence.Entity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 
 class ErrorMessageModel(
         var status: Int? = null,
@@ -39,4 +38,25 @@ class ExceptionControllerAdvice {
 
         return ResponseEntity(errorMessageModel, HttpStatus.BAD_REQUEST)
     }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handleArgumentTypeMismatchException(ex: MethodArgumentTypeMismatchException): ResponseEntity<ErrorMessageModel> {
+
+        val errorMessageModel = ErrorMessageModel(
+                status = 400,
+                message = ex.message,
+        )
+
+        return ResponseEntity(errorMessageModel, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(ResourceNotFoundException::class)
+    fun handleResourceNotFoundException(ex: ResourceNotFoundException): ResponseEntity<ErrorMessageModel> {
+        val errorMessage = ErrorMessageModel(
+                HttpStatus.NOT_FOUND.value(),
+                ex.message
+        )
+        return ResponseEntity(errorMessage, HttpStatus.NOT_FOUND)
+    }
+
 }
