@@ -1,3 +1,2 @@
-# config/detekt/detekt.yml
 build:
   maxIssues: -1
