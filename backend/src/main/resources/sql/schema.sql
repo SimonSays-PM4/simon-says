@@ -13,6 +13,12 @@ CREATE TABLE IF NOT EXISTS event
     numberOfTables    INT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS ingredient
+(
+    id       INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE
+    );
+
 -- Schema for Posts table
 CREATE TABLE IF NOT EXISTS posts
 (
