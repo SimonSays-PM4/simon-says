@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom"
 import { ColumnType } from "../../models/ColumnType"
 import { Button } from "../Button"
 
@@ -7,12 +6,13 @@ type IDataTableTypeProps = {}
 type IDataTableProps<T> = {
     rows: T[]
     columns: Array<ColumnType<T>>
-    title: string
+    title: string,
+    onCreateClick: () => void,
+    onEditClick: (row: any) => void,
+    onDeleteClick: (row: any) => void
 }
 
-export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows, title }: IDataTableProps<DataType>) => {
-    const navigate = useNavigate();
-
+export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows, title, onCreateClick, onEditClick, onDeleteClick }: IDataTableProps<DataType>) => {
     return (
         <div className="overflow-hidden rounded-lg border border-default-200">
             <div className="overflow-hidden p-6 ">
@@ -20,7 +20,7 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                     <h2 className="text-xl font-semibold text-default-800">{title}</h2>
 
                     <div className="flex flex-wrap items-center gap-4">
-                        <Button buttonText="Create" />
+                        <Button buttonText="Create" onClick={onCreateClick} />
                     </div>
                 </div>
             </div>
@@ -48,31 +48,21 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                     return (
                                         <tr key={idx}>
                                             {columns.map((column, idx) => {
-                                                const tableData = row[column.key] as string
+                                                const tableData = row[column.key] as string;
 
-                                                if (column.key == "name") {
-                                                    return (
-                                                        <td className="min-w-[190px] whitespace-nowrap px-5 py-3" key={tableData + idx}>
-                                                            <div className="flex items-center gap-2">
-                                                                <h4 className="text-sm font-medium text-default-800">{tableData}</h4>
-                                                            </div>
-                                                        </td>
-                                                    )
-                                                } else {
-                                                    return (
-                                                        <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
-                                                            {tableData}
-                                                        </td>
-                                                    )
-                                                }
+                                                return (
+                                                    <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
+                                                        {tableData}
+                                                    </td>
+                                                );
                                             })}
 
-                                            <td className="flex min-h-[60px]">
-                                                <Button buttonText="Edit" className="my-2" onClick={() => navigate("/event/id123")} />
-                                                <Button buttonText="Delete" className="my-2 ml-2" />
+                                            <td className="flex min-h-[60px] items-end ml-auto">
+                                                <Button buttonText="Bearbeiten" className="my-2" onClick={() => onEditClick(row)} />
+                                                <Button buttonText="Löschen" className="my-2 mx-2" onClick={() => onDeleteClick(row)} />
                                             </td>
                                         </tr>
-                                    )
+                                    );
                                 })}
                             </tbody>
                         </table>
