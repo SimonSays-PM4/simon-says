@@ -9,7 +9,10 @@ env:
   JAVA_VERSION: 17
   JAVA_DIST: corretto
 jobs:
-  gradle-build:
+  kotlin-static-code-analysis:
+    defaults:
+      run:
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
     runs-on: ubuntu-22.04
     steps:
       - name: checkout sources
@@ -23,4 +26,3 @@ jobs:
         with:
           github_token: ${{ secrets.github_token }}
           detekt_config: config/detekt/detekt.yml
-        working_directory: ${{ env.BACKEND_DIRECTORY }}
