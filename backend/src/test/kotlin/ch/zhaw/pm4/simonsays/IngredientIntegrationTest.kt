@@ -1,6 +1,6 @@
 package ch.zhaw.pm4.simonsays
 
-import ch.zhaw.pm4.simonsays.api.types.IngredientCreateDTO
+import ch.zhaw.pm4.simonsays.api.types.IngredientCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
@@ -47,7 +47,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Test
     @Order(1)
     fun `should add new ingredient`() {
-        val ingredient = IngredientCreateDTO("integrationingredient")
+        val ingredient = IngredientCreateUpdateDTO(null, "integrationingredient")
         val ingredientDTO = IngredientDTO(1,"integrationingredient")
         // when/then
         mockMvc.post("/rest-api/v1/ingredient") {

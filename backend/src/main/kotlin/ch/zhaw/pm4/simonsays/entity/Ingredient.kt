@@ -7,7 +7,7 @@ import jakarta.persistence.*
 data class Ingredient(
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

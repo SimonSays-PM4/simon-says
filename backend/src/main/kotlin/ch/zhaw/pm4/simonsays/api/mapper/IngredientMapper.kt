@@ -1,6 +1,6 @@
 package ch.zhaw.pm4.simonsays.api.mapper
 
-import ch.zhaw.pm4.simonsays.api.types.IngredientCreateDTO
+import ch.zhaw.pm4.simonsays.api.types.IngredientCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 import org.mapstruct.Mapper
@@ -12,5 +12,5 @@ interface IngredientMapper {
     fun mapToIngredientDTO(ingredient: Ingredient): IngredientDTO
 
     @Mapping(target = "id", ignore = true)
-    fun mapCreateDTOToIngredient(ingredient: IngredientCreateDTO): Ingredient
+    fun mapCreateDTOToIngredient(ingredient: IngredientCreateUpdateDTO): Ingredient
 }
