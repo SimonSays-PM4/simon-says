@@ -1,7 +1,8 @@
 package ch.zhaw.pm4.simonsays
 
-import ch.zhaw.pm4.simonsays.api.types.EventCreateDTO
+import ch.zhaw.pm4.simonsays.api.types.EventCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
+import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import ch.zhaw.pm4.simonsays.factory.EventFactory
 import jakarta.transaction.Transactional
@@ -11,10 +12,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-import org.testcontainers.shaded.org.bouncycastle.asn1.cms.CMSAttributes.contentType
+import org.springframework.test.web.servlet.put
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class EventIntegrationTest : IntegrationTest() {
@@ -27,16 +30,16 @@ class EventIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `event creation should should work with correct input`() {
-        val event = EventCreateDTO("integrationevent", "integrationeventpassword", 2)
-        val eventDto = EventDTO("integrationevent", 2, 1)
+        val event = EventCreateUpdateDTO(null, "eventusedfortesting", "eventusedfortesting", 2)
+        val eventDto = EventDTO("eventusedfortesting", 2, 2)
         // when/then
-        mockMvc.post("/rest-api/v1/event") {
+        mockMvc.put("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(event)
         }
             .andDo { print() }
             .andExpect {
-                status { isCreated() }
+                status { is2xxSuccessful() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                     json(objectMapper.writeValueAsString(eventDto))
@@ -47,14 +50,14 @@ class EventIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `event creation should fail if event name is missing`() {
-        val event = EventCreateDTO("5", "integrationeventpassword", 2)
+        val event = EventCreateUpdateDTO(null,"5", "integrationeventpassword", 2)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
                 mapOf("name" to "Event name must be between 5 and 64 chars long")
         )
         // when/then
-        mockMvc.post("/rest-api/v1/event") {
+        mockMvc.put("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(event)
         }
@@ -71,7 +74,7 @@ class EventIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `event creation should fail if number of tables is negative`() {
-        val event = EventCreateDTO("integrationevent", "integrationeventpassword", -1)
+        val event = EventCreateUpdateDTO(null,"integrationevent", "integrationeventpassword", -1)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
@@ -80,7 +83,7 @@ class EventIntegrationTest : IntegrationTest() {
                 )
         )
         // when/then
-        mockMvc.post("/rest-api/v1/event") {
+        mockMvc.put("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(event)
         }
@@ -97,7 +100,7 @@ class EventIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `event creation should fail and display all errors`() {
-        val event = EventCreateDTO(tooLongEventName, null, 2)
+        val event = EventCreateUpdateDTO(null, tooLongEventName, null, 2)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
@@ -107,7 +110,7 @@ class EventIntegrationTest : IntegrationTest() {
                 )
         )
         // when/then
-        mockMvc.post("/rest-api/v1/event") {
+        mockMvc.put("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(event)
         }
@@ -127,12 +130,6 @@ class EventIntegrationTest : IntegrationTest() {
         eventFactory.createEvent("test", "test", 0)
         eventFactory.createEvent("name", "test", 2)
 
-        val expectedResponse = listOf(
-                EventDTO("name", 2, 2),
-                EventDTO("test", 0, 1)
-        )
-        val expectedJson = objectMapper.writeValueAsString(expectedResponse)
-
         mockMvc.get("/rest-api/v1/event")
                 .andDo { print() }
                 .andExpect {
@@ -140,6 +137,52 @@ class EventIntegrationTest : IntegrationTest() {
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         jsonPath("$", hasSize<Any>(2))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
+    fun `update event`() {
+        val event: Event = eventFactory.createEvent("test", "test", 0)
+        val updateEvent = EventCreateUpdateDTO(event.id,"integrationtest", "testtest", 3)
+        val expectedReturn = EventDTO("integrationtest", 3, event.id)
+
+        mockMvc.put("/rest-api/v1/event") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updateEvent)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { is2xxSuccessful() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedReturn))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
+    fun `event update should fail when invalid id provided`() {
+        val event: Event = eventFactory.createEvent("test", "test", 0)
+        val updateEvent = EventCreateUpdateDTO(9999999999,"integrationtest", "testtest", 3)
+        val expectedReturn: ErrorMessageModel = ErrorMessageModel(
+                HttpStatus.NOT_FOUND.value(),
+                "Event not found with ID: 9999999999",
+                null
+        )
+
+        mockMvc.put("/rest-api/v1/event") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updateEvent)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedReturn))
                     }
                 }
     }

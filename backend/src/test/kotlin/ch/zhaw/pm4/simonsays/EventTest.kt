@@ -1,7 +1,7 @@
 package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.mapper.EventMapperImpl
-import ch.zhaw.pm4.simonsays.api.types.EventCreateDTO
+import ch.zhaw.pm4.simonsays.api.types.EventCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.repository.EventRepository
@@ -35,7 +35,8 @@ class EventTest {
                 15,
                 1
         )
-        val eventCreateDTO = EventCreateDTO(
+        val eventCreateUpdateDTO = EventCreateUpdateDTO(
+                null,
                 "Testevent",
                 "Testeventpassword",
                 15
@@ -44,7 +45,7 @@ class EventTest {
                 "Testevent",
                 15,
                 1
-        ), eventService.createEvent(eventCreateDTO))
+        ), eventService.createUpdateEvent(eventCreateUpdateDTO))
     }
 
     @Test
