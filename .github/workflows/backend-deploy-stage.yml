@@ -1,7 +1,10 @@
-name: backend manual stage deploy
+name: backend staging deployment
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+  push:
+    branches:
+      - KAN-89
 env:
   # GENERAL
   BACKEND_DIRECTORY: backend
