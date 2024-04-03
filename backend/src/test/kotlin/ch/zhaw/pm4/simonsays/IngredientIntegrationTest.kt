@@ -9,16 +9,15 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class IngredientIntegrationTest : IntegrationTest() {
 
     @Test
     fun `should throw validation error`() {
-        //val ingredient = IngredientCreateDTO()
         // when/then
-        mockMvc.post("/rest-api/v1/ingredient") {
+        mockMvc.put("/rest-api/v1/ingredient") {
             contentType = MediaType.APPLICATION_JSON
             content = "{\"name\":null}"
         }
@@ -27,10 +26,11 @@ class IngredientIntegrationTest : IntegrationTest() {
                 status { isBadRequest() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
-                    json(objectMapper.writeValueAsString("Ingredient name must be provided"))
+                    json("{\"status\":400,\"message\":\"Validation failed\",\"errors\":{\"name\":\"Ingredient name must be provided\"}}")
                 }
             }
     }
+
     @Test
     fun `should get ingredient not found`() {
         // when/then
@@ -44,29 +44,31 @@ class IngredientIntegrationTest : IntegrationTest() {
                 }
             }
     }
+
     @Test
     @Order(1)
     fun `should add new ingredient`() {
         val ingredient = IngredientCreateUpdateDTO(null, "integrationingredient")
-        val ingredientDTO = IngredientDTO(1,"integrationingredient")
+        val ingredientDTO = IngredientDTO(1, "integrationingredient")
         // when/then
-        mockMvc.post("/rest-api/v1/ingredient") {
+        mockMvc.put("/rest-api/v1/ingredient") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(ingredient)
         }
             .andDo { print() }
             .andExpect {
-                status { isCreated() }
+                status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                     json(objectMapper.writeValueAsString(ingredientDTO))
                 }
             }
     }
+
     @Test
     @Order(2)
     fun `should list ingredients`() {
-        val ingredientDTOs = listOf(IngredientDTO(1,"integrationingredient"))
+        val ingredientDTOs = listOf(IngredientDTO(1, "integrationingredient"))
         // when/then
         mockMvc.get("/rest-api/v1/ingredient")
             .andDo { print() }
@@ -78,10 +80,11 @@ class IngredientIntegrationTest : IntegrationTest() {
                 }
             }
     }
+
     @Test
     @Order(2)
     fun `should get ingredient`() {
-        val ingredientDTO = IngredientDTO(1,"integrationingredient")
+        val ingredientDTO = IngredientDTO(1, "integrationingredient")
         // when/then
         mockMvc.get("/rest-api/v1/ingredient/1")
             .andDo { print() }
@@ -93,6 +96,7 @@ class IngredientIntegrationTest : IntegrationTest() {
                 }
             }
     }
+
     @Test
     @Order(3)
     fun `should delete ingredient`() {
