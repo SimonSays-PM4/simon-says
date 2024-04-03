@@ -3,7 +3,8 @@ import {EventControllerApi, EventDTO} from "../../gen/api";
 
 type EventActions = {
     deleteEvent:() => void,
-    setEventIdToDelete:(id:number)=> void;
+    setEventToDelete:(id:EventDTO)=> void,
+    eventToDelete: EventDTO
 }
 type EventListPageReturnProps = {
     eventActions:EventActions
@@ -13,7 +14,7 @@ type EventListPageReturnProps = {
     data:EventDTO[]
 }
 export const useEventListPage = (): EventListPageReturnProps  => {
-    const [eventIdToDelete, setEventIdToDelete] = useState(0)
+    const [eventToDelete, setEventToDelete] = useState<EventDTO>({id:0,name:"",numberOfTables:0,password:""})
     const [loading, setLoading] = useState(false)
     const [showDeletePopup, setShowDeletePopup] = useState(false)
     const [data, setData] = useState<EventDTO[]>([])
@@ -26,7 +27,7 @@ export const useEventListPage = (): EventListPageReturnProps  => {
         }
     }, [showDeletePopup]);
 
-    const reloadEvents = useCallback(async () => {
+    const reloadEvents = useCallback( () => {
         setLoading(true);
         eventControllerApi.getEvents().then((response) => {
                 setData(response.data)
@@ -36,18 +37,19 @@ export const useEventListPage = (): EventListPageReturnProps  => {
     }, [])
 
     const deleteEvent = useCallback(() => {
-        if (eventIdToDelete>0) {
+        if (eventToDelete.id && eventToDelete.id>0) {
             setLoading(true);
-            eventControllerApi.deleteEvent(eventIdToDelete).then(()=>{
+            eventControllerApi.deleteEvent(eventToDelete.id).then(()=>{
                 setShowDeletePopup(false)
                 setLoading(false);
             })
         }
-    }, [eventIdToDelete])
+    }, [eventToDelete.id])
 
     const eventActions:EventActions = {
         deleteEvent,
-        setEventIdToDelete
+        setEventToDelete,
+        eventToDelete
     }
 
     return {eventActions,loading, showDeletePopup, setShowDeletePopup,data}

@@ -1,4 +1,4 @@
-import {EventControllerApi, EventPutDTO} from "../../gen/api";
+import {EventControllerApi, EventCreateUpdateDTO} from "../../gen/api";
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {FieldValues} from "react-hook-form";
@@ -9,7 +9,7 @@ type EventActions = {
     saveEvent: (eventToSave:FieldValues) => void;
 }
 type EventCreateReturnProps = {
-    event:EventPutDTO,
+    event:EventCreateUpdateDTO,
     errorMessage: string | undefined,
     eventActions:EventActions
     isLoading:boolean
@@ -21,7 +21,7 @@ export const useEventCreatePage = (): EventCreateReturnProps  => {
     const {id} = useParams();
     const eventId = id?Number(id):0;
 
-    const [event, setEvent] = useState<EventPutDTO>({id:0, password:"", name:"",numberOfTables:0})
+    const [event, setEvent] = useState<EventCreateUpdateDTO>({id:0, password:"", name:"",numberOfTables:0})
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -34,8 +34,7 @@ export const useEventCreatePage = (): EventCreateReturnProps  => {
         if (eventId>0) {
             setIsLoading(true)
             eventControllerApi.getEvent(eventId).then((response)=> {
-                const receivedEvent = response.data as EventPutDTO
-                receivedEvent.password = "";
+                const receivedEvent = response.data as EventCreateUpdateDTO
                 setEvent(receivedEvent);
                 setIsLoading(false);
             }).catch(() => {
@@ -48,35 +47,21 @@ export const useEventCreatePage = (): EventCreateReturnProps  => {
     },[id])
 
     const saveEvent = useCallback((data:FieldValues) => {
-        const eventToSave = data as EventPutDTO;
+        const eventToSave = data as EventCreateUpdateDTO;
 
         setIsLoading(true);
-        if (eventId>0) {
-            eventToSave.id = eventId;
-            eventControllerApi.putEvent(eventToSave).then((response) => {
-                setIsLoading(false);
-                if (response.status === 201 || response.status === 200) {
-                    navigate("/events");
-                } else {
-                    setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
-                }
-            }).catch(() => {
-                setIsLoading(false);
+        eventToSave.id = eventId >0 ? eventId:undefined;
+        eventControllerApi.putEvent(eventToSave).then((response) => {
+            setIsLoading(false);
+            if (response.status === 201 || response.status === 200) {
+                navigate("/events");
+            } else {
                 setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
-            })
-        } else {
-            eventControllerApi.createEvent(eventToSave).then((response) => {
-                setIsLoading(false);
-                if (response.status === 201 || response.status === 200) {
-                    navigate("/events");
-                } else {
-                    setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
-                }
-            }).catch(() => {
-                setIsLoading(false);
-                setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
-            })
-        }
+            }
+        }).catch(() => {
+            setIsLoading(false);
+            setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
+        })
     }, [event]);
 
     const deleteEvent = useCallback(() => {
