@@ -16,5 +16,10 @@ npm run api
 npm run build
 ```
 
+### Start Application Locally
+```sh{ background = true}
+npm start
+```
+
 
 
