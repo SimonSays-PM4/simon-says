@@ -29,6 +29,11 @@ jobs:
         with:
           working-directory: ${{ env.FRONTEND_DIRECTORY }}
           node-version: ${{ env.NODE_VERSION }}
+      - name: cypress-tests
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: ${{ env.FRONTEND_DIRECTORY }}
+          browser: chrome
   test-helm-chart:
    runs-on: ubuntu-22.04
    steps:
