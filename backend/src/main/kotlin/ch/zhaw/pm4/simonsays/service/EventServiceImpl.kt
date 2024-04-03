@@ -50,12 +50,11 @@ class EventServiceImpl(
         return eventToSave
     }
 
-    override fun deleteEvent(eventId: Long): EventDTO {
+    override fun deleteEvent(eventId: Long) {
         val event = eventRepository.findById(eventId).orElseThrow {
             ResourceNotFoundException("Event not found with ID: $eventId")
         }
         eventRepository.delete(event)
-        return eventMapper.mapToEventDTO(event)
     }
 
 }

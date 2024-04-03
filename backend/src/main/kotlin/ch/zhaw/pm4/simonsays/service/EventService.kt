@@ -7,5 +7,5 @@ interface EventService {
     fun getEvents(): List<EventDTO>
     fun getEvent(eventId: Long): EventDTO
     fun createUpdateEvent(event: EventCreateUpdateDTO): EventDTO
-    fun deleteEvent(eventId: Long): EventDTO
+    fun deleteEvent(eventId: Long)
 }

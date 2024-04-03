@@ -13,8 +13,11 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
+
+
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class EventIntegrationTest : IntegrationTest() {
@@ -23,12 +26,13 @@ class EventIntegrationTest : IntegrationTest() {
     protected lateinit var eventFactory: EventFactory
 
     private val tooLongEventName: String = "hafdnvgnumnluizouvsathtjeyqpnelscybzbgpkyizsdtxnhjfyfomhdlbouwwqz"
+    private val arbitraryId = 9999999999
 
     @Test
     @Transactional
     fun `event creation should should work with correct input`() {
         val event = EventCreateUpdateDTO(null, "eventusedfortesting", "eventusedfortesting", 2)
-        val eventDto = EventDTO("eventusedfortesting", 2, 2)
+        val eventDto = EventDTO("eventusedfortesting", "eventusedfortesting",2, 2)
         // when/then
         mockMvc.put("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON
@@ -140,10 +144,49 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
+    fun `retrieve event`() {
+        val event: Event = eventFactory.createEvent("test", "test", 0)
+
+        // Since the response is expected to be an array, wrap the expected DTO in a list
+        val expectedJson = EventDTO("test", "test", 0, event.id)
+
+        mockMvc.get("/rest-api/v1/event/${event.id}")
+                .andDo { print() }
+                .andExpect {
+                    status { is2xxSuccessful() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedJson))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
+    fun `retrieving non existing event leads to not found`() {
+        val expectedReturn = ErrorMessageModel(
+                HttpStatus.NOT_FOUND.value(),
+                "Event not found with ID: ${arbitraryId}",
+                null
+        )
+
+        mockMvc.get("/rest-api/v1/event/${arbitraryId}")
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedReturn))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
     fun `update event`() {
         val event: Event = eventFactory.createEvent("test", "test", 0)
         val updateEvent = EventCreateUpdateDTO(event.id,"integrationtest", "testtest", 3)
-        val expectedReturn = EventDTO("integrationtest", 3, event.id)
+        val expectedReturn = EventDTO("integrationtest", "testtest",3, event.id)
 
         mockMvc.put("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON
@@ -163,10 +206,10 @@ class EventIntegrationTest : IntegrationTest() {
     @Transactional
     fun `event update should fail when invalid id provided`() {
         eventFactory.createEvent("test", "test", 0)
-        val updateEvent = EventCreateUpdateDTO(9999999999,"integrationtest", "testtest", 3)
+        val updateEvent = EventCreateUpdateDTO(arbitraryId,"integrationtest", "testtest", 3)
         val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
-                "Event not found with ID: 9999999999",
+                "Event not found with ID: ${arbitraryId}",
                 null
         )
 
@@ -184,24 +227,26 @@ class EventIntegrationTest : IntegrationTest() {
                 }
     }
 
-    /*@Test
+    @Test
     @Transactional
-    fun `retrieve event`() {
-        eventFactory.createEvent("test", "test", 0)
+    fun `delete event should fail when invalid id provided`() {
+        val expectedReturn = ErrorMessageModel(
+                HttpStatus.NOT_FOUND.value(),
+                "Event not found with ID: ${arbitraryId}",
+                null
+        )
 
-        // Since the response is expected to be an array, wrap the expected DTO in a list
-        val expectedJson = objectMapper.writeValueAsString(listOf(EventDTO("test", 0, 1)))
-
-        mockMvc.get("/rest-api/v1/event")
+        mockMvc.delete("/rest-api/v1/event/${arbitraryId}") {
+            contentType = MediaType.APPLICATION_JSON
+        }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isNotFound() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        json(expectedJson)
+                        json(objectMapper.writeValueAsString(expectedReturn))
                     }
                 }
-    }*/
-
+    }
 
 }
