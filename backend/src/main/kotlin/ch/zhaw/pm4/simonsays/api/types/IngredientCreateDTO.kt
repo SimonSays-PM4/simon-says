@@ -6,11 +6,14 @@ import jakarta.validation.constraints.NotEmpty
 import org.hibernate.validator.constraints.Length
 
 
-data class IngredientCreateDTO (
+data class IngredientCreateUpdateDTO (
+
+        @field:Schema(description = "Name for the ingredient")
+        val id: Long?,
 
         @field:Schema(description = "Name for the ingredient")
         @field:NotBlank(message = "Ingredient name must be provided")
         @field:NotEmpty(message = "Ingredient name must be provided")
         @field:Length(min = 3, max = 64, message = "Ingredient name must be between 3 and 64 chars long")
-        val name: String,
+        val name: String?,
 )

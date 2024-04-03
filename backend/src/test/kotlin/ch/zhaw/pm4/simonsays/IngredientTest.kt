@@ -1,7 +1,7 @@
 package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapperImpl
-import ch.zhaw.pm4.simonsays.api.types.IngredientCreateDTO
+import ch.zhaw.pm4.simonsays.api.types.IngredientCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
@@ -33,13 +33,14 @@ class IngredientTest {
         every { ingredientRepository.save(any()) } returns Ingredient(
             "Testingredient", 1
         )
-        val ingredientCreateDTO = IngredientCreateDTO(
+        val ingredientCreateDTO = IngredientCreateUpdateDTO(
+            null,
             "Testingredient"
         )
         Assertions.assertEquals(
             IngredientDTO(
             1, "Testingredient"
-        ), ingredientService.createIngredient(ingredientCreateDTO))
+        ), ingredientService.createUpdateIngredient(ingredientCreateDTO))
     }
     @Test
     fun `Test event list`() {
