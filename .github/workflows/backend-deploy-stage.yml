@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - KAN-89
+      - main
 env:
   # GENERAL
   BACKEND_DIRECTORY: backend
