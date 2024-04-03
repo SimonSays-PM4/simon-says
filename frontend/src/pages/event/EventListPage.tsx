@@ -10,8 +10,8 @@ export const EventListPage: React.FC = () => {
     const navigate = useNavigate();
 
     const orderRows = [
-        { name: "Event 1", numberOfTables: 5 } as EventCreateDTO,
-        { name: "Event 2", numberOfTables: 12 } as EventCreateDTO,
+        { id:45,name: "Event 1", numberOfTables: 5 } as EventCreateDTO,
+        { id:34,name: "Event 2", numberOfTables: 12 } as EventCreateDTO,
     ];
 
     const columns: Array<ColumnType<EventCreateDTO>> = [
@@ -42,6 +42,7 @@ export const EventListPage: React.FC = () => {
     }, []);
 
     const onEditClick = (row: EventCreateDTO) => {
+        navigate("../event/create/"+row.id)
         // TODO: Implement edit click
         console.log(row);
     }
