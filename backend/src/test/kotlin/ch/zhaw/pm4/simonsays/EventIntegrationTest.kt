@@ -30,7 +30,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `event creation should should work with correct input`() {
+    fun `Test event creation should should work with correct input`() {
         val event = EventCreateUpdateDTO(null, "eventusedfortesting", "eventusedfortesting", 2)
         val eventDto = EventDTO("eventusedfortesting", "eventusedfortesting",2, 2)
         // when/then
@@ -50,7 +50,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `event creation should fail if event name is missing`() {
+    fun `Test event creation should fail if event name is missing`() {
         val event = EventCreateUpdateDTO(null,"5", "integrationeventpassword", 2)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
@@ -74,7 +74,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `event creation should fail if number of tables is negative`() {
+    fun `Test event creation should fail if number of tables is negative`() {
         val event = EventCreateUpdateDTO(null,"integrationevent", "integrationeventpassword", -1)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
@@ -100,7 +100,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `event creation should fail and display all errors`() {
+    fun `Test event creation should fail and display all errors`() {
         val event = EventCreateUpdateDTO(null, tooLongEventName, null, 2)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
@@ -127,7 +127,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `retrieve all events`() {
+    fun `Test retrieve all events`() {
         eventFactory.createEvent("test", "test", 0)
         eventFactory.createEvent("name", "test", 2)
 
@@ -144,7 +144,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `retrieve event`() {
+    fun `Test retrieve event`() {
         val event: Event = eventFactory.createEvent("test", "test", 0)
 
         // Since the response is expected to be an array, wrap the expected DTO in a list
@@ -163,7 +163,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `retrieving non existing event leads to not found`() {
+    fun `Test retrieving non existing event leads to not found`() {
         val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
                 "Event not found with ID: ${arbitraryId}",
@@ -183,7 +183,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `update event`() {
+    fun `Test update event`() {
         val event: Event = eventFactory.createEvent("test", "test", 0)
         val updateEvent = EventCreateUpdateDTO(event.id,"integrationtest", "testtest", 3)
         val expectedReturn = EventDTO("integrationtest", "testtest",3, event.id)
@@ -204,7 +204,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `event update should fail when invalid id provided`() {
+    fun `Test event update should fail when invalid id provided`() {
         eventFactory.createEvent("test", "test", 0)
         val updateEvent = EventCreateUpdateDTO(arbitraryId,"integrationtest", "testtest", 3)
         val expectedReturn = ErrorMessageModel(
@@ -229,7 +229,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `delete event should fail when invalid id provided`() {
+    fun `Test delete event should fail when invalid id provided`() {
         val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
                 "Event not found with ID: ${arbitraryId}",
