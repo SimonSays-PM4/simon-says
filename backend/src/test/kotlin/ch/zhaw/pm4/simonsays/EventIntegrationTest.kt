@@ -32,7 +32,7 @@ class EventIntegrationTest : IntegrationTest() {
     @Transactional
     fun `Test event creation should should work with correct input`() {
         val event = EventCreateUpdateDTO(null, "eventusedfortesting", "eventusedfortesting", 2)
-        val eventDto = EventDTO("eventusedfortesting", "eventusedfortesting",2, 2)
+        val eventDto = EventDTO("eventusedfortesting", "eventusedfortesting",2, 1)
         // when/then
         mockMvc.put("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON
