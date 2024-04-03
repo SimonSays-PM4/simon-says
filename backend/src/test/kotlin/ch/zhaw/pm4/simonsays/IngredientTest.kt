@@ -14,6 +14,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 import java.util.Optional.empty
 
 class IngredientTest {
@@ -29,7 +30,7 @@ class IngredientTest {
     }
 
     @Test
-    fun `Test event creation`() {
+    fun `Test ingredient creation`() {
         every { ingredientRepository.save(any()) } returns Ingredient(
             "Testingredient", 1
         )
@@ -43,7 +44,7 @@ class IngredientTest {
         ), ingredientService.createUpdateIngredient(ingredientCreateDTO))
     }
     @Test
-    fun `Test event list`() {
+    fun `Test ingredient list`() {
         every { ingredientRepository.findAll() } returns
             listOf(Ingredient("Testingredient", 1), Ingredient("Testingredient2", 2))
 
@@ -51,10 +52,10 @@ class IngredientTest {
             listOf(IngredientDTO(1, "Testingredient"), IngredientDTO(2, "Testingredient2")), ingredientService.listIngredients())
     }
     @Test
-    fun `Test event get`() {
-        every { ingredientRepository.findById(any()).get() } returns Ingredient(
+    fun `Test ingredient get`() {
+        every { ingredientRepository.findById(1) } returns Optional.of(Ingredient(
             "Testingredient", 1
-        )
+        ))
         Assertions.assertEquals(
             IngredientDTO(
                 1, "Testingredient"
@@ -62,7 +63,7 @@ class IngredientTest {
     }
 
     @Test
-    fun `Test event get not found`() {
+    fun `Test ingredient get not found`() {
         every { ingredientRepository.findById(any()) } returns empty()
         Assertions.assertThrows(
             ResourceNotFoundException::class.java,
@@ -73,14 +74,14 @@ class IngredientTest {
 
 
     @Test
-    fun `Test event deletion`() {
+    fun `Test ingredient deletion`() {
         every { ingredientRepository.delete(any()) } returns Unit
         Assertions.assertEquals(
            Unit, ingredientService.deleteIngredient(1))
     }
 
     @Test
-    fun `Test event deletion not found`() {
+    fun `Test ingredient deletion not found`() {
         every { ingredientRepository.findById(any()) } returns empty()
         Assertions.assertThrows(
             ResourceNotFoundException::class.java,

@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length
 
 data class IngredientCreateUpdateDTO (
 
-        @field:Schema(description = "Name for the ingredient")
+        @field:Schema(description = "Id for the ingredient", required = false)
         val id: Long?,
 
         @field:Schema(description = "Name for the ingredient")
