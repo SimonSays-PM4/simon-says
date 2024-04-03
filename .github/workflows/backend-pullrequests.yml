@@ -21,6 +21,7 @@ jobs:
       - name: detekt-kotlin-static-code-analysis
         uses: alaegin/Detekt-Action@v1.23.5
         with:
+          detekt_input: ${{ env.BACKEND_DIRECTORY }}
           github_token: ${{ secrets.github_token }}
           detekt_config: backend/config/detekt/detekt.yml
           reviewdog_level: info
