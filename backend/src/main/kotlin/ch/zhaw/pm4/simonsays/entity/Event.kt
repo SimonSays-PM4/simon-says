@@ -7,15 +7,15 @@ import jakarta.persistence.*
 @NoArgAnnotation
 data class Event(
         @Column(nullable = false)
-        val name: String,
+        var name: String,
 
         @Column(nullable = false)
-        val password: String,
+        var password: String,
 
         @Column(nullable = false)
-        val numberOfTables: Long,
+        var numberOfTables: Long,
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Int? = null
+        val id: Long? = null
 )

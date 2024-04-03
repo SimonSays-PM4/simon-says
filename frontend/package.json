@@ -9,7 +9,7 @@
         "preview": "vite preview",
         "test": "jest",
         "lint": "eslint --max-warnings=0 \"src/**/*.{ts,tsx}\"",
-        "api": "openapi-generator-cli generate -i doc.json -g typescript-axios -o ./src/gen/api/\n"
+        "api": "openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g typescript-axios -o ./src/gen/api/\n"
     },
     "dependencies": {
         "@testing-library/user-event": "^14.5.2",

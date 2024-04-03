@@ -37,13 +37,13 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+    implementation("io.socket:socket.io-server:4.1.2")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
     implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.1")
     runtimeOnly ("com.mysql:mysql-connector-j")
     testImplementation("org.testcontainers:junit-jupiter:1.19.7")
     testImplementation("org.testcontainers:mysql:1.19.7")
-
-
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 tasks.withType<KotlinCompile> {

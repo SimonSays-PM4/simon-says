@@ -11,5 +11,6 @@ spring:
     username: simonsays
     password: simonsays
     driver-class-name: com.mysql.cj.jdbc.Driver
-
 debug: on
+application:
+  url: "http://localhost:3000"

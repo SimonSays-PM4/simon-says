@@ -29,6 +29,7 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
  * @interface EventCreateDTO
  */
 export interface EventCreateDTO {
+    'id': number;
     /**
      * Name for the event
      * @type {string}
@@ -55,17 +56,15 @@ export interface EventCreateDTO {
  */
 export interface EventDTO {
     /**
+     * Id of the event
+     */
+    'id': number;
+    /**
      * Name for the event
      * @type {string}
      * @memberof EventDTO
      */
     'name': string;
-    /**
-     * Event description
-     * @type {string}
-     * @memberof EventDTO
-     */
-    'password': string;
     /**
      * Number of tables available at the event
      * @type {number}
@@ -76,13 +75,13 @@ export interface EventDTO {
 /**
  * 
  * @export
- * @interface Health
+ * @interface HealthDTO
  */
-export interface Health {
+export interface HealthDTO {
     /**
      * Shows the state of the application.
      * @type {string}
-     * @memberof Health
+     * @memberof HealthDTO
      */
     'state': string;
 }
@@ -103,7 +102,7 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
         createEvent: async (eventCreateDTO: EventCreateDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'eventCreateDTO' is not null or undefined
             assertParamExists('createEvent', 'eventCreateDTO', eventCreateDTO)
-            const localVarPath = `/api/event`;
+            const localVarPath = `/rest-api/v1/event`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -198,10 +197,10 @@ export class EventControllerApi extends BaseAPI {
 
 
 /**
- * HealthApi - axios parameter creator
+ * HealthControllerApi - axios parameter creator
  * @export
  */
-export const HealthApiAxiosParamCreator = function (configuration?: Configuration) {
+export const HealthControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
@@ -237,11 +236,11 @@ export const HealthApiAxiosParamCreator = function (configuration?: Configuratio
 };
 
 /**
- * HealthApi - functional programming interface
+ * HealthControllerApi - functional programming interface
  * @export
  */
-export const HealthApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = HealthApiAxiosParamCreator(configuration)
+export const HealthControllerApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = HealthControllerApiAxiosParamCreator(configuration)
     return {
         /**
          * 
@@ -249,21 +248,21 @@ export const HealthApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async health(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Health>> {
+        async health(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<HealthDTO>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.health(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['HealthApi.health']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['HealthControllerApi.health']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
 };
 
 /**
- * HealthApi - factory interface
+ * HealthControllerApi - factory interface
  * @export
  */
-export const HealthApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = HealthApiFp(configuration)
+export const HealthControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = HealthControllerApiFp(configuration)
     return {
         /**
          * 
@@ -271,28 +270,28 @@ export const HealthApiFactory = function (configuration?: Configuration, basePat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        health(options?: any): AxiosPromise<Health> {
+        health(options?: any): AxiosPromise<HealthDTO> {
             return localVarFp.health(options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * HealthApi - object-oriented interface
+ * HealthControllerApi - object-oriented interface
  * @export
- * @class HealthApi
+ * @class HealthControllerApi
  * @extends {BaseAPI}
  */
-export class HealthApi extends BaseAPI {
+export class HealthControllerApi extends BaseAPI {
     /**
      * 
      * @summary shows health
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof HealthApi
+     * @memberof HealthControllerApi
      */
     public health(options?: RawAxiosRequestConfig) {
-        return HealthApiFp(this.configuration).health(options).then((request) => request(this.axios, this.basePath));
+        return HealthControllerApiFp(this.configuration).health(options).then((request) => request(this.axios, this.basePath));
     }
 }
 
