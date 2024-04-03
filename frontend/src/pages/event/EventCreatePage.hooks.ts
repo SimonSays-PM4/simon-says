@@ -1,4 +1,4 @@
-import {EventControllerApi, EventCreateDTO} from "../../gen/api";
+import {EventControllerApi, EventPutDTO} from "../../gen/api";
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {FieldValues} from "react-hook-form";
@@ -9,7 +9,7 @@ type EventActions = {
     saveEvent: (eventToSave:FieldValues) => void;
 }
 type EventCreateReturnProps = {
-    event:EventCreateDTO,
+    event:EventPutDTO,
     errorMessage: string | undefined,
     eventActions:EventActions
     isLoading:boolean
@@ -21,7 +21,7 @@ export const useEventCreatePage = (): EventCreateReturnProps  => {
     const {id} = useParams();
     const eventId = id?Number(id):0;
 
-    const [event, setEvent] = useState<EventCreateDTO>({id:0, password:"", name:"",numberOfTables:0})
+    const [event, setEvent] = useState<EventPutDTO>({id:0, password:"", name:"",numberOfTables:0})
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -32,35 +32,60 @@ export const useEventCreatePage = (): EventCreateReturnProps  => {
 
     useEffect(()=> {
         if (eventId>0) {
-            // TODO: API call to get event
-            const fetchedEvent : EventCreateDTO = {id:3, name:"Test Edit Event", password:"TEST", numberOfTables:34}
-            setEvent(fetchedEvent)
+            setIsLoading(true)
+            eventControllerApi.getEvent(eventId).then((response)=> {
+                const receivedEvent = response.data as EventPutDTO
+                receivedEvent.password = "";
+                setEvent(receivedEvent);
+                setIsLoading(false);
+            }).catch(() => {
+                // TODO: Add Error Handling
+                console.error("FAILED TO FETCH");
+                setIsLoading(false);
+            })
         }
 
     },[id])
 
     const saveEvent = useCallback((data:FieldValues) => {
-        const eventToSave = data as EventCreateDTO;
+        const eventToSave = data as EventPutDTO;
+
         setIsLoading(true);
-        eventControllerApi.createEvent(eventToSave).then((response) => {
-            setIsLoading(false);
-            if (response.status === 201) {
-                navigate("/events");
-            } else {
+        if (eventId>0) {
+            eventToSave.id = eventId;
+            eventControllerApi.putEvent(eventToSave).then((response) => {
+                setIsLoading(false);
+                if (response.status === 201 || response.status === 200) {
+                    navigate("/events");
+                } else {
+                    setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
+                }
+            }).catch(() => {
+                setIsLoading(false);
                 setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
-            }
-        }).catch(() => {
-            setIsLoading(false);
-            setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
-        })
+            })
+        } else {
+            eventControllerApi.createEvent(eventToSave).then((response) => {
+                setIsLoading(false);
+                if (response.status === 201 || response.status === 200) {
+                    navigate("/events");
+                } else {
+                    setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
+                }
+            }).catch(() => {
+                setIsLoading(false);
+                setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
+            })
+        }
     }, [event]);
 
     const deleteEvent = useCallback(() => {
         if (eventId>0) {
-            // TODO: API call to delete event
             setIsLoading(true);
-            setIsLoading(false);
-            navigate("/events");
+            eventControllerApi.deleteEvent(eventId).then(()=>{
+                setIsLoading(false);
+                navigate("/events");
+            })
         }
     }, [id])
 
