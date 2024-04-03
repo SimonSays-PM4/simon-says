@@ -23,7 +23,7 @@ class EventTest {
     @BeforeEach
     fun setup() {
         // mockkStatic("kotlinx.coroutines.reactor.MonoKt")
-        eventRepo = mockk(relaxed = true);
+        eventRepo = mockk(relaxed = true)
         eventService = EventServiceImpl(eventRepo, EventMapperImpl())
     }
 

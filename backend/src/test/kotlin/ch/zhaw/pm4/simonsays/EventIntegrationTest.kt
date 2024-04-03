@@ -12,11 +12,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
@@ -165,9 +162,9 @@ class EventIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `event update should fail when invalid id provided`() {
-        val event: Event = eventFactory.createEvent("test", "test", 0)
+        eventFactory.createEvent("test", "test", 0)
         val updateEvent = EventCreateUpdateDTO(9999999999,"integrationtest", "testtest", 3)
-        val expectedReturn: ErrorMessageModel = ErrorMessageModel(
+        val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
                 "Event not found with ID: 9999999999",
                 null
