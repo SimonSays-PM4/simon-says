@@ -29,6 +29,9 @@ jobs:
         with:
           working-directory: ${{ env.FRONTEND_DIRECTORY }}
           node-version: ${{ env.NODE_VERSION }}
+      - name: start application for cypress tests
+        run: npm start &
+        working-directory: ${{ env.FRONTEND_DIRECTORY }}
       - name: cypress-tests
         uses: cypress-io/github-action@v6
         with:
