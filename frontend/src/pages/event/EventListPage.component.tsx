@@ -2,13 +2,13 @@ import React from "react";
 import { DataTable } from "../../components/data-tables/DataTable";
 import { ColumnType } from "../../models/ColumnType";
 import { Loader } from "../../components/Loader";
-import {EventCreateUpdateDTO, EventDTO} from "../../gen/api";
+import { EventCreateUpdateDTO, EventDTO } from "../../gen/api";
 import { useNavigate } from "react-router-dom";
-import {useEventListPage} from "./EventListPage.hooks.tsx";
-import {Popup} from "../../components/Popup.tsx";
+import { useEventListPage } from "./EventListPage.hooks.tsx";
+import { Popup } from "../../components/Popup.tsx";
 
 export const EventListPageComponent: React.FC = () => {
-    const {loading, eventActions, showDeletePopup, setShowDeletePopup,data} = useEventListPage()
+    const { loading, eventActions, showDeletePopup, setShowDeletePopup, data } = useEventListPage()
     const navigate = useNavigate();
 
     const columns: Array<ColumnType<EventDTO>> = [
@@ -23,11 +23,11 @@ export const EventListPageComponent: React.FC = () => {
     ];
 
     const onEditClick = (row: EventCreateUpdateDTO) => {
-        navigate("../event/create/"+row.id)
+        navigate("../event/create/" + row.id)
     }
 
     const onDeleteClick = (row: EventDTO) => {
-        if(row.id) {
+        if (row.id) {
             eventActions.setEventToDelete(row);
             setShowDeletePopup(true);
         }
@@ -40,7 +40,7 @@ export const EventListPageComponent: React.FC = () => {
             ) : (
                 <DataTable<EventDTO> title="Events" columns={columns} rows={data} onCreateClick={() => navigate("/event/create")} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />
             )}
-            <Popup show={showDeletePopup} onClose={()=> setShowDeletePopup(false)} onAccept={eventActions.deleteEvent} modalText={'Delete "'+eventActions.eventToDelete.name+'"'}/>
+            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteEvent} modalText={'Delete "' + eventActions.eventToDelete.name + '"'} />
         </div>
     );
 }
