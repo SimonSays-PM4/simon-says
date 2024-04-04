@@ -1,42 +1,59 @@
-import {EventControllerApi, EventCreateDTO} from "../../gen/api";
+import {EventControllerApi, EventCreateUpdateDTO} from "../../gen/api";
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {FieldValues} from "react-hook-form";
 
+
+type EventActions = {
+    deleteEvent: () => void,
+    saveEvent: (eventToSave:FieldValues) => void;
+}
 type EventCreateReturnProps = {
-    event:EventCreateDTO,
+    event:EventCreateUpdateDTO,
     errorMessage: string | undefined,
-    saveEvent:(eventToSave:FieldValues)=>void,
-    isLoading:boolean;
+    eventActions:EventActions
+    isLoading:boolean
+    showDeleteModal:boolean,
+    setShowDeleteModal:(thing:boolean)=>void;
 }
 export const useEventCreatePage = (): EventCreateReturnProps  => {
 
     const {id} = useParams();
     const eventId = id?Number(id):0;
 
-    const [event, setEvent] = useState<EventCreateDTO>({id:0, password:"", name:"",numberOfTables:0})
+    const [event, setEvent] = useState<EventCreateUpdateDTO>({id:0, password:"", name:"",numberOfTables:0})
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showDeleteModal,setShowDeleteModal] = useState(false)
 
     const eventControllerApi = new EventControllerApi();
     const navigate = useNavigate();
 
     useEffect(()=> {
         if (eventId>0) {
-            // TODO: API call to get event
-            const fetchedEvent : EventCreateDTO = {id:3, name:"Test Edit Event", password:"TEST", numberOfTables:34}
-            setEvent(fetchedEvent)
+            setIsLoading(true)
+            eventControllerApi.getEvent(eventId).then((response)=> {
+                const receivedEvent = response.data as EventCreateUpdateDTO
+                setEvent(receivedEvent);
+                setIsLoading(false);
+            }).catch(() => {
+                // TODO: Add Error Handling
+                console.error("FAILED TO FETCH");
+                setIsLoading(false);
+            })
         }
 
     },[id])
 
     const saveEvent = useCallback((data:FieldValues) => {
-        const eventToSave = data as EventCreateDTO;
-        setIsLoading(true);
+        const eventToSave = data as EventCreateUpdateDTO;
 
-        eventControllerApi.createEvent(eventToSave).then((response) => {
+        setIsLoading(true);
+        eventToSave.id = eventId >0 ? eventId:undefined;
+        eventControllerApi.putEvent(eventToSave).then((response) => {
             setIsLoading(false);
-            if (response.status === 201) {
+            if (response.status === 201 || response.status === 200) {
                 navigate("/events");
             } else {
                 setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
@@ -47,5 +64,20 @@ export const useEventCreatePage = (): EventCreateReturnProps  => {
         })
     }, [event]);
 
-    return {event, errorMessage, saveEvent, isLoading}
+    const deleteEvent = useCallback(() => {
+        if (eventId>0) {
+            setIsLoading(true);
+            eventControllerApi.deleteEvent(eventId).then(()=>{
+                setIsLoading(false);
+                navigate("/events");
+            })
+        }
+    }, [id])
+
+    const eventActions: EventActions = {
+        saveEvent,
+        deleteEvent
+    }
+
+    return {event, errorMessage, eventActions, isLoading,showDeleteModal, setShowDeleteModal}
 }
