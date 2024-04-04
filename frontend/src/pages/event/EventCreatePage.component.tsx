@@ -52,7 +52,7 @@ export const EventCreatePageComponent: React.FC = () => {
                     type="password"
                     register={register}
                     isRequired={true}
-                    minLength={5}
+                    minLength={8}
                     maxLength={64}
                     validationError={getErrorMessage(nameof<EventCreateUpdateDTO>(e => e.password))} />
                 <FormInput id={nameof<EventCreateUpdateDTO>(e => e.numberOfTables)}
