@@ -12,12 +12,12 @@ data class PrintQueue(
     @Column(nullable = false)
     val name: String,
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     val printers: List<Printer>,
 
     @OneToMany(mappedBy = "printQueue")
-    val jobs: List<PrintQueueJob>,
+    val jobs: List<PrintQueueJob>?,
 
-    @ManyToOne
-    val printerServer: PrinterServer
+    @ManyToMany(mappedBy = "queues")
+    val printerServer: List<PrinterServer>?,
 )

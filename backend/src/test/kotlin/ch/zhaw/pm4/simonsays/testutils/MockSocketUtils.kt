@@ -1,10 +1,12 @@
 package ch.zhaw.pm4.simonsays.testutils
 
+import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
+import ch.zhaw.pm4.simonsays.utils.printer.sendPojos
 import io.mockk.every
 import io.mockk.mockk
 import io.socket.socketio.server.SocketIoSocket
 
-fun mockSocket(namespaceName: String): SocketIoSocket {
+fun mockSocket(namespaceName: String? = null): SocketIoSocket {
     val mockSocket = mockk<SocketIoSocket>(relaxed = true)
     every { mockSocket.namespace } returns mockk {
         every { name } returns namespaceName

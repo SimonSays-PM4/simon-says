@@ -7,5 +7,6 @@ import org.mapstruct.Mapper
 @Mapper(componentModel = "spring")
 interface PrintQueueJobMapper {
     fun mapToPrintQueueJobDto(printQueueJob: PrintQueueJob): PrintQueueJobDto
+    // TODO(LUKAS) Doesn't work, not sure how we can fix this
     fun mapToPrintQueueJob(printQueueJobDto: PrintQueueJobDto): PrintQueueJob
 }

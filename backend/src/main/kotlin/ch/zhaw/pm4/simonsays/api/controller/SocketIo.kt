@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.simonsays.api.controller
 
+import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
 import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import io.socket.engineio.server.EngineIoServer
 import io.socket.engineio.server.EngineIoServerOptions
@@ -27,7 +28,21 @@ import jakarta.servlet.http.HttpServletResponse
  *
  * which would make "socket-api/v1/printer-server/{id}/print-queues" the namespace.
  */
-interface SocketIoNamespace {
+interface SocketIoNamespace<T> {
+    companion object {
+        /** The change event name. */
+        const val CHANGE_EVENT = "change"
+
+        /** The initial data event name. */
+        const val INITIAL_DATA_EVENT = "initial-data"
+
+        /** The remove event name. */
+        const val REMOVE_EVENT = "remove"
+
+        /** The application error event name. */
+        const val APPLICATION_ERROR_EVENT = "application-error"
+    }
+
     /**
      * This method is called by the Socket.IO server to check if the given requested namespace name is part of the
      * namespace handled by this bean.
@@ -46,11 +61,55 @@ interface SocketIoNamespace {
      * This method is called by the Socket.IO server to handle the disconnection event for the given namespace.
      * @param socket The socket that represents the connection.
      */
-    fun onDisconnection(socket: SocketIoSocket)
+    fun onDisconnect(socket: SocketIoSocket)
+
+    /**
+     * This method may be called when an object changes and needs to be sent to all connected clients.
+     * @param data The data to send to all connected clients.
+     */
+    fun onChange(data: T)
+
+    /**
+     * This method is called when an object is removed and needs to be removed from all connected clients.
+     * @param data The data to remove from all connected clients.
+     */
+    fun onRemove(data: T)
+
+    /**
+     * This method is called when an application error occurs and needs to be sent to all connected clients.
+     *
+     * @param id The unique identifier of the error. When null, the error will be sent to all connected clients. Otherwise, only the client with the given id will receive the error.
+     * @param error The error that occurred.
+     */
+    fun onApplicationError(id: String?, error: ApplicationErrorDto)
+
+    /**
+     * Shorthand method for onApplicationError(id, ApplicationErrorDto(code, message)).
+     */
+    fun onApplicationError(id: String?, code: String, message: String) {
+        val error = ApplicationErrorDto(code, message)
+        onApplicationError(id, error)
+    }
+
+    /**
+     * Send and error to specific socket
+     */
+    fun onApplicationError(socket: SocketIoSocket, error: ApplicationErrorDto)
+
+    /**
+     * Shorhand method for onApplicationError(socket, ApplicationErrorDto(code, message))
+     */
+    fun onApplicationError(socket: SocketIoSocket, code: String, message: String) {
+        val error = ApplicationErrorDto(code, message)
+        onApplicationError(socket, error)
+    }
 }
 
 @WebServlet("/socket.io/*", asyncSupported = true)
-class SocketIo(printerProperties: PrinterProperties, socketIoNamespaces: List<SocketIoNamespace>) : HttpServlet() {
+class SocketIo(
+    printerProperties: PrinterProperties,
+    socketIoNamespaces: List<SocketIoNamespace<out Any>>,
+) : HttpServlet() {
     /**
      * Define the underlying Engine.IO server.
      */
@@ -86,7 +145,7 @@ class SocketIo(printerProperties: PrinterProperties, socketIoNamespaces: List<So
                 namespace.onConnection(socket)
                 socket.on("disconnect") {
                     log("client socket '$clientSocketId' disconnected from server socket '$serverSocketId' with namespace '$namespaceName'")
-                    namespace.onDisconnection(socket)
+                    namespace.onDisconnect(socket)
                 }
 
             }

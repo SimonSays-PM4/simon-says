@@ -30,6 +30,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
     implementation("io.socket:socket.io-server:4.1.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-json-org:2.17.0")
     kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     developmentOnly("org.springframework.boot:spring-boot-devtools")

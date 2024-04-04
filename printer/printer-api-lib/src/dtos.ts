@@ -16,16 +16,12 @@ Terminology:
 */
 
 /**
- * GET rest-api/v1/printer-servers
- * or can also be used as socket.io subscription
- * socket-api/v1/printer-servers
+ * /socket-api/v1/printer-servers
  */
 export type PrinterServersDto = PrinterServerDto[]
 
 /**
- * GET rest-api/v1/printer-servers/{id}
- * or can also be used as socket.io subscription
- * socket-api/v1/printer-servers/{id}
+ * /socket-api/v1/printer-servers/{id}
  */
 export interface PrinterServerDto {
     id: string,
@@ -35,18 +31,6 @@ export interface PrinterServerDto {
     queues: PrintQueueDto[],
 }
 
-/** 
- * GET rest-api/v1/printer-server/{id}/print-queues
- * or can also be used as socket.io subscription
- * socket-api/v1/printer-server/{id}/print-queues
- */
-export type PrintQueuesDto = PrintQueueDto[]
-
-/**
- * GET rest-api/v1/printer-server/{id}/print-queues/{id}
- * or can also be used as socket.io subscription
- * socket-api/v1/printer-server/{id}/print-queues/{id}
- */
 export interface PrintQueueDto {
     id: string,
     /** A human readable name mainly used for human debugging ;) */
@@ -68,16 +52,13 @@ export interface PrintQueueDto {
 }
 
 /**
- * GET rest-api/v1/printer-server/{id}/print-queues/{id}/jobs/{id}
- * or you can also use the next keyword to get the next pending job
- * GET rest-api/v1/printer-server/{id}/print-queues/{id}/jobs/next
- * 
  * To subscribe to changes in the next pending job use the following socket.io path
- * socket-api/v1/printer-server/{id}/print-queues/{id}/jobs/next
+ * /socket-api/v1/printer-servers/{id}/print-queues/{id}/jobs/next
  * The backend will always emit the current next pending job on connection and then
  * everytime it changes.
+ * 
  * You may also subscribe to a specific job by using the job id
- * socket-api/v1/printer-server/{id}/print-queues/{id}/jobs/{id}
+ * /socket-api/v1/printer-servers/{id}/print-queues/{id}/jobs/{id}
  * The backend will on connect emit the current state of the job and then everytime it changes.
  * 
  * The print job is printed in the following format:
@@ -123,22 +104,27 @@ export interface PrintQueueJobDto {
 }
 
 /**
- * Get all jobs since ever
- * GET rest-api/v1/printer-server/{id}/print-queues/{id}/jobs
- * 
- * or subscribe to all job changes
- * socket-api/v1/printer-server/{id}/print-queues/{id}/jobs
+ * Get all jobs since ever and subscribe to all job changes
+ * /socket-api/v1/printer-servers/{id}/print-queues/{id}/jobs
  * The backend will emit all jobs on connect and then everytime a job changes.
  */
 export type PrintQueueJobsDto = PrintQueueJobDto[]
 
-
-// PUT rest-api/v1/printer-server/{id}/print-queues/{id}/jobs/{id}
-// or also used as socket.io event
-export interface PrintQueueJobUpdateDto {
+/**
+ * Used as socket.io event to update the status of a print job
+*/
+ export interface PrintQueueJobUpdateDto {
     id: string,
     /** The status of the print */
     status: 'pending' | 'printed' | 'error' | 'canceled',
     /** An optional human readable message that describes the current status of the print job. For example an error message */
     statusMessage?: string,
+}
+
+/**
+ * A generic error response
+ */
+export interface ApplicationErrorDto {
+    code: string,
+    message: string,
 }

@@ -12,6 +12,6 @@ data class Printer(
     @Column(nullable = false)
     val name: String,
 
-    @ManyToMany
-    val printQueues: List<PrintQueue>
+    @ManyToMany(mappedBy = "printers")
+    val printQueues: List<PrintQueue>?
 )
