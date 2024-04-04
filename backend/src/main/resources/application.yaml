@@ -13,8 +13,9 @@ spring:
     hibernate:
       ddl-auto: update
     defer-datasource-initialization: true
-
 debug: on
+application:
+  url: ""
 
 # The printer-queue-server application configuration
 printer-queue-server:

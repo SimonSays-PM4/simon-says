@@ -1,12 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HomePage } from "./pages/HomePage";
-import { MainLayout } from "./layouts/MainLayout";
 import { AppProvider } from "./providers/AppProvider";
 import { ActivePageType } from "./enums/ActivePageType";
 import { LoginPage } from "./pages/LoginPage";
-import { EventListPage } from "./pages/event/EventListPage";
-import { EventPage } from "./pages/event/EventPage";
+import { EventListPageComponent } from "./pages/event/EventListPage.component.tsx";
 import { Error404Page } from "./pages/Error404Page";
+import { AuthorizedRoute } from "./routing/AuthorizedRoute";
+import { EventCreatePageComponent } from "./pages/event/EventCreatePage.component.tsx";
 
 export default function App() {
     return (
@@ -14,9 +14,11 @@ export default function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/" element={<MainLayout activePageType={ActivePageType.Home}><HomePage /></MainLayout>} />
-                    <Route path="/events" element={<MainLayout activePageType={ActivePageType.EventList}><EventListPage /></MainLayout>} />
-                    <Route path="/event/:id" element={<MainLayout activePageType={ActivePageType.Event}><EventPage /></MainLayout>} />
+                    <Route path="/" element={<AuthorizedRoute activePageType={ActivePageType.Home}><HomePage /></AuthorizedRoute>} />
+                    <Route path="/events" element={<AuthorizedRoute activePageType={ActivePageType.EventList}><EventListPageComponent /></AuthorizedRoute>} />
+                    <Route path="/event/create" element={<AuthorizedRoute activePageType={ActivePageType.Event}><EventCreatePageComponent /></AuthorizedRoute>}>
+                        <Route path="/event/create/:id" element={<AuthorizedRoute activePageType={ActivePageType.Event}><EventCreatePageComponent /></AuthorizedRoute>}/>
+                    </Route>
 
                     <Route path="*" element={<Error404Page />} />
                 </Routes>
