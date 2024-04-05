@@ -12,6 +12,8 @@ export interface IFormInputProps {
     disabled?: boolean;
     isRequired?: boolean;
     validationError?: string;
+    minLength?: number;
+    maxLength?: number;
     register: UseFormRegister<FieldValues>;
 }
 
@@ -25,6 +27,8 @@ export const FormInput: React.FC<IFormInputProps> = ({
     disabled = false,
     isRequired = false,
     validationError,
+    minLength,
+    maxLength,
     register
 }) => {
     return (
@@ -44,7 +48,7 @@ export const FormInput: React.FC<IFormInputProps> = ({
                         disabled={disabled}
                         placeholder={placeholderValue}
                         aria-required={isRequired}
-                        {...register(id, { required: isRequired, disabled: disabled, value: defaultValue })}
+                        {...register(id, { required: isRequired, disabled: disabled, value: defaultValue, minLength: minLength, maxLength: maxLength })}
                     />
                 </div>
             </div>
