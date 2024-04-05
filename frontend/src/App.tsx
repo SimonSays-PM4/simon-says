@@ -7,6 +7,8 @@ import { EventListPageComponent } from "./pages/event/EventListPage.component.ts
 import { Error404Page } from "./pages/Error404Page";
 import { AuthorizedRoute } from "./routing/AuthorizedRoute";
 import { EventCreatePageComponent } from "./pages/event/EventCreatePage.component.tsx";
+import { IngredientListPageComponent } from "./pages/ingredient/IngredientListPage.component.tsx";
+import { IngredientCreatePageComponent } from "./pages/ingredient/IngredientCreatePage.component.tsx";
 
 export default function App() {
     return (
@@ -17,7 +19,11 @@ export default function App() {
                     <Route path="/" element={<AuthorizedRoute activePageType={ActivePageType.Home}><HomePage /></AuthorizedRoute>} />
                     <Route path="/events" element={<AuthorizedRoute activePageType={ActivePageType.EventList}><EventListPageComponent /></AuthorizedRoute>} />
                     <Route path="/event/create" element={<AuthorizedRoute activePageType={ActivePageType.Event}><EventCreatePageComponent /></AuthorizedRoute>}>
-                        <Route path="/event/create/:id" element={<AuthorizedRoute activePageType={ActivePageType.Event}><EventCreatePageComponent /></AuthorizedRoute>}/>
+                        <Route path="/event/create/:id" element={<AuthorizedRoute activePageType={ActivePageType.Event}><EventCreatePageComponent /></AuthorizedRoute>} />
+                    </Route>
+                    <Route path="/ingredients" element={<AuthorizedRoute activePageType={ActivePageType.IngredientList}><IngredientListPageComponent /></AuthorizedRoute>} />
+                    <Route path="/ingredient/create" element={<AuthorizedRoute activePageType={ActivePageType.Ingredient}><IngredientCreatePageComponent /></AuthorizedRoute>}>
+                        <Route path="/ingredient/create/:id" element={<AuthorizedRoute activePageType={ActivePageType.Ingredient}><IngredientCreatePageComponent /></AuthorizedRoute>} />
                     </Route>
 
                     <Route path="*" element={<Error404Page />} />

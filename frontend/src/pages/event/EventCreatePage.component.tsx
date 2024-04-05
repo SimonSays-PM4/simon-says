@@ -69,7 +69,7 @@ export const EventCreatePageComponent: React.FC = () => {
                 </div>
             </form>
 
-            <Popup modalText="Do you want to delete this event?" show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={eventActions.deleteEvent} />
+            <Popup modalText="Do you want to delete this event?" show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={eventActions.deleteEvent} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }
