@@ -14,10 +14,6 @@ jobs:
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
-      #- name: gradle-build
-      #  uses: ./.github/actions/gradle-build
-      #  with:
-      #    working-directory: ${{ env.BACKEND_DIRECTORY }}
       - name: detekt-kotlin-static-code-analysis
         uses: alaegin/Detekt-Action@v1.23.5
         with:

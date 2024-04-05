@@ -28,4 +28,4 @@ jobs:
       - name: gradle-build
         uses: ./.github/actions/gradle-build
         with:
-          working-directory: ${{ env.BACKEND_DIRECTORY }}}}
+          working-directory: ${{ env.BACKEND_DIRECTORY }}
