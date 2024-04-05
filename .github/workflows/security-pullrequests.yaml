@@ -1,0 +1,21 @@
+name: security scan on pull requests
+on:
+  pull_request
+
+jobs:
+  semgrep-diff:
+    runs-on: ubuntu-22.04
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: clone application source code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: differential sempgrep scan
+        run: |
+          semgrep scan \
+            --error \
+            --metrics=off \
+            --baseline-commit $ \
+            --config="p/default"
