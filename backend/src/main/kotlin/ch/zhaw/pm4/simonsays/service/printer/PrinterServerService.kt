@@ -5,7 +5,6 @@ import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrinterDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDto
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueRepository
-import ch.zhaw.pm4.simonsays.repository.printer.PrinterRepository
 import ch.zhaw.pm4.simonsays.repository.printer.PrinterServerRepository
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrNull
@@ -14,7 +13,6 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class PrinterServerService(
     private val printerServerRepository: PrinterServerRepository,
-    private val printerRepository: PrinterRepository,
     private val printQueueRepository: PrintQueueRepository,
     private val printerServerMapper: PrinterServerMapper,
 ) {
@@ -33,21 +31,16 @@ class PrinterServerService(
         return printerServerRepository.existsById(id)
     }
 
-    fun updatePrinterServer(printerServerDto: PrinterServerDto): PrinterServerDto {
+    fun savePrinterServer(printerServerDto: PrinterServerDto): PrinterServerDto {
         // Update existing printer server
         val printerServer = printerServerMapper.mapToPrinterServer(printerServerDto)
-        printerServer.queues.forEach { queue ->
-            queue.printers.forEach { printer ->
-                printerRepository.save(printer)
-            }
-            printQueueRepository.save(queue)
-        }
-        val updatedPrinterServer = printerServerRepository.save(printerServer)
+        val updatedPrinterServer = printerServerRepository.saveAndFlush(printerServer)
         return printerServerMapper.mapToPrinterServerDto(updatedPrinterServer)
     }
 
     fun removePrinterServer(id: String) {
         printerServerRepository.deleteById(id)
+        printerServerRepository.flush()
     }
 
     fun createSampleData() {
@@ -76,14 +69,14 @@ class PrinterServerService(
             name = "Sample Printer Server",
             queues = listOf(samplePrintQueue1, samplePrintQueue2),
         )
-        updatePrinterServer(samplePrinterServer1)
+        savePrinterServer(samplePrinterServer1)
 
         val samplePrinterServer2 = PrinterServerDto(
             id = "3ef0f613-13fb-4eb9-a9be-df86db516615",
             name = "Sample Printer Server 2",
             queues = listOf(),
         )
-        updatePrinterServer(samplePrinterServer2)
+        savePrinterServer(samplePrinterServer2)
 
         val samplePrintQueue3 = PrintQueueDto(
             id = "6218afd5-0fac-4826-afe3-115c103daf67",
@@ -97,7 +90,7 @@ class PrinterServerService(
             name = "Sample Printer Server 3",
             queues = listOf(samplePrintQueue3),
         )
-        updatePrinterServer(samplePrinterServer3)
+        savePrinterServer(samplePrinterServer3)
     }
 
     init {

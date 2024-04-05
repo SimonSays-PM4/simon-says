@@ -129,7 +129,7 @@ class PrinterServersNamespace(
             )
         }
 
-        val updatePrinterServer = printerServerService.updatePrinterServer(printerServerDto)
+        val updatePrinterServer = printerServerService.savePrinterServer(printerServerDto)
         // Send updated data to subscribers
         onChange(updatePrinterServer)
     }
@@ -137,9 +137,9 @@ class PrinterServersNamespace(
     /**
      * Invoked when a remove event is received on the server
      *
-     * @param data The data received with the change event
+     * @param data The data received with the remove event
      * @param subscribedPrinterId The printer server id the client is connected to. {@code null} if the client is connected to all printer servers.
-     * @param socket The socket that received the change event
+     * @param socket The socket that received the remove event
      */
     internal fun onRemoveEventReceived(data: Array<Any>, subscribedPrinterId: String?, socket: SocketIoSocket) {
         log.info("Remove event received: $data")
@@ -149,14 +149,13 @@ class PrinterServersNamespace(
             socket, code = "INVALID_REMOVE_DATA", message = "Invalid data received. Expected JSON object.",
         )
 
-
         val printerServerJson = data.first() as JSONObject
 
         //verify the printer server id was provided
         if (!printerServerJson.has("id")) {
             return onApplicationError(
                 socket,
-                code = "MISSING_PRINT_SERVER_ID",
+                code = "MISSING_ID",
                 message = "Missing printer server id.",
             )
         }
@@ -214,10 +213,6 @@ class PrinterServersNamespace(
         } else {
             subscribersToSpecificPrinterServer[id]?.forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }
         }
-    }
-
-    override fun onApplicationError(socket: SocketIoSocket, error: ApplicationErrorDto) {
-        socket.sendPojo(APPLICATION_ERROR_EVENT, error)
     }
 
     private fun getPrinterServerIdFromNamespace(namespace: String): String? {

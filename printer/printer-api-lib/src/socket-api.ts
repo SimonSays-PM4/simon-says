@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import { ApplicationErrorDto, PrinterServerDto, PrinterServersDto, PrintQueueDto, PrintQueueJobDto, PrintQueueJobsDto } from './dtos';
 
-const defaultMaxAckTimeout = 1000;
+const defaultMaxAckTimeout = 2000;
 
 export class SocketApi<OnConnectType, OnChangeType> {
     readonly socketUrl: string;
@@ -27,6 +27,7 @@ export class SocketApi<OnConnectType, OnChangeType> {
         onRemove: (data: OnChangeType) => void,
         onApplicationError: (error: ApplicationErrorDto) => void
     ) {
+        console.debug(`Connecting to socket at ${socketUrl}`);
         this.socketUrl = socketUrl;
         this.onInitialData = onInitialData;
         this.onChange = onChange;
@@ -36,6 +37,9 @@ export class SocketApi<OnConnectType, OnChangeType> {
         this.socket.on('change', onChange);
         this.socket.on('remove', onRemove);
         this.socket.on('application-error', onApplicationError);
+        this.socket.on('connect_error', (error: Error) => {
+            console.error(`🧦 Socket connection error: ${error.message}`);
+        });
 
         // For debugging
         this.socket.onAny((event, ...args) => {

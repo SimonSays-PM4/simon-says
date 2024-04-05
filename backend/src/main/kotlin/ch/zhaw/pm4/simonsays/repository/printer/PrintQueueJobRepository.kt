@@ -1,11 +1,14 @@
 package ch.zhaw.pm4.simonsays.repository.printer
 
-import ch.zhaw.pm4.simonsays.entity.printer.PrintQueue
-import ch.zhaw.pm4.simonsays.entity.printer.PrintQueueJob
-import ch.zhaw.pm4.simonsays.entity.printer.Printer
-import ch.zhaw.pm4.simonsays.entity.printer.PrinterServer
+import ch.zhaw.pm4.simonsays.entity.printer.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
-interface PrintQueueJobRepository : JpaRepository<PrintQueueJob, String>
+interface PrintQueueJobRepository : JpaRepository<PrintQueueJob, String> {
+
+    fun findFirstByPrintQueueAndStatusOrderByCreationDateTimeAsc(printQueue: PrintQueue, status: JobStatus): Optional<PrintQueueJob>
+
+    fun findAllByPrintQueue(printQueue: PrintQueue): List<PrintQueueJob>
+}

@@ -2,6 +2,7 @@ package ch.zhaw.pm4.simonsays.api.controller
 
 import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
 import ch.zhaw.pm4.simonsays.config.PrinterProperties
+import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
 import io.socket.engineio.server.EngineIoServer
 import io.socket.engineio.server.EngineIoServerOptions
 import io.socket.socketio.server.SocketIoServer
@@ -78,7 +79,7 @@ interface SocketIoNamespace<T> {
     /**
      * This method is called when an application error occurs and needs to be sent to all connected clients.
      *
-     * @param id The unique identifier of the error. When null, the error will be sent to all connected clients. Otherwise, only the client with the given id will receive the error.
+     * @param id The unique identifier to send to (printer server id, job id, ...). When null, the error will be sent to all connected clients. Otherwise, only subscribers of the given id will receive the error.
      * @param error The error that occurred.
      */
     fun onApplicationError(id: String?, error: ApplicationErrorDto)
@@ -94,7 +95,9 @@ interface SocketIoNamespace<T> {
     /**
      * Send and error to specific socket
      */
-    fun onApplicationError(socket: SocketIoSocket, error: ApplicationErrorDto)
+    fun onApplicationError(socket: SocketIoSocket, error: ApplicationErrorDto) {
+        socket.sendPojo(APPLICATION_ERROR_EVENT, error)
+    }
 
     /**
      * Shorhand method for onApplicationError(socket, ApplicationErrorDto(code, message))

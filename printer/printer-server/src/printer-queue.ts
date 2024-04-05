@@ -1,5 +1,5 @@
 import { SocketApi } from 'printer-api-lib/src/socket-api';
-import { PrintQueueDto, PrintQueueJobDto, PrintQueueJobUpdateDto } from 'printer-api-lib/src/dtos';
+import { ApplicationErrorDto, PrintQueueDto, PrintQueueJobDto, PrintQueueJobUpdateDto } from 'printer-api-lib/src/dtos';
 import { Printer } from "./printer";
 
 export class PrinterQueue {
@@ -18,9 +18,10 @@ export class PrinterQueue {
             process.env.PRINTER_QUEUE_SERVER_BASE_URL!,
             this.printServerId,
             this.printQueueDto.id,
-            this.onPrintQueueJobInitialData,
-            this.onPrintQueueJobChange,
-            this.onPrintQueueJobRemove
+            (printQueueJob) => this.onPrintQueueJobInitialData(printQueueJob),
+            (printQueueJob) => this.onPrintQueueJobChange(printQueueJob),
+            (printQueueJob) => this.onPrintQueueJobRemove(printQueueJob),
+            (error) => this.onApplicationError(error)
         );
     }
 
@@ -29,16 +30,22 @@ export class PrinterQueue {
     }
 
     onPrintQueueJobInitialData(printQueueJob: PrintQueueJobDto): void {
+        console.log(`Initial data received for print job ${printQueueJob.id}`);
         this.print(printQueueJob);
     }
 
     onPrintQueueJobChange(printQueueJob: PrintQueueJobDto): void {
+        console.log(`Change received for print job ${printQueueJob.id}`);
         this.print(printQueueJob);
     }
 
     onPrintQueueJobRemove(printQueueJob: PrintQueueJobDto): void {
         // Do nothing
         console.warn(`Print job ${printQueueJob.id} was removed from the queue. The print server does not support removing/stopping print jobs.`);
+    }
+
+    onApplicationError(error: ApplicationErrorDto): void {
+        console.error("Error in printer queue socket connection", error);
     }
 
     async print(printJob: PrintQueueJobDto): Promise<void> {
@@ -79,6 +86,6 @@ export class PrinterQueue {
     }
 
     async updatePrintQueueJob(update: PrintQueueJobUpdateDto): Promise<void> {
-        await this.nextPrintQueueJobConnection.sendChange<PrintQueueJobUpdateDto>(update);
+        await this.nextPrintQueueJobConnection.sendChange(update);
     }
 }

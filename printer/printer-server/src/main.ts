@@ -1,5 +1,6 @@
 import { buildId } from '../build/build-id.json';
 import { PrinterServer } from './printer-server';
+import 'dotenv/config'
 
 console.log(`
 _____ _                      _____                                                   
@@ -19,7 +20,6 @@ Version: ${buildId}
 console.log('Starting printer server...');
 const printServer = new PrinterServer();
 console.log('[ok] Printer server started');
-
 
 // We also want to attempt to gracefully shut down the server when the process is terminated
 function stopServerSignalHandler() {

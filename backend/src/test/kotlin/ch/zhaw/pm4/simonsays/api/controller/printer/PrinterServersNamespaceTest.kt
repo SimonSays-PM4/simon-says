@@ -178,14 +178,14 @@ class PrinterServersNamespaceTest {
             name = "test-printer-server-name",
             queues = emptyList(),
         )
-        every { mockPrinterServerService.updatePrinterServer(printerServerDto) } returns printerServerDto
+        every { mockPrinterServerService.savePrinterServer(printerServerDto) } returns printerServerDto
         every { mockPrinterServerService.doesPrinterServerExist("test-printer-server-id") } returns true
         val printerServerDtoJson = arrayOf<Any>(JSONObject(printerServerDto))
 
         namespace.onConnection(mockSocket)
         namespace.onChangeEventReceived(printerServerDtoJson, subscribedPrinterId, mockSocket)
 
-        verify { mockPrinterServerService.updatePrinterServer(printerServerDto) }
+        verify { mockPrinterServerService.savePrinterServer(printerServerDto) }
         verify { mockSocket.send(CHANGE_EVENT, any()) }
     }
 
@@ -198,7 +198,7 @@ class PrinterServersNamespaceTest {
         namespace.onConnection(mockSocket)
         namespace.onChangeEventReceived(invalidData, subscribedPrinterId, mockSocket)
 
-        verify(inverse = true) { mockPrinterServerService.updatePrinterServer(any()) }
+        verify(inverse = true) { mockPrinterServerService.savePrinterServer(any()) }
         verify { mockSocket.send(APPLICATION_ERROR_EVENT, any()) }
     }
 
@@ -238,7 +238,7 @@ class PrinterServersNamespaceTest {
         namespace.onChangeEventReceived(printerServerDtoJson, subscribedPrinterId, mockSocket)
 
         // Verify that the updatePrinterServer method is not called since the IDs do not match
-        verify(inverse = true) { mockPrinterServerService.updatePrinterServer(any()) }
+        verify(inverse = true) { mockPrinterServerService.savePrinterServer(any()) }
         // Verify that an application error is emitted with a specific error code indicating the ID mismatch
         verify { mockSocket.send(APPLICATION_ERROR_EVENT, any()) }
     }
