@@ -17,9 +17,7 @@ jobs:
       - name: full scan
         run: |
           semgrep \
-            --sarif --output report.sarif \
-            --metrics=off \
-            --config="p/default"
+            --config="auto"
       - name: save report as pipeline artifact
         uses: actions/upload-artifact@v3
         with:
