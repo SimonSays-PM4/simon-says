@@ -1,7 +1,10 @@
-name: frontend manual stage deploy
+name: frontend staging deployment
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 env:
   # GENERAL

@@ -1,13 +1,16 @@
 package ch.zhaw.pm4.simonsays.api.types
 
 import io.swagger.v3.oas.annotations.media.Schema
-import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import org.hibernate.validator.constraints.Length
 
-data class EventCreateDTO (
+data class EventCreateUpdateDTO (
+
+        @field:Schema(description = "ID for the event")
+        val id: Long?,
+
         @field:Schema(description = "Name for the event")
         @field:NotBlank(message = "Event name must be provided")
         @field:NotEmpty(message = "Event name must be provided")

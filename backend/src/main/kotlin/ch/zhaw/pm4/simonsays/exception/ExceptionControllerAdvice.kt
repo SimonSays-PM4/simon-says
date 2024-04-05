@@ -2,10 +2,12 @@ package ch.zhaw.pm4.simonsays.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.servlet.resource.NoResourceFoundException
 
 class ErrorMessageModel(
         var status: Int? = null,
@@ -52,6 +54,24 @@ class ExceptionControllerAdvice {
 
     @ExceptionHandler(ResourceNotFoundException::class)
     fun handleResourceNotFoundException(ex: ResourceNotFoundException): ResponseEntity<ErrorMessageModel> {
+        val errorMessage = ErrorMessageModel(
+                HttpStatus.NOT_FOUND.value(),
+                ex.message
+        )
+        return ResponseEntity(errorMessage, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
+    fun handleHttpRequestMethodNotSupportedException(ex: HttpRequestMethodNotSupportedException): ResponseEntity<ErrorMessageModel> {
+        val errorMessage = ErrorMessageModel(
+                HttpStatus.METHOD_NOT_ALLOWED.value(),
+                ex.message
+        )
+        return ResponseEntity(errorMessage, HttpStatus.METHOD_NOT_ALLOWED)
+    }
+
+    @ExceptionHandler(NoResourceFoundException::class)
+    fun handleNoResourceFoundException(ex: NoResourceFoundException): ResponseEntity<ErrorMessageModel> {
         val errorMessage = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
                 ex.message
