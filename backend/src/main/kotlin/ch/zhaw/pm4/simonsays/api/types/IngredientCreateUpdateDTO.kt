@@ -16,7 +16,4 @@ data class IngredientCreateUpdateDTO (
         @field:NotEmpty(message = "Ingredient name must be provided")
         @field:Length(min = 3, max = 64, message = "Ingredient name must be between 3 and 64 chars long")
         val name: String?,
-
-        @field:Schema(description = "Event id for the ingredient")
-        val eventId: Long
 )

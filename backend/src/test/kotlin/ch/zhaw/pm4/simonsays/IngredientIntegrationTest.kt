@@ -6,19 +6,20 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.http.MediaType
-import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-@Sql(scripts = ["sql/add_initial_event.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class IngredientIntegrationTest : IntegrationTest() {
 
+    private fun getIngredientsUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/ingredient"
+
+    private fun getIngredientUrl(eventId: Long, ingredientId: Long) = "${getIngredientsUrl(eventId)}/${ingredientId}"
     @Test
     fun `should throw validation error`() {
         // when/then
-        mockMvc.put("/rest-api/v1/ingredient") {
+        mockMvc.put(getIngredientsUrl(1)) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(createUpdateIngredientDTO(null, null))
         }
@@ -35,7 +36,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Test
     fun `should get ingredient not found`() {
         // when/then
-        mockMvc.get("/rest-api/v1/ingredient/404")
+        mockMvc.get(getIngredientUrl(1, 404))
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
@@ -52,7 +53,7 @@ class IngredientIntegrationTest : IntegrationTest() {
         val ingredient = createUpdateIngredientDTO()
         val ingredientDTO = getIngredient1DTO()
         // when/then
-        mockMvc.put("/rest-api/v1/ingredient") {
+        mockMvc.put(getIngredientsUrl(1)) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(ingredient)
         }
@@ -71,7 +72,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     fun `should list ingredients`() {
         val ingredientDTOs = listOf(getIngredient1DTO())
         // when/then
-        mockMvc.get("/rest-api/v1/ingredient")
+        mockMvc.get(getIngredientsUrl(1))
             .andDo { print() }
             .andExpect {
                 status { isOk() }
@@ -87,7 +88,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     fun `should get ingredient`() {
         val ingredientDTO = getIngredient1DTO()
         // when/then
-        mockMvc.get("/rest-api/v1/ingredient/1")
+        mockMvc.get(getIngredientUrl(1, 1))
             .andDo { print() }
             .andExpect {
                 status { isOk() }
@@ -102,7 +103,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Order(3)
     fun `should delete ingredient`() {
         // when/then
-        mockMvc.delete("/rest-api/v1/ingredient/1")
+        mockMvc.delete(getIngredientUrl(1, 1))
             .andDo { print() }
             .andExpect {
                 status { isNoContent() }
