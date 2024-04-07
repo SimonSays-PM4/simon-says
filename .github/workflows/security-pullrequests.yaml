@@ -20,4 +20,3 @@ jobs:
           semgrep scan \
             --error \
             --baseline-commit HEAD~
-            --config="auto"
