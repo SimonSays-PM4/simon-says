@@ -5,15 +5,19 @@ import react from "@vitejs/plugin-react";
 export default defineConfig(({mode}) => {
 
     const env = loadEnv(mode, process.cwd(), '')
-    let api_url = "127.0.0.1:8080/api";
+    let api_url = "http://localhost:8080/";
     if (mode != 'development') {
-        api_url = env.API_URL;
+        api_url = env.VITE_API_URL;
     }
 
     return {
         define:{
-            __APP_EN__: JSON.stringify(env.APP_ENV),
-            __API_URL__: JSON.stringify(api_url)
+            VITE_API_URL: JSON.stringify(api_url),
+            process: {
+                env: {
+                    VITE_API_URL: api_url
+                }
+            },
         },
         plugins: [react()],
             server: {

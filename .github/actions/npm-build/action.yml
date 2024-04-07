@@ -29,7 +29,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |-
-          API_URL=${{ inputs.api-url }} npm run build
+          VITE_API_URL=${{ inputs.api-url }} npm run build:staging
     - name: npm test
       working-directory: ${{ inputs.working-directory }}
       shell: bash

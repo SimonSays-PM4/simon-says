@@ -6,6 +6,7 @@
     "scripts": {
         "start": "vite",
         "build": "tsc && vite build",
+        "build:staging": "tsc && vite build --mode staging",
         "preview": "vite preview",
         "test": "jest",
         "lint": "eslint --max-warnings=0 \"src/**/*.{ts,tsx}\"",
