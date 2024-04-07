@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { EventControllerApi, EventDTO } from "../../gen/api";
+import {eventService} from "../../api.ts";
+import {EventDTO} from "../../../gen/api";
 
 type EventActions = {
     deleteEvent: () => void,
@@ -19,8 +20,6 @@ export const useEventListPage = (): EventListPageReturnProps => {
     const [showDeletePopup, setShowDeletePopup] = useState(false)
     const [data, setData] = useState<EventDTO[]>([])
 
-    const eventControllerApi = new EventControllerApi();
-
     useEffect(() => {
         if (!showDeletePopup) {
             reloadEvents();
@@ -29,7 +28,7 @@ export const useEventListPage = (): EventListPageReturnProps => {
 
     const reloadEvents = useCallback(() => {
         setLoading(true);
-        eventControllerApi.getEvents().then((response) => {
+        eventService.getEvents().then((response) => {
             setData(response.data)
             setLoading(false)
         }
@@ -39,7 +38,7 @@ export const useEventListPage = (): EventListPageReturnProps => {
     const deleteEvent = useCallback(() => {
         if (eventToDelete.id && eventToDelete.id > 0) {
             setLoading(true);
-            eventControllerApi.deleteEvent(eventToDelete.id).then(() => {
+            eventService.deleteEvent(eventToDelete.id).then(() => {
                 setShowDeletePopup(false)
                 setLoading(false);
             })

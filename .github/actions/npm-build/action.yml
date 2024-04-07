@@ -7,6 +7,9 @@ inputs:
   node-version:
     required: true
     description: node version to use
+  api-url:
+    default: simonsays-backend-stage.pm4.init-lab.ch/
+    description: URL for backend
 
 runs:
   using: "composite"
@@ -26,7 +29,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |-
-          npm run build
+          API_URL=${{ inputs.api-url }} npm run build
     - name: npm test
       working-directory: ${{ inputs.working-directory }}
       shell: bash
