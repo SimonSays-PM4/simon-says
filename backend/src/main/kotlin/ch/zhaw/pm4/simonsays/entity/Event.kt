@@ -17,5 +17,8 @@ data class Event(
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long? = null
+        val id: Long? = null,
+
+        @OneToMany(mappedBy = "event")
+        val ingredients: Set<Ingredient>? = HashSet()
 )
