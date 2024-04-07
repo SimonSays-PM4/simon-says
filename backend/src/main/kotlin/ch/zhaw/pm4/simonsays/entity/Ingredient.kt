@@ -11,5 +11,10 @@ data class Ingredient(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null
+    val id: Int? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    val event: Event
+
 )

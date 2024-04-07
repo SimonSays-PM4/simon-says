@@ -5,6 +5,8 @@ import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
+import ch.zhaw.pm4.simonsays.service.EventService
+import ch.zhaw.pm4.simonsays.service.EventServiceImpl
 import ch.zhaw.pm4.simonsays.service.IngredientService
 import ch.zhaw.pm4.simonsays.service.IngredientServiceImpl
 import com.ninjasquad.springmockk.MockkBean
@@ -20,16 +22,21 @@ class IngredientTest {
     @MockkBean(relaxed = true)
     protected lateinit var ingredientRepository: IngredientRepository
 
+    @MockkBean(relaxed = true)
+    protected lateinit var eventService: EventService
+
     private lateinit var ingredientService: IngredientService
 
     @BeforeEach
     fun setup() {
         ingredientRepository = mockk(relaxed = true)
-        ingredientService = IngredientServiceImpl(ingredientRepository, IngredientMapperImpl())
+        eventService = mockk(relaxed = true)
+        ingredientService = IngredientServiceImpl(ingredientRepository, IngredientMapperImpl(), eventService)
     }
 
     @Test
     fun `Test ingredient creation`() {
+        every { eventService.getEvent(any()) } returns getEventDTO()
         every { ingredientRepository.save(any()) } returns getIngredient1()
         val ingredientCreateDTO = createUpdateIngredientDTO()
         Assertions.assertEquals(
@@ -40,7 +47,7 @@ class IngredientTest {
     @Test
     fun `Test ingredient list`() {
         every { ingredientRepository.findAll() } returns
-                listOf(Ingredient("Testingredient", 1), Ingredient("Testingredient2", 2))
+                listOf(Ingredient("Testingredient", 1, getEvent()), Ingredient("Testingredient2", 2, getEvent()))
 
         Assertions.assertEquals(
             listOf(IngredientDTO(1, "Testingredient"), IngredientDTO(2, "Testingredient2")),

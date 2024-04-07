@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service
 @Service
 class IngredientServiceImpl(
     private val ingredientRepository: IngredientRepository,
-    private val ingredientMapper: IngredientMapper
+    private val ingredientMapper: IngredientMapper,
+    private val eventService: EventService
 ) : IngredientService {
 
     override fun listIngredients(): List<IngredientDTO> {
@@ -32,10 +33,11 @@ class IngredientServiceImpl(
     }
 
     override fun createUpdateIngredient(ingredient: IngredientCreateUpdateDTO): IngredientDTO {
+        val event = eventService.getEvent(ingredient.eventId)
         val ingredientToSave = if (ingredient.id != null) {
             makeIngredientReadyForUpdate(ingredient)
         } else {
-            ingredientMapper.mapCreateDTOToIngredient(ingredient)
+            ingredientMapper.mapCreateDTOToIngredient(ingredient, event)
         }
 
         return ingredientMapper.mapToIngredientDTO(ingredientRepository.save(ingredientToSave))

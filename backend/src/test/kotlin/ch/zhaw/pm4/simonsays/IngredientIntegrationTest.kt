@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.http.MediaType
+import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+@Sql(scripts = ["sql/add_initial_event.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class IngredientIntegrationTest : IntegrationTest() {
 
     @Test
