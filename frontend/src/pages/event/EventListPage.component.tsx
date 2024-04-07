@@ -2,10 +2,10 @@ import React from "react";
 import { DataTable } from "../../components/data-tables/DataTable";
 import { ColumnType } from "../../models/ColumnType";
 import { Loader } from "../../components/Loader";
-import { EventCreateUpdateDTO, EventDTO } from "../../gen/api";
 import { useNavigate } from "react-router-dom";
 import { useEventListPage } from "./EventListPage.hooks.tsx";
 import { Popup } from "../../components/Popup.tsx";
+import {EventCreateUpdateDTO, EventDTO} from "../../gen/api";
 
 export const EventListPageComponent: React.FC = () => {
     const { loading, eventActions, showDeletePopup, setShowDeletePopup, data } = useEventListPage()
