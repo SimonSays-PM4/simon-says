@@ -1,1 +1,0 @@
-INSERT INTO event (id, name, password, numberOfTables) VALUES (1, 'event1', 'password1', 1);

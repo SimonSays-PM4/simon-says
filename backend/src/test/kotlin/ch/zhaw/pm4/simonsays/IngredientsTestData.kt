@@ -8,8 +8,7 @@ import ch.zhaw.pm4.simonsays.entity.Ingredient
 
 fun createUpdateIngredientDTO(id: Long? = null, name: String? = "TestIngredient") = IngredientCreateUpdateDTO(
     id = id,
-    name = name,
-    eventId = 1
+    name = name
 )
 
 fun getIngredient1(name: String? = "TestIngredient") = Ingredient(name = name!!, id = 1, getEvent())
