@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FieldValues } from "react-hook-form";
 import {eventService} from "../../api.ts";
-import {EventCreateUpdateDTO} from "../../../gen/api";
+import {EventCreateUpdateDTO} from "../../gen/api";
 
 type EventActions = {
     deleteEvent: () => void;

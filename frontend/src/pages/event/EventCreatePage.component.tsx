@@ -5,7 +5,7 @@ import { FormInput } from "../../components/form/FormInput";
 import { nameof } from "ts-simple-nameof";
 import { Popup } from "../../components/Popup.tsx";
 import { useEventCreatePage } from "./EventCreatePage.hooks.ts";
-import {EventCreateUpdateDTO} from "../../../gen/api";
+import {EventCreateUpdateDTO} from "../../gen/api";
 
 export const EventCreatePageComponent: React.FC = () => {
     const { event, errorMessage, eventActions, setShowDeleteModal, showDeleteModal } = useEventCreatePage();

@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "start": "vite",
-        "build": "API_URL=http://lol.ch tsc && vite build",
+        "build": "tsc && vite build",
         "preview": "vite preview",
         "test": "jest",
         "lint": "eslint --max-warnings=0 \"src/**/*.{ts,tsx}\"",

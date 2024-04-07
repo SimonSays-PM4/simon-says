@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import {eventService} from "../../api.ts";
-import {EventDTO} from "../../../gen/api";
+import {EventDTO} from "../../gen/api";
 
 type EventActions = {
     deleteEvent: () => void,
