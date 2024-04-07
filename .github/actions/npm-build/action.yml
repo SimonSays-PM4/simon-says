@@ -8,7 +8,7 @@ inputs:
     required: true
     description: node version to use
   api-url:
-    default: simonsays-backend-stage.pm4.init-lab.ch/
+    default: https://simonsays-backend-stage.pm4.init-lab.ch
     description: URL for backend
 
 runs:
