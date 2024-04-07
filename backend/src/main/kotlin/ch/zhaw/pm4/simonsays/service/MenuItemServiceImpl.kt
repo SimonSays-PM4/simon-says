@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service
 @Service
 class MenuItemServiceImpl(
         private val menuItemRepository: MenuItemRepository,
-        private val menuItemMapper: MenuItemMapper
+        private val menuItemMapper: MenuItemMapper,
+        private val eventService: EventService,
 ) : MenuItemService {
 
     override fun getMenuItems(): MutableList<MenuItemDTO> {
@@ -30,10 +31,12 @@ class MenuItemServiceImpl(
 
     override fun createUpdateMenuItem(menuItem: MenuItemCreateUpdateDTO): MenuItemDTO {
 
+        val event = eventService.getEvent(menuItem.eventId!!)
+
         val menuItemToBeSaved = if(menuItem.id != null) {
             makeMenuItemReadyForUpdate(menuItem)
         } else {
-            menuItemMapper.mapCreateDTOToMenuItem(menuItem)
+            menuItemMapper.mapCreateDTOToMenuItem(menuItem, event)
         }
 
         val savedMenuItem = menuItemRepository.save(menuItemToBeSaved)
@@ -45,6 +48,7 @@ class MenuItemServiceImpl(
             ResourceNotFoundException("Menu item not found with ID: ${menuItem.id}")
         }
         menuItemToSave.name = menuItem.name!!
+        menuItemToSave.event = eventService.getEventEntity(menuItem.eventId!!)
         return menuItemToSave
     }
 
