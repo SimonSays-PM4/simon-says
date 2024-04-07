@@ -16,20 +16,8 @@ CREATE TABLE IF NOT EXISTS event
 CREATE TABLE IF NOT EXISTS ingredient
 (
     id       INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
+    name VARCHAR(255) NOT NULL UNIQUE,
+    event_id INT NOT NULL,
+    FOREIGN KEY (event_id) REFERENCES event (id)
     );
-
--- Schema for Posts table
-CREATE TABLE IF NOT EXISTS posts
-(
-    id      INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT          NOT NULL,
-    title   VARCHAR(255) NOT NULL,
-    content TEXT
-    -- FOREIGN KEY (user_id) REFERENCES users (id)
-);
-
--- Insert seed data into 'users' table
-
--- Insert seed data into 'posts' table
 
