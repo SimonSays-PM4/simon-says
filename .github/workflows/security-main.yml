@@ -1,7 +1,9 @@
 name: running security checks
 
 on:
-  - push
+  push:
+    branches:
+      - main
 
 jobs:
   semgrep-full:
