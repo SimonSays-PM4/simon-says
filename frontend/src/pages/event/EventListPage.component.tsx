@@ -40,7 +40,7 @@ export const EventListPageComponent: React.FC = () => {
             ) : (
                 <DataTable<EventDTO> title="Events" columns={columns} rows={data} onCreateClick={() => navigate("/event/create")} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />
             )}
-            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteEvent} modalText={'Delete "' + eventActions.eventToDelete.name + '"'} />
+            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteEvent} modalText={'Delete "' + eventActions.eventToDelete.name + '"'} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }

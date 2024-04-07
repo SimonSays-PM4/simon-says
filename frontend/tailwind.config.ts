@@ -25,8 +25,8 @@ const config: Config = {
         extend: {
             colors: {
                 primary: {
-                    ...colors.orange,
-                    DEFAULT: "#F58220"
+                    ...colors.red,
+                    DEFAULT: "#990000"
                 }
             },
 
@@ -55,8 +55,8 @@ const config: Config = {
                 light: {
                     default: colors.slate,
                     primary: {
-                        ...colors.orange,
-                        DEFAULT: "#F58220"
+                        ...colors.red,
+                        DEFAULT: "#990000"
                     },
                     secondary: "#6c757d",
                     success: "#43d39e",

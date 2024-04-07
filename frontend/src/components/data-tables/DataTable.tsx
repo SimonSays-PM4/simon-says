@@ -20,7 +20,7 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                     <h2 className="text-xl font-semibold text-default-800">{title}</h2>
 
                     <div className="flex flex-wrap items-center gap-4">
-                        <Button buttonText="Create" onClick={onCreateClick} />
+                        <Button buttonText="Erstellen" onClick={onCreateClick} />
                     </div>
                 </div>
             </div>
