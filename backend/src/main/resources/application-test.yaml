@@ -1,0 +1,16 @@
+# database settings
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/simonsays
+    username: simonsays
+    password: simonsays
+    driver-class-name: com.mysql.cj.jdbc.Driver
+debug: on
+application:
+  url: "http://localhost:3000"
