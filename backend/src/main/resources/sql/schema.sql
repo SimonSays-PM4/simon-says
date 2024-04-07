@@ -13,6 +13,14 @@ CREATE TABLE IF NOT EXISTS event
     numberOfTables    INT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS menu_item
+(
+    id       INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    event_id INT NOT NULL,
+    FOREIGN KEY (event_id) REFERENCES event (id)
+    );
+
 CREATE TABLE IF NOT EXISTS ingredient
 (
     id       INT AUTO_INCREMENT PRIMARY KEY,

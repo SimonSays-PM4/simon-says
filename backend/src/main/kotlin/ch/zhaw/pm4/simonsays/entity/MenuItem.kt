@@ -11,6 +11,10 @@ data class MenuItem (
 
         @Column(nullable = false)
         var name: String,
+
+        @ManyToOne(optional = false)
+        @JoinColumn(name = "event_id", nullable = false)
+        var event: Event
 ) {
 
 }
