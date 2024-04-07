@@ -13,7 +13,7 @@ export const Popup: React.FC<PopupProps> = ({ onClose, onAccept, show, modalText
     return (<div>
         {show && (
             <div tabIndex={-1}
-                className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%)] max-h-full flex bg-gray-600/[.6]">
+                className="modal overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%)] max-h-full flex bg-gray-600/[.6]">
                 <div className="relative p-4 w-full max-w-md max-h-full">
                     <div className="relative bg-white rounded-lg shadow">
                         <button type="button"
