@@ -48,3 +48,13 @@ This directory contains source code important to the printer-system of SimonSays
             |              |        ------------------
             ---------------- 
 ```
+
+## Build Printer Server Docker Image
+
+Go to this directory and run the following command:
+
+```bash
+docker build -t printer-server -f Printer-Server-Dockerfile .
+```
+
+The Dockerfile is not directly in the printer-server directory, but in the root directory of the printer-system. This is because the printer-server needs to be able to access the printer-api-lib dependency which in docker means you need to be at the same level as the printer-api-lib and printer-server directories to be able to copy them into the docker image.

@@ -1,0 +1,20 @@
+from node:20.12-bookworm
+
+# Expose the port
+EXPOSE 3000
+
+# Copy over the printer-api-lib
+WORKDIR /app
+
+# Copy the printer-api-lib
+COPY printer-api-lib ./printer-api-lib
+
+# Copy the printer-server
+COPY printer-server ./printer-server
+
+WORKDIR /app/printer-server
+RUN npm ci
+
+# Start the server
+CMD ["npm", "start"]
+
