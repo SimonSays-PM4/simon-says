@@ -19,7 +19,7 @@ export const IngredientListPageComponent: React.FC = () => {
     ];
 
     const onEditClick = (row: IngredientCreateUpdateDTO) => {
-        navigate("../ingredient/create/" + row.id);
+        navigate(`../ingredient/create/` + row.id);
     };
 
     const onDeleteClick = (row: IngredientDTO) => {
@@ -32,7 +32,7 @@ export const IngredientListPageComponent: React.FC = () => {
             {isLoading ? (
                 <div className="w-[100px] block mx-auto"><Loader /></div>
             ) : (
-                <DataTable<IngredientDTO> title="Zutaten" columns={columns} rows={data} onCreateClick={() => navigate("/ingredient/create")} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />
+                <DataTable<IngredientDTO> title="Zutaten" columns={columns} rows={data} onCreateClick={() => navigate(`../ingredient/create`)} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />
             )}
 
             <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteIngredient} modalText={'Zutate "' + eventActions.ingredientToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
