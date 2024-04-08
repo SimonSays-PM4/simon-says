@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("rest-api/v1/menuItem")
 class MenuItemController(private val menuItemService: MenuItemService) {
     @Operation(summary = "Read all menu items")
-    @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("{eventId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun getMenuItems(): List<MenuItemDTO> {
-        return  menuItemService.getMenuItems()
+    fun getMenuItems(@PathVariable("eventId") eventId: Long): List<MenuItemDTO> {
+        return  menuItemService.getMenuItems(eventId)
     }
     @Operation(summary = "Retrieve a single menu item")
     @GetMapping("{menuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])

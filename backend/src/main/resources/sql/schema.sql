@@ -29,3 +29,11 @@ CREATE TABLE IF NOT EXISTS ingredient
     FOREIGN KEY (event_id) REFERENCES event (id)
     );
 
+CREATE TABLE IF NOT EXISTS menu_item_ingredients
+(
+    menu_item_id INT NOT NULL,
+    FOREIGN KEY (menu_item_id) REFERENCES menu_item (id),
+    ingredient_id INT NOT NULL,
+    FOREIGN KEY (ingredient_id) REFERENCES ingredient (id)
+);
+

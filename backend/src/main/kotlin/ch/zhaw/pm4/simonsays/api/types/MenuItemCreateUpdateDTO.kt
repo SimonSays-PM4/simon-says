@@ -1,10 +1,7 @@
 package ch.zhaw.pm4.simonsays.api.types
 
 import io.swagger.v3.oas.annotations.media.Schema
-import jakarta.validation.constraints.Min
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.*
 import org.hibernate.validator.constraints.Length
 
 class MenuItemCreateUpdateDTO(
@@ -21,4 +18,8 @@ class MenuItemCreateUpdateDTO(
     @field:NotEmpty(message = "Menu item name must be provided")
     @field:Length(min = 1, max = 64, message = "Menu item name must be between 1 and 64 chars long")
     val name: String?,
+
+    @NotNull(message = "Ingredient list must be provided")
+    @Size(min = 1, message = "A menu item must have at least one ingredient")
+    val ingredientIds: List<Long>
 ) {}
