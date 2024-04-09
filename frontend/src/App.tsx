@@ -23,12 +23,12 @@ export default function App() {
                         <Route path="/admin/event/create" element={<AuthorizedRoute activePageType={ActivePageType.Event}><EventCreatePageComponent /></AuthorizedRoute>}>
                             <Route path="/admin/event/create/:id" element={<AuthorizedRoute activePageType={ActivePageType.Event}><EventCreatePageComponent /></AuthorizedRoute>} />
                         </Route>
-                    </Route>
 
-                    <Route path="/:eventId">
-                        <Route path="/:eventId/ingredients" element={<AuthorizedEventRoute activePageType={ActivePageType.IngredientList}><IngredientListPageComponent /></AuthorizedEventRoute>} />
-                        <Route path="/:eventId/ingredient/create" element={<AuthorizedEventRoute activePageType={ActivePageType.Ingredient}><IngredientCreatePageComponent /></AuthorizedEventRoute>}>
-                            <Route path="/:eventId/ingredient/create/:id" element={<AuthorizedEventRoute activePageType={ActivePageType.Ingredient}><IngredientCreatePageComponent /></AuthorizedEventRoute>} />
+                        <Route path="/admin/:eventId">
+                            <Route path="/admin/:eventId/ingredients" element={<AuthorizedEventRoute activePageType={ActivePageType.IngredientList}><IngredientListPageComponent /></AuthorizedEventRoute>} />
+                            <Route path="/admin/:eventId/ingredient/create" element={<AuthorizedEventRoute activePageType={ActivePageType.Ingredient}><IngredientCreatePageComponent /></AuthorizedEventRoute>}>
+                                <Route path="/admin/:eventId/ingredient/create/:id" element={<AuthorizedEventRoute activePageType={ActivePageType.Ingredient}><IngredientCreatePageComponent /></AuthorizedEventRoute>} />
+                            </Route>
                         </Route>
                     </Route>
                     <Route path="*" element={<Error404Page />} />

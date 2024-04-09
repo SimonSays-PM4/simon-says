@@ -32,7 +32,7 @@ export const Navigation: React.FC<INavigationProps> = ({ activePageType }) => {
                     />
                     <NavigationItem
                         text="Zutaten"
-                        link="/3/ingredients" // TODO: remove this hardcoded eventId
+                        link="/admin/3/ingredients" // TODO: remove this hardcoded eventId
                         isActive={activePageType === ActivePageType.IngredientList}
                     />
                 </div>
