@@ -5,7 +5,7 @@ describe("Ingredient CRUD", () => {
         cy.get("form").contains("Login").click();
         cy.get("h1").contains("Home Page");
 
-        cy.get('a[href="/ingredients"]').click();
+        cy.get('a[href="/admin/3/ingredients"]').click();
     });
 
     it("should create a ingredient", () => {
