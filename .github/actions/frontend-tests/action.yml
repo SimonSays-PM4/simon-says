@@ -19,17 +19,24 @@ runs:
       with:
         working-directory: ${{ inputs.working-directory }}
         node-version: ${{ inputs.node-version }}
+        api-url: http://localhost:8080
+    - name: gradle-build
+      uses: ./.github/actions/gradle-build
+      with:
+        working-directory: ${{ inputs.backend-working-directory }}
+
     - name: start backend database
       working-directory: ${{ inputs.backend-working-directory }}
       shell: bash
       run: |-
         docker-compose up -d db
-        sleep 30
+        sleep 5
     - name: start backend application
       working-directory: ${{ inputs.backend-working-directory }}
       shell: bash
       run: |-
         ./gradlew bootRun --args='--spring.profiles.active=dev' &
+        timeout=300; count=0; while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost:8080/v3/api-docs)" != "200" ]] && [[ $count -lt $timeout ]]; do sleep 1; count=$((count+1)); done; [[ $count -eq $timeout ]] && echo "Timed out waiting for 200 response" && exit 1; echo "API is up"
     - name: start frontend for cypress tests
       working-directory: ${{ inputs.working-directory }}
       shell: bash
@@ -40,3 +47,16 @@ runs:
       with:
         working-directory: ${{ inputs.working-directory }}
         browser: chrome
+    - name: cleanup backend
+      shell: bash
+      working-directory: ${{ inputs.backend-working-directory }}
+      run: |-
+        docker-compose down
+        docker volume prune -f
+        # stop gradle
+        pkill -f 'gradle'
+    - name: cleanup frontend
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |-
+        pkill -f 'npm start'

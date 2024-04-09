@@ -15,3 +15,11 @@ spring:
 debug: on
 application:
   url: ""
+# Spring Boot Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - prometheus
