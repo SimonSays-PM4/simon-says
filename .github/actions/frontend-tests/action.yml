@@ -19,6 +19,7 @@ runs:
       with:
         working-directory: ${{ inputs.working-directory }}
         node-version: ${{ inputs.node-version }}
+        api-url: http://localhost:8080
     - name: start backend database
       working-directory: ${{ inputs.backend-working-directory }}
       shell: bash
