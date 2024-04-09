@@ -14,4 +14,4 @@ spring:
 
 debug: on
 application:
-  url: ""
+  url: "https://simonsays-stage.pm4.init-lab.ch/"
