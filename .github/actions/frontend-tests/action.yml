@@ -40,3 +40,16 @@ runs:
       with:
         working-directory: ${{ inputs.working-directory }}
         browser: chrome
+    - name: cleanup backend
+      shell: bash
+      working-directory: ${{ inputs.backend-working-directory }}
+      run: |-
+        docker-compose down
+        docker volume prune -f
+        # stop gradle
+        pkill -f 'gradle'
+    - name: cleanup frontend
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |-
+        pkill -f 'npm start'
