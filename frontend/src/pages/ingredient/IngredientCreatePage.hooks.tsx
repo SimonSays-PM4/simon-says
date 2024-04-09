@@ -1,8 +1,9 @@
-import { IngredientControllerApi, IngredientCreateUpdateDTO } from "../../gen/api";
+import { IngredientCreateUpdateDTO } from "../../gen/api";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FieldValues } from "react-hook-form";
 import { EventContext } from "../../providers/EventContext";
+import { ingredientService } from "../../api";
 
 type IngredientActions = {
     deleteIngredient: () => void;
@@ -19,6 +20,7 @@ type IngredientCreateReturnProps = {
 
 export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
     const { eventId } = useContext(EventContext);
+    const navigate = useNavigate();
     const { id } = useParams();
     const ingredientId = id ? Number(id) : 0;
 
@@ -28,14 +30,12 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
-    const ingredientControllerApi = new IngredientControllerApi();
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (ingredientId && ingredientId > 0) {
             setIsLoading(true);
 
-            ingredientControllerApi
+            ingredientService
                 .getIngredient(ingredientId, eventId)
                 .then((response) => {
                     const receivedIngredient = response.data as IngredientCreateUpdateDTO;
@@ -64,7 +64,7 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
             ingredientToSave.id = ingredientId > 0 ? ingredientId : undefined;
             setIngredient(ingredientToSave);
 
-            ingredientControllerApi
+            ingredientService
                 .createIngredient(eventId, ingredientToSave)
                 .then((response) => {
                     if (response.status === 201 || response.status === 200) {
@@ -86,7 +86,8 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
     const deleteIngredient = useCallback(() => {
         if (ingredientId > 0) {
             setIsSaving(true);
-            ingredientControllerApi.deleteIngredient(ingredientId, eventId)
+
+            ingredientService.deleteIngredient(ingredientId, eventId)
                 .then(() => {
                     navigate("/ingredients");
                 })
