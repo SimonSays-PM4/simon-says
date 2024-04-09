@@ -19,30 +19,14 @@ env:
 
 
 jobs:
-  npm-build:
+  frontend-tests:
     runs-on: ubuntu-22.04
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
-      - name: npm-build
-        uses: ./.github/actions/npm-build
+      - name: frontend-test
+        uses: ./.github/actions/frontend-tests
         with:
           working-directory: ${{ env.FRONTEND_DIRECTORY }}
+          backend-working-directory: ${{ env.BACKEND_DIRECTORY }}
           node-version: ${{ env.NODE_VERSION }}
-      - name: start application for cypress tests
-        run: npm start &
-        working-directory: ${{ env.FRONTEND_DIRECTORY }}
-      - name: cypress-tests
-        uses: cypress-io/github-action@v6
-        with:
-          working-directory: ${{ env.FRONTEND_DIRECTORY }}
-          browser: chrome
-  test-helm-chart:
-   runs-on: ubuntu-22.04
-   steps:
-     - name: checkout sources
-       uses: actions/checkout@v4
-     - name: test helm
-       uses: ./.github/actions/helm-test
-       with:
-         helm-directory: ${{ env.HELM_DIRECTORY }}

@@ -1,0 +1,42 @@
+name: frontend-test
+description: executes all frontend tests
+inputs:
+  working-directory:
+    required: true
+    description: directory of docker sources
+  backend-working-directory:
+    required: true
+    description: directory of backend sources
+  node-version:
+    required: true
+    description: node version
+
+runs:
+  using: "composite"
+  steps:
+    - name: npm-build
+      uses: ./.github/actions/npm-build
+      with:
+        working-directory: ${{ inputs.working-directory }}
+        node-version: ${{ inputs.node-version }}
+    - name: start backend database
+      working-directory: ${{ inputs.backend-working-directory }}
+      shell: bash
+      run: |-
+        docker-compose up -d db
+        sleep 5
+    - name: start backend application
+      working-directory: ${{ inputs.backend-working-directory }}
+      shell: bash
+      run: |-
+        ./gradlew bootRun --args='--spring.profiles.active=dev' &
+    - name: start frontend for cypress tests
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |-
+        npm start &
+    - name: cypress-tests
+      uses: cypress-io/github-action@v6
+      with:
+        working-directory: ${{ inputs.working-directory }}
+        browser: chrome
