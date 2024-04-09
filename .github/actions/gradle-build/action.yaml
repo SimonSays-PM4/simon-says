@@ -4,6 +4,10 @@ inputs:
   working-directory:
     required: true
     description: directory of gradle sources
+  upload-artifacts:
+    required: false
+    description: upload build artifacts
+    default: true
 
 runs:
   using: "composite"
@@ -30,3 +34,4 @@ runs:
         path: ${{ inputs.working-directory }}/build/libs
         retention-days: 1
         if-no-files-found: error
+      if: ${{ inputs.upload-artifacts }}
