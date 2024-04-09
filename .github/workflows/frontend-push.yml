@@ -5,6 +5,7 @@ on:
 env:
   # GENERAL
   FRONTEND_DIRECTORY: frontend
+  BACKEND_DIRECTORY: backend
   # NPM env
   NODE_VERSION: 20
   # DOCKER env
