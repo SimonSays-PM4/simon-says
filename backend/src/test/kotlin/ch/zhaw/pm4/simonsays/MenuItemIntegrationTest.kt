@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+/*@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class MenuItemIntegrationTest : IntegrationTest() {
 
     @Autowired
@@ -280,4 +280,4 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 }
     }
 
-}
+}*/

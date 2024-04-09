@@ -46,7 +46,7 @@ class IngredientTest {
     @Test
     fun `Test ingredient list`() {
         every { ingredientRepository.findAllByEventId(any()) } returns
-                listOf(Ingredient("Testingredient", 1, getEvent()), Ingredient("Testingredient2", 2, getEvent()))
+                listOf(Ingredient("Testingredient", 1, getEvent(), listOf()), Ingredient("Testingredient2", 2, getEvent(), listOf()))
 
         Assertions.assertEquals(
             listOf(IngredientDTO(1, "Testingredient"), IngredientDTO(2, "Testingredient2")),

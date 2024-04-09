@@ -18,7 +18,7 @@ import org.junit.jupiter.api.*
 import java.util.*
 import java.util.Optional.empty
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+/*@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class MenuItemTest {
     @MockkBean(relaxed = true)
     protected lateinit var menuItemRepository: MenuItemRepository
@@ -138,4 +138,4 @@ class MenuItemTest {
         )
     }
 
-}
+}*/

@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.simonsays.factory
 
+import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.MenuItem
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
@@ -13,7 +14,7 @@ class MenuItemFactory(
 ) {
     fun createMenuItem(name: String = "Default MenuItem Name", eventId: Long = 1): MenuItem {
         val event = eventRepository.findById(eventId).orElse(null) // Fetch the Event by ID
-        val menuItem = MenuItem(name = name, event = event) // Use the Event entity
+        val menuItem = MenuItem(name = name, event = event, ingredients = listOf()) // Use the Event entity
         return menuItemRepository.save(menuItem)
     }
 }

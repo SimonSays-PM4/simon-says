@@ -10,10 +10,10 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("rest-api/v1/menuItem")
+@RequestMapping("rest-api/v1/event/{eventId}/menuitem")
 class MenuItemController(private val menuItemService: MenuItemService) {
     @Operation(summary = "Read all menu items")
-    @GetMapping("{eventId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun getMenuItems(@PathVariable("eventId") eventId: Long): List<MenuItemDTO> {
         return  menuItemService.getMenuItems(eventId)
@@ -21,7 +21,7 @@ class MenuItemController(private val menuItemService: MenuItemService) {
     @Operation(summary = "Retrieve a single menu item")
     @GetMapping("{menuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun getMenuItem(@PathVariable("menuItemId") menuItemID: Long ): MenuItemDTO {
+    fun getMenuItem(@PathVariable("eventId") eventId: Long, @PathVariable("menuItemId") menuItemID: Long ): MenuItemDTO {
         return menuItemService.getMenuItem(menuItemID)
     }
     @Operation(summary = "Update/Create a menu item")

@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.simonsays.api.types
 
+import ch.zhaw.pm4.simonsays.entity.Ingredient
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.*
 import org.hibernate.validator.constraints.Length
@@ -21,5 +22,5 @@ class MenuItemCreateUpdateDTO(
 
     @NotNull(message = "Ingredient list must be provided")
     @Size(min = 1, message = "A menu item must have at least one ingredient")
-    val ingredientIds: List<Long>
+    val ingredients: List<IngredientDTO>
 ) {}

@@ -15,6 +15,9 @@ data class Ingredient(
 
     @ManyToOne
     @JoinColumn(name = "event_id")
-    val event: Event
+    val event: Event,
+
+    @ManyToMany(mappedBy = "ingredients")
+    val menuItems: List<MenuItem>?
 
 )

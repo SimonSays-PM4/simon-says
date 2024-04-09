@@ -5,7 +5,7 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 
 -- Schema for Users table
-CREATE TABLE IF NOT EXISTS event
+/*CREATE TABLE IF NOT EXISTS event
 (
     id       INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
@@ -27,13 +27,13 @@ CREATE TABLE IF NOT EXISTS ingredient
     name VARCHAR(255) NOT NULL UNIQUE,
     event_id INT NOT NULL,
     FOREIGN KEY (event_id) REFERENCES event (id)
-    );
+);*/
 
-CREATE TABLE IF NOT EXISTS menu_item_ingredients
+/*CREATE TABLE IF NOT EXISTS menu_item_ingredients
 (
     menu_item_id INT NOT NULL,
     FOREIGN KEY (menu_item_id) REFERENCES menu_item (id),
     ingredient_id INT NOT NULL,
     FOREIGN KEY (ingredient_id) REFERENCES ingredient (id)
-);
+);*/
 
