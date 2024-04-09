@@ -30,6 +30,7 @@ runs:
       shell: bash
       run: |-
         ./gradlew bootRun --args='--spring.profiles.active=dev' &
+        timeout=300; count=0; while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost:8080/v3/api-docs)" != "200" ]] && [[ $count -lt $timeout ]]; do sleep 1; count=$((count+1)); done; [[ $count -eq $timeout ]] && echo "Timed out waiting for 200 response" && exit 1; echo "API is up"
     - name: start frontend for cypress tests
       working-directory: ${{ inputs.working-directory }}
       shell: bash
