@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FieldValues } from "react-hook-form";
-import {eventService} from "../../api.ts";
-import {EventCreateUpdateDTO} from "../../gen/api";
+import { eventService } from "../../api.ts";
+import { EventCreateUpdateDTO } from "../../gen/api";
 
 type EventActions = {
     deleteEvent: () => void;
@@ -65,7 +65,7 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
                 .then((response) => {
                     setIsLoading(false);
                     if (response.status === 201 || response.status === 200) {
-                        navigate("/events");
+                        navigate("../events");
                     } else {
                         setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
                     }
@@ -83,7 +83,7 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
             setIsLoading(true);
             eventService.deleteEvent(eventId).then(() => {
                 setIsLoading(false);
-                navigate("/events");
+                navigate("../events");
             });
         }
     }, [id]);
