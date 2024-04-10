@@ -24,7 +24,6 @@ runs:
       uses: ./.github/actions/gradle-build
       with:
         working-directory: ${{ inputs.backend-working-directory }}
-
     - name: start backend database
       working-directory: ${{ inputs.backend-working-directory }}
       shell: bash
