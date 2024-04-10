@@ -225,7 +225,39 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test menu item update adding an ingredient`() {
+        val menuItem: MenuItem = menuItemFactory.createMenuItem("testmenuitem")
+        val secondIngredient: Ingredient = ingredientFactory.createIngredient()
+        val updateMenuItem = MenuItemCreateUpdateDTO(
+                menuItem.id,
+                testEvent.id,
+                "integrationtest",
+                listOf(
+                        ingredientMapper.mapToIngredientDTO(testIngredient),
+                        ingredientMapper.mapToIngredientDTO(secondIngredient)
+                )
+        )
+        val expectedReturn = MenuItemDTO(
+                menuItem.id!!,
+                testEvent.id!!,
+                "integrationtest",
+                listOf(
+                        ingredientMapper.mapToIngredientDTO(testIngredient),
+                        ingredientMapper.mapToIngredientDTO(secondIngredient)
+                )
+        )
 
+        mockMvc.put(getMenuItemUrl(1)) {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updateMenuItem)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { is2xxSuccessful() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedReturn))
+                    }
+                }
     }
 
     @Test
