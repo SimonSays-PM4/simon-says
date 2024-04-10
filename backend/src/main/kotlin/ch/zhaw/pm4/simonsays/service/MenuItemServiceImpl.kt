@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.simonsays.service
 
+import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapper
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
@@ -17,7 +18,9 @@ class MenuItemServiceImpl(
         private val menuItemRepository: MenuItemRepository,
         private val menuItemMapper: MenuItemMapper,
         private val eventService: EventService,
-        private val ingredientRepository: IngredientRepository
+        private val ingredientRepository: IngredientRepository,
+        private val ingredientMapper: IngredientMapper,
+        private val eventMapper: EventMapper
 ) : MenuItemService {
 
     override fun getMenuItems(eventId: Long): MutableList<MenuItemDTO> {
@@ -43,7 +46,7 @@ class MenuItemServiceImpl(
         println("Fetched event: ${event.id}")
 
         val ingredients = mutableListOf<Ingredient>()
-        menuItem.ingredients.forEach { ingredient ->
+        menuItem.ingredients!!.forEach { ingredient ->
             val ingredientToBeSaved = ingredientRepository.getReferenceById(ingredient.id)
             println("Fetched ingredient: $ingredient") // Log the entire object to inspect its state
             ingredients.add(ingredientToBeSaved)
@@ -83,6 +86,7 @@ class MenuItemServiceImpl(
         }
         menuItemToSave.name = menuItem.name!!
         menuItemToSave.event = eventService.getEventEntity(menuItem.eventId!!)
+        menuItemToSave.ingredients = menuItem.ingredients!!.map { ingredientDTO -> ingredientMapper.mapDTOtoIngredient(ingredientDTO, eventMapper.mapToEventDTO(menuItemToSave.event)) }
         return menuItemToSave
     }
 

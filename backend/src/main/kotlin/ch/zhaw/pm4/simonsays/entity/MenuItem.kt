@@ -18,5 +18,5 @@ data class MenuItem (
         var event: Event,
 
         @ManyToMany(fetch = FetchType.EAGER)
-        val ingredients: List<Ingredient>
+        var ingredients: List<Ingredient>
 )

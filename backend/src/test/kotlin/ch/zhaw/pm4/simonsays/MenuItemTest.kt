@@ -1,5 +1,7 @@
 package ch.zhaw.pm4.simonsays
 
+import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
+import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
@@ -32,7 +34,13 @@ class MenuItemTest {
     protected lateinit var eventService: EventService
 
     @MockkBean(relaxed = true)
+    protected lateinit var eventMapper: EventMapper
+
+    @MockkBean(relaxed = true)
     protected lateinit var ingredientRepository: IngredientRepository
+
+    @MockkBean(relaxed = true)
+    protected lateinit var ingredientMapper: IngredientMapper
 
     private lateinit var menuItemService: MenuItemService
 
@@ -78,7 +86,14 @@ class MenuItemTest {
         )
 
         // Construct the service with the mocked dependencies
-        menuItemService = MenuItemServiceImpl(menuItemRepository, MenuItemMapperImpl(), eventService, ingredientRepository)
+        menuItemService = MenuItemServiceImpl(
+                menuItemRepository,
+                MenuItemMapperImpl(),
+                eventService,
+                ingredientRepository,
+                ingredientMapper,
+                eventMapper
+        )
     }
 
     @Test

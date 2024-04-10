@@ -11,8 +11,11 @@ import org.mapstruct.*
 
 @Mapper(componentModel = "spring")
 interface MenuItemMapper {
-    @Mapping(target = "eventId", source = "event.id")
-    @Mapping(target = "ingredients") // Handle manually in after mapping
+    @Mappings(
+        Mapping(target = "eventId", source = "event.id"),
+        Mapping(target = "name", source = "menuItem.name"),
+        Mapping(target = "ingredients")
+    )
     fun mapToMenuItemDTO(menuItem: MenuItem): MenuItemDTO
 
     @Mappings(

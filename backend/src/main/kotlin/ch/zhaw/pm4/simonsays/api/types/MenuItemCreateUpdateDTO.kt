@@ -22,5 +22,5 @@ class MenuItemCreateUpdateDTO(
 
     @NotNull(message = "Ingredient list must be provided")
     @Size(min = 1, message = "A menu item must have at least one ingredient")
-    val ingredients: List<IngredientDTO>
+    val ingredients: List<IngredientDTO>?
 ) {}

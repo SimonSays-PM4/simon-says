@@ -11,6 +11,11 @@ import org.mapstruct.Mappings
 @Mapper(componentModel = "spring")
 interface IngredientMapper {
 
+    @Mappings(
+            Mapping(target = "id"),
+            Mapping(target = "name", source = "ingredient.name"),
+            Mapping(target= "event.ingredients", ignore = true)
+    )
     fun mapToIngredientDTO(ingredient: Ingredient): IngredientDTO
 
     @Mappings(

@@ -10,11 +10,15 @@ import org.springframework.stereotype.Component
 @Component
 class MenuItemFactory(
         @Autowired private val menuItemRepository: MenuItemRepository,
-        @Autowired private val eventRepository: EventRepository // Add EventRepository
+        @Autowired private val eventRepository: EventRepository
 ) {
-    fun createMenuItem(name: String = "Default MenuItem Name", eventId: Long = 1): MenuItem {
+    fun createMenuItem(
+            name: String = "Default MenuItem Name",
+            eventId: Long = 1,
+            ingredients: List<Ingredient> = listOf()
+    ): MenuItem {
         val event = eventRepository.findById(eventId).orElse(null) // Fetch the Event by ID
-        val menuItem = MenuItem(name = name, event = event, ingredients = listOf()) // Use the Event entity
+        val menuItem = MenuItem(name = name, event = event, ingredients = ingredients) // Use the Event entity
         return menuItemRepository.save(menuItem)
     }
 }
