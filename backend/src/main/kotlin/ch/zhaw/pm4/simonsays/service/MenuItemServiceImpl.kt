@@ -5,6 +5,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapper
 import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
+import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.MenuItem
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
@@ -52,7 +53,7 @@ class MenuItemServiceImpl(
 
         val menuItemToBeSaved = if (isUpdateOperation) {
             println("Preparing menuItem for update")
-            makeMenuItemReadyForUpdate(menuItem)
+            makeMenuItemReadyForUpdate(menuItem, ingredients)
         } else {
             println("Mapping DTO to new menuItem entity")
             menuItemMapper.mapCreateDTOToMenuItem(menuItem, event, ingredients)
@@ -72,14 +73,13 @@ class MenuItemServiceImpl(
     }
 
 
-    private fun makeMenuItemReadyForUpdate(menuItem: MenuItemCreateUpdateDTO): MenuItem {
+    private fun makeMenuItemReadyForUpdate(menuItem: MenuItemCreateUpdateDTO, ingredients: List<Ingredient>): MenuItem {
         val menuItemToSave = menuItemRepository.findById(menuItem.id!!).orElseThrow {
             ResourceNotFoundException("Menu item not found with ID: ${menuItem.id}")
         }
         menuItemToSave.name = menuItem.name!!
         menuItemToSave.event = eventService.getEventEntity(menuItem.eventId!!)
-        menuItemToSave.ingredients = menuItem.ingredients!!.map {
-            ingredientDTO -> ingredientMapper.mapDTOtoIngredient(ingredientService.getIngredient(ingredientDTO.id, menuItemToSave.event.id!!), eventMapper.mapToEventDTO(menuItemToSave.event)) }
+        menuItemToSave.ingredients = ingredients
         return menuItemToSave
     }
 
