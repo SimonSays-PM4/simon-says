@@ -14,6 +14,7 @@ import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
 import ch.zhaw.pm4.simonsays.service.EventService
+import ch.zhaw.pm4.simonsays.service.IngredientService
 import ch.zhaw.pm4.simonsays.service.MenuItemService
 import ch.zhaw.pm4.simonsays.service.MenuItemServiceImpl
 import com.ninjasquad.springmockk.MockkBean
@@ -42,6 +43,9 @@ class MenuItemTest {
     @MockkBean(relaxed = true)
     protected lateinit var ingredientMapper: IngredientMapper
 
+    @MockkBean(relaxed = true)
+    protected lateinit var ingredientService: IngredientService
+
     private lateinit var menuItemService: MenuItemService
 
     private lateinit var mockEvent: Event
@@ -55,6 +59,7 @@ class MenuItemTest {
         eventService = mockk(relaxed = true)
         ingredientRepository = mockk(relaxed = true)
         ingredientMapper = mockk(relaxed = true)
+        ingredientService = mockk(relaxed = true)
         eventMapper = mockk(relaxed = true)
 
         // Stubbing
@@ -92,6 +97,7 @@ class MenuItemTest {
                 menuItemRepository,
                 MenuItemMapperImpl(),
                 eventService,
+                ingredientService,
                 ingredientRepository,
                 ingredientMapper,
                 eventMapper

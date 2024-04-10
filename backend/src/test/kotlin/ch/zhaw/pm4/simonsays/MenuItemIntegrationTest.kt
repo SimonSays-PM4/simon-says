@@ -51,7 +51,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @BeforeEach
     fun setUp() {
         testEvent = eventFactory.createEvent("Test Event Name", "TestEventPassword", 10)
-        testIngredient = ingredientFactory.createIngredient()
+        testIngredient = ingredientFactory.createIngredient("Default Ingredient Name")
     }
 
     @Test
@@ -263,7 +263,44 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `test menu item update removing an ingredient`() {
+        val secondIngredient: Ingredient = ingredientFactory.createIngredient()
+        val menuItem: MenuItem = menuItemFactory.createMenuItem(
+                "testmenuitem",
+                testEvent.id!!,
+                listOf(
+                    testIngredient,
+                    secondIngredient
+                )
+        )
+        val updateMenuItem = MenuItemCreateUpdateDTO(
+                menuItem.id,
+                testEvent.id,
+                "integrationtest",
+                listOf(
+                        ingredientMapper.mapToIngredientDTO(testIngredient),
+                )
+        )
+        val expectedReturn = MenuItemDTO(
+                menuItem.id!!,
+                testEvent.id!!,
+                "integrationtest",
+                listOf(
+                        ingredientMapper.mapToIngredientDTO(testIngredient),
+                )
+        )
 
+        mockMvc.put(getMenuItemUrl(1)) {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updateMenuItem)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { is2xxSuccessful() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedReturn))
+                    }
+                }
     }
 
     @Test
@@ -315,6 +352,19 @@ class MenuItemIntegrationTest : IntegrationTest() {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
                     }
+                }
+    }
+
+    @Test
+    @Transactional
+    fun `Delete menu item should succeed`() {
+        val menuitem: MenuItem = menuItemFactory.createMenuItem("testitem")
+        mockMvc.delete("${getMenuItemUrl(1)}/${menuitem.id}") {
+            contentType = MediaType.APPLICATION_JSON
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { is2xxSuccessful() }
                 }
     }
 

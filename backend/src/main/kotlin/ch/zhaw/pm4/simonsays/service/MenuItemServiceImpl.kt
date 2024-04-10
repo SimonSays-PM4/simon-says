@@ -16,6 +16,7 @@ class MenuItemServiceImpl(
         private val menuItemRepository: MenuItemRepository,
         private val menuItemMapper: MenuItemMapper,
         private val eventService: EventService,
+        private val ingredientService: IngredientService,
         private val ingredientRepository: IngredientRepository,
         private val ingredientMapper: IngredientMapper,
         private val eventMapper: EventMapper
@@ -77,7 +78,8 @@ class MenuItemServiceImpl(
         }
         menuItemToSave.name = menuItem.name!!
         menuItemToSave.event = eventService.getEventEntity(menuItem.eventId!!)
-        menuItemToSave.ingredients = menuItem.ingredients!!.map { ingredientDTO -> ingredientMapper.mapDTOtoIngredient(ingredientDTO, eventMapper.mapToEventDTO(menuItemToSave.event)) }
+        menuItemToSave.ingredients = menuItem.ingredients!!.map {
+            ingredientDTO -> ingredientMapper.mapDTOtoIngredient(ingredientService.getIngredient(ingredientDTO.id, menuItemToSave.event.id!!), eventMapper.mapToEventDTO(menuItemToSave.event)) }
         return menuItemToSave
     }
 
