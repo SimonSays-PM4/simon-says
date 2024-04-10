@@ -54,6 +54,8 @@ class MenuItemTest {
         menuItemRepository = mockk(relaxed = true)
         eventService = mockk(relaxed = true)
         ingredientRepository = mockk(relaxed = true)
+        ingredientMapper = mockk(relaxed = true)
+        eventMapper = mockk(relaxed = true)
 
         // Stubbing
         every { eventService.getEvent(any()) } returns EventDTO(
