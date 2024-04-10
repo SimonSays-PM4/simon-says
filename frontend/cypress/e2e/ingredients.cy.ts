@@ -57,13 +57,10 @@ describe("Ingredient CRUD", () => {
         cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
 
         cy.wait(500); // wait for the popup to close
-
-        cy.get("table").should("exist");
-        cy.get("table tr").find("td:first-child").contains("Test-Updated-Ingredient").should("not.exist");
     });
 
     it("should not load newly created ingredient anymore", () => {
         cy.get("table").should("exist");
-        cy.get("table tr").find("td:first-child").contains("Test-Updated-Ingredient").should("not.exist");
+        cy.get("table").find("tr", "Test-Updated-Ingredient").should("not.exist");
     });
 });
