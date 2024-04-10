@@ -1,11 +1,8 @@
 package ch.zhaw.pm4.simonsays.service
 
-import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapper
-import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
-import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.MenuItem
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
@@ -14,10 +11,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class MenuItemServiceImpl(
-        private val menuItemRepository: MenuItemRepository,
-        private val menuItemMapper: MenuItemMapper,
-        private val eventService: EventService,
-        private val ingredientRepository: IngredientRepository
+    private val menuItemRepository: MenuItemRepository,
+    private val menuItemMapper: MenuItemMapper,
+    private val eventService: EventService,
+    private val ingredientRepository: IngredientRepository
 ) : MenuItemService {
 
     override fun getMenuItems(eventId: Long): MutableList<MenuItemDTO> {
@@ -30,7 +27,7 @@ class MenuItemServiceImpl(
 
     override fun getMenuItem(menuItemId: Long): MenuItemDTO {
         val menuItem = menuItemRepository.findById(menuItemId)
-                .orElseThrow { ResourceNotFoundException("Menu item not found with ID: $menuItemId") }
+            .orElseThrow { ResourceNotFoundException("Menu item not found with ID: $menuItemId") }
         return menuItemMapper.mapToMenuItemDTO(menuItem)
     }
 
@@ -42,13 +39,8 @@ class MenuItemServiceImpl(
         val event = eventService.getEvent(menuItem.eventId!!)
         println("Fetched event: ${event.id}")
 
-        val ingredients = mutableListOf<Ingredient>()
-        menuItem.ingredients.forEach { ingredient ->
-            val ingredientToBeSaved = ingredientRepository.getReferenceById(ingredient.id)
-            println("Fetched ingredient: $ingredient") // Log the entire object to inspect its state
-            ingredients.add(ingredientToBeSaved)
-            println("Current ingredients list size: ${ingredients.size}") // Check size after each addition
-        }
+        val ingredients = ingredientRepository.findByIdIn(menuItem.ingredients.map { it.id.toInt() })
+
 
         // Determine whether this is a creation or update operation
         val isUpdateOperation = menuItem.id != null
@@ -59,7 +51,6 @@ class MenuItemServiceImpl(
             makeMenuItemReadyForUpdate(menuItem)
         } else {
             println("Mapping DTO to new menuItem entity")
-            //menuItemMapper.mapCreateDTOToMenuItem(menuItem, event, menuItem.ingredients.map { ingredientDTO -> ingredientMapper.mapDTOtoIngredient(ingredientDTO, event) })
             menuItemMapper.mapCreateDTOToMenuItem(menuItem, event, ingredients)
         }
 
