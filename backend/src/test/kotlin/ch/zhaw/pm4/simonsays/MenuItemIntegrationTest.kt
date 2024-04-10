@@ -160,7 +160,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 listOf(ingredientMapper.mapToIngredientDTO(testIngredient))
         )
 
-        mockMvc.get("${getMenuItemUrl(1)}/${menuItem.id}")
+        mockMvc.get("${getMenuItemUrl(testEvent.id!!)}/${menuItem.id}")
                 .andDo { print() }
                 .andExpect {
                     status { is2xxSuccessful() }
@@ -382,7 +382,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 "Event not found with ID: ${arbitraryId}",
                 null
         )
-        mockMvc.put(getMenuItemUrl(1)) {
+        mockMvc.put(getMenuItemUrl(arbitraryId)) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(menuItem)
         }

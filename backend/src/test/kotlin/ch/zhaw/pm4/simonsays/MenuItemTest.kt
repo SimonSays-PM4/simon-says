@@ -21,8 +21,6 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.*
-import org.mockito.Mock
-import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 import java.util.Optional.empty
 
@@ -138,12 +136,12 @@ class MenuItemTest {
                 listOf(
                     mockIngredientDTO
                 )
-        ), menuItemService.createUpdateMenuItem(menuItemCreateUpdateDto))
+        ), menuItemService.createUpdateMenuItem(menuItemCreateUpdateDto, mockEvent.id!!))
     }
 
     @Test
     fun `Test menu item fetching`() {
-        every { menuItemRepository.findByEventId(mockEvent.id!!) } returns mutableListOf(
+        every { menuItemRepository.findAllByEventId(mockEvent.id!!) } returns mutableListOf(
                 MenuItem(
                         3,
                         "password",
@@ -161,13 +159,13 @@ class MenuItemTest {
                         )
                 )
         )
-        val menuItems: List<MenuItemDTO> = menuItemService.getMenuItems(mockEvent.id!!)
+        val menuItems: List<MenuItemDTO> = menuItemService.listMenuItems(mockEvent.id!!)
         Assertions.assertEquals(2, menuItems.count())
     }
 
     @Test
     fun `Test menu item get`() {
-        every { menuItemRepository.findById(1) } returns Optional.of(MenuItem(
+        every { menuItemRepository.findByIdAndEventId(1, mockEvent.id!!) } returns Optional.of(MenuItem(
                 1,
                 "testeventpassword",
                 mockEvent,
@@ -178,27 +176,27 @@ class MenuItemTest {
         Assertions.assertEquals(
                 MenuItemDTO(
                         1,
-                        1,
+                        mockEvent.id!!,
                         "testeventpassword",
                         listOf(
                                 mockIngredientDTO
                         )
-                ), menuItemService.getMenuItem(1))
+                ), menuItemService.getMenuItem(1, mockEvent.id!!))
     }
 
     @Test
     fun `Test menu item got not found`() {
-        every { menuItemRepository.findById(any()) } returns empty()
+        every { menuItemRepository.findByIdAndEventId(any(), any()) } returns empty()
         Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
-                { menuItemService.getMenuItem(1) },
+                { menuItemService.getMenuItem(1, mockEvent.id!!) },
                 "Menu item not found with ID: 1"
         )
     }
 
     @Test
     fun `Test menu item deletion`() {
-        every { menuItemRepository.findById(1) } returns Optional.of(MenuItem(
+        every { menuItemRepository.findByIdAndEventId(1, mockEvent.id!!) } returns Optional.of(MenuItem(
                 3,
                 "testeventpassword",
                 mockEvent,
@@ -207,15 +205,15 @@ class MenuItemTest {
                 )
         ))
         Assertions.assertEquals(
-                Unit, menuItemService.deleteMenuItem(1))
+                Unit, menuItemService.deleteMenuItem(1, mockEvent.id!!))
     }
 
     @Test
     fun `Test menu item deletion not found`() {
-        every { menuItemRepository.findById(any()) } returns empty()
+        every { menuItemRepository.findByIdAndEventId(any(), any()) } returns empty()
         Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
-                { menuItemService.getMenuItem(1) },
+                { menuItemService.getMenuItem(1, mockEvent.id!!) },
                 "Menu item not found with ID: 1"
         )
     }

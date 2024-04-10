@@ -23,53 +23,31 @@ class MenuItemServiceImpl(
         private val eventMapper: EventMapper
 ) : MenuItemService {
 
-    override fun getMenuItems(eventId: Long): MutableList<MenuItemDTO> {
-        val menuItems: List<MenuItem> = menuItemRepository.findByEventId(eventId)
+    override fun listMenuItems(eventId: Long): MutableList<MenuItemDTO> {
+        val menuItems: List<MenuItem> = menuItemRepository.findAllByEventId(eventId)
         val menuItemDTOs: MutableList<MenuItemDTO> = menuItems.map { menuItem ->
             menuItemMapper.mapToMenuItemDTO(menuItem)
         }.toMutableList()
         return menuItemDTOs
     }
 
-    override fun getMenuItem(menuItemId: Long): MenuItemDTO {
-        val menuItem = menuItemRepository.findById(menuItemId)
+    override fun getMenuItem(menuItemId: Long, eventId: Long): MenuItemDTO {
+        val menuItem = menuItemRepository.findByIdAndEventId(menuItemId, eventId)
             .orElseThrow { ResourceNotFoundException("Menu item not found with ID: $menuItemId") }
         return menuItemMapper.mapToMenuItemDTO(menuItem)
     }
 
-    override fun createUpdateMenuItem(menuItem: MenuItemCreateUpdateDTO): MenuItemDTO {
-        // Log the start of the operation and the input DTO
-        println("Starting createUpdateMenuItem with DTO: $menuItem")
-
-        // Fetching the event based on the eventId
-        val event = eventService.getEvent(menuItem.eventId!!)
-        println("Fetched event: ${event.id}")
-
+    override fun createUpdateMenuItem(menuItem: MenuItemCreateUpdateDTO, eventId: Long): MenuItemDTO {
+        val event = eventService.getEvent(eventId)
         val ingredients = ingredientRepository.findByIdIn(menuItem.ingredients!!.map { it.id.toInt() })
-
-        // Determine whether this is a creation or update operation
         val isUpdateOperation = menuItem.id != null
-        println("Is update operation: $isUpdateOperation")
-
         val menuItemToBeSaved = if (isUpdateOperation) {
-            println("Preparing menuItem for update")
             makeMenuItemReadyForUpdate(menuItem, ingredients)
         } else {
-            println("Mapping DTO to new menuItem entity")
             menuItemMapper.mapCreateDTOToMenuItem(menuItem, event, ingredients)
         }
-
-        // Log the menuItem entity about to be saved
-        println("Saving menuItem: ${menuItemToBeSaved.id ?: "new"}")
         val savedMenuItem = menuItemRepository.save(menuItemToBeSaved)
-
-        // Log the result of the save operation
-        println("Saved menuItem with ID: ${savedMenuItem.id}")
-
-        // Map the saved entity to a DTO to return
-        return menuItemMapper.mapToMenuItemDTO(savedMenuItem).also {
-            println("Returning menuItemDTO with ID: ${it.id}")
-        }
+        return menuItemMapper.mapToMenuItemDTO(savedMenuItem)
     }
 
 
@@ -83,8 +61,8 @@ class MenuItemServiceImpl(
         return menuItemToSave
     }
 
-    override fun deleteMenuItem(menuItemId: Long) {
-        val menuItem = menuItemRepository.findById(menuItemId).orElseThrow {
+    override fun deleteMenuItem(menuItemId: Long, eventId: Long) {
+        val menuItem = menuItemRepository.findByIdAndEventId(menuItemId, eventId).orElseThrow {
             ResourceNotFoundException("Menu item not found with ID: $menuItemId")
         }
         menuItemRepository.delete(menuItem)

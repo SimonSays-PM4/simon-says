@@ -4,8 +4,8 @@ import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
 
 interface MenuItemService {
-    fun getMenuItems(eventId: Long): List<MenuItemDTO>
-    fun getMenuItem(menuItemId: Long): MenuItemDTO
-    fun createUpdateMenuItem(menuItem: MenuItemCreateUpdateDTO): MenuItemDTO
-    fun deleteMenuItem(menuItemId: Long)
+    fun listMenuItems(eventId: Long): List<MenuItemDTO>
+    fun getMenuItem(menuItemId: Long, eventId: Long): MenuItemDTO
+    fun createUpdateMenuItem(menuItem: MenuItemCreateUpdateDTO, eventId: Long): MenuItemDTO
+    fun deleteMenuItem(menuItemId: Long, eventId: Long)
 }

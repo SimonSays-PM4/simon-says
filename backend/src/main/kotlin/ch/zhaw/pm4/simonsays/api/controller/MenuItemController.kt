@@ -16,24 +16,24 @@ class MenuItemController(private val menuItemService: MenuItemService) {
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun getMenuItems(@PathVariable("eventId") eventId: Long): List<MenuItemDTO> {
-        return  menuItemService.getMenuItems(eventId)
+        return  menuItemService.listMenuItems(eventId)
     }
     @Operation(summary = "Retrieve a single menu item")
     @GetMapping("{menuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun getMenuItem(@PathVariable("eventId") eventId: Long, @PathVariable("menuItemId") menuItemID: Long ): MenuItemDTO {
-        return menuItemService.getMenuItem(menuItemID)
+        return menuItemService.getMenuItem(menuItemID, eventId)
     }
     @Operation(summary = "Update/Create a menu item")
     @PutMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun putMenuItem(@Valid @RequestBody request: MenuItemCreateUpdateDTO): MenuItemDTO {
-        return menuItemService.createUpdateMenuItem(request)
+    fun putMenuItem(@PathVariable("eventId") eventId: Long, @Valid @RequestBody request: MenuItemCreateUpdateDTO): MenuItemDTO {
+        return menuItemService.createUpdateMenuItem(request, eventId)
     }
     @Operation(summary = "Delete a menu item")
     @DeleteMapping("{menuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun deleteMenuItem(@PathVariable("menuItemId") menuItemId: Long) {
-        menuItemService.deleteMenuItem(menuItemId)
+    fun deleteMenuItem(@PathVariable("eventId") eventId: Long, @PathVariable("menuItemId") menuItemId: Long) {
+        menuItemService.deleteMenuItem(menuItemId,eventId)
     }
 }
