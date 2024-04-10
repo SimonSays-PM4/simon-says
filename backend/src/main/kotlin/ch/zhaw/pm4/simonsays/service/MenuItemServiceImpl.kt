@@ -17,8 +17,6 @@ class MenuItemServiceImpl(
         private val menuItemRepository: MenuItemRepository,
         private val menuItemMapper: MenuItemMapper,
         private val eventService: EventService,
-        private val ingredientMapper: IngredientMapper,
-        private val ingredientService: IngredientService,
         private val ingredientRepository: IngredientRepository
 ) : MenuItemService {
 

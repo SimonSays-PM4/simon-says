@@ -13,10 +13,10 @@ data class MenuItem (
         @Column(nullable = false)
         var name: String,
 
-        @ManyToMany(fetch = FetchType.EAGER)
-        val ingredients: List<Ingredient>,
-
         @ManyToOne(optional = false)
         @JoinColumn(name = "event_id", nullable = false)
-        var event: Event
+        var event: Event,
+
+        @ManyToMany(fetch = FetchType.EAGER)
+        val ingredients: List<Ingredient>
 )
