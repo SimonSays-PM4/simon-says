@@ -43,8 +43,7 @@ class MenuItemServiceImpl(
         val event = eventService.getEvent(menuItem.eventId!!)
         println("Fetched event: ${event.id}")
 
-        val ingredients = ingredientRepository.findByIdIn(menuItem.ingredients.map { it.id.toInt() })
-
+        val ingredients = ingredientRepository.findByIdIn(menuItem.ingredients!!.map { it.id.toInt() })
 
         // Determine whether this is a creation or update operation
         val isUpdateOperation = menuItem.id != null
