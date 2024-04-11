@@ -17,7 +17,6 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
-import java.util.*
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
@@ -160,7 +159,7 @@ class EventIntegrationTest : IntegrationTest() {
         // Since the response is expected to be an array, wrap the expected DTO in a list
         val expectedJson = EventDTO("test", "test", 0, event.id)
 
-        mockMvc.get("/rest-api/v1/event/${event.id}"){
+        mockMvc.get("/rest-api/v1/event/${event.id}") {
             with(httpBasic(username, password))
         }
             .andDo { print() }
@@ -182,7 +181,7 @@ class EventIntegrationTest : IntegrationTest() {
             null
         )
 
-        mockMvc.get("/rest-api/v1/event/${arbitraryId}"){
+        mockMvc.get("/rest-api/v1/event/${arbitraryId}") {
             with(httpBasic(username, password))
         }
             .andDo { print() }
