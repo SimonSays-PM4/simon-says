@@ -4,5 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "application")
 class ApplicationProperties (
-    val url: String
+    val url: String,
+    val adminToken : String
 )

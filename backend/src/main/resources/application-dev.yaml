@@ -14,3 +14,4 @@ spring:
 debug: on
 application:
   url: "http://localhost:3000"
+  adminToken: "admin123"
