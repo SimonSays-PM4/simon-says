@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+// @ts-ignore
 import colors from "tailwindcss/colors";
 import { createThemes } from "tw-colors";
 

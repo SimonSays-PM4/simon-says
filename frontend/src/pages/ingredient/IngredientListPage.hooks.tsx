@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
-import { IngredientControllerApi, IngredientDTO } from "../../gen/api";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { EventContext } from "../../providers/EventContext";
+import { ingredientService } from "../../api";
+import { IngredientDTO } from "../../gen/api";
 
 type IngredientActions = {
     deleteIngredient: () => void,
@@ -15,12 +17,11 @@ type IngredientListPageReturnProps = {
 };
 
 export const useIngredientListPage = (): IngredientListPageReturnProps => {
+    const { eventId } = useContext(EventContext);
     const [ingredientToDelete, setIngredientToDelete] = useState<IngredientDTO>({ id: 0, name: "" });
     const [isLoading, setIsLoading] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [data, setData] = useState<IngredientDTO[]>([]);
-
-    const ingredientControllerApi = new IngredientControllerApi();
 
     useEffect(() => {
         if (!showDeletePopup) {
@@ -31,7 +32,7 @@ export const useIngredientListPage = (): IngredientListPageReturnProps => {
     const reloadIngredients = useCallback(() => {
         try {
             setIsLoading(true);
-            ingredientControllerApi.listIngredients().then((response) => {
+            ingredientService.listIngredients(eventId).then((response) => {
                 setData(response.data);
             });
         }
@@ -48,7 +49,7 @@ export const useIngredientListPage = (): IngredientListPageReturnProps => {
             if (ingredientToDelete.id && ingredientToDelete.id > 0) {
                 setIsLoading(true);
 
-                ingredientControllerApi.deleteIngredient(ingredientToDelete.id).then(() => {
+                ingredientService.deleteIngredient(ingredientToDelete.id, eventId).then(() => {
                     setShowDeletePopup(false);
                 });
             }
