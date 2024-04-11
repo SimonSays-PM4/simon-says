@@ -9,11 +9,6 @@ class MenuItemCreateUpdateDTO(
     @field:Schema(description = "ID for the event")
     val id: Long?,
 
-    @field:Schema(description = "Event Id, must be provided")
-    @field:NotNull(message = "Please provide an Event Id") // Ensure the eventId is not null
-    @field:Min(value = 1, message = "Provide a valid Event Id") // Ensure eventId is greater than 0
-    val eventId: Long?,
-
     @field:Schema(description = "Name for the Menu Item")
     @field:NotBlank(message = "Menu item name must be provided")
     @field:NotEmpty(message = "Menu item name must be provided")
