@@ -1,10 +1,9 @@
 package ch.zhaw.pm4.simonsays
 
+import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
-import org.junit.jupiter.api.MethodOrderer
-import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestMethodOrder
+import jakarta.transaction.Transactional
+import org.junit.jupiter.api.*
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
@@ -16,10 +15,18 @@ class IngredientIntegrationTest : IntegrationTest() {
     private fun getIngredientsUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/ingredient"
 
     private fun getIngredientUrl(eventId: Long, ingredientId: Long) = "${getIngredientsUrl(eventId)}/${ingredientId}"
+
+    private lateinit var globalEvent: Event
+
+    @BeforeEach
+    fun setup() {
+        globalEvent = eventFactory.createEvent()
+    }
+
     @Test
-    fun `should throw validation error`() {
-        // when/then
-        mockMvc.put(getIngredientsUrl(1)) {
+    @Transactional
+    fun `should throw validation error no name`() {
+        mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(createUpdateIngredientDTO(null, null))
         }
@@ -28,15 +35,44 @@ class IngredientIntegrationTest : IntegrationTest() {
                 status { isBadRequest() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
-                    objectMapper.writeValueAsString(ErrorMessageModel(400, "Validation failed", mapOf("name" to "Ingredient name must be provided")))
+                    objectMapper.writeValueAsString(
+                        ErrorMessageModel(
+                            400,
+                            "Validation failed",
+                            mapOf("name" to "Ingredient name must be provided")
+                        )
+                    )
                 }
             }
     }
 
     @Test
+    @Transactional
+    fun `should throw validation error too long name`() {
+        mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(createUpdateIngredientDTO(null, "a".repeat(65)))
+        }
+            .andDo { print() }
+            .andExpect {
+                status { isBadRequest() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    objectMapper.writeValueAsString(
+                        ErrorMessageModel(
+                            400,
+                            "Validation failed",
+                            mapOf("name" to "Ingredient name must be between 3 and 64 chars long")
+                        )
+                    )
+                }
+            }
+    }
+
+    @Test
+    @Transactional
     fun `should get ingredient not found`() {
-        // when/then
-        mockMvc.get(getIngredientUrl(1, 404))
+        mockMvc.get(getIngredientUrl(globalEvent.id!!, 404))
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
@@ -48,12 +84,12 @@ class IngredientIntegrationTest : IntegrationTest() {
     }
 
     @Test
+    @Transactional
     @Order(1)
     fun `should add new ingredient`() {
         val ingredient = createUpdateIngredientDTO()
         val ingredientDTO = getIngredient1DTO()
-        // when/then
-        mockMvc.put(getIngredientsUrl(1)) {
+        mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(ingredient)
         }
@@ -68,11 +104,12 @@ class IngredientIntegrationTest : IntegrationTest() {
     }
 
     @Test
-    @Order(2)
+    @Transactional
     fun `should list ingredients`() {
-        val ingredientDTOs = listOf(getIngredient1DTO())
+        val ingredient = ingredientFactory.createIngredient(name = getIngredient1DTO().name)
+        val ingredientDTOs = listOf(getIngredient1DTO(id = ingredient.id!!))
         // when/then
-        mockMvc.get(getIngredientsUrl(1))
+        mockMvc.get(getIngredientsUrl(ingredient.event.id!!))
             .andDo { print() }
             .andExpect {
                 status { isOk() }
@@ -84,11 +121,12 @@ class IngredientIntegrationTest : IntegrationTest() {
     }
 
     @Test
-    @Order(2)
+    @Transactional
     fun `should get ingredient`() {
-        val ingredientDTO = getIngredient1DTO()
-        // when/then
-        mockMvc.get(getIngredientUrl(1, 1))
+        val ingredient = ingredientFactory.createIngredient(name = getIngredient1DTO().name)
+        val ingredientDTO = getIngredient1DTO(id = ingredient.id!!)
+
+        mockMvc.get(getIngredientUrl(ingredient.event.id!!, ingredient.id!!))
             .andDo { print() }
             .andExpect {
                 status { isOk() }
@@ -100,10 +138,10 @@ class IngredientIntegrationTest : IntegrationTest() {
     }
 
     @Test
-    @Order(3)
+    @Transactional
     fun `should delete ingredient`() {
-        // when/then
-        mockMvc.delete(getIngredientUrl(1, 1))
+        val ingredient = ingredientFactory.createIngredient(name = getIngredient1DTO().name)
+        mockMvc.delete(getIngredientUrl(ingredient.event.id!!, ingredient.id!!))
             .andDo { print() }
             .andExpect {
                 status { isNoContent() }
