@@ -15,10 +15,22 @@ export const LoginPage: React.FC = () => {
         handleSubmit,
     } = useForm();
 
+    const isLocalUrl = (url: string): boolean => {
+        // A local URL should start with '/' and not contain '://'
+        return url.startsWith('/') && !url.includes('://');
+    }
+
     const onSubmit = (data: FieldValues) => {
-        console.log(data);
         setLoginInfo(new LoginInfo(true, "Test-User"));
-        navigate("/");
+        const searchParams = new URLSearchParams(location.search);
+        const returnUrl = searchParams.get('returnUrl');
+
+        if (returnUrl && isLocalUrl(returnUrl)) {
+            navigate(returnUrl);
+        }
+        else {
+            navigate("/");
+        }
     }
 
     return (
