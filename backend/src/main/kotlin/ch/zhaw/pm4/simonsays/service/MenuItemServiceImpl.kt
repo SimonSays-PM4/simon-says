@@ -17,10 +17,7 @@ class MenuItemServiceImpl(
         private val menuItemRepository: MenuItemRepository,
         private val menuItemMapper: MenuItemMapper,
         private val eventService: EventService,
-        private val ingredientService: IngredientService,
         private val ingredientRepository: IngredientRepository,
-        private val ingredientMapper: IngredientMapper,
-        private val eventMapper: EventMapper
 ) : MenuItemService {
 
     override fun listMenuItems(eventId: Long): MutableList<MenuItemDTO> {
@@ -42,7 +39,7 @@ class MenuItemServiceImpl(
         val ingredients = ingredientRepository.findByIdIn(menuItem.ingredients!!.map { it.id.toInt() })
         val isUpdateOperation = menuItem.id != null
         val menuItemToBeSaved = if (isUpdateOperation) {
-            makeMenuItemReadyForUpdate(menuItem, ingredients)
+            makeMenuItemReadyForUpdate(menuItem, eventId, ingredients)
         } else {
             menuItemMapper.mapCreateDTOToMenuItem(menuItem, event, ingredients)
         }
@@ -51,12 +48,12 @@ class MenuItemServiceImpl(
     }
 
 
-    private fun makeMenuItemReadyForUpdate(menuItem: MenuItemCreateUpdateDTO, ingredients: List<Ingredient>): MenuItem {
+    private fun makeMenuItemReadyForUpdate(menuItem: MenuItemCreateUpdateDTO, eventId: Long, ingredients: List<Ingredient>): MenuItem {
         val menuItemToSave = menuItemRepository.findById(menuItem.id!!).orElseThrow {
             ResourceNotFoundException("Menu item not found with ID: ${menuItem.id}")
         }
         menuItemToSave.name = menuItem.name!!
-        menuItemToSave.event = eventService.getEventEntity(menuItem.eventId!!)
+        menuItemToSave.event = eventService.getEventEntity(eventId)
         menuItemToSave.ingredients = ingredients
         return menuItemToSave
     }

@@ -1,9 +1,6 @@
 package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
-import ch.zhaw.pm4.simonsays.api.types.EventCreateUpdateDTO
-import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
-import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.MenuItem
@@ -57,12 +54,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test menu item creation should work with correct input`() {
-        val menuItem = MenuItemCreateUpdateDTO(
-                null,
-                testEvent.id!!,
-                "testmenuitemname",
-                listOf(ingredientMapper.mapToIngredientDTO(testIngredient))
-        )
+        val menuItem = getCreateUpdateMenuItemDTO()
         mockMvc.put(getMenuItemUrl(1)) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(menuItem)
@@ -72,7 +64,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                     status { is2xxSuccessful() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        jsonPath("$.name", equalTo("testmenuitemname"))
+                        jsonPath("$.name", equalTo(getCreateUpdateMenuItemDTO().name))
                     }
                 }
     }
@@ -80,7 +72,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test menu item creation should fail if menu item name is missing`() {
-        val menuItem = MenuItemCreateUpdateDTO(null, null, null, null)
+        val menuItem = getCreateUpdateMenuItemDTO(null, null, null)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
@@ -104,12 +96,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test menuitem creation should fail and display all errors`() {
-        val menuItem = MenuItemCreateUpdateDTO(
-                null,
-                testEvent.id,
-                tooLongMenuItemName,
-                listOf(ingredientMapper.mapToIngredientDTO(testIngredient))
-        )
+        val menuItem = getCreateUpdateMenuItemDTO(null, tooLongMenuItemName, listOf(getIngredient1DTO()))
         val menuItemDTO = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
@@ -152,13 +139,8 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test retrieve menu item`() {
-        val menuItem: MenuItem = menuItemFactory.createMenuItem("testmenuitem", testEvent.id!!, listOf(testIngredient))
-        val expectedJson = MenuItemDTO(
-                menuItem.id!!,
-                testEvent.id!!,
-                "testmenuitem",
-                listOf(ingredientMapper.mapToIngredientDTO(testIngredient))
-        )
+        val menuItem: MenuItem = menuItemFactory.createMenuItem("MenuItem Test", testEvent.id!!, listOf(testIngredient))
+        val expectedJson = getMenuItemDTO(ingredientDTOs = listOf(getIngredient1DTO(testIngredient.id, testIngredient.name)))
 
         mockMvc.get("${getMenuItemUrl(testEvent.id!!)}/${menuItem.id}")
                 .andDo { print() }
@@ -194,19 +176,9 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test update menu item`() {
-        val menuItem: MenuItem = menuItemFactory.createMenuItem("testmenuitem")
-        val updateMenuItem = MenuItemCreateUpdateDTO(
-                menuItem.id,
-                testEvent.id,
-                "integrationtest",
-                listOf(ingredientMapper.mapToIngredientDTO(testIngredient))
-        )
-        val expectedReturn = MenuItemDTO(
-                menuItem.id!!,
-                testEvent.id!!,
-                "integrationtest",
-                listOf(ingredientMapper.mapToIngredientDTO(testIngredient))
-        )
+        val menuItem: MenuItem = menuItemFactory.createMenuItem()
+        val updateMenuItem = getCreateUpdateMenuItemDTO(menuItem.id, "integrationtest", listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
+        val expectedReturn = getMenuItemDTO(menuItem.id!!, "integrationtest", listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
 
         mockMvc.put(getMenuItemUrl(1)) {
             contentType = MediaType.APPLICATION_JSON
@@ -227,18 +199,16 @@ class MenuItemIntegrationTest : IntegrationTest() {
     fun `Test menu item update adding an ingredient`() {
         val menuItem: MenuItem = menuItemFactory.createMenuItem("testmenuitem")
         val secondIngredient: Ingredient = ingredientFactory.createIngredient()
-        val updateMenuItem = MenuItemCreateUpdateDTO(
+        val updateMenuItem = getCreateUpdateMenuItemDTO(
                 menuItem.id,
-                testEvent.id,
                 "integrationtest",
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                         ingredientMapper.mapToIngredientDTO(secondIngredient)
                 )
         )
-        val expectedReturn = MenuItemDTO(
+        val expectedReturn = getMenuItemDTO(
                 menuItem.id!!,
-                testEvent.id!!,
                 "integrationtest",
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
@@ -272,17 +242,15 @@ class MenuItemIntegrationTest : IntegrationTest() {
                     secondIngredient
                 )
         )
-        val updateMenuItem = MenuItemCreateUpdateDTO(
+        val updateMenuItem = getCreateUpdateMenuItemDTO(
                 menuItem.id,
-                testEvent.id,
                 "integrationtest",
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                 )
         )
-        val expectedReturn = MenuItemDTO(
+        val expectedReturn = getMenuItemDTO(
                 menuItem.id!!,
-                testEvent.id!!,
                 "integrationtest",
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
@@ -307,12 +275,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Transactional
     fun `Test menu item update should fail when invalid id provided`() {
         menuItemFactory.createMenuItem("testitem")
-        val updateMenuItem = MenuItemCreateUpdateDTO(
-                arbitraryId,
-                testEvent.id,
-                "integrationtest",
-                listOf(ingredientMapper.mapToIngredientDTO(testIngredient))
-        )
+        val updateMenuItem = getCreateUpdateMenuItemDTO(arbitraryId)
         val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
                 "Menu item not found with ID: ${arbitraryId}",
@@ -371,12 +334,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test create menu item should fail when invalid event id provided`() {
-        val menuItem = MenuItemCreateUpdateDTO(
-                null,
-                arbitraryId,
-                "testmenuitemname",
-                listOf(ingredientMapper.mapToIngredientDTO(testIngredient))
-        )
+        val menuItem = getCreateUpdateMenuItemDTO()
         val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
                 "Event not found with ID: ${arbitraryId}",

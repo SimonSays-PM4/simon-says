@@ -6,18 +6,18 @@ import jakarta.persistence.*
 @NoArgAnnotation
 data class Ingredient(
 
-    @Column(nullable = false)
-    var name: String,
+        @Column(nullable = false)
+        var name: String,
 
-    @Id
+        @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null,
+        val id: Long? = null,
 
-    @ManyToOne
+        @ManyToOne
     @JoinColumn(name = "event_id")
-    val event: Event,
+        val event: Event,
 
-    @ManyToMany(mappedBy = "ingredients")
-    val menuItems: List<MenuItem>?
+        @ManyToMany(mappedBy = "ingredients")
+        val menuItems: List<MenuItem>?
 
 )

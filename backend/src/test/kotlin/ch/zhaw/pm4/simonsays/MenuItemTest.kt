@@ -3,13 +3,7 @@ package ch.zhaw.pm4.simonsays
 import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapperImpl
-import ch.zhaw.pm4.simonsays.api.types.EventDTO
-import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
-import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
-import ch.zhaw.pm4.simonsays.entity.Event
-import ch.zhaw.pm4.simonsays.entity.Ingredient
-import ch.zhaw.pm4.simonsays.entity.MenuItem
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
@@ -46,10 +40,6 @@ class MenuItemTest {
 
     private lateinit var menuItemService: MenuItemService
 
-    private lateinit var mockEvent: Event
-    private lateinit var mockIngredient: Ingredient
-    private lateinit var mockIngredientDTO: IngredientDTO
-
     @BeforeEach
     fun setup() {
         // Initialization of mocks
@@ -59,36 +49,6 @@ class MenuItemTest {
         ingredientMapper = mockk(relaxed = true)
         ingredientService = mockk(relaxed = true)
         eventMapper = mockk(relaxed = true)
-
-        // Stubbing
-        every { eventService.getEvent(any()) } returns EventDTO(
-                name = "Testevent",
-                password = "Testeventpassword",
-                numberOfTables = 10,
-                id = 1
-        )
-
-        // Setup Mock Event
-        mockEvent = Event(
-                id = 1, // Use whatever constructor parameters your Event class requires
-                name = "Testevent",
-                password = "Testeventpassword",
-                numberOfTables = 10
-        )
-
-        // Setup Mock Ingredient
-        mockIngredient = Ingredient(
-                id = 1,
-                name = "testingredient",
-                event = mockEvent,
-                menuItems = null
-        )
-
-        // Setup Mock Ingredient DTO
-        mockIngredientDTO = IngredientDTO(
-                id = 1,
-                "testingredient"
-        )
 
         // Construct the service with the mocked dependencies
         menuItemService = MenuItemServiceImpl(
@@ -104,84 +64,37 @@ class MenuItemTest {
 
     @Test
     fun `Test menu item creation`() {
-        every { menuItemRepository.save(any()) } returns MenuItem(
-                1,
-                "MenuItem Test",
-                mockEvent,
-                listOf(
-                    mockIngredient
-                )
+        every { menuItemRepository.save(any()) } returns getMenuItem()
 
-        )
+        every { ingredientRepository.getReferenceById(any()) } returns getIngredient1()
 
-        every { ingredientRepository.getReferenceById(any()) } returns Ingredient(
-                mockIngredient.name,
-                mockIngredient.id,
-                mockIngredient.event,
-                null
-        )
+        val menuItemCreateUpdateDto = getCreateUpdateMenuItemDTO()
+        Assertions.assertEquals(getMenuItemDTO(), menuItemService.createUpdateMenuItem(menuItemCreateUpdateDto, getEvent().id!!))
+    }
 
-        val menuItemCreateUpdateDto = MenuItemCreateUpdateDTO(
-                null,
-                1,
-                "MenuItem Test",
-                listOf(
-                    mockIngredientDTO
-                )
-        )
-        Assertions.assertEquals(MenuItemDTO(
-                1,
-                mockEvent.id!!,
-                "MenuItem Test",
-                listOf(
-                    mockIngredientDTO
-                )
-        ), menuItemService.createUpdateMenuItem(menuItemCreateUpdateDto, mockEvent.id!!))
+    @Test
+    fun `Test menu item update`()  {
+        every { menuItemRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getMenuItem())
+        every { menuItemRepository.save(any()) } returns getMenuItem(name = "updated name")
+        val menuItemCreateUpdateDto = getCreateUpdateMenuItemDTO(name = "updated name")
+        Assertions.assertEquals(getMenuItemDTO(name = "updated name"), menuItemService.createUpdateMenuItem(menuItemCreateUpdateDto, getEvent().id!!))
     }
 
     @Test
     fun `Test menu item fetching`() {
-        every { menuItemRepository.findAllByEventId(mockEvent.id!!) } returns mutableListOf(
-                MenuItem(
-                        3,
-                        "password",
-                        mockEvent,
-                        listOf(
-                                mockIngredient
-                        )
-                ),
-                MenuItem(
-                       2,
-                        "password",
-                        mockEvent,
-                        listOf(
-                                mockIngredient
-                        )
-                )
+        every { menuItemRepository.findAllByEventId(getEvent().id!!) } returns mutableListOf(
+                getMenuItem(),
+                getMenuItem()
         )
-        val menuItems: List<MenuItemDTO> = menuItemService.listMenuItems(mockEvent.id!!)
+        val menuItems: List<MenuItemDTO> = menuItemService.listMenuItems(getEvent().id!!)
         Assertions.assertEquals(2, menuItems.count())
     }
 
     @Test
     fun `Test menu item get`() {
-        every { menuItemRepository.findByIdAndEventId(1, mockEvent.id!!) } returns Optional.of(MenuItem(
-                1,
-                "testeventpassword",
-                mockEvent,
-                listOf(
-                        mockIngredient
-                )
-        ))
+        every { menuItemRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenuItem())
         Assertions.assertEquals(
-                MenuItemDTO(
-                        1,
-                        mockEvent.id!!,
-                        "testeventpassword",
-                        listOf(
-                                mockIngredientDTO
-                        )
-                ), menuItemService.getMenuItem(1, mockEvent.id!!))
+                getMenuItemDTO(), menuItemService.getMenuItem(1, getEvent().id!!))
     }
 
     @Test
@@ -189,23 +102,16 @@ class MenuItemTest {
         every { menuItemRepository.findByIdAndEventId(any(), any()) } returns empty()
         Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
-                { menuItemService.getMenuItem(1, mockEvent.id!!) },
+                { menuItemService.getMenuItem(1, getEvent().id!!) },
                 "Menu item not found with ID: 1"
         )
     }
 
     @Test
     fun `Test menu item deletion`() {
-        every { menuItemRepository.findByIdAndEventId(1, mockEvent.id!!) } returns Optional.of(MenuItem(
-                3,
-                "testeventpassword",
-                mockEvent,
-                listOf(
-                        mockIngredient
-                )
-        ))
+        every { menuItemRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenuItem())
         Assertions.assertEquals(
-                Unit, menuItemService.deleteMenuItem(1, mockEvent.id!!))
+                Unit, menuItemService.deleteMenuItem(1, getEvent().id!!))
     }
 
     @Test
@@ -213,7 +119,7 @@ class MenuItemTest {
         every { menuItemRepository.findByIdAndEventId(any(), any()) } returns empty()
         Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
-                { menuItemService.getMenuItem(1, mockEvent.id!!) },
+                { menuItemService.getMenuItem(1, getEvent().id!!) },
                 "Menu item not found with ID: 1"
         )
     }

@@ -1,11 +1,8 @@
 package ch.zhaw.pm4.simonsays.factory
 
-import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.Ingredient
-import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
-import com.sun.java.accessibility.util.EventID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
