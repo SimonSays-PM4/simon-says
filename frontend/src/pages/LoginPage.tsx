@@ -21,6 +21,7 @@ export const LoginPage: React.FC = () => {
     }
 
     const onSubmit = (data: FieldValues) => {
+        console.log(data);
         setLoginInfo(new LoginInfo(true, "Test-User"));
         const searchParams = new URLSearchParams(location.search);
         const returnUrl = searchParams.get('returnUrl');
