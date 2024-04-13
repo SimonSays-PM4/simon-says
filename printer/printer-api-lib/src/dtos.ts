@@ -82,7 +82,7 @@ export interface PrintQueueDto {
 export interface PrintQueueJobDto {
     id: string,
     /** The status of the print. 'printing' was deliberately left out as a state since the printer prints so fast that it is not worth the effort to track it and it would only complicate the system. */
-    status: 'pending' | 'printed' | 'error' | 'canceled',
+    status: 'PENDING' | 'PRINTED' | 'ERROR' | 'CANCELED',
     /** Am optional human readable message that describes the current status of the print job. For example an error message */
     statusMessage?: string,
     /** Base64 Encoded *png* image printed at the top of the receipt */
@@ -116,7 +116,7 @@ export type PrintQueueJobsDto = PrintQueueJobDto[]
  export interface PrintQueueJobUpdateDto {
     id: string,
     /** The status of the print */
-    status: 'pending' | 'printed' | 'error' | 'canceled',
+    status: 'PENDING' | 'PRINTED' | 'ERROR' | 'CANCELED',
     /** An optional human readable message that describes the current status of the print job. For example an error message */
     statusMessage?: string,
 }

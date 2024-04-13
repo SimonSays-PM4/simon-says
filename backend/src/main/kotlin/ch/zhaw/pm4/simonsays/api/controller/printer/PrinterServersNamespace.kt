@@ -9,7 +9,6 @@ import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDto
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
 import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
-import ch.zhaw.pm4.simonsays.utils.printer.sendPojos
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.socket.socketio.server.SocketIoSocket
 import org.json.JSONObject
@@ -65,7 +64,7 @@ class PrinterServersNamespace(
         if (printerServerId == null) {
             subscribersToAllPrinterServers.add(socket)
             val initialData = printerServerService.getAllPrinterServers()
-            socket.sendPojos(INITIAL_DATA_EVENT, initialData)
+            socket.sendPojo(INITIAL_DATA_EVENT, initialData)
         } else {
             val printerServerSubscribers =
                 subscribersToSpecificPrinterServer.computeIfAbsent(printerServerId) { mutableSetOf(socket) }

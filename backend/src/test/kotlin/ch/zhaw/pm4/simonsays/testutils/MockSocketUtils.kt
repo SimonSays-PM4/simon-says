@@ -1,7 +1,5 @@
 package ch.zhaw.pm4.simonsays.testutils
 
-import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
-import ch.zhaw.pm4.simonsays.utils.printer.sendPojos
 import io.mockk.every
 import io.mockk.mockk
 import io.socket.socketio.server.SocketIoSocket

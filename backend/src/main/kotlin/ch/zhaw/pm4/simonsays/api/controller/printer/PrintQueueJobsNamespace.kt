@@ -11,7 +11,6 @@ import ch.zhaw.pm4.simonsays.service.printer.PrintQueueJobService
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueService
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
 import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
-import ch.zhaw.pm4.simonsays.utils.printer.sendPojos
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.socket.socketio.server.SocketIoSocket
 import org.json.JSONObject
@@ -92,7 +91,7 @@ class PrintQueueJobsNamespace(
                 val subscribers = subscribersToAllPrintQueueJobs.computeIfAbsent(printQueueId) { mutableSetOf() }
                 subscribers.add(socket)
                 val initialData = printQueueJobService.getAllPrintQueueJobsForPrintQueue(printQueueId)
-                socket.sendPojos(INITIAL_DATA_EVENT, initialData)
+                socket.sendPojo(INITIAL_DATA_EVENT, initialData)
             }
 
             NEXT_JOB -> {
@@ -143,7 +142,7 @@ class PrintQueueJobsNamespace(
         val jobId = if (jobJson.has("id")) jobJson.getString("id") else null
 
         // Check if the client is connected to a specific job and only allow changes to that print job
-        if (subscribedJobId != null && jobId != subscribedJobId) {
+        if (subscribedJobId != null && subscribedJobId != NEXT_JOB && jobId != subscribedJobId) {
             return onApplicationError(
                 socket,
                 "PROVIDED_AND_SUBSCRIBED_ID_DO_NOT_MATCH",
@@ -158,9 +157,15 @@ class PrintQueueJobsNamespace(
             )
         }
 
+        // set the last update date
+        val currentTimeMillis = System.currentTimeMillis()
+        jobJson.put("lastUpdateDateTime", currentTimeMillis)
+
         // if the id is not set, we generate a new one, so we create a new entry
         if (jobId == null) {
             jobJson.put("id", UUID.randomUUID())
+            // set/override creation date
+            jobJson.put("creationDateTime", currentTimeMillis)
         }
 
         // Attempt to convert json to data class

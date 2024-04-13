@@ -60,7 +60,7 @@ export class PrinterQueue {
                     await printer.print(printJob);
                     await this.updatePrintQueueJob({
                         id: printJob.id,
-                        status: "printed"
+                        status: "PRINTED"
                     });
                     return;
                 } catch (error) {
@@ -80,7 +80,7 @@ export class PrinterQueue {
         console.error(errorMessage);
         await this.updatePrintQueueJob({
             id: printJob.id,
-            status: "error",
+            status: "ERROR",
             statusMessage: errorMessage
         });
     }
