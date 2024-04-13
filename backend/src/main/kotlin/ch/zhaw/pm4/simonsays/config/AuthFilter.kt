@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -33,27 +34,29 @@ class AuthFilter(
 ) : OncePerRequestFilter() {
 
     private val matcher = AntPathMatcher()
-    private final val adminEndpoints: Map<RequestMappingInfo, HandlerMethod>
+    private val log = LoggerFactory.getLogger(javaClass)
 
-    init {
-        // Find all http mapped methods that are annotated with @AdminEndpoint in the entire application
-        adminEndpoints = requestMappingHandlerMapping.handlerMethods // Get all handler methods
+    // Find all http mapped methods that are annotated with @AdminEndpoint in the entire application
+    private final val adminEndpoints: Map<RequestMappingInfo, HandlerMethod> =
+        requestMappingHandlerMapping.handlerMethods // Get all handler methods
             .filter { it.value.method.isAnnotationPresent(AdminEndpoint::class.java) } // Filter for methods annotated with @AdminEndpoint
-    }
 
     override fun doFilterInternal(
         request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain
     ) {
+        log.debug("AuthFilter: ${request.method} ${request.requestURI}")
+
         val basicAuthToken = request.getHeader(HttpHeaders.AUTHORIZATION)
 
         // Check if the request has an Authorization header
         if (basicAuthToken == null || basicAuthToken.isBlank()) {
-            return respondWithError(response, HttpStatus.UNAUTHORIZED, "No Authorization was provided")
+            return respondWithError(request, response, HttpStatus.UNAUTHORIZED, "No Authorization was provided")
         }
 
         // Check if auth
         if (!basicAuthToken.startsWith(BASIC_AUTH_PREFIX)) {
             return respondWithError(
+                request,
                 response,
                 HttpStatus.BAD_REQUEST,
                 "Invalid Authorization format. Make sure to start the token with '${BASIC_AUTH_PREFIX}'"
@@ -65,6 +68,7 @@ class AuthFilter(
             extractCredentials(basicAuthToken)
         } catch (exception: Exception) {
             return respondWithError(
+                request,
                 response,
                 HttpStatus.BAD_REQUEST,
                 "Could not get credentials. Make sure to provide a valid basic authorization token"
@@ -74,7 +78,12 @@ class AuthFilter(
         // Check if admin endpoint
         if (isAdminEndpoint(request)) {
             if (!isAdmin(username, password)) {
-                return respondWithError(response, HttpStatus.FORBIDDEN, "Unauthorized access to admin endpoint")
+                return respondWithError(
+                    request,
+                    response,
+                    HttpStatus.FORBIDDEN,
+                    "Unauthorized access to admin endpoint"
+                )
             }
             return filterChain.doFilter(request, response)
         }
@@ -82,7 +91,7 @@ class AuthFilter(
         // Check if event endpoint
         if (isEventRelatedEndpoint(request)) {
             val eventId = getEventIdFromRequest(request) ?: return respondWithError(
-                response, HttpStatus.BAD_REQUEST, "Invalid event id"
+                request, response, HttpStatus.BAD_REQUEST, "Invalid event id"
             )
 
             // Admins are allowed to access all events
@@ -93,14 +102,14 @@ class AuthFilter(
             // Check if the username is allowed
             if (!isUsernameAllowed(username)) {
                 return respondWithError(
-                    response, HttpStatus.FORBIDDEN, "Username is not allowed (cannot be admin or empty)"
+                    request, response, HttpStatus.FORBIDDEN, "Username is not allowed (cannot be admin or empty)"
                 )
             }
 
             // Check if the event credentials are valid
             if (!areEventCredentialsValid(eventId, password)) {
                 return respondWithError(
-                    response, HttpStatus.FORBIDDEN, "Unauthorized access to event or event does not exist"
+                    request, response, HttpStatus.FORBIDDEN, "Unauthorized access to event or event does not exist"
                 )
             }
             return filterChain.doFilter(request, response)
@@ -180,9 +189,15 @@ class AuthFilter(
     /**
      * Respond to the request with an error
      */
-    private fun respondWithError(response: HttpServletResponse, status: HttpStatus, message: String) {
+    private fun respondWithError(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        status: HttpStatus,
+        message: String
+    ) {
         val error = ErrorDTO(code = status.name, message = message)
         val errorJson = objectMapper.writeValueAsString(error)
+        log.warn("${request.method} ${request.requestURI}: ${status.name} $message")
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.writer?.write(errorJson)
         response.status = status.value()
