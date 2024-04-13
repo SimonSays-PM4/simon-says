@@ -8,17 +8,17 @@ import org.springframework.stereotype.Component
 
 @Component
 class IngredientFactory(
-        @Autowired private val ingredientRepository: IngredientRepository,
-        @Autowired private val eventFactory: EventFactory
+    @Autowired private val ingredientRepository: IngredientRepository,
+    @Autowired private val eventFactory: EventFactory
 ) {
     fun createIngredient(
         name: String = "Default Ingredient Name",
         event: Event = eventFactory.createEvent()
     ): Ingredient {
         val ingredient = Ingredient(
-                name = name,
-                event = event,
-                menuItems = null
+            name = name,
+            event = event,
+            menuItems = null
         )
         return ingredientRepository.save(ingredient)
     }

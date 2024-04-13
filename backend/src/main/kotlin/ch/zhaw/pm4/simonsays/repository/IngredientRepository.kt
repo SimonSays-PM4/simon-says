@@ -8,7 +8,6 @@ import java.util.*
 @Repository
 interface IngredientRepository : JpaRepository<Ingredient, Long> {
     fun findAllByEventId(eventId: Long): List<Ingredient>
-
     fun findByIdAndEventId(id: Long, eventId: Long): Optional<Ingredient>
 
     fun findByIdIn(id: List<Int>): List<Ingredient>

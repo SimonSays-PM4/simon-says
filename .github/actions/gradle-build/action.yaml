@@ -4,6 +4,14 @@ inputs:
   working-directory:
     required: true
     description: directory of gradle sources
+  upload-artifacts:
+    required: false
+    description: upload build artifacts
+    default: true
+  skip-tests:
+    required: false
+    description: skip tests
+    default: false
 
 runs:
   using: "composite"
@@ -19,7 +27,11 @@ runs:
     - name: gradle build
       working-directory: ${{ inputs.working-directory }}
       run: |-
-        ./gradlew build
+        if [[ ${{ inputs.skip-tests }} == true ]]; then
+          ./gradlew build -x test
+        else
+          ./gradlew build
+        fi
       shell: bash
     - name: upload build artifacts
       uses: actions/upload-artifact@v4
@@ -30,3 +42,4 @@ runs:
         path: ${{ inputs.working-directory }}/build/libs
         retention-days: 1
         if-no-files-found: error
+      if: ${{ inputs.upload-artifacts }}
