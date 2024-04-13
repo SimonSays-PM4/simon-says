@@ -29,8 +29,6 @@ class EventIntegrationTest : IntegrationTest() {
     @Order(1)
     fun `Test event creation should should work with correct input`() {
         val event = EventCreateUpdateDTO(null, "eventusedfortesting", "eventusedfortesting", 2)
-        val eventDto = EventDTO("eventusedfortesting", "eventusedfortesting",2, 1)
-        // when/then
         mockMvc.put("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(event)
@@ -147,7 +145,7 @@ class EventIntegrationTest : IntegrationTest() {
         val event: Event = eventFactory.createEvent("test", "test", 0)
 
         // Since the response is expected to be an array, wrap the expected DTO in a list
-        val expectedJson = EventDTO("test", "test", 0, event.id)
+        val expectedJson = EventDTO( id = event.id, name = "test", password = "test", numberOfTables = 0)
 
         mockMvc.get("/rest-api/v1/event/${event.id}")
                 .andDo { print() }
@@ -185,7 +183,7 @@ class EventIntegrationTest : IntegrationTest() {
     fun `Test update event`() {
         val event: Event = eventFactory.createEvent("test", "test", 0)
         val updateEvent = EventCreateUpdateDTO(event.id,"integrationtest", "testtest", 3)
-        val expectedReturn = EventDTO("integrationtest", "testtest",3, event.id)
+        val expectedReturn = EventDTO(id = event.id, name = "integrationtest", password = "testtest", numberOfTables = 3)
 
         mockMvc.put("/rest-api/v1/event") {
             contentType = MediaType.APPLICATION_JSON

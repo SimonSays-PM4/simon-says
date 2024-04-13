@@ -55,10 +55,7 @@ class MenuItemTest {
                 menuItemRepository,
                 MenuItemMapperImpl(),
                 eventService,
-                ingredientService,
-                ingredientRepository,
-                ingredientMapper,
-                eventMapper
+                ingredientRepository
         )
     }
 
@@ -66,7 +63,7 @@ class MenuItemTest {
     fun `Test menu item creation`() {
         every { menuItemRepository.save(any()) } returns getMenuItem()
 
-        every { ingredientRepository.getReferenceById(any()) } returns getIngredient1()
+        every { ingredientRepository.getReferenceById(any()) } returns getTestIngredient1()
 
         val menuItemCreateUpdateDto = getCreateUpdateMenuItemDTO()
         Assertions.assertEquals(getMenuItemDTO(), menuItemService.createUpdateMenuItem(menuItemCreateUpdateDto, getEvent().id!!))
