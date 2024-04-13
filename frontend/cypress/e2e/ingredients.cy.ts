@@ -1,11 +1,10 @@
 describe("Ingredient CRUD", () => {
     beforeEach(() => {
-        cy.visit("http://localhost:3000");
+        cy.visit("http://localhost:3000/login?returnUrl=%2Fadmin%2F1%2Fingredients");
         cy.get("h1").contains("Login");
         cy.get("form").contains("Login").click();
-        cy.get("h1").contains("Home Page");
 
-        cy.get('a[href="/admin/1/ingredients"]').click();
+        cy.get("h2").contains("Zutaten").should("exist");
     });
 
     it("should create a ingredient", () => {
