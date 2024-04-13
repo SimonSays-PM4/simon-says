@@ -20,7 +20,8 @@ interface MenuItemMapper {
             Mapping(target = "name", source = "menuItem.name"),
             Mapping(target = "ingredients", source = "ingredients"),
             Mapping(target= "event.menuItems", ignore = true),
-            Mapping(target= "event.ingredients", ignore = true)
+            Mapping(target= "event.ingredients", ignore = true),
+            Mapping(target= "event.stations", ignore = true)
     )
     fun mapCreateDTOToMenuItem(menuItem: MenuItemCreateUpdateDTO, event: EventDTO, ingredients: List<Ingredient>): MenuItem
 }

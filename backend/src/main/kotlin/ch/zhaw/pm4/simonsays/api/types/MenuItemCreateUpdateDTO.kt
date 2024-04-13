@@ -1,15 +1,14 @@
 package ch.zhaw.pm4.simonsays.api.types
 
-import ch.zhaw.pm4.simonsays.entity.Ingredient
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.*
 import org.hibernate.validator.constraints.Length
 
 class MenuItemCreateUpdateDTO(
-    @field:Schema(description = "ID for the event")
+    @field:Schema(description = "ID for the menu item")
     val id: Long?,
 
-    @field:Schema(description = "Name for the Menu Item")
+    @field:Schema(description = "Name for the Menu item")
     @field:NotBlank(message = "Menu item name must be provided")
     @field:NotEmpty(message = "Menu item name must be provided")
     @field:Length(min = 1, max = 64, message = "Menu item name must be between 1 and 64 chars long")

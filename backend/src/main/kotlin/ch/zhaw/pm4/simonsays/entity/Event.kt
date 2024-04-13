@@ -24,5 +24,8 @@ data class Event(
         val ingredients: Set<Ingredient>? = HashSet(),
 
         @OneToMany(mappedBy = "event")
-        val menuItems: Set<MenuItem>? = HashSet()
+        val menuItems: Set<MenuItem>? = HashSet(),
+
+        @OneToMany(mappedBy = "event")
+        val stations: Set<Station>? = HashSet()
 )
