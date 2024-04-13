@@ -31,6 +31,8 @@ class AuthFilterTest {
 
     private val adminToken = "mysecretpassword"
     private val incorrectAdminToken = "incorrectpassword"
+    private val eventToken = "myeventtoken"
+    private val incorrectEventToken = "incorrecteventtoken"
     private val adminUsername = "admin"
 
     @BeforeEach
@@ -82,7 +84,7 @@ class AuthFilterTest {
 
     // Tests for event-related endpoints
     private fun testEventEndpointAccess(eventId: Long, password: String, shouldAccessBeAllowed: Boolean) {
-        val mockEventDTO = createMockEventDTO(eventId, "SimonSaysBurger", "securePassword123", 10)
+        val mockEventDTO = createMockEventDTO(eventId, "SimonSaysBurger", eventToken, 10)
         every { eventService.getEvent(eventId) } returns mockEventDTO
         setupRequest("Basic ${getBasicAuthToken("user", password)}", "GET", "/rest-api/v1/event/$eventId")
 
@@ -92,12 +94,12 @@ class AuthFilterTest {
 
     @Test
     fun `Event related endpoint should allow access with valid event credentials`() {
-        testEventEndpointAccess(1L, "securePassword123", true)
+        testEventEndpointAccess(1L, eventToken, true)
     }
 
     @Test
     fun `Event related endpoint should deny access with invalid event credentials`() {
-        testEventEndpointAccess(1L, incorrectAdminToken, false)
+        testEventEndpointAccess(1L, incorrectEventToken, false)
     }
 
     private fun createMockEventDTO(id: Long, name: String, password: String, numberOfTables: Long): EventDTO {
