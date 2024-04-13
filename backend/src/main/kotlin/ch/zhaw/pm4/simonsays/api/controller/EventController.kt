@@ -2,6 +2,7 @@ package ch.zhaw.pm4.simonsays.api.controller
 
 import ch.zhaw.pm4.simonsays.api.types.EventCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
+import ch.zhaw.pm4.simonsays.config.AdminEndpoint
 import ch.zhaw.pm4.simonsays.service.EventService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -22,6 +23,7 @@ class EventController(private val eventService: EventService) {
     @Operation(summary = "Read all events")
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
+    @AdminEndpoint
     fun getEvents(): List<EventDTO> {
         return  eventService.getEvents()
     }
@@ -34,12 +36,14 @@ class EventController(private val eventService: EventService) {
     @Operation(summary = "Update/Create an event")
     @PutMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
+    @AdminEndpoint
     fun putEvent(@Valid @RequestBody request: EventCreateUpdateDTO): EventDTO {
         return eventService.createUpdateEvent(request)
     }
     @Operation(summary = "Delete an event")
     @DeleteMapping("{eventId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
+    @AdminEndpoint
     fun deleteEvent(@PathVariable("eventId") eventId: Long) {
         eventService.deleteEvent(eventId)
     }
