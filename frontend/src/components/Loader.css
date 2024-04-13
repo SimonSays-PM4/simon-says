@@ -4,6 +4,11 @@
     align-items: center;
     width: 5rem;
     height: 5rem;
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 1.5s;
 }
 .fancy-spinner div {
     position: absolute;
@@ -20,19 +25,37 @@
     box-shadow: none;
 }
 .fancy-spinner div.ring:nth-child(1) {
-    border-left-color: #f58320;
-    border-right-color: #f58320;
+    border-left-color: #990000;
+    border-right-color: #990000;
 }
 .fancy-spinner div.ring:nth-child(2) {
-    border-top-color: #f58320;
-    border-bottom-color: #f58320;
+    border-top-color: #990000;
+    border-bottom-color: #990000;
     -webkit-animation-delay: 1s;
     animation-delay: 1s;
 }
 .fancy-spinner div.dot {
     width: 1rem;
     height: 1rem;
-    background: #f58320;
+    background: #990000;
+}
+
+@-webkit-keyframes fadeInOpacity {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInOpacity {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 @-webkit-keyframes fancy {

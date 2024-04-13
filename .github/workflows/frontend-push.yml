@@ -5,6 +5,7 @@ on:
 env:
   # GENERAL
   FRONTEND_DIRECTORY: frontend
+  BACKEND_DIRECTORY: backend
   # NPM env
   NODE_VERSION: 20
   # DOCKER env
@@ -16,33 +17,18 @@ env:
   # K8S env
   K8S_API: https://pm4.init-lab.ch/k8s/clusters/local
   K8S_NAMESPACE: simonsays-stage
-
+  JAVA_VERSION: 17
+  JAVA_DIST: corretto
 
 jobs:
-  npm-build:
+  frontend-tests:
     runs-on: ubuntu-22.04
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
-      - name: npm-build
-        uses: ./.github/actions/npm-build
+      - name: frontend-test
+        uses: ./.github/actions/frontend-tests
         with:
           working-directory: ${{ env.FRONTEND_DIRECTORY }}
+          backend-working-directory: ${{ env.BACKEND_DIRECTORY }}
           node-version: ${{ env.NODE_VERSION }}
-      - name: start application for cypress tests
-        run: npm start &
-        working-directory: ${{ env.FRONTEND_DIRECTORY }}
-      - name: cypress-tests
-        uses: cypress-io/github-action@v6
-        with:
-          working-directory: ${{ env.FRONTEND_DIRECTORY }}
-          browser: chrome
-  test-helm-chart:
-   runs-on: ubuntu-22.04
-   steps:
-     - name: checkout sources
-       uses: actions/checkout@v4
-     - name: test helm
-       uses: ./.github/actions/helm-test
-       with:
-         helm-directory: ${{ env.HELM_DIRECTORY }}
