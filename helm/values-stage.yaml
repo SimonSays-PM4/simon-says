@@ -5,7 +5,6 @@ backend:
       tag: "latest"
       pullPolicy: "Always"
   config:
-    adminSecretName: "simonsays-admin"
     activeProfiles: stage
   ingress:
     host: simonsays-backend-stage.pm4.init-lab.ch
