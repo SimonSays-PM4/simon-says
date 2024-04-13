@@ -1,7 +1,5 @@
 package ch.zhaw.pm4.simonsays.service
 
-import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
-import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapper
 import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
@@ -55,6 +53,7 @@ class MenuItemServiceImpl(
         menuItemToSave.name = menuItem.name!!
         menuItemToSave.event = eventService.getEventEntity(eventId)
         menuItemToSave.ingredients = ingredients
+        menuItemToSave.price = menuItem.price
         return menuItemToSave
     }
 

@@ -346,4 +346,76 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 }
     }
 
+    @Test
+    @Transactional
+    fun `Test menu item price update`() {
+        val menuItem: MenuItem = menuItemFactory.createMenuItem(
+                "testmenuitem",
+                testEvent.id!!,
+                listOf(
+                        testIngredient,
+                ),
+                10
+        )
+        val updateMenuItem = getCreateUpdateMenuItemDTO(
+                menuItem.id,
+                "integrationtest",
+                listOf(
+                        ingredientMapper.mapToIngredientDTO(testIngredient),
+                ),
+                15
+        )
+        val expectedReturn = getMenuItemDTO(
+                menuItem.id!!,
+                "integrationtest",
+                listOf(
+                        ingredientMapper.mapToIngredientDTO(testIngredient),
+                ),
+                15
+        )
+
+        mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updateMenuItem)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { is2xxSuccessful() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedReturn))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
+    fun `Test menu item update should fail when invalid price provided`() {
+        val menuItem = getCreateUpdateMenuItemDTO(
+                null,
+                "testitem",
+                listOf(
+                        ingredientMapper.mapToIngredientDTO(testIngredient)
+                ),
+                -5)
+        val eventDto = ErrorMessageModel(
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation failed",
+                mapOf("price" to "Price of the menu item must be 0 or higher")
+        )
+        // when/then
+        mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(menuItem)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(eventDto))
+                    }
+                }
+    }
+
 }

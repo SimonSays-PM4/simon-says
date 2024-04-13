@@ -8,5 +8,7 @@ data class MenuItemDTO (
         @field:Schema(description = "Name for the menu item")
         val name: String,
         @field:Schema(description = "List of ingredients")
-        var ingredients: List<IngredientDTO>
+        var ingredients: List<IngredientDTO>,
+        @field:Schema(description = "Price of the menu item")
+        var price: Long
 )
