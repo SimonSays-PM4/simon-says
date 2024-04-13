@@ -35,18 +35,18 @@ class IngredientTest {
 
     @Test
     fun `Test ingredient creation`() {
-        every { eventService.getEvent(any()) } returns getEventDTO()
-        every { ingredientRepository.save(any()) } returns getIngredient1()
-        val ingredientCreateDTO = createUpdateIngredientDTO()
+        every { eventService.getEvent(any()) } returns getTestEventDTO()
+        every { ingredientRepository.save(any()) } returns getTestIngredient1()
+        val ingredientCreateDTO = createUpdateTestIngredientDTO()
         Assertions.assertEquals(
-            getIngredient1DTO(), ingredientService.createUpdateIngredient(ingredientCreateDTO, 1)
+            getTestIngredientDTO(), ingredientService.createUpdateIngredient(ingredientCreateDTO, 1)
         )
     }
 
     @Test
     fun `Test ingredient list`() {
         every { ingredientRepository.findAllByEventId(any()) } returns
-                listOf(Ingredient("Testingredient", 1, getEvent()), Ingredient("Testingredient2", 2, getEvent()))
+                listOf(Ingredient(1, "Testingredient", getTestEvent()), Ingredient(2, "Testingredient2", getTestEvent()))
 
         Assertions.assertEquals(
             listOf(IngredientDTO(1, "Testingredient"), IngredientDTO(2, "Testingredient2")),
@@ -56,9 +56,9 @@ class IngredientTest {
 
     @Test
     fun `Test ingredient get`() {
-        every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getIngredient1())
+        every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getTestIngredient1())
         Assertions.assertEquals(
-            getIngredient1DTO(), ingredientService.getIngredient(1,1)
+            getTestIngredientDTO(), ingredientService.getIngredient(1,1)
         )
     }
 
@@ -81,7 +81,7 @@ class IngredientTest {
 
     @Test
     fun `Test ingredient deletion not found`() {
-        every { eventService.getEvent(any()) } returns getEventDTO()
+        every { eventService.getEvent(any()) } returns getTestEventDTO()
         every { ingredientRepository.findByIdAndEventId(any(), any()) } returns empty()
         val error = Assertions.assertThrows(
             ResourceNotFoundException::class.java
@@ -91,10 +91,10 @@ class IngredientTest {
 
     @Test
     fun `Test ingredient update`() {
-        every { eventService.getEvent(any()) } returns getEventDTO()
-        every { ingredientRepository.save(any()) } returns getIngredient1("TestingredientUpdated")
-        every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getIngredient1())
-        val ingredientCreateUpdateDTO = createUpdateIngredientDTO(1, "TestingredientUpdated")
+        every { eventService.getEvent(any()) } returns getTestEventDTO()
+        every { ingredientRepository.save(any()) } returns getTestIngredient1("TestingredientUpdated")
+        every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getTestIngredient1())
+        val ingredientCreateUpdateDTO = createUpdateTestIngredientDTO(1, "TestingredientUpdated")
         Assertions.assertEquals(
             IngredientDTO(
                 1, "TestingredientUpdated"
@@ -104,9 +104,9 @@ class IngredientTest {
 
     @Test
     fun `Test ingredient update not found`() {
-        every { eventService.getEvent(any()) } returns getEventDTO()
+        every { eventService.getEvent(any()) } returns getTestEventDTO()
         every { ingredientRepository.findByIdAndEventId(any(), any()) } returns empty()
-        val ingredientCreateUpdateDTO = createUpdateIngredientDTO(2)
+        val ingredientCreateUpdateDTO = createUpdateTestIngredientDTO(2)
 
         val error = Assertions.assertThrows(
             ResourceNotFoundException::class.java
@@ -117,7 +117,7 @@ class IngredientTest {
     @Test
     fun `Test ingredient update not found event`() {
         every { eventService.getEvent(any()) } throws ResourceNotFoundException("Event not found with ID: 404")
-        val ingredientCreateUpdateDTO = createUpdateIngredientDTO(2)
+        val ingredientCreateUpdateDTO = createUpdateTestIngredientDTO(2)
 
         val error = Assertions.assertThrows(
             ResourceNotFoundException::class.java

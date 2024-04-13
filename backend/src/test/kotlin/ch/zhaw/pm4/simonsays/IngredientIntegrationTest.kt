@@ -28,7 +28,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     fun `should throw validation error no name`() {
         mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(createUpdateIngredientDTO(null, null))
+            content = objectMapper.writeValueAsString(createUpdateTestIngredientDTO(null, null))
         }
             .andDo { print() }
             .andExpect {
@@ -51,7 +51,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     fun `should throw validation error too long name`() {
         mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(createUpdateIngredientDTO(null, "a".repeat(65)))
+            content = objectMapper.writeValueAsString(createUpdateTestIngredientDTO(null, "a".repeat(65)))
         }
             .andDo { print() }
             .andExpect {
@@ -87,8 +87,8 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Transactional
     @Order(1)
     fun `should add new ingredient`() {
-        val ingredient = createUpdateIngredientDTO()
-        val ingredientDTO = getIngredient1DTO()
+        val ingredient = createUpdateTestIngredientDTO()
+        val ingredientDTO = getTestIngredientDTO()
         mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(ingredient)
@@ -106,8 +106,8 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `should list ingredients`() {
-        val ingredient = ingredientFactory.createIngredient(name = getIngredient1DTO().name)
-        val ingredientDTOs = listOf(getIngredient1DTO(id = ingredient.id!!))
+        val ingredient = ingredientFactory.createIngredient(name = getTestIngredientDTO().name)
+        val ingredientDTOs = listOf(getTestIngredientDTO(id = ingredient.id!!))
         // when/then
         mockMvc.get(getIngredientsUrl(ingredient.event.id!!))
             .andDo { print() }
@@ -123,8 +123,8 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `should get ingredient`() {
-        val ingredient = ingredientFactory.createIngredient(name = getIngredient1DTO().name)
-        val ingredientDTO = getIngredient1DTO(id = ingredient.id!!)
+        val ingredient = ingredientFactory.createIngredient(name = getTestIngredientDTO().name)
+        val ingredientDTO = getTestIngredientDTO(id = ingredient.id!!)
 
         mockMvc.get(getIngredientUrl(ingredient.event.id!!, ingredient.id!!))
             .andDo { print() }
@@ -140,7 +140,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `should delete ingredient`() {
-        val ingredient = ingredientFactory.createIngredient(name = getIngredient1DTO().name)
+        val ingredient = ingredientFactory.createIngredient(name = getTestIngredientDTO().name)
         mockMvc.delete(getIngredientUrl(ingredient.event.id!!, ingredient.id!!))
             .andDo { print() }
             .andExpect {
