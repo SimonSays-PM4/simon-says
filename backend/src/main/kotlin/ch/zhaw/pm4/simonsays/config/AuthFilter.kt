@@ -41,10 +41,15 @@ class AuthFilter(
         requestMappingHandlerMapping.handlerMethods // Get all handler methods
             .filter { it.value.method.isAnnotationPresent(AdminEndpoint::class.java) } // Filter for methods annotated with @AdminEndpoint
 
-    override fun doFilterInternal(
+    public override fun doFilterInternal(
         request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain
     ) {
         log.debug("AuthFilter: ${request.method} ${request.requestURI}")
+
+        if (!isAdminEndpoint(request) && !isEventRelatedEndpoint(request)) {
+            log.debug("AuthFilter: ${request.method} ${request.requestURI} does not require authentication")
+            return filterChain.doFilter(request, response)
+        }
 
         val basicAuthToken = request.getHeader(HttpHeaders.AUTHORIZATION)
 
