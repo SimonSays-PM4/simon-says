@@ -2,10 +2,10 @@ import React from "react";
 import { DataTable } from "../../components/data-tables/DataTable";
 import { ColumnType } from "../../models/ColumnType";
 import { Loader } from "../../components/Loader";
-import { EventCreateUpdateDTO, EventDTO } from "../../gen/api";
 import { useNavigate } from "react-router-dom";
 import { useEventListPage } from "./EventListPage.hooks.tsx";
 import { Popup } from "../../components/Popup.tsx";
+import { EventCreateUpdateDTO, EventDTO } from "../../gen/api";
 
 export const EventListPageComponent: React.FC = () => {
     const { loading, eventActions, showDeletePopup, setShowDeletePopup, data } = useEventListPage()
@@ -38,9 +38,9 @@ export const EventListPageComponent: React.FC = () => {
             {loading ? (
                 <div className="w-[100px] block mx-auto"><Loader /></div>
             ) : (
-                <DataTable<EventDTO> title="Events" columns={columns} rows={data} onCreateClick={() => navigate("/event/create")} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />
+                <DataTable<EventDTO> title="Events" columns={columns} rows={data} onCreateClick={() => navigate("../event/create")} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />
             )}
-            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteEvent} modalText={'Delete "' + eventActions.eventToDelete.name + '"'} />
+            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteEvent} modalText={'Delete "' + eventActions.eventToDelete.name + '"'} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }

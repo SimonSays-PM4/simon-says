@@ -1,7 +1,8 @@
-import { EventControllerApi, EventCreateUpdateDTO } from "../../gen/api";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FieldValues } from "react-hook-form";
+import { eventService } from "../../api.ts";
+import { EventCreateUpdateDTO } from "../../gen/api";
 
 type EventActions = {
     deleteEvent: () => void;
@@ -26,13 +27,12 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const eventControllerApi = new EventControllerApi();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (eventId > 0) {
             setIsLoading(true);
-            eventControllerApi
+            eventService
                 .getEvent(eventId)
                 .then((response) => {
                     const receivedEvent = response.data as EventCreateUpdateDTO;
@@ -60,12 +60,12 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
             const eventToSave = data as EventCreateUpdateDTO;
             eventToSave.id = eventId > 0 ? eventId : undefined;
 
-            eventControllerApi
+            eventService
                 .putEvent(eventToSave)
                 .then((response) => {
                     setIsLoading(false);
                     if (response.status === 201 || response.status === 200) {
-                        navigate("/events");
+                        navigate("../events");
                     } else {
                         setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
                     }
@@ -81,9 +81,9 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
     const deleteEvent = useCallback(() => {
         if (eventId > 0) {
             setIsLoading(true);
-            eventControllerApi.deleteEvent(eventId).then(() => {
+            eventService.deleteEvent(eventId).then(() => {
                 setIsLoading(false);
-                navigate("/events");
+                navigate("../events");
             });
         }
     }, [id]);
