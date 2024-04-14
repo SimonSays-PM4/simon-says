@@ -20,5 +20,8 @@ data class MenuItem (
         var ingredients: List<Ingredient>,
 
         @Column
-        var price: Long
+        var price: Long,
+
+        @ManyToMany(mappedBy = "menuItems")
+        val menus: List<Menu>?
 )

@@ -34,7 +34,7 @@ class MenuItemServiceImpl(
 
     override fun createUpdateMenuItem(menuItem: MenuItemCreateUpdateDTO, eventId: Long): MenuItemDTO {
         val event = eventService.getEvent(eventId)
-        val ingredients = ingredientRepository.findByIdIn(menuItem.ingredients!!.map { it.id.toInt() })
+        val ingredients = ingredientRepository.findByIdIn(menuItem.ingredients!!.map { it.id })
         val isUpdateOperation = menuItem.id != null
         val menuItemToBeSaved = if (isUpdateOperation) {
             makeMenuItemReadyForUpdate(menuItem, eventId, ingredients)
