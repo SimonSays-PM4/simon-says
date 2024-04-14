@@ -1,0 +1,58 @@
+name: frontend-test
+description: executes all frontend tests
+inputs:
+  working-directory:
+    required: true
+    description: directory of docker sources
+  backend-working-directory:
+    required: true
+    description: directory of backend sources
+  node-version:
+    required: true
+    description: node version
+
+runs:
+  using: "composite"
+  steps:
+    - name: npm-build
+      uses: ./.github/actions/npm-build
+      with:
+        working-directory: ${{ inputs.working-directory }}
+        node-version: ${{ inputs.node-version }}
+        api-url: http://localhost:8080
+    - name: gradle-build
+      uses: ./.github/actions/gradle-build
+      with:
+        working-directory: ${{ inputs.backend-working-directory }}
+        skip-tests: true
+    - name: start backend database
+      working-directory: ${{ inputs.backend-working-directory }}
+      shell: bash
+      run: |-
+        docker-compose up -d db
+        sleep 5
+    - name: start backend application
+      working-directory: ${{ inputs.backend-working-directory }}
+      shell: bash
+      run: |-
+        ./gradlew bootRun --args='--spring.profiles.active=dev' &
+        timeout=300; count=0; while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost:8080/v3/api-docs)" != "200" ]] && [[ $count -lt $timeout ]]; do sleep 1; count=$((count+1)); done; [[ $count -eq $timeout ]] && echo "Timed out waiting for 200 response" && exit 1; echo "API is up"
+    - name: start frontend for cypress tests
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |-
+        npm start &
+    - name: cypress-tests
+      uses: cypress-io/github-action@v6
+      with:
+        working-directory: ${{ inputs.working-directory }}
+        browser: chrome
+    - name: stop all services
+      shell: bash
+      working-directory: ${{ inputs.backend-working-directory }}
+      run: |-
+        docker-compose down
+        docker volume prune -f
+        # stop gradle
+        pkill -f 'gradle'
+        pkill -f 'npm start'

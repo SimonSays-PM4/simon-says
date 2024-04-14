@@ -4,13 +4,12 @@ import ch.zhaw.pm4.simonsays.api.types.EventCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
-import ch.zhaw.pm4.simonsays.factory.EventFactory
 import jakarta.transaction.Transactional
 import org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
@@ -22,9 +21,6 @@ import org.springframework.test.web.servlet.put
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class EventIntegrationTest : IntegrationTest() {
 
-    @Autowired
-    protected lateinit var eventFactory: EventFactory
-
     private val tooLongEventName: String = "hafdnvgnumnluizouvsathtjeyqpnelscybzbgpkyizsdtxnhjfyfomhdlbouwwqz"
     private val arbitraryId = 9999999999
 
@@ -33,6 +29,7 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
+    @Order(1)
     fun `Test event creation should should work with correct input`() {
         val event = EventCreateUpdateDTO(null, "eventusedfortesting", "eventusedfortesting", 2)
         val eventDto = EventDTO("eventusedfortesting", "eventusedfortesting", 2, 1)
