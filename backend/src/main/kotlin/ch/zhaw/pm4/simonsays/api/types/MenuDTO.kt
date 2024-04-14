@@ -2,7 +2,7 @@ package ch.zhaw.pm4.simonsays.api.types
 
 import io.swagger.v3.oas.annotations.media.Schema
 
-class MenuDTO (
+data class MenuDTO (
     @field:Schema(description = "ID of the menu item")
     val id: Long,
     @field:Schema(description = "Name for the menu")
