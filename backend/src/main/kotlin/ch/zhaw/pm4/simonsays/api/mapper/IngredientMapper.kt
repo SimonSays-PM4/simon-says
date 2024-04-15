@@ -12,8 +12,6 @@ import org.mapstruct.Mappings
 interface IngredientMapper {
 
     @Mappings(
-            Mapping(target = "id"),
-            Mapping(target = "name"),
             Mapping(target= "event.ingredients", ignore = true)
     )
     fun mapToIngredientDTO(ingredient: Ingredient): IngredientDTO

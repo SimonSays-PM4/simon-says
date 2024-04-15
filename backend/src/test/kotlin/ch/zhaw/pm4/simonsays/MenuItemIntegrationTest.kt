@@ -53,7 +53,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         jsonPath("$.name", equalTo(getCreateUpdateMenuItemDTO().name))
@@ -120,7 +120,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         mockMvc.get(getMenuItemUrl(testEvent.id!!))
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         jsonPath("$", hasSize<Any>(2))
@@ -137,7 +137,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         mockMvc.get("${getMenuItemUrl(testEvent.id!!)}/${menuItem.id}")
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedJson))
@@ -178,7 +178,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -214,7 +214,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -255,7 +255,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -319,7 +319,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isNoContent() }
                 }
     }
 
@@ -380,7 +380,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))

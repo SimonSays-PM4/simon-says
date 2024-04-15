@@ -90,11 +90,11 @@ class EventTest {
     @Test
     fun `Test event get not found`() {
         every { eventRepo.findById(any()) } returns empty()
-        Assertions.assertThrows(
+        val error = Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
-                { eventService.getEvent(1) },
-                "Event not found with ID: 1"
+                { eventService.getEvent(1) }
         )
+        Assertions.assertEquals("Event not found with ID: 1", error.message)
     }
 
 
@@ -113,11 +113,11 @@ class EventTest {
     @Test
     fun `Test event deletion not found`() {
         every { eventRepo.findById(any()) } returns empty()
-        Assertions.assertThrows(
+        val error = Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
-                { eventService.getEvent(1) },
-                "Event not found with ID: 1"
+                { eventService.getEvent(1) }
         )
+        Assertions.assertEquals("Event not found with ID: 1", error.message)
     }
 
 }

@@ -97,11 +97,10 @@ class MenuItemTest {
     @Test
     fun `Test menu item got not found`() {
         every { menuItemRepository.findByIdAndEventId(any(), any()) } returns empty()
-        Assertions.assertThrows(
-                ResourceNotFoundException::class.java,
-                { menuItemService.getMenuItem(1, getEvent().id!!) },
-                "Menu item not found with ID: 1"
-        )
+        val error = Assertions.assertThrows(
+                ResourceNotFoundException::class.java
+        ) { menuItemService.getMenuItem(1, getEvent().id!!) }
+        Assertions.assertEquals("Menu item not found with ID: 1", error.message)
     }
 
     @Test
@@ -114,11 +113,10 @@ class MenuItemTest {
     @Test
     fun `Test menu item deletion not found`() {
         every { menuItemRepository.findByIdAndEventId(any(), any()) } returns empty()
-        Assertions.assertThrows(
-                ResourceNotFoundException::class.java,
-                { menuItemService.getMenuItem(1, getEvent().id!!) },
-                "Menu item not found with ID: 1"
-        )
+        val error = Assertions.assertThrows(
+                ResourceNotFoundException::class.java)
+        { menuItemService.getMenuItem(1, getEvent().id!!) }
+        Assertions.assertEquals("Menu item not found with ID: 1", error.message)
     }
 
 }
