@@ -35,6 +35,14 @@ export const EventMenuEditPage: React.FC = () => {
                isRequired={true}
                minLength={5}
                maxLength={64}/>
+   <FormInput id={nameof<MenuItemDTO>(e => e.price)}
+              defaultValue={""+menuItem.price}
+              label={"Price"}
+              type="number"
+              step={0.01}
+              register={register}
+              isRequired={true}
+   />
    <label className="mb-2 block text-sm font-medium text-default-900">
     Ingredients
    </label>

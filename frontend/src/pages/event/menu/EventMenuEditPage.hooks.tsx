@@ -31,7 +31,7 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
     const appContext = useContext(AppContext);
     const menuItemId = menuId ? Number(menuId) : 0;
     const {eventId} = useContext(EventContext);
-    const [menuItem, setMenuItem] = useState<MenuItemDTO>({id:0,name:"",ingredients:[]});
+    const [menuItem, setMenuItem] = useState<MenuItemDTO>({id:0,name:"",price:0.0,ingredients:[]});
     const [selectedIngredients,setSelectedIngredients] = useState<ValueLabel[]>([]);
     const [isLoading, setLoading] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);

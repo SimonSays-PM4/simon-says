@@ -21,7 +21,7 @@ type EventMenuReturnProps = {
 
 export const useEventMenuPage = (): EventMenuReturnProps => {
     const {eventId} = useContext(EventContext);
-    const [menuItemToDelete, setMenuItemToDelete] = useState<MenuItemDTO>({ id: 0, name: "",ingredients:[] })
+    const [menuItemToDelete, setMenuItemToDelete] = useState<MenuItemDTO>({ id: 0, name: "",price:0.0,ingredients:[] })
     const [menuItems, setMenuItems] = useState<MenuItemDTO[]>([])
     const [event, setEvent] = useState<EventDTO>({id:0,password:"",name:"", numberOfTables:0});
     const [isLoading, setLoading] = useState<boolean>(false);

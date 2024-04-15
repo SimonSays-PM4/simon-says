@@ -143,7 +143,7 @@ export interface IngredientDTO {
  */
 export interface MenuItemCreateUpdateDTO {
     /**
-     * ID for the event
+     * ID for the menu item
      * @type {number}
      * @memberof MenuItemCreateUpdateDTO
      */
@@ -160,6 +160,12 @@ export interface MenuItemCreateUpdateDTO {
      * @memberof MenuItemCreateUpdateDTO
      */
     'ingredients': Array<IngredientDTO>;
+    /**
+     * Price of the menu item
+     * @type {number}
+     * @memberof MenuItemCreateUpdateDTO
+     */
+    'price': number;
 }
 /**
  * 
@@ -185,6 +191,12 @@ export interface MenuItemDTO {
      * @memberof MenuItemDTO
      */
     'ingredients': Array<IngredientDTO>;
+    /**
+     * Price of the menu item
+     * @type {number}
+     * @memberof MenuItemDTO
+     */
+    'price': number;
 }
 
 /**
