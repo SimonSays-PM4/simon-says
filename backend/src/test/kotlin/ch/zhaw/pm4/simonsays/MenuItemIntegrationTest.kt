@@ -401,7 +401,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
-                mapOf("price" to "Price of the menu item must be 0 or higher")
+                mapOf("price" to "Price of the menu item must be 1 or higher")
         )
         // when/then
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
