@@ -33,9 +33,9 @@ class EventTest {
     @Test
     fun `Test event creation`() {
         every { eventRepo.save(any()) } returns Event(
+                15,
             "Testevent",
                 "Testeventpassword",
-                15,
                 1
         )
         val eventCreateUpdateDTO = EventCreateUpdateDTO(
@@ -45,9 +45,9 @@ class EventTest {
                 15
         )
         Assertions.assertEquals(EventDTO(
+                15,
                 "Testevent",
                 "Testeventpassword",
-                15,
                 1
         ), eventService.createUpdateEvent(eventCreateUpdateDTO))
     }
@@ -56,14 +56,15 @@ class EventTest {
     fun `Test event fetching`() {
         every { eventRepo.findAll() } returns mutableListOf(
                 Event(
-                      "testevent",
-                        "password",
-                        3
+                    name = "testevent",
+                    password = "password",
+                    numberOfTables = 2
+
                 ),
                 Event(
-                    "testevent2",
-                        "password",
-                        2
+                    name = "testevent2",
+                    password = "password",
+                    numberOfTables = 2
                 )
         )
         val events: List<EventDTO> = eventService.getEvents()
@@ -73,37 +74,37 @@ class EventTest {
     @Test
     fun `Test event get`() {
         every { eventRepo.findById(1) } returns Optional.of(Event(
-                "testevent",
-                "testeventpassword",
-                1
+                name = "testevent",
+                password = "testeventpassword",
+                numberOfTables = 1
         ))
         Assertions.assertEquals(
                 EventDTO(
-                        "testevent",
-                        "testeventpassword",
-                        1,
-                        null
+                        id = null,
+                        name = "testevent",
+                        password = "testeventpassword",
+                        numberOfTables = 1,
                 ), eventService.getEvent(1))
     }
 
     @Test
     fun `Test event get not found`() {
         every { eventRepo.findById(any()) } returns empty()
-        Assertions.assertThrows(
+        val error = Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
-                { eventService.getEvent(1) },
-                "Event not found with ID: 1"
+                { eventService.getEvent(1) }
         )
+        Assertions.assertEquals("Event not found with ID: 1", error.message)
     }
 
 
     @Test
     fun `Test event deletion`() {
         every { eventRepo.findById(1) } returns Optional.of(Event(
-                "testevent",
-                "testeventpassword",
-                3,
-                null
+                id = null,
+                name = "testevent",
+                password = "testeventpassword",
+                numberOfTables = 3,
         ))
         Assertions.assertEquals(
                 Unit, eventService.deleteEvent(1))
@@ -112,11 +113,11 @@ class EventTest {
     @Test
     fun `Test event deletion not found`() {
         every { eventRepo.findById(any()) } returns empty()
-        Assertions.assertThrows(
+        val error = Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
-                { eventService.getEvent(1) },
-                "Event not found with ID: 1"
+                { eventService.getEvent(1) }
         )
+        Assertions.assertEquals("Event not found with ID: 1", error.message)
     }
 
 }

@@ -4,6 +4,6 @@ export interface IEventContext {
     eventId: number;
 }
 
-const EventContext = React.createContext<IEventContext>(undefined!);
+const EventContext = React.createContext<IEventContext>({eventId:0});
 
 export { EventContext };
