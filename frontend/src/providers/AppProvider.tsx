@@ -11,7 +11,7 @@ export interface IAppProviderProvideProps {
 const AppProvider: React.FC<IAppProviderProvideProps> = ({ children }: IAppProviderProvideProps) => {
     const [loginInfo, setLoginInfo] = React.useState<LoginInfo>(new LoginInfo(false, "-"));
     const addNotification = (type:NotificationType, message:string) => {
-        if (type == NotificationType.OK) {
+        if (type === NotificationType.OK) {
             toast.success(message, {
                 position: "top-right",
                 autoClose: 5000,
@@ -23,7 +23,7 @@ const AppProvider: React.FC<IAppProviderProvideProps> = ({ children }: IAppProvi
                 theme: "light",
                 transition: Bounce,
             });
-        } else if (type == NotificationType.ERR) {
+        } else if (type === NotificationType.ERR) {
             toast.error(message, {
                 position: "top-right",
                 autoClose: 5000,
@@ -35,7 +35,7 @@ const AppProvider: React.FC<IAppProviderProvideProps> = ({ children }: IAppProvi
                 theme: "light",
                 transition: Bounce,
             });
-        } else if (type == NotificationType.WARN) {
+        } else if (type === NotificationType.WARN) {
             toast.warn(message, {
                 position: "top-right",
                 autoClose: 5000,
