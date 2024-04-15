@@ -32,7 +32,7 @@ class MenuItemController(private val menuItemService: MenuItemService) {
     }
     @Operation(summary = "Delete a menu item")
     @DeleteMapping("{menuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteMenuItem(@PathVariable("eventId") eventId: Long, @PathVariable("menuItemId") menuItemId: Long) {
         menuItemService.deleteMenuItem(menuItemId,eventId)
     }

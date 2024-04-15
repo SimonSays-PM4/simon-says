@@ -53,7 +53,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         jsonPath("$.name", equalTo(getCreateUpdateMenuItemDTO().name))
@@ -120,7 +120,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         mockMvc.get(getMenuItemUrl(testEvent.id!!))
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         jsonPath("$", hasSize<Any>(2))
@@ -137,7 +137,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         mockMvc.get("${getMenuItemUrl(testEvent.id!!)}/${menuItem.id}")
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedJson))
@@ -178,7 +178,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -214,7 +214,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -255,7 +255,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -319,7 +319,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isNoContent() }
                 }
     }
 
@@ -355,7 +355,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 listOf(
                         testIngredient,
                 ),
-                10
+                10.0
         )
         val updateMenuItem = getCreateUpdateMenuItemDTO(
                 menuItem.id,
@@ -363,7 +363,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                 ),
-                15
+                15.0
         )
         val expectedReturn = getMenuItemDTO(
                 menuItem.id!!,
@@ -371,7 +371,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                 ),
-                15
+                15.0
         )
 
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
@@ -380,7 +380,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -397,11 +397,11 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient)
                 ),
-                -5)
+                -5.0)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
-                mapOf("price" to "Price of the menu item must be 0 or higher")
+                mapOf("price" to "Price of the menu item must be 1 or higher")
         )
         // when/then
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {

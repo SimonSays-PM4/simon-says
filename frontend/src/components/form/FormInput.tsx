@@ -15,6 +15,7 @@ export interface IFormInputProps {
     minLength?: number;
     maxLength?: number;
     register: UseFormRegister<FieldValues>;
+    step?:number
 }
 
 export const FormInput: React.FC<IFormInputProps> = ({
@@ -29,7 +30,8 @@ export const FormInput: React.FC<IFormInputProps> = ({
     validationError,
     minLength,
     maxLength,
-    register
+    register,
+    step
 }) => {
     return (
         <div className={"sm:grid sm:grid-flow-row sm:grid-cols-1 sm:items-end my-4 " + (classNames ?? "")} key={id + defaultValue}>
@@ -49,6 +51,7 @@ export const FormInput: React.FC<IFormInputProps> = ({
                         placeholder={placeholderValue}
                         aria-required={isRequired}
                         {...register(id, { required: isRequired, disabled: disabled, value: defaultValue, minLength: minLength, maxLength: maxLength })}
+                        step={step}
                     />
                 </div>
             </div>

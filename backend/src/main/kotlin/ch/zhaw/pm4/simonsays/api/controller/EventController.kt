@@ -39,7 +39,7 @@ class EventController(private val eventService: EventService) {
     }
     @Operation(summary = "Delete an event")
     @DeleteMapping("{eventId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteEvent(@PathVariable("eventId") eventId: Long) {
         eventService.deleteEvent(eventId)
     }

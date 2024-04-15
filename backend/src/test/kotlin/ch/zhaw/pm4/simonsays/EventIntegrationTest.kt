@@ -35,7 +35,7 @@ class EventIntegrationTest : IntegrationTest() {
         }
             .andDo { print() }
             .andExpect {
-                status { is2xxSuccessful() }
+                status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                     jsonPath("$.name", CoreMatchers.equalTo("eventusedfortesting"))
@@ -131,7 +131,7 @@ class EventIntegrationTest : IntegrationTest() {
         mockMvc.get("/rest-api/v1/event")
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         jsonPath("$", hasSize<Any>(2))
@@ -150,7 +150,7 @@ class EventIntegrationTest : IntegrationTest() {
         mockMvc.get("/rest-api/v1/event/${event.id}")
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedJson))
@@ -191,12 +191,25 @@ class EventIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
                     }
                 }
+    }
+
+    @Test
+    @Transactional
+    fun `Test delete event`() {
+        val event: Event = eventFactory.createEvent("test", "test", 0)
+        mockMvc.delete("/rest-api/v1/event/${event.id}") {
+            contentType = MediaType.APPLICATION_JSON
+        }
+            .andDo { print() }
+            .andExpect {
+                status { isNoContent() }
+            }
     }
 
     @Test
