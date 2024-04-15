@@ -3,6 +3,7 @@ package ch.zhaw.pm4.simonsays
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import jakarta.transaction.Transactional
+import org.hamcrest.CoreMatchers
 import org.junit.jupiter.api.*
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.delete
@@ -88,7 +89,6 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Order(1)
     fun `should add new ingredient`() {
         val ingredient = createUpdateTestIngredientDTO()
-        val ingredientDTO = getTestIngredientDTO()
         mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(ingredient)
@@ -98,7 +98,7 @@ class IngredientIntegrationTest : IntegrationTest() {
                 status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
-                    json(objectMapper.writeValueAsString(ingredientDTO))
+                    jsonPath("$.name", CoreMatchers.equalTo(getTestIngredientDTO().name))
                 }
             }
     }

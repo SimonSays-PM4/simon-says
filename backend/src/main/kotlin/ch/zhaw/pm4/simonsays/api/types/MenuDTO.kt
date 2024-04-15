@@ -3,7 +3,7 @@ package ch.zhaw.pm4.simonsays.api.types
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class MenuDTO (
-    @field:Schema(description = "ID of the menu item")
+    @field:Schema(description = "ID of the menu")
     val id: Long,
     @field:Schema(description = "Name for the menu")
     val name: String,

@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class MenuIntegrationTest: IntegrationTest() {
+class MenuIntegrationTest : IntegrationTest() {
     private fun getMenuUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/menu"
 
 
@@ -109,38 +109,39 @@ class MenuIntegrationTest: IntegrationTest() {
             }
     }
 
-        @Test
-        @Transactional
-        fun `Test retrieve all menus`() {
-            menuFactory.createMenu(name = "test", eventId = testEvent.id!!, menuItems = listOf(testMenuItem))
-            menuFactory.createMenu("name", eventId = testEvent.id!!,  menuItems = listOf(testMenuItem))
+    @Test
+    @Transactional
+    fun `Test retrieve all menus`() {
+        menuFactory.createMenu(name = "test", eventId = testEvent.id!!, menuItems = listOf(testMenuItem))
+        menuFactory.createMenu("name", eventId = testEvent.id!!, menuItems = listOf(testMenuItem))
 
-            mockMvc.get(getMenuUrl(testEvent.id!!))
-                .andDo { print() }
-                .andExpect {
-                    status { is2xxSuccessful() }
-                    content {
-                        contentType(MediaType.APPLICATION_JSON)
-                        jsonPath("$", IsCollectionWithSize.hasSize<Any>(2))
-                    }
+        mockMvc.get(getMenuUrl(testEvent.id!!))
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    jsonPath("$", IsCollectionWithSize.hasSize<Any>(2))
                 }
-        }
+            }
+    }
 
-        @Test
-        @Transactional
-        fun `Test retrieve menu`() {
-            val menu = menuFactory.createMenu("Menu Test", testEvent.id!!, listOf(testMenuItem))
-            val expectedJson = getMenuDTO(id = menu.id!!, menuItemDTOs = listOf(menuItemMapper.mapToMenuItemDTO(testMenuItem)))
-            mockMvc.get("${getMenuUrl(testEvent.id!!)}/${menu.id}")
-                .andDo { print() }
-                .andExpect {
-                    status { isOk() }
-                    content {
-                        contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(expectedJson))
-                    }
+    @Test
+    @Transactional
+    fun `Test retrieve menu`() {
+        val menu = menuFactory.createMenu("Menu Test", testEvent.id!!, listOf(testMenuItem))
+        val expectedJson =
+            getMenuDTO(id = menu.id!!, menuItemDTOs = listOf(menuItemMapper.mapToMenuItemDTO(testMenuItem)))
+        mockMvc.get("${getMenuUrl(testEvent.id!!)}/${menu.id}")
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(expectedJson))
                 }
-        }
+            }
+    }
 
     @Test
     @Transactional
@@ -167,8 +168,10 @@ class MenuIntegrationTest: IntegrationTest() {
     @Transactional
     fun `Test update menu`() {
         val menu = menuFactory.createMenu(eventId = testEvent.id!!, menuItems = listOf(testMenuItem))
-        val updateMenu = getCreateUpdateMenuDTO(menu.id, "integrationtest", listOf(menuItemMapper.mapToMenuItemDTO(testMenuItem)))
-        val expectedReturn = getMenuDTO(menu.id!!, "integrationtest", listOf(menuItemMapper.mapToMenuItemDTO(testMenuItem)))
+        val updateMenu =
+            getCreateUpdateMenuDTO(menu.id, "integrationtest", listOf(menuItemMapper.mapToMenuItemDTO(testMenuItem)))
+        val expectedReturn =
+            getMenuDTO(menu.id!!, "integrationtest", listOf(menuItemMapper.mapToMenuItemDTO(testMenuItem)))
 
         mockMvc.put(getMenuUrl(testEvent.id!!)) {
             contentType = MediaType.APPLICATION_JSON
@@ -187,7 +190,8 @@ class MenuIntegrationTest: IntegrationTest() {
     @Test
     @Transactional
     fun `Test menu update adding a menu item`() {
-        val menu = menuFactory.createMenu(name = "testmenuitem", eventId = testEvent.id!!, menuItems = listOf(testMenuItem))
+        val menu =
+            menuFactory.createMenu(name = "testmenuitem", eventId = testEvent.id!!, menuItems = listOf(testMenuItem))
         val secondMenuItem = menuItemFactory.createMenuItem(eventId = testEvent.id!!)
         val updateMenu = getCreateUpdateMenuDTO(
             menu.id,
@@ -224,7 +228,7 @@ class MenuIntegrationTest: IntegrationTest() {
     @Test
     @Transactional
     fun `test menu update removing an ingredient`() {
-        val secondMenuItem = menuItemFactory.createMenuItem()
+        val secondMenuItem = menuItemFactory.createMenuItem(eventId = testEvent.id!!)
         val menu = menuFactory.createMenu(
             "testmenuitem",
             testEvent.id!!,
@@ -269,7 +273,7 @@ class MenuIntegrationTest: IntegrationTest() {
         val updateMenu = getCreateUpdateMenuDTO(arbitraryId)
         val expectedReturn = ErrorMessageModel(
             HttpStatus.NOT_FOUND.value(),
-            "Menu item not found with ID: $arbitraryId",
+            "Menu not found with ID: $arbitraryId",
             null
         )
 
@@ -292,7 +296,7 @@ class MenuIntegrationTest: IntegrationTest() {
     fun `Test delete menu should fail when invalid id provided`() {
         val expectedReturn = ErrorMessageModel(
             HttpStatus.NOT_FOUND.value(),
-            "Menu item not found with ID: $arbitraryId",
+            "Menu not found with ID: $arbitraryId",
             null
         )
 
@@ -318,7 +322,7 @@ class MenuIntegrationTest: IntegrationTest() {
         }
             .andDo { print() }
             .andExpect {
-                status { isOk() }
+                status { isNoContent() }
             }
     }
 

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
+import java.util.Optional.empty
 
 class MenuTest {
     @MockkBean(relaxed = true)
@@ -61,20 +62,43 @@ class MenuTest {
 
     @Test
     fun `Test menu creation`() {
-        every { menuRepository.save(any()) } returns getMenu(menuItems = listOf(getMenuItem(), getMenuItem(id = 2, price = 3)))
+        every { menuRepository.save(any()) } returns getMenu(
+            menuItems = listOf(
+                getMenuItem(),
+                getMenuItem(id = 2, price = 3.0)
+            )
+        )
 
         every { menuItemRepository.getReferenceById(any()) } returns getMenuItem()
 
         val menuCreateUpdateDto = getCreateUpdateMenuDTO()
-        Assertions.assertEquals(getMenuDTO(menuItemDTOs = listOf(getMenuItemDTO(), getMenuItemDTO(id = 2, price = 3))), menuService.createUpdateMenu(menuCreateUpdateDto, getEvent().id!!))
+        Assertions.assertEquals(
+            getMenuDTO(menuItemDTOs = listOf(getMenuItemDTO(), getMenuItemDTO(id = 2, price = 3.0))),
+            menuService.createUpdateMenu(menuCreateUpdateDto, getEvent().id!!)
+        )
     }
 
     @Test
-    fun `Test menu update`()  {
+    fun `Test menu update`() {
         every { menuRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getMenu())
         every { menuRepository.save(any()) } returns getMenu(name = "updated name")
         val menuCreateUpdateDto = getCreateUpdateMenuDTO(name = "updated name")
-        Assertions.assertEquals(getMenuDTO(name = "updated name"), menuService.createUpdateMenu(menuCreateUpdateDto, getEvent().id!!))
+        Assertions.assertEquals(
+            getMenuDTO(name = "updated name"),
+            menuService.createUpdateMenu(menuCreateUpdateDto, getEvent().id!!)
+        )
+    }
+
+    @Test
+    fun `Test menu update not found`() {
+        every { eventService.getEvent(any()) } returns getTestEventDTO()
+        every { menuRepository.findByIdAndEventId(any(), any()) } returns empty()
+        val menuCreateUpdateDto = getCreateUpdateMenuDTO(id = 2)
+
+        val error = Assertions.assertThrows(
+            ResourceNotFoundException::class.java
+        ) { menuService.createUpdateMenu(menuCreateUpdateDto, 1) }
+        Assertions.assertEquals("Menu not found with ID: 2", error.message)
     }
 
     @Test
@@ -91,33 +115,33 @@ class MenuTest {
     fun `Test menu get`() {
         every { menuRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenu())
         Assertions.assertEquals(
-            getMenuDTO(), menuService.getMenu(1, getEvent().id!!))
+            getMenuDTO(), menuService.getMenu(1, getEvent().id!!)
+        )
     }
 
     @Test
-    fun `Test menu got not found`() {
-        every { menuRepository.findByIdAndEventId(any(), any()) } returns Optional.empty()
-        Assertions.assertThrows(
-            ResourceNotFoundException::class.java,
-            { menuService.getMenu(1, getEvent().id!!) },
-            "Menu not found with ID: 1"
-        )
+    fun `Test menu get not found`() {
+        every { menuRepository.findByIdAndEventId(any(), any()) } returns empty()
+        val error = Assertions.assertThrows(
+            ResourceNotFoundException::class.java
+        ) { menuService.getMenu(1, getEvent().id!!) }
+        Assertions.assertEquals("Menu not found with ID: 1", error.message)
     }
 
     @Test
     fun `Test menu deletion`() {
         every { menuRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenu())
         Assertions.assertEquals(
-            Unit, menuService.deleteMenu(1, getEvent().id!!))
+            Unit, menuService.deleteMenu(1, getEvent().id!!)
+        )
     }
 
     @Test
     fun `Test menu deletion not found`() {
-        every { menuRepository.findByIdAndEventId(any(), any()) } returns Optional.empty()
-        Assertions.assertThrows(
+        every { menuRepository.findByIdAndEventId(any(), any()) } returns empty()
+        val error = Assertions.assertThrows(
             ResourceNotFoundException::class.java,
-            { menuService.getMenu(1, getEvent().id!!) },
-            "Menu not found with ID: 1"
-        )
+        ) { menuService.getMenu(1, getEvent().id!!) }
+        Assertions.assertEquals("Menu not found with ID: 1", error.message)
     }
 }

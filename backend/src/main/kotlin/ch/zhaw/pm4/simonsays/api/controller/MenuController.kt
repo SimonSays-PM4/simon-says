@@ -2,8 +2,6 @@ package ch.zhaw.pm4.simonsays.api.controller
 
 import ch.zhaw.pm4.simonsays.api.types.MenuCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuDTO
-import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
-import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
 import ch.zhaw.pm4.simonsays.service.MenuService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -34,7 +32,7 @@ class MenuController (private  val menuService: MenuService){
     }
     @Operation(summary = "Delete a menu")
     @DeleteMapping("{menuId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteMenu(@PathVariable("eventId") eventId: Long, @PathVariable("menuId") menuId: Long) {
         menuService.deleteMenu(menuId,eventId)
     }
