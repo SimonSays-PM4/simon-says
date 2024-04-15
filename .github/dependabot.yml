@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "frontend"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "leoantferrari"
+    labels:
+      - "dependencies"
+      - "frontend"
+
+  - package-ecosystem: "gradle"
+    directory: "backend"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "larawaespe"
+    labels:
+      - "dependencies"
+      - "backend"
