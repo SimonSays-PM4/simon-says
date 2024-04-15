@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FieldValues } from "react-hook-form";
-import { eventService } from "../../api.ts";
 import { EventCreateUpdateDTO } from "../../gen/api";
+import { getEventService } from "../../api";
+import { AppContext } from "../../providers/AppContext";
 
 type EventActions = {
     deleteEvent: () => void;
@@ -28,6 +29,9 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const navigate = useNavigate();
+
+    const { loginInfo } = useContext(AppContext);
+    const eventService = getEventService(loginInfo.userName, loginInfo.password);
 
     useEffect(() => {
         if (eventId > 0) {

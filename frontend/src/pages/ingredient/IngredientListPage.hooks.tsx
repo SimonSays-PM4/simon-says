@@ -1,7 +1,8 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { EventContext } from "../../providers/EventContext";
-import { ingredientService } from "../../api";
+import { getIngredientService } from "../../api";
 import { IngredientDTO } from "../../gen/api";
+import { AppContext } from "../../providers/AppContext";
 
 type IngredientActions = {
     deleteIngredient: () => void,
@@ -22,6 +23,9 @@ export const useIngredientListPage = (): IngredientListPageReturnProps => {
     const [isLoading, setIsLoading] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [data, setData] = useState<IngredientDTO[]>([]);
+
+    const { loginInfo } = useContext(AppContext);
+    const ingredientService = getIngredientService(loginInfo.userName, loginInfo.password);
 
     useEffect(() => {
         if (!showDeletePopup) {

@@ -7,7 +7,7 @@ export interface IAppProviderProvideProps {
 }
 
 const AppProvider: React.FC<IAppProviderProvideProps> = ({ children }: IAppProviderProvideProps) => {
-    const [loginInfo, setLoginInfo] = React.useState<LoginInfo>(new LoginInfo(false, "-"));
+    const [loginInfo, setLoginInfo] = React.useState<LoginInfo>(new LoginInfo(false, "-", ""));
 
     return (
         <AppContext.Provider
