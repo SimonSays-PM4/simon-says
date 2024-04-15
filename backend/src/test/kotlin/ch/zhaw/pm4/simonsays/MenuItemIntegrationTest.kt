@@ -355,7 +355,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 listOf(
                         testIngredient,
                 ),
-                10
+                10.0
         )
         val updateMenuItem = getCreateUpdateMenuItemDTO(
                 menuItem.id,
@@ -363,7 +363,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                 ),
-                15
+                15.0
         )
         val expectedReturn = getMenuItemDTO(
                 menuItem.id!!,
@@ -371,7 +371,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                 ),
-                15
+                15.0
         )
 
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
@@ -397,7 +397,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient)
                 ),
-                -5)
+                -5.0)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",

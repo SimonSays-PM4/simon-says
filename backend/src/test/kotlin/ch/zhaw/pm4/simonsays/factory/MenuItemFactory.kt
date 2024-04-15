@@ -16,7 +16,7 @@ class MenuItemFactory(
             name: String = "Default MenuItem Name",
             eventId: Long = 1,
             ingredients: List<Ingredient> = listOf(),
-            price: Long = 1
+            price: Double = 1.0
     ): MenuItem {
         val event = eventRepository.findById(eventId).orElse(null) // Fetch the Event by ID
         val menuItem = MenuItem(name = name, event = event, ingredients = ingredients, price = price) // Use the Event entity

@@ -10,5 +10,5 @@ data class MenuItemDTO (
         @field:Schema(description = "List of ingredients")
         var ingredients: List<IngredientDTO>,
         @field:Schema(description = "Price of the menu item")
-        var price: Long
+        var price: Double
 )

@@ -12,7 +12,7 @@ fun getCreateUpdateMenuItemDTO(
         id: Long? = null,
         name: String? = "MenuItem Test",
         ingredients: List<IngredientDTO>? = listOf(getTestIngredientDTO()),
-        price: Long = 1
+        price: Double = 1.0
 ): MenuItemCreateUpdateDTO {
     return MenuItemCreateUpdateDTO(
         id,
@@ -27,7 +27,7 @@ fun getMenuItem(
         name: String = "MenuItem Test",
         event: Event = getEvent(),
         ingredients: List<Ingredient> = listOf(getTestIngredient1()),
-        price: Long = 1
+        price: Double = 1.0
 ): MenuItem {
     return MenuItem(
             id,
@@ -42,7 +42,7 @@ fun getMenuItemDTO(
         id: Long = 1,
         name: String = "MenuItem Test",
         ingredientDTOs: List<IngredientDTO> = listOf(getTestIngredientDTO()),
-        price: Long = 1
+        price: Double = 1.0
 ): MenuItemDTO {
     return MenuItemDTO(
             id,
