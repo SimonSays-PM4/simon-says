@@ -28,6 +28,12 @@ class EventServiceImpl(
         return eventMapper.mapToEventDTO(event)
     }
 
+    override fun getEventEntity(eventId: Long): Event {
+        val event = eventRepository.findById(eventId)
+                .orElseThrow { ResourceNotFoundException("Event not found with ID: $eventId") }
+        return event
+    }
+
     override fun createUpdateEvent(event: EventCreateUpdateDTO): EventDTO {
 
         val eventToBeSaved = if(event.id != null) {

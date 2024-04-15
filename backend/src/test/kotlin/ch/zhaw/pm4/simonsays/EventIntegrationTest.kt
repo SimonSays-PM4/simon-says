@@ -5,6 +5,7 @@ import ch.zhaw.pm4.simonsays.api.types.EventDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import jakarta.transaction.Transactional
+import org.hamcrest.CoreMatchers
 import org.hamcrest.collection.IsCollectionWithSize.hasSize
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
@@ -32,8 +33,6 @@ class EventIntegrationTest : IntegrationTest() {
     @Order(1)
     fun `Test event creation should should work with correct input`() {
         val event = EventCreateUpdateDTO(null, "eventusedfortesting", "eventusedfortesting", 2)
-        val eventDto = EventDTO("eventusedfortesting", "eventusedfortesting", 2, 1)
-        // when/then
         mockMvc.put("/rest-api/v1/event") {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
@@ -41,10 +40,12 @@ class EventIntegrationTest : IntegrationTest() {
         }
             .andDo { print() }
             .andExpect {
-                status { is2xxSuccessful() }
+                status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
-                    json(objectMapper.writeValueAsString(eventDto))
+                    jsonPath("$.name", CoreMatchers.equalTo("eventusedfortesting"))
+                    jsonPath("$.password", CoreMatchers.equalTo("eventusedfortesting"))
+                    jsonPath("$.numberOfTables", CoreMatchers.equalTo(2))
                 }
             }
     }
@@ -140,7 +141,7 @@ class EventIntegrationTest : IntegrationTest() {
         }
             .andDo { print() }
             .andExpect {
-                status { is2xxSuccessful() }
+                status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                     jsonPath("$", hasSize<Any>(2))
@@ -154,14 +155,14 @@ class EventIntegrationTest : IntegrationTest() {
         val event: Event = eventFactory.createEvent("test", "test", 0)
 
         // Since the response is expected to be an array, wrap the expected DTO in a list
-        val expectedJson = EventDTO("test", "test", 0, event.id)
+        val expectedJson = EventDTO(id = event.id, name = "test", password = "test", numberOfTables = 0)
 
         mockMvc.get("/rest-api/v1/event/${event.id}") {
             with(httpBasic(username, password))
         }
             .andDo { print() }
             .andExpect {
-                status { is2xxSuccessful() }
+                status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                     json(objectMapper.writeValueAsString(expectedJson))
@@ -178,7 +179,7 @@ class EventIntegrationTest : IntegrationTest() {
             null
         )
 
-        mockMvc.get("/rest-api/v1/event/${arbitraryId}") {
+        mockMvc.get("/rest-api/v1/event/${arbitraryId}"){
             with(httpBasic(username, password))
         }
             .andDo { print() }
@@ -196,7 +197,8 @@ class EventIntegrationTest : IntegrationTest() {
     fun `Test update event`() {
         val event: Event = eventFactory.createEvent("test", "test", 0)
         val updateEvent = EventCreateUpdateDTO(event.id, "integrationtest", "testtest", 3)
-        val expectedReturn = EventDTO("integrationtest", "testtest", 3, event.id)
+        val expectedReturn =
+            EventDTO(id = event.id, name = "integrationtest", password = "testtest", numberOfTables = 3)
 
         mockMvc.put("/rest-api/v1/event") {
             with(httpBasic(username, password))
@@ -205,11 +207,25 @@ class EventIntegrationTest : IntegrationTest() {
         }
             .andDo { print() }
             .andExpect {
-                status { is2xxSuccessful() }
+                status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                     json(objectMapper.writeValueAsString(expectedReturn))
                 }
+            }
+    }
+
+    @Test
+    @Transactional
+    fun `Test delete event`() {
+        val event: Event = eventFactory.createEvent("test", "test", 0)
+        mockMvc.delete("/rest-api/v1/event/${event.id}") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+        }
+            .andDo { print() }
+            .andExpect {
+                status { isNoContent() }
             }
     }
 

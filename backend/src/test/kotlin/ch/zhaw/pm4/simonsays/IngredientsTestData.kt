@@ -11,9 +11,9 @@ fun createUpdateTestIngredientDTO(id: Long? = null, name: String? = "TestIngredi
     name = name
 )
 
-fun getTestIngredient1(name: String? = "TestIngredient") = Ingredient(name = name!!, id = 1, event = getTestEvent())
+fun getTestIngredient1(name: String? = "TestIngredient") = Ingredient(name = name!!, id = 1, event = getTestEvent(), menuItems = null)
 
 fun getTestIngredientDTO(name: String? = "TestIngredient", id: Long? = 1) = IngredientDTO(name = name!!, id = id!!)
 
-fun getTestEvent() = Event("TestEvent", "TestPassword", 1, 1)
-fun getTestEventDTO() = EventDTO("TestEvent", "TestPassword", 1, 1)
+fun getTestEvent() = Event(id = 1, name = "TestEvent", password = "TestPassword", numberOfTables = 1)
+fun getTestEventDTO() = EventDTO(id = 1, name = "TestEvent", password = "TestPassword", numberOfTables = 1)

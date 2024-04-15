@@ -13,4 +13,5 @@ class EventFactory(
         val event = Event(name = name, password = password, numberOfTables = numberOfTables)
         return eventRepository.save(event)
     }
+
 }

@@ -31,6 +31,7 @@ class EventController(private val eventService: EventService) {
     @Operation(summary = "Retrieve a single event", security = [SecurityRequirement(name = "basicAuth")])
     @GetMapping("{eventId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
+    @AdminEndpoint
     fun getEvent(@PathVariable("eventId") eventId: Long ): EventDTO {
         return eventService.getEvent(eventId)
     }
@@ -43,7 +44,7 @@ class EventController(private val eventService: EventService) {
     }
     @Operation(summary = "Delete an event", security = [SecurityRequirement(name = "basicAuth")])
     @DeleteMapping("{eventId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @AdminEndpoint
     fun deleteEvent(@PathVariable("eventId") eventId: Long) {
         eventService.deleteEvent(eventId)
