@@ -11,13 +11,6 @@ export const IngredientListPageComponent: React.FC = () => {
     const { isLoading, eventActions, showDeletePopup, setShowDeletePopup, data } = useIngredientListPage();
     const navigate = useNavigate();
 
-    const columns: Array<ColumnType<IngredientDTO>> = [
-        {
-            key: "name",
-            name: "Name",
-        },
-    ];
-
     const onEditClick = (row: IngredientCreateUpdateDTO) => {
         navigate(`../ingredient/create/` + row.id);
     };
@@ -27,12 +20,32 @@ export const IngredientListPageComponent: React.FC = () => {
         setShowDeletePopup(true);
     };
 
+    const columns: Array<ColumnType<IngredientDTO>> = [
+        {
+            key: "name",
+            name: "Name",
+            type:"column"
+        },
+        {
+            key:"id",
+            name:"Bearbeiten",
+            type:"action",
+            action: onEditClick
+        },
+        {
+            key:"id",
+            name:"Löschen",
+            type:"action",
+            action: onDeleteClick
+        }
+    ];
+
     return (
         <div className="w-full">
             {isLoading ? (
                 <div className="w-[100px] block mx-auto"><Loader /></div>
             ) : (
-                <DataTable<IngredientDTO> title="Zutaten" columns={columns} rows={data} onCreateClick={() => navigate(`../ingredient/create`)} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />
+                <DataTable<IngredientDTO> title="Zutaten" columns={columns} rows={data} onCreateClick={() => navigate(`../ingredient/create`)}  />
             )}
 
             <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteIngredient} modalText={'Zutate "' + eventActions.ingredientToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
