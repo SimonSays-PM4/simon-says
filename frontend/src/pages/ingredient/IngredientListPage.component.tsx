@@ -28,13 +28,13 @@ export const IngredientListPageComponent: React.FC = () => {
         },
         {
             key:"id",
-            name:"Edit",
+            name:"Bearbeiten",
             type:"action",
             action: onEditClick
         },
         {
             key:"id",
-            name:"Delete",
+            name:"Löschen",
             type:"action",
             action: onDeleteClick
         }

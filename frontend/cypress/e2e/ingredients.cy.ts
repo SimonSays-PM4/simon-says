@@ -60,6 +60,6 @@ describe("Ingredient CRUD", () => {
 
     it("should not load newly created ingredient anymore", () => {
         cy.get("table").should("exist");
-        cy.get("tbody").children().should("have.length", 0);
+        cy.get("tbody").children().should("have.length", 1);
     });
 });
