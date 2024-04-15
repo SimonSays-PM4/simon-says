@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 import {eventService} from "../../api.ts";
 import {EventDTO} from "../../gen/api";
+import {AppContext} from "../../providers/AppContext.tsx";
+import {NotificationType} from "../../enums/NotificationType.ts";
 
 type EventActions = {
     deleteEvent: () => void,
@@ -19,6 +21,7 @@ export const useEventListPage = (): EventListPageReturnProps => {
     const [loading, setLoading] = useState(false)
     const [showDeletePopup, setShowDeletePopup] = useState(false)
     const [data, setData] = useState<EventDTO[]>([])
+    const appContext = useContext(AppContext)
 
     useEffect(() => {
         if (!showDeletePopup) {
@@ -41,6 +44,7 @@ export const useEventListPage = (): EventListPageReturnProps => {
             eventService.deleteEvent(eventToDelete.id).then(() => {
                 setShowDeletePopup(false)
                 setLoading(false);
+                appContext.addNotification(NotificationType.ERR,"Deleted Event")
             })
         }
     }, [eventToDelete.id])
