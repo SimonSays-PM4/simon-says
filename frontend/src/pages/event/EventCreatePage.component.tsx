@@ -10,7 +10,7 @@ import { EventCreateUpdateDTO } from "../../gen/api";
 export const EventCreatePageComponent: React.FC = () => {
     const { event, errorMessage, eventActions, setShowDeleteModal, showDeleteModal } = useEventCreatePage();
     const fieldRequiredMessage = "Dieses Feld ist erforderlich.";
-    const fieldLengthMessage = "Die Eingabe ist muss zwischen 5 und 64 Zeichen sein.";
+    const fieldLengthMessage = "Die Eingabe muss zwischen 5 und 64 Zeichen sein.";
 
     const {
         register,

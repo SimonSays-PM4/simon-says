@@ -9,7 +9,7 @@ export const Header: React.FC = () => {
     const navigate = useNavigate();
 
     const invokeLogout = () => {
-        setLoginInfo(new LoginInfo(false, "-"));
+        setLoginInfo(new LoginInfo(false, "-", ""));
         navigate("/login");
     };
 
