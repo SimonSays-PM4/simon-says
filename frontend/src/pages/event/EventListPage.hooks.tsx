@@ -1,5 +1,5 @@
 import {useCallback, useContext, useEffect, useState} from "react";
-import {eventService} from "../../api.ts";
+import {getEventService} from "../../api.ts";
 import {EventDTO} from "../../gen/api";
 import {AppContext} from "../../providers/AppContext.tsx";
 import {NotificationType} from "../../enums/NotificationType.ts";
@@ -21,7 +21,9 @@ export const useEventListPage = (): EventListPageReturnProps => {
     const [loading, setLoading] = useState(false)
     const [showDeletePopup, setShowDeletePopup] = useState(false)
     const [data, setData] = useState<EventDTO[]>([])
+    
     const appContext = useContext(AppContext)
+    const eventService = getEventService(appContext.loginInfo.userName, appContext.loginInfo.password);
 
     useEffect(() => {
         if (!showDeletePopup) {

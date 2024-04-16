@@ -1,5 +1,5 @@
 import {useCallback, useContext, useEffect, useState} from "react";
-import {ingredientService, menuItemService} from "../../../api.ts";
+import {getIngredientService, getMenuItemService} from "../../../api.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {IngredientDTO, MenuItemCreateUpdateDTO, MenuItemDTO} from "../../../gen/api";
 import {FieldValues} from "react-hook-form";
@@ -37,6 +37,9 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [options,setOptions] = useState<ValueLabel[]>([]);
     const navigate = useNavigate();
+    
+    const ingredientService = getIngredientService(appContext.loginInfo.userName, appContext.loginInfo.password);
+    const menuItemService = getMenuItemService(appContext.loginInfo.userName, appContext.loginInfo.password);
 
     useEffect(() => {
         console.log(menuId)

@@ -1,4 +1,4 @@
-import {eventService, menuItemService} from "../../../api.ts";
+import { getEventService, getMenuItemService} from "../../../api.ts";
 import {useCallback, useContext, useEffect, useState} from "react";
 import {EventDTO, MenuItemDTO} from "../../../gen/api";
 import {EventContext} from "../../../providers/EventContext.tsx";
@@ -27,6 +27,9 @@ export const useEventMenuPage = (): EventMenuReturnProps => {
     const [isLoading, setLoading] = useState<boolean>(false);
     const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
     const appContext = useContext(AppContext);
+
+    const eventService = getEventService(appContext.loginInfo.userName, appContext.loginInfo.password);
+    const menuItemService = getMenuItemService(appContext.loginInfo.userName, appContext.loginInfo.password);
 
     useEffect(()=> {
         setLoading(true)
