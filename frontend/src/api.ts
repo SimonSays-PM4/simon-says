@@ -1,5 +1,5 @@
-import axios from "./gen/api/api/node_modules/axios";
-import {EventControllerApi, HealthControllerApi, IngredientControllerApi, MenuItemControllerApi} from "./gen/api";
+import axios from "axios";
+import { EventControllerApi, HealthControllerApi, IngredientControllerApi, MenuItemControllerApi } from "./gen/api";
 
 export const API_URL = process.env.VITE_API_URL || import.meta.env.VITE_API_URL;
 

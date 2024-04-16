@@ -1,19 +1,18 @@
 import React from "react";
-import {useEventMenuPage} from "./EventMenuPage.hooks.ts";
-import {Loader} from "../../../components/Loader.tsx";
-import {ColumnType} from "../../../models/ColumnType.ts";
-import {MenuItemDTO} from "../../../gen/api";
-import {DataTable} from "../../../components/data-tables/DataTable.tsx";
-import {useNavigate} from "react-router-dom";
-import {Popup} from "../../../components/Popup.tsx";
+import { useEventMenuPage } from "./EventMenuPage.hooks.ts";
+import { Loader } from "../../../components/Loader.tsx";
+import { ColumnType } from "../../../models/ColumnType.ts";
+import { MenuItemDTO } from "../../../gen/api";
+import { DataTable } from "../../../components/data-tables/DataTable.tsx";
+import { useNavigate } from "react-router-dom";
+import { Popup } from "../../../components/Popup.tsx";
 
 export const EventMenuPage: React.FC = () => {
-
-    const { event,menuItems, isLoading, menuItemActions, showDeletePopup, setShowDeletePopup  } = useEventMenuPage();
+    const { event, menuItems, isLoading, menuItemActions, showDeletePopup, setShowDeletePopup } = useEventMenuPage();
     const navigate = useNavigate();
 
     if (isLoading) {
-        return <Loader/>
+        return <Loader />
     }
 
     const onEditClick = (row: MenuItemDTO) => {
@@ -34,22 +33,22 @@ export const EventMenuPage: React.FC = () => {
             type: "column"
         },
         {
-            key:"id",
-            name:"Edit",
+            key: "id",
+            name: "Edit",
             type: "action",
-            action:onEditClick
+            action: onEditClick
         },
         {
-            key:"id",
-            name:"Delete",
+            key: "id",
+            name: "Delete",
             type: "action",
-            action:onDeleteClick
+            action: onDeleteClick
         }
     ];
 
 
-    return  <div className="w-full"><h1>Edit Menu of <b>"{event.name}"</b></h1><br/>
-        <DataTable rows={menuItems} columns={columns} title="Available Menu Items" onCreateClick={()=>navigate("./create/0")}/>
+    return <div className="w-full"><h1>Edit Menu of <b>"{event.name}"</b></h1><br />
+        <DataTable rows={menuItems} columns={columns} title="Available Menu Items" onCreateClick={() => navigate("./create/0")} />
         <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={menuItemActions.deleteMenuItem} modalText={'Delete "' + menuItemActions.menuItemToDelete.name + '"'} closeText="Abbrechen" acceptText="Löschen" />
     </div>
 }

@@ -1,23 +1,23 @@
-import {useCallback, useContext, useEffect, useState} from "react";
-import {getIngredientService, getMenuItemService} from "../../../api.ts";
-import {useNavigate, useParams} from "react-router-dom";
-import {IngredientDTO, MenuItemCreateUpdateDTO, MenuItemDTO} from "../../../gen/api";
-import {FieldValues} from "react-hook-form";
-import {EventContext} from "../../../providers/EventContext.tsx";
-import {AppContext} from "../../../providers/AppContext.tsx";
-import {NotificationType} from "../../../enums/NotificationType.ts";
-import {ValueLabel} from "../../../models/ValueLabel.ts";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { getIngredientService, getMenuItemService } from "../../../api.ts";
+import { useNavigate, useParams } from "react-router-dom";
+import { IngredientDTO, MenuItemCreateUpdateDTO, MenuItemDTO } from "../../../gen/api";
+import { FieldValues } from "react-hook-form";
+import { EventContext } from "../../../providers/EventContext.tsx";
+import { AppContext } from "../../../providers/AppContext.tsx";
+import { NotificationType } from "../../../enums/NotificationType.ts";
+import { ValueLabel } from "../../../models/ValueLabel.ts";
 
 type EventMenuEditReturnProps = {
-    menuItem:MenuItemDTO,
+    menuItem: MenuItemDTO,
     menuItemActions: MenuItemActions,
-    isLoading:boolean,
-    setShowDeleteModal:(show:boolean) =>void,
-    showDeleteModal:boolean,
-    navigate:(thing:string) =>void,
-    setIngredients: (ingredients:IngredientDTO[]) => void
+    isLoading: boolean,
+    setShowDeleteModal: (show: boolean) => void,
+    showDeleteModal: boolean,
+    navigate: (thing: string) => void,
+    setIngredients: (ingredients: IngredientDTO[]) => void
     ingredientOptions: ValueLabel[],
-    selectedIngredients:ValueLabel[]
+    selectedIngredients: ValueLabel[]
 };
 
 type MenuItemActions = {
@@ -27,43 +27,43 @@ type MenuItemActions = {
 
 export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
 
-    const {menuId} = useParams();
+    const { menuId } = useParams();
     const appContext = useContext(AppContext);
     const menuItemId = menuId ? Number(menuId) : 0;
-    const {eventId} = useContext(EventContext);
-    const [menuItem, setMenuItem] = useState<MenuItemDTO>({id:0,name:"",price:0.0,ingredients:[]});
-    const [selectedIngredients,setSelectedIngredients] = useState<ValueLabel[]>([]);
+    const { eventId } = useContext(EventContext);
+    const [menuItem, setMenuItem] = useState<MenuItemDTO>({ id: 0, name: "", price: 0.0, ingredients: [] });
+    const [selectedIngredients, setSelectedIngredients] = useState<ValueLabel[]>([]);
     const [isLoading, setLoading] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [options,setOptions] = useState<ValueLabel[]>([]);
+    const [options, setOptions] = useState<ValueLabel[]>([]);
     const navigate = useNavigate();
-    
+
     const ingredientService = getIngredientService(appContext.loginInfo.userName, appContext.loginInfo.password);
     const menuItemService = getMenuItemService(appContext.loginInfo.userName, appContext.loginInfo.password);
 
     useEffect(() => {
         console.log(menuId)
-        if (eventId>0) {
-            if (menuItemId>0) {
+        if (eventId > 0) {
+            if (menuItemId > 0) {
                 menuItemService.getMenuItem(eventId, menuItemId).then((item) => {
                     setSelectedIngredients(item.data.ingredients.map((ing) => {
-                        return {value: ing.id, label: ing.name}
+                        return { value: ing.id, label: ing.name }
                     }))
                     setMenuItem(item.data)
                 }).catch(() => appContext.addNotification(NotificationType.ERR, "Failed to Fetch Menu Item"))
             }
-            ingredientService.listIngredients(eventId).then((ingredients) =>  {
-                setOptions([...ingredients.data.map((ing)=>{return{value:ing.id,label:ing.name}})]);
-            }).catch(()=>appContext.addNotification(NotificationType.ERR, "Failed to Fetch Ingredients"))
+            ingredientService.listIngredients(eventId).then((ingredients) => {
+                setOptions([...ingredients.data.map((ing) => { return { value: ing.id, label: ing.name } })]);
+            }).catch(() => appContext.addNotification(NotificationType.ERR, "Failed to Fetch Ingredients"))
         }
-    },[eventId,menuItemId])
+    }, [eventId, menuItemId])
 
-    const setIngredients = useCallback((ingredients:IngredientDTO[]) => {
+    const setIngredients = useCallback((ingredients: IngredientDTO[]) => {
         const newMenuItem = menuItem;
         newMenuItem.ingredients = ingredients;
-        setSelectedIngredients(ingredients.map((ing)=> {return{value:ing.id,label:ing.name}}))
+        setSelectedIngredients(ingredients.map((ing) => { return { value: ing.id, label: ing.name } }))
         setMenuItem(newMenuItem)
-    },[menuItem, menuItemId])
+    }, [menuItem, menuItemId])
 
     const saveMenuItem = useCallback(
         (data: FieldValues) => {
@@ -74,23 +74,23 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
             menuItemToSave.ingredients = menuItem.ingredients;
 
             menuItemService
-                .putMenuItem(eventId,menuItemToSave)
+                .putMenuItem(eventId, menuItemToSave)
                 .then((response) => {
                     setLoading(false);
-                    navigate("./"+response.data.id);
-                    appContext.addNotification(NotificationType.OK, "Saved Menu Item \""+menuItemToSave.name+"\"")
+                    navigate("./" + response.data.id);
+                    appContext.addNotification(NotificationType.OK, "Saved Menu Item \"" + menuItemToSave.name + "\"")
                 })
                 .catch(() => {
                     setLoading(false);
-                    appContext.addNotification(NotificationType.ERR, "Failed to save \""+menuItemToSave.name+"\"");
+                    appContext.addNotification(NotificationType.ERR, "Failed to save \"" + menuItemToSave.name + "\"");
                 });
         },
         [menuItem]
     );
 
     const deleteMenuItem = useCallback(() => {
-        menuItemService.deleteMenuItem(eventId,menuItemId).then(response=> {
-            if (response.status == 200 || response.status ==201) {
+        menuItemService.deleteMenuItem(eventId, menuItemId).then(response => {
+            if (response.status == 200 || response.status == 201) {
                 navigate("./../")
                 appContext.addNotification(NotificationType.OK, "Deleted Menu Item")
             }
@@ -98,10 +98,10 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
 
     }, [menuItem])
 
-    const menuItemActions:MenuItemActions = {
-        saveMenuItem:saveMenuItem,
-        deleteMenuItem:deleteMenuItem
-    } ;
+    const menuItemActions: MenuItemActions = {
+        saveMenuItem: saveMenuItem,
+        deleteMenuItem: deleteMenuItem
+    };
 
-    return {menuItem, menuItemActions, isLoading, setShowDeleteModal, showDeleteModal,navigate,setIngredients,ingredientOptions:options,selectedIngredients}
+    return { menuItem, menuItemActions, isLoading, setShowDeleteModal, showDeleteModal, navigate, setIngredients, ingredientOptions: options, selectedIngredients }
 }
