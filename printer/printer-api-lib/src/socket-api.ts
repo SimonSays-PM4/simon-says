@@ -1,8 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { ApplicationErrorDto, PrinterServerDto, PrinterServersDto, PrintQueueDto, PrintQueueJobDto, PrintQueueJobsDto } from './dtos';
 
-const defaultMaxAckTimeout = 2000;
-
 export class SocketApi<OnConnectType, OnChangeType> {
     readonly socketUrl: string;
     readonly onInitialData: (data: OnConnectType) => void;
@@ -32,7 +30,7 @@ export class SocketApi<OnConnectType, OnChangeType> {
         this.onInitialData = onInitialData;
         this.onChange = onChange;
         this.onApplicationError = onApplicationError;
-        this.socket = io(socketUrl).timeout(defaultMaxAckTimeout);
+        this.socket = io(socketUrl);
         this.socket.on('initial-data', onInitialData);
         this.socket.on('change', onChange);
         this.socket.on('remove', onRemove);
@@ -48,11 +46,13 @@ export class SocketApi<OnConnectType, OnChangeType> {
     }
 
     async sendChange(data: Partial<OnChangeType>): Promise<void> {
-        await this.socket.emitWithAck('change', data);
+        console.debug(`Sending change to ${this.socketUrl}`, data);
+        await this.socket.timeout(5000).emit('change', data);
     }
 
     async sendRemove<T>(data: Partial<OnChangeType>): Promise<void> {
-        await this.socket.emitWithAck('remove', data);
+        console.debug(`Sending remove to ${this.socketUrl}`, data);
+        await this.socket.timeout(5000).emit('remove', data);
     }
 
     // connect to /socket-api/v1/printer-servers

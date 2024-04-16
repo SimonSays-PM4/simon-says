@@ -1,12 +1,14 @@
 import { SocketApi } from 'printer-api-lib/src/socket-api';
 import { ApplicationErrorDto, PrintQueueDto, PrintQueueJobDto, PrintQueueJobUpdateDto } from 'printer-api-lib/src/dtos';
 import { Printer } from "./printer";
+import { error } from 'console';
 
 export class PrinterQueue {
     readonly printServerId: string;
     readonly printQueueDto: PrintQueueDto;
     readonly nextPrintQueueJobConnection: SocketApi<PrintQueueJobDto, PrintQueueJobDto>;
     readonly printers: Printer[] = [];
+    private lastPrintJobId?: string;
 
     constructor(printServerId: string, printQueueDto: PrintQueueDto) {
         this.printServerId = printServerId;
@@ -49,6 +51,17 @@ export class PrinterQueue {
     }
 
     async print(printJob: PrintQueueJobDto): Promise<void> {
+        if(printJob.status !== "PENDING") {
+            console.log(`Print job ${printJob.id} is not pending. Skipping.`);
+            return;
+        }
+        // TODO (Lukas) we might be able to remove the following check if we implement a proper queue
+        if(this.lastPrintJobId === printJob.id) {
+            console.log(`Print job ${printJob.id} is already being printed. Skipping.`);
+            return;
+        }
+        this.lastPrintJobId = printJob.id;
+
         // Collect all errors that occur during printing
         const printErrors = [];
 
@@ -76,8 +89,8 @@ export class PrinterQueue {
         }
 
         // If we reach this point, no printer was able to print the job
-        const errorMessage = `Failed to print job ${printJob.id} because no printer was able to print the job. Errors: ${printErrors.join(", ")}`;
-        console.error(errorMessage);
+        var errorMessage = `Failed to print job ${printJob.id} because no printer was able to print the job.`;
+        console.error(errorMessage, printErrors);
         await this.updatePrintQueueJob({
             id: printJob.id,
             status: "ERROR",
@@ -86,6 +99,15 @@ export class PrinterQueue {
     }
 
     async updatePrintQueueJob(update: PrintQueueJobUpdateDto): Promise<void> {
-        await this.nextPrintQueueJobConnection.sendChange(update);
+        try {
+            await this.nextPrintQueueJobConnection.sendChange(update);
+        } catch (error) {
+            // try again after a short delay
+            console.log("Failed to send update of printer job. Retrying in 1 seconds.", error);
+            setTimeout(async () => {
+                await this.updatePrintQueueJob(update);
+            }, 1);
+            console.error("An error occured while sending update of printer job", error) 
+        }
     }
 }

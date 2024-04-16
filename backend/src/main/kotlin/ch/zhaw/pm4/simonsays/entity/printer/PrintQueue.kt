@@ -12,7 +12,7 @@ data class PrintQueue(
     @Column(nullable = false)
     val name: String,
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.MERGE])
     val printers: List<Printer>,
 
     @OneToMany(mappedBy = "printQueue")

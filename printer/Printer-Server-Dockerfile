@@ -19,6 +19,7 @@ COPY printer-server ./printer-server
 
 WORKDIR /app/printer-server
 RUN npm ci
+RUN npm run build-id
 
 # Start the server
 CMD ["npm", "start"]

@@ -6,6 +6,7 @@ import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.CHANGE_E
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.INITIAL_DATA_EVENT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.REMOVE_EVENT
 import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
+import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueJobService
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueService
@@ -128,7 +129,7 @@ class PrintQueueJobsNamespace(
         subscribedJobId: PrintQueueJobId?,
         socket: SocketIoSocket,
     ) {
-        log.info("Change event received: $data")
+        log.info("Print queue job change event received: $data")
 
         // Verify that we actually received a json
         if (data.isEmpty() || data.first() !is JSONObject) {
@@ -162,19 +163,40 @@ class PrintQueueJobsNamespace(
         jobJson.put("lastUpdateDateTime", currentTimeMillis)
 
         // if the id is not set, we generate a new one, so we create a new entry
-        if (jobId == null) {
+        val printQueueJobDto = if (jobId == null) {
             jobJson.put("id", UUID.randomUUID())
             // set/override creation date
             jobJson.put("creationDateTime", currentTimeMillis)
-        }
-
-        // Attempt to convert json to data class
-        val printQueueJobDto = try {
-            objectMapper.convertValue(jobJson, PrintQueueJobDto::class.java)
-        } catch (error: Error) {
-            return onApplicationError(
-                socket, "INVALID_CHANGE_DATA", "Invalid or malformed data received. Expected a valid print queue job."
+            // Attempt to convert json to data class
+            val printQueueJobDto = try {
+                objectMapper.convertValue(jobJson, PrintQueueJobDto::class.java)
+            } catch (error: Error) {
+                return onApplicationError(
+                    socket,
+                    "INVALID_CHANGE_DATA",
+                    "Invalid or malformed data received. Expected a valid print queue job."
+                )
+            }
+            printQueueJobDto
+        } else {
+            // if the id is set, we only allow changes to the job status and status message
+            val existingPrintQueueJob = printQueueJobService.getPrintQueueJobById(jobId) ?: return onApplicationError(
+                socket, "PRINT_QUEUE_JOB_NOT_FOUND", "Print queue job with id $jobId not found."
             )
+            val updatedPrintQueueJobDto = existingPrintQueueJob.copy(
+                status = if (jobJson.has("status")) JobStatusDto.valueOf(jobJson.getString("status")) else existingPrintQueueJob.status,
+                statusMessage = if (jobJson.has("statusMessage")) jobJson.getString("statusMessage") else existingPrintQueueJob.statusMessage,
+            )
+            // warn client if they want to change something else than status or status message
+            if (jobJson.keys().asSequence().any { it != "status" && it != "statusMessage" && it != "id" && it != "lastUpdateDateTime" }) {
+                onApplicationError(
+                    socket,
+                    "INVALID_CHANGE_DATA",
+                    "Partially invalid or change data received. Only status and status message can be changed. Any other value will be ignored."
+                )
+            }
+
+            updatedPrintQueueJobDto
         }
 
         val savedPrintQueueJob = printQueueJobService.savePrintQueueJob(printQueueId, printQueueJobDto)
@@ -289,14 +311,11 @@ class PrintQueueJobsNamespace(
         // Notify all specific job subscribers
         subscribersToSpecificPrintQueueJobs[jobId]?.forEach { it.sendPojo(CHANGE_EVENT, data) }
 
-        // If the next pending job has changed we want to send the new job
-        val currentNextPendingJob = nextPendingPrintQueueJobs[printQueueId]
+        // If the next pending job has changed we need to send the new job
         val updatedNextPendingJob = printQueueJobService.getNextPendingPrintQueueJob(printQueueId)
-        if (currentNextPendingJob?.id != updatedNextPendingJob?.id) {
-            nextPendingPrintQueueJobs[printQueueId] = updatedNextPendingJob
-        }
+        nextPendingPrintQueueJobs[printQueueId] = updatedNextPendingJob
         // If the next pending job has not changed, we still want to send the updated job
-        subscribersToNextPrintQueueJob[printQueueId]?.forEach { it.sendPojo(CHANGE_EVENT, currentNextPendingJob) }
+        subscribersToNextPrintQueueJob[printQueueId]?.forEach { it.sendPojo(CHANGE_EVENT, updatedNextPendingJob) }
     }
 
     /**

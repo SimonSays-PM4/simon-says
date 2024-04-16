@@ -12,6 +12,6 @@ data class PrinterServer(
     @Column(nullable = false)
     val name: String,
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.MERGE])
     val queues: List<PrintQueue>
 )

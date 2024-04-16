@@ -85,7 +85,7 @@ class PrinterServersNamespace(
      * @param socket The socket that received the change event
      */
     fun onChangeEventReceived(data: Array<Any>, subscribedPrinterId: String?, socket: SocketIoSocket) {
-        log.info("Change event received: $data")
+        log.info("Printer server change event received: $data")
 
         // Verify that we actually received a json
         if (data.isEmpty() || data.first() !is JSONObject) {

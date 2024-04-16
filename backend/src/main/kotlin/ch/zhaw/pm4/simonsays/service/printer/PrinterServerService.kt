@@ -13,7 +13,6 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class PrinterServerService(
     private val printerServerRepository: PrinterServerRepository,
-    private val printQueueRepository: PrintQueueRepository,
     private val printerServerMapper: PrinterServerMapper,
 ) {
     fun getAllPrinterServers(): List<PrinterServerDto> {
@@ -34,7 +33,7 @@ class PrinterServerService(
     fun savePrinterServer(printerServerDto: PrinterServerDto): PrinterServerDto {
         // Update existing printer server
         val printerServer = printerServerMapper.mapToPrinterServer(printerServerDto)
-        val updatedPrinterServer = printerServerRepository.saveAndFlush(printerServer)
+        val updatedPrinterServer = printerServerRepository.save(printerServer)
         return printerServerMapper.mapToPrinterServerDto(updatedPrinterServer)
     }
 
