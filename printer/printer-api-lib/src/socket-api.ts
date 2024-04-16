@@ -30,29 +30,39 @@ export class SocketApi<OnConnectType, OnChangeType> {
         this.onInitialData = onInitialData;
         this.onChange = onChange;
         this.onApplicationError = onApplicationError;
-        this.socket = io(socketUrl);
+        this.socket = io(socketUrl, { autoConnect: false });
         this.socket.on('initial-data', onInitialData);
         this.socket.on('change', onChange);
         this.socket.on('remove', onRemove);
         this.socket.on('application-error', onApplicationError);
-        this.socket.on('connect_error', (error: Error) => {
-            console.error(`🧦 Socket connection error: ${error.message}`);
-        });
 
         // For debugging
+        this.socket.on('error', (error: any) => console.error(`🧦 Socket error:`, error));
+        this.socket.on('reconnect', (attemptNumber: number) => console.debug(`🧦 Socket reconnected after ${attemptNumber} attempts`));
+        this.socket.on('reconnect_attempt', (attemptNumber: number) => console.debug(`🧦 Socket reconnect attempt ${attemptNumber}`));
+        this.socket.on('reconnect_error', (error: any) => console.error(`🧦 Socket reconnect error:`, error))
+        this.socket.on('reconnect_failed', () => console.error(`🧦 Socket reconnect failed`));
+        this.socket.on('connect', () => console.debug(`🧦 Socket connected to ${socketUrl}`));
+        this.socket.on('connect_error', (error: any) => console.error(`🧦 Socket connection error:`, error));
+        this.socket.on('disconnect', () => console.debug(`🧦 Socket disconnected from ${socketUrl}`));
+
+        // For debugging event more
         this.socket.onAny((event, ...args) => {
             console.debug(`🧦 Socket event: ${event}`, args);
         });
+
+        // connect to the socket
+        this.socket = this.socket.connect();
     }
 
     async sendChange(data: Partial<OnChangeType>): Promise<void> {
         console.debug(`Sending change to ${this.socketUrl}`, data);
-        await this.socket.timeout(5000).emit('change', data);
+        await this.socket.emit('change', data);
     }
 
     async sendRemove<T>(data: Partial<OnChangeType>): Promise<void> {
         console.debug(`Sending remove to ${this.socketUrl}`, data);
-        await this.socket.timeout(5000).emit('remove', data);
+        await this.socket.emit('remove', data);
     }
 
     // connect to /socket-api/v1/printer-servers

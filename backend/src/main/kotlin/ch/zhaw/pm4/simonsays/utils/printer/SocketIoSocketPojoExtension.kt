@@ -8,8 +8,8 @@ import org.json.JSONObject
  * Extension function to send a pojo as a JSON object to a socket.io socket.
  */
 fun SocketIoSocket.sendPojo(event: String, data: Any?) {
+    // if data is null, do not send anything
     if (data == null) {
-        this.send(event, null)
         return
     }
     // For some reason socket.io does not support sending enums, so we have to convert them to strings

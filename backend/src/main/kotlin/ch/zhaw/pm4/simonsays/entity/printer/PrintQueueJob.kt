@@ -15,7 +15,7 @@ data class PrintQueueJob(
     @Column(nullable = true)
     val statusMessage: String? = null,
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 8164)
     val base64PngLogoImage: String? = null,
 
     @Column(nullable = true)
@@ -24,10 +24,10 @@ data class PrintQueueJob(
     @Column(nullable = true)
     val title: String? = null,
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1023)
     val body: String,
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 1023)
     val qrCode: String? = null,
 
     @Column(nullable = true)

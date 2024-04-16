@@ -62,8 +62,7 @@ export class Printer {
         }
 
         // Check if the printer is connected
-        const isConnected = await this.thermalPrinter!.isPrinterConnected();
-        if (!isConnected) {
+        if (!this.isConnected()) {
             throw new Error(`Failed to print job because printer ${this.name} with mac ${this.mac} is not connected`);
         }
 
@@ -113,7 +112,15 @@ export class Printer {
         // Cut the paper and execute the print job
         this.thermalPrinter!.cut();
         try {
-            await this.thermalPrinter!.execute({docname: printJob.id, waitForResponse: true});
+            console.log(`PRINTING JOB ${printJob.id}
+            
+            
+            body: ${printJob.body}
+            
+            
+            
+            `);
+            await this.thermalPrinter!.execute({docname: printJob.id, waitForResponse: false});
         } catch (error) {
             throw new Error(`Failed to print job ${printJob.id} on printer ${this.name} with mac ${this.mac}: ${error}`);
         }

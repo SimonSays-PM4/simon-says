@@ -8,7 +8,6 @@ export class PrinterQueue {
     readonly printQueueDto: PrintQueueDto;
     readonly nextPrintQueueJobConnection: SocketApi<PrintQueueJobDto, PrintQueueJobDto>;
     readonly printers: Printer[] = [];
-    private lastPrintJobId?: string;
 
     constructor(printServerId: string, printQueueDto: PrintQueueDto) {
         this.printServerId = printServerId;
@@ -52,15 +51,9 @@ export class PrinterQueue {
 
     async print(printJob: PrintQueueJobDto): Promise<void> {
         if(printJob.status !== "PENDING") {
-            console.log(`Print job ${printJob.id} is not pending. Skipping.`);
+            console.log(`Print job ${printJob.id} is not pending. Nothing to print here.`);
             return;
         }
-        // TODO (Lukas) we might be able to remove the following check if we implement a proper queue
-        if(this.lastPrintJobId === printJob.id) {
-            console.log(`Print job ${printJob.id} is already being printed. Skipping.`);
-            return;
-        }
-        this.lastPrintJobId = printJob.id;
 
         // Collect all errors that occur during printing
         const printErrors = [];
