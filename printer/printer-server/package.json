@@ -21,6 +21,7 @@
   "dependencies": {
     "@network-utils/arp-lookup": "^2.1.0",
     "dotenv": "^16.4.5",
+    "local-devices": "^4.0.0",
     "node-thermal-printer": "^4.4.2",
     "printer-api-lib": "file:../printer-api-lib"
   }

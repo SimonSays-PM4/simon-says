@@ -1,6 +1,9 @@
 import { PrinterTypes, ThermalPrinter } from "node-thermal-printer";
 import arp from "@network-utils/arp-lookup";
 import { PrintQueueJobDto } from "printer-api-lib/src/dtos";
+import scanForDevicesInNetwork from "local-devices";
+
+const networkScanMaxTimeoutInMs = 20_000;
 
 export class Printer {
     readonly mac: string;
@@ -24,10 +27,29 @@ export class Printer {
             return true;
         }
         console.log(`Initializing printer ${this.name} with mac ${this.mac}`);
-        const ip = await arp.toIP(this.mac);
+        // First we try to find the ip address of the printer in our arp cache because this is the fastest way
+        let ip = await arp.toIP(this.mac);
         if (!ip) {
-            console.error(`Failed to resolve printer ip for mac ${this.mac}`);
-            return false;
+            console.error(`Failed to resolve printer ip for mac ${this.mac} in arp cache. Starting network scan.`);
+            // Attempting network scan
+            try {
+                // timeout the network scan after a certain time
+                const networkDevices = await Promise.race([
+                    scanForDevicesInNetwork(),
+                    new Promise<scanForDevicesInNetwork.IDevice[]>((_, reject) => setTimeout(() => reject("Network scan timeout"), networkScanMaxTimeoutInMs))
+                ]);
+
+                const printerDevice = networkDevices.find(device => device.mac === this.mac);
+                if (!printerDevice) {
+                    console.error(`Failed to resolve printer ip for mac ${this.mac} in network scan.`);
+                    return false;
+                }
+                ip = printerDevice.ip;
+            }
+            catch (error) {
+                console.error(`Failed to resolve printer ip for mac ${this.mac} in network scan: ${error}`);
+                return false;
+            }
         }
         console.log(`Resolved printer ip for mac ${this.mac} to ${ip}`);
 
@@ -47,7 +69,7 @@ export class Printer {
         if (!initSuccessul) {
             return false;
         }
-        return  process.env.DRY_RUN_PRINTER_MAC_ADDRESS === this.mac || (await this.thermalPrinter!.isPrinterConnected());
+        return process.env.DRY_RUN_PRINTER_MAC_ADDRESS === this.mac || (await this.thermalPrinter!.isPrinterConnected());
     }
 
     /**
@@ -68,7 +90,7 @@ export class Printer {
         }
 
         // Dry run the print job if in dry run mode
-        if(process.env.DRY_RUN) {
+        if (process.env.DRY_RUN == "true") {
             return this.dryRun(printJob);
         }
 
@@ -124,7 +146,7 @@ export class Printer {
         // Cut the paper and execute the print job
         this.thermalPrinter!.cut();
         try {
-            await this.thermalPrinter!.execute({docname: printJob.id, waitForResponse: false});
+            await this.thermalPrinter!.execute({ docname: printJob.id, waitForResponse: false });
         } catch (error) {
             throw new Error(`Failed to print job ${printJob.id} on printer ${this.name} with mac ${this.mac}: ${error}`);
         }
@@ -186,9 +208,9 @@ export class Printer {
             virtualPaper += center(splitIfTooLong(`*${printJob.title}*`));
             virtualPaper += "\n\n";
         }
-        
+
         virtualPaper += splitIfTooLong(printJob.body) + "\n\n";
-        
+
         if (printJob.qrCode) {
             virtualPaper += center("<QR-CODE>");
             virtualPaper += "\n\n";
