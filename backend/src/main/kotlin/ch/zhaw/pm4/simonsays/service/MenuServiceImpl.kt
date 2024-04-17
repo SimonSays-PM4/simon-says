@@ -19,15 +19,14 @@ class MenuServiceImpl(
 ): MenuService {
     override fun listMenus(eventId: Long): MutableList<MenuDTO> {
         val menus: List<Menu> = menuRepository.findAllByEventId(eventId)
-        val menuDTOs: MutableList<MenuDTO> = menus.map { menu ->
-            menuMapper.mapToMenuDTO(menu, menu.menuItems.sumOf { it.price.toDouble() })
+        return menus.map { menu ->
+            menuMapper.mapToMenuDTO(menu, menu.menuItems.sumOf { it.price })
         }.toMutableList()
-        return menuDTOs
     }
     override fun getMenu(menuId: Long, eventId: Long): MenuDTO {
         val menu = menuRepository.findByIdAndEventId(menuId, eventId)
             .orElseThrow { ResourceNotFoundException("Menu not found with ID: $menuId") }
-        return menuMapper.mapToMenuDTO(menu, menu.menuItems.sumOf { it.price.toDouble() })
+        return menuMapper.mapToMenuDTO(menu, menu.menuItems.sumOf { it.price })
     }
 
     override fun createUpdateMenu(menu: MenuCreateUpdateDTO, eventId: Long): MenuDTO {
@@ -40,19 +39,19 @@ class MenuServiceImpl(
             menuMapper.mapCreateDTOToMenu(menu, event, menuItems)
         }
         val savedMenu = menuRepository.save(menuToBeSaved)
-        return menuMapper.mapToMenuDTO(savedMenu, menu.menuItems.sumOf { it.price.toDouble() })
+        return menuMapper.mapToMenuDTO(savedMenu, menu.menuItems.sumOf { it.price })
     }
 
     override fun deleteMenu(menuId: Long, eventId: Long) {
         val menu = menuRepository.findByIdAndEventId(menuId, eventId).orElseThrow {
-            ResourceNotFoundException("Menu item not found with ID: $menuId")
+            ResourceNotFoundException("Menu not found with ID: $menuId")
         }
         menuRepository.delete(menu)
     }
 
     private fun makeMenuReadyForUpdate(menu: MenuCreateUpdateDTO, eventId: Long, menuItems: List<MenuItem>): Menu {
-        val menuToSave = menuRepository.findById(menu.id!!).orElseThrow {
-            ResourceNotFoundException("Menu item not found with ID: ${menu.id}")
+        val menuToSave = menuRepository.findByIdAndEventId(menu.id!!, eventId).orElseThrow {
+            ResourceNotFoundException("Menu not found with ID: ${menu.id}")
         }
         menuToSave.name = menu.name!!
         menuToSave.event = eventService.getEventEntity(eventId)

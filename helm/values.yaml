@@ -1,4 +1,6 @@
 backend:
+  config:
+    adminSecretName: "simonsays-admin"
   deployment:
     name: simonsays-backend
     replicas: 1

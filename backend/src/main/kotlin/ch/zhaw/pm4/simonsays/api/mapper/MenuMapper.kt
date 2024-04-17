@@ -13,7 +13,6 @@ import org.mapstruct.Mappings
 interface MenuMapper {
     @Mappings(
         Mapping(target = "name", source = "menu.name"),
-        Mapping(target = "menuItems")
     )
     fun mapToMenuDTO(menu: Menu, price: Double): MenuDTO
 

@@ -3,8 +3,8 @@ import {
     EventControllerApi,
     HealthControllerApi,
     IngredientControllerApi,
-    MenuControllerApi,
-    MenuItemControllerApi
+    MenuItemControllerApi,
+    MenuControllerApi
 } from "./gen/api/api";
 
 export const API_URL = process.env.VITE_API_URL || import.meta.env.VITE_API_URL;

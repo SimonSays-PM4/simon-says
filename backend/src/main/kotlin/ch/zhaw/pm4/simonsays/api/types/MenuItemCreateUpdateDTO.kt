@@ -19,6 +19,6 @@ class MenuItemCreateUpdateDTO(
     val ingredients: List<IngredientDTO>?,
 
     @field:Schema(description = "Price of the menu item")
-    @field:Min(value = 0, message = "Price of the menu item must be 0 or higher")
-    val price: Long
+    @field:Min(value = 1, message = "Price of the menu item must be 1 or higher")
+    val price: Double
 ) {}
