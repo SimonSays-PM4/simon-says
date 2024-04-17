@@ -1,11 +1,31 @@
-import { EventControllerApi, HealthControllerApi, IngredientControllerApi } from "./gen/api";
+import axios from "axios";
+import {
+    EventControllerApi,
+    HealthControllerApi,
+    IngredientControllerApi,
+    MenuControllerApi,
+    MenuItemControllerApi
+} from "./gen/api/api";
 
 export const API_URL = process.env.VITE_API_URL || import.meta.env.VITE_API_URL;
 
-console.log("API ROUTE: " + API_URL);
-console.log("STAGE: " + import.meta.env.MODE);
-const eventService = new EventControllerApi(undefined, API_URL, undefined);
-const ingredientService = new IngredientControllerApi(undefined, API_URL, undefined);
-const healthService = new HealthControllerApi(undefined, API_URL || import.meta.env.VITE_API_URL, undefined);
+const getEventService = (username: string, password: string) => {
+    const axiosInstance = axios.create({ auth: { username: username, password: password } });
+    return new EventControllerApi(undefined, API_URL, axiosInstance);
+};
+const getIngredientService = (username: string, password: string) => {
+    const axiosInstance = axios.create({ auth: { username: username, password: password } });
+    return new IngredientControllerApi(undefined, API_URL, axiosInstance);
+};
+const getMenuItemService = (username: string, password: string) => {
+    const axiosInstance = axios.create({ auth: { username: username, password: password } });
+    return new MenuItemControllerApi(undefined, API_URL, axiosInstance);
+};
+const getMenuService = (username: string, password: string) => {
+    const axiosInstance = axios.create({ auth: { username: username, password: password } });
+    return new MenuControllerApi(undefined, API_URL, axiosInstance);
+};
 
-export { eventService, healthService, ingredientService };
+const healthService = new HealthControllerApi(undefined, API_URL, undefined);
+
+export { healthService, getEventService, getIngredientService, getMenuService, getMenuItemService };
