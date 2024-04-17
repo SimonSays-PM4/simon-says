@@ -19,3 +19,23 @@ updates:
     labels:
       - "dependencies"
       - "backend"
+
+  - package-ecosystem: "npm"
+    directory: "printer/printer-server"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "mcluky"
+    labels:
+      - "dependencies"
+      - "printer-server"
+
+  - package-ecosystem: "npm"
+    directory: "printer/printer-api-lib"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "mcluky"
+    labels:
+      - "dependencies"
+      - "printer-api-lib"
