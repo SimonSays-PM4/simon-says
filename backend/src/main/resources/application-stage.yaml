@@ -11,13 +11,14 @@ spring:
     username: simon
     password: pREEW0Gr6833gbyD
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 debug: on
 application:
-  url: ""
+  url: "https://simonsays-stage.pm4.init-lab.ch/"
 
 # The printer-queue-server application configuration
 printer-queue-server:
   # List of frontend origins allowed to communicate with the printer server
   frontend-origins:
     # TODO: Add the URL of your deployed frontend here
-    - https://stage.simon-says.ch
+    - https://simonsays-stage.pm4.init-lab.ch

@@ -61,6 +61,12 @@ export interface EventCreateUpdateDTO {
  */
 export interface EventDTO {
     /**
+     * ID of the event
+     * @type {number}
+     * @memberof EventDTO
+     */
+    'id'?: number;
+    /**
      * Name for the event
      * @type {string}
      * @memberof EventDTO
@@ -78,12 +84,6 @@ export interface EventDTO {
      * @memberof EventDTO
      */
     'numberOfTables': number;
-    /**
-     * ID of the event
-     * @type {number}
-     * @memberof EventDTO
-     */
-    'id'?: number;
 }
 /**
  * 
@@ -97,6 +97,106 @@ export interface HealthDTO {
      * @memberof HealthDTO
      */
     'state': string;
+}
+/**
+ * 
+ * @export
+ * @interface IngredientCreateUpdateDTO
+ */
+export interface IngredientCreateUpdateDTO {
+    /**
+     * Id for the ingredient
+     * @type {number}
+     * @memberof IngredientCreateUpdateDTO
+     */
+    'id'?: number;
+    /**
+     * Name for the ingredient
+     * @type {string}
+     * @memberof IngredientCreateUpdateDTO
+     */
+    'name': string;
+}
+/**
+ * 
+ * @export
+ * @interface IngredientDTO
+ */
+export interface IngredientDTO {
+    /**
+     * Id for the ingredient
+     * @type {number}
+     * @memberof IngredientDTO
+     */
+    'id': number;
+    /**
+     * Name for the ingredient
+     * @type {string}
+     * @memberof IngredientDTO
+     */
+    'name': string;
+}
+/**
+ * 
+ * @export
+ * @interface MenuItemCreateUpdateDTO
+ */
+export interface MenuItemCreateUpdateDTO {
+    /**
+     * ID for the menu item
+     * @type {number}
+     * @memberof MenuItemCreateUpdateDTO
+     */
+    'id'?: number;
+    /**
+     * Name for the Menu Item
+     * @type {string}
+     * @memberof MenuItemCreateUpdateDTO
+     */
+    'name': string;
+    /**
+     * 
+     * @type {Array<IngredientDTO>}
+     * @memberof MenuItemCreateUpdateDTO
+     */
+    'ingredients': Array<IngredientDTO>;
+    /**
+     * Price of the menu item
+     * @type {number}
+     * @memberof MenuItemCreateUpdateDTO
+     */
+    'price': number;
+}
+/**
+ * 
+ * @export
+ * @interface MenuItemDTO
+ */
+export interface MenuItemDTO {
+    /**
+     * ID of the menu item
+     * @type {number}
+     * @memberof MenuItemDTO
+     */
+    'id': number;
+    /**
+     * Name for the menu item
+     * @type {string}
+     * @memberof MenuItemDTO
+     */
+    'name': string;
+    /**
+     * List of ingredients
+     * @type {Array<IngredientDTO>}
+     * @memberof MenuItemDTO
+     */
+    'ingredients': Array<IngredientDTO>;
+    /**
+     * Price of the menu item
+     * @type {number}
+     * @memberof MenuItemDTO
+     */
+    'price': number;
 }
 
 /**
@@ -127,6 +227,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
 
     
@@ -162,6 +266,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -191,6 +299,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
 
     
@@ -224,6 +336,10 @@ export const EventControllerApiAxiosParamCreator = function (configuration?: Con
             const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
 
     
@@ -505,6 +621,714 @@ export class HealthControllerApi extends BaseAPI {
      */
     public health(options?: RawAxiosRequestConfig) {
         return HealthControllerApiFp(this.configuration).health(options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * IngredientControllerApi - axios parameter creator
+ * @export
+ */
+export const IngredientControllerApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Creates new ingredient
+         * @param {number} eventId 
+         * @param {IngredientCreateUpdateDTO} ingredientCreateUpdateDTO 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createIngredient: async (eventId: number, ingredientCreateUpdateDTO: IngredientCreateUpdateDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('createIngredient', 'eventId', eventId)
+            // verify required parameter 'ingredientCreateUpdateDTO' is not null or undefined
+            assertParamExists('createIngredient', 'ingredientCreateUpdateDTO', ingredientCreateUpdateDTO)
+            const localVarPath = `/rest-api/v1/event/{eventId}/ingredient`
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(ingredientCreateUpdateDTO, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Delete ingredient
+         * @param {number} id 
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteIngredient: async (id: number, eventId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteIngredient', 'id', id)
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('deleteIngredient', 'eventId', eventId)
+            const localVarPath = `/rest-api/v1/event/{eventId}/ingredient/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get ingredient
+         * @param {number} id 
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getIngredient: async (id: number, eventId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getIngredient', 'id', id)
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('getIngredient', 'eventId', eventId)
+            const localVarPath = `/rest-api/v1/event/{eventId}/ingredient/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary List of ingredients
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listIngredients: async (eventId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('listIngredients', 'eventId', eventId)
+            const localVarPath = `/rest-api/v1/event/{eventId}/ingredient`
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * IngredientControllerApi - functional programming interface
+ * @export
+ */
+export const IngredientControllerApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = IngredientControllerApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Creates new ingredient
+         * @param {number} eventId 
+         * @param {IngredientCreateUpdateDTO} ingredientCreateUpdateDTO 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createIngredient(eventId: number, ingredientCreateUpdateDTO: IngredientCreateUpdateDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IngredientDTO>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createIngredient(eventId, ingredientCreateUpdateDTO, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['IngredientControllerApi.createIngredient']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Delete ingredient
+         * @param {number} id 
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteIngredient(id: number, eventId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteIngredient(id, eventId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['IngredientControllerApi.deleteIngredient']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Get ingredient
+         * @param {number} id 
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getIngredient(id: number, eventId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IngredientDTO>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getIngredient(id, eventId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['IngredientControllerApi.getIngredient']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary List of ingredients
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listIngredients(eventId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<IngredientDTO>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listIngredients(eventId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['IngredientControllerApi.listIngredients']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * IngredientControllerApi - factory interface
+ * @export
+ */
+export const IngredientControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = IngredientControllerApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Creates new ingredient
+         * @param {number} eventId 
+         * @param {IngredientCreateUpdateDTO} ingredientCreateUpdateDTO 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createIngredient(eventId: number, ingredientCreateUpdateDTO: IngredientCreateUpdateDTO, options?: any): AxiosPromise<IngredientDTO> {
+            return localVarFp.createIngredient(eventId, ingredientCreateUpdateDTO, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Delete ingredient
+         * @param {number} id 
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteIngredient(id: number, eventId: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteIngredient(id, eventId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get ingredient
+         * @param {number} id 
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getIngredient(id: number, eventId: number, options?: any): AxiosPromise<IngredientDTO> {
+            return localVarFp.getIngredient(id, eventId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary List of ingredients
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listIngredients(eventId: number, options?: any): AxiosPromise<Array<IngredientDTO>> {
+            return localVarFp.listIngredients(eventId, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * IngredientControllerApi - object-oriented interface
+ * @export
+ * @class IngredientControllerApi
+ * @extends {BaseAPI}
+ */
+export class IngredientControllerApi extends BaseAPI {
+    /**
+     * 
+     * @summary Creates new ingredient
+     * @param {number} eventId 
+     * @param {IngredientCreateUpdateDTO} ingredientCreateUpdateDTO 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof IngredientControllerApi
+     */
+    public createIngredient(eventId: number, ingredientCreateUpdateDTO: IngredientCreateUpdateDTO, options?: RawAxiosRequestConfig) {
+        return IngredientControllerApiFp(this.configuration).createIngredient(eventId, ingredientCreateUpdateDTO, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Delete ingredient
+     * @param {number} id 
+     * @param {number} eventId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof IngredientControllerApi
+     */
+    public deleteIngredient(id: number, eventId: number, options?: RawAxiosRequestConfig) {
+        return IngredientControllerApiFp(this.configuration).deleteIngredient(id, eventId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get ingredient
+     * @param {number} id 
+     * @param {number} eventId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof IngredientControllerApi
+     */
+    public getIngredient(id: number, eventId: number, options?: RawAxiosRequestConfig) {
+        return IngredientControllerApiFp(this.configuration).getIngredient(id, eventId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary List of ingredients
+     * @param {number} eventId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof IngredientControllerApi
+     */
+    public listIngredients(eventId: number, options?: RawAxiosRequestConfig) {
+        return IngredientControllerApiFp(this.configuration).listIngredients(eventId, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * MenuItemControllerApi - axios parameter creator
+ * @export
+ */
+export const MenuItemControllerApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Delete a menu item
+         * @param {number} eventId 
+         * @param {number} menuItemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteMenuItem: async (eventId: number, menuItemId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('deleteMenuItem', 'eventId', eventId)
+            // verify required parameter 'menuItemId' is not null or undefined
+            assertParamExists('deleteMenuItem', 'menuItemId', menuItemId)
+            const localVarPath = `/rest-api/v1/event/{eventId}/menuitem/{menuItemId}`
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)))
+                .replace(`{${"menuItemId"}}`, encodeURIComponent(String(menuItemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Retrieve a single menu item
+         * @param {number} eventId 
+         * @param {number} menuItemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMenuItem: async (eventId: number, menuItemId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('getMenuItem', 'eventId', eventId)
+            // verify required parameter 'menuItemId' is not null or undefined
+            assertParamExists('getMenuItem', 'menuItemId', menuItemId)
+            const localVarPath = `/rest-api/v1/event/{eventId}/menuitem/{menuItemId}`
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)))
+                .replace(`{${"menuItemId"}}`, encodeURIComponent(String(menuItemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Read all menu items
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMenuItems: async (eventId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('getMenuItems', 'eventId', eventId)
+            const localVarPath = `/rest-api/v1/event/{eventId}/menuitem`
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Update/Create a menu item
+         * @param {number} eventId 
+         * @param {MenuItemCreateUpdateDTO} menuItemCreateUpdateDTO 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putMenuItem: async (eventId: number, menuItemCreateUpdateDTO: MenuItemCreateUpdateDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'eventId' is not null or undefined
+            assertParamExists('putMenuItem', 'eventId', eventId)
+            // verify required parameter 'menuItemCreateUpdateDTO' is not null or undefined
+            assertParamExists('putMenuItem', 'menuItemCreateUpdateDTO', menuItemCreateUpdateDTO)
+            const localVarPath = `/rest-api/v1/event/{eventId}/menuitem`
+                .replace(`{${"eventId"}}`, encodeURIComponent(String(eventId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(menuItemCreateUpdateDTO, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * MenuItemControllerApi - functional programming interface
+ * @export
+ */
+export const MenuItemControllerApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = MenuItemControllerApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Delete a menu item
+         * @param {number} eventId 
+         * @param {number} menuItemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteMenuItem(eventId: number, menuItemId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteMenuItem(eventId, menuItemId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MenuItemControllerApi.deleteMenuItem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Retrieve a single menu item
+         * @param {number} eventId 
+         * @param {number} menuItemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMenuItem(eventId: number, menuItemId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MenuItemDTO>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMenuItem(eventId, menuItemId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MenuItemControllerApi.getMenuItem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Read all menu items
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMenuItems(eventId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<MenuItemDTO>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMenuItems(eventId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MenuItemControllerApi.getMenuItems']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Update/Create a menu item
+         * @param {number} eventId 
+         * @param {MenuItemCreateUpdateDTO} menuItemCreateUpdateDTO 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putMenuItem(eventId: number, menuItemCreateUpdateDTO: MenuItemCreateUpdateDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MenuItemDTO>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putMenuItem(eventId, menuItemCreateUpdateDTO, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MenuItemControllerApi.putMenuItem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * MenuItemControllerApi - factory interface
+ * @export
+ */
+export const MenuItemControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = MenuItemControllerApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Delete a menu item
+         * @param {number} eventId 
+         * @param {number} menuItemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteMenuItem(eventId: number, menuItemId: number, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteMenuItem(eventId, menuItemId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Retrieve a single menu item
+         * @param {number} eventId 
+         * @param {number} menuItemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMenuItem(eventId: number, menuItemId: number, options?: any): AxiosPromise<MenuItemDTO> {
+            return localVarFp.getMenuItem(eventId, menuItemId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Read all menu items
+         * @param {number} eventId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMenuItems(eventId: number, options?: any): AxiosPromise<Array<MenuItemDTO>> {
+            return localVarFp.getMenuItems(eventId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update/Create a menu item
+         * @param {number} eventId 
+         * @param {MenuItemCreateUpdateDTO} menuItemCreateUpdateDTO 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putMenuItem(eventId: number, menuItemCreateUpdateDTO: MenuItemCreateUpdateDTO, options?: any): AxiosPromise<MenuItemDTO> {
+            return localVarFp.putMenuItem(eventId, menuItemCreateUpdateDTO, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * MenuItemControllerApi - object-oriented interface
+ * @export
+ * @class MenuItemControllerApi
+ * @extends {BaseAPI}
+ */
+export class MenuItemControllerApi extends BaseAPI {
+    /**
+     * 
+     * @summary Delete a menu item
+     * @param {number} eventId 
+     * @param {number} menuItemId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof MenuItemControllerApi
+     */
+    public deleteMenuItem(eventId: number, menuItemId: number, options?: RawAxiosRequestConfig) {
+        return MenuItemControllerApiFp(this.configuration).deleteMenuItem(eventId, menuItemId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Retrieve a single menu item
+     * @param {number} eventId 
+     * @param {number} menuItemId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof MenuItemControllerApi
+     */
+    public getMenuItem(eventId: number, menuItemId: number, options?: RawAxiosRequestConfig) {
+        return MenuItemControllerApiFp(this.configuration).getMenuItem(eventId, menuItemId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Read all menu items
+     * @param {number} eventId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof MenuItemControllerApi
+     */
+    public getMenuItems(eventId: number, options?: RawAxiosRequestConfig) {
+        return MenuItemControllerApiFp(this.configuration).getMenuItems(eventId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update/Create a menu item
+     * @param {number} eventId 
+     * @param {MenuItemCreateUpdateDTO} menuItemCreateUpdateDTO 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof MenuItemControllerApi
+     */
+    public putMenuItem(eventId: number, menuItemCreateUpdateDTO: MenuItemCreateUpdateDTO, options?: RawAxiosRequestConfig) {
+        return MenuItemControllerApiFp(this.configuration).putMenuItem(eventId, menuItemCreateUpdateDTO, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

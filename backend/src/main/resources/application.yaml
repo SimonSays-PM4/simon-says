@@ -2,7 +2,7 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/simonsays
-    username: simon
+    username: simonsays
     password: simonsays
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
@@ -15,7 +15,7 @@ spring:
     defer-datasource-initialization: true
 debug: on
 application:
-  url: ""
+  url: "http://localhost:3000"
 
 # The printer-queue-server application configuration
 printer-queue-server:

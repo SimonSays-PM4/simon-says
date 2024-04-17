@@ -1,4 +1,3 @@
-# database settings
 spring:
   jpa:
     hibernate:
@@ -14,6 +13,7 @@ spring:
 debug: on
 application:
   url: "http://localhost:3000"
+  adminToken: "mysecretpassword"
 
 # The printer-queue-server application configuration
 printer-queue-server:

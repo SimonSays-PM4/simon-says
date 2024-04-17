@@ -1,16 +1,16 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../../components/Button";
-import { EventCreateUpdateDTO } from "../../gen/api";
 import { FormInput } from "../../components/form/FormInput";
 import { nameof } from "ts-simple-nameof";
 import { Popup } from "../../components/Popup.tsx";
 import { useEventCreatePage } from "./EventCreatePage.hooks.ts";
+import { EventCreateUpdateDTO } from "../../gen/api";
 
 export const EventCreatePageComponent: React.FC = () => {
     const { event, errorMessage, eventActions, setShowDeleteModal, showDeleteModal } = useEventCreatePage();
     const fieldRequiredMessage = "Dieses Feld ist erforderlich.";
-    const fieldLengthMessage = "Die Eingabe ist muss zwischen 5 und 64 Zeichen sein.";
+    const fieldLengthMessage = "Die Eingabe muss zwischen 5 und 64 Zeichen sein.";
 
     const {
         register,
@@ -58,7 +58,8 @@ export const EventCreatePageComponent: React.FC = () => {
                 <FormInput id={nameof<EventCreateUpdateDTO>(e => e.numberOfTables)}
                     label={"Anzahl Tische"}
                     defaultValue={String(event.numberOfTables)}
-                    type="number" register={register}
+                    type="number"
+                    register={register}
                     isRequired={true}
                     validationError={getErrorMessage(nameof<EventCreateUpdateDTO>(e => e.numberOfTables))} />
 
@@ -69,7 +70,7 @@ export const EventCreatePageComponent: React.FC = () => {
                 </div>
             </form>
 
-            <Popup modalText="Do you want to delete this event?" show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={eventActions.deleteEvent} />
+            <Popup modalText="Do you want to delete this event?" show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={eventActions.deleteEvent} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }
