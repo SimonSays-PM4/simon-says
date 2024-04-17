@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional
 import org.hamcrest.CoreMatchers
 import org.junit.jupiter.api.*
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
@@ -18,6 +19,8 @@ class IngredientIntegrationTest : IntegrationTest() {
     private fun getIngredientUrl(eventId: Long, ingredientId: Long) = "${getIngredientsUrl(eventId)}/${ingredientId}"
 
     private lateinit var globalEvent: Event
+    private val username = "admin"
+    private val password = "mysecretpassword"
 
     @BeforeEach
     fun setup() {
@@ -28,6 +31,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Transactional
     fun `should throw validation error no name`() {
         mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(createUpdateTestIngredientDTO(null, null))
         }
@@ -51,6 +55,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Transactional
     fun `should throw validation error too long name`() {
         mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(createUpdateTestIngredientDTO(null, "a".repeat(65)))
         }
@@ -73,7 +78,9 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `should get ingredient not found`() {
-        mockMvc.get(getIngredientUrl(globalEvent.id!!, 404))
+        mockMvc.get(getIngredientUrl(globalEvent.id!!, 404)){
+            with(httpBasic(username, password))
+        }
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
@@ -90,6 +97,7 @@ class IngredientIntegrationTest : IntegrationTest() {
     fun `should add new ingredient`() {
         val ingredient = createUpdateTestIngredientDTO()
         mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(ingredient)
         }
@@ -109,7 +117,9 @@ class IngredientIntegrationTest : IntegrationTest() {
         val ingredient = ingredientFactory.createIngredient(name = getTestIngredientDTO().name)
         val ingredientDTOs = listOf(getTestIngredientDTO(id = ingredient.id!!))
         // when/then
-        mockMvc.get(getIngredientsUrl(ingredient.event.id!!))
+        mockMvc.get(getIngredientsUrl(ingredient.event.id!!)){
+            with(httpBasic(username, password))
+        }
             .andDo { print() }
             .andExpect {
                 status { isOk() }
@@ -126,7 +136,9 @@ class IngredientIntegrationTest : IntegrationTest() {
         val ingredient = ingredientFactory.createIngredient(name = getTestIngredientDTO().name)
         val ingredientDTO = getTestIngredientDTO(id = ingredient.id!!)
 
-        mockMvc.get(getIngredientUrl(ingredient.event.id!!, ingredient.id!!))
+        mockMvc.get(getIngredientUrl(ingredient.event.id!!, ingredient.id!!)){
+            with(httpBasic(username, password))
+        }
             .andDo { print() }
             .andExpect {
                 status { isOk() }
@@ -141,7 +153,9 @@ class IngredientIntegrationTest : IntegrationTest() {
     @Transactional
     fun `should delete ingredient`() {
         val ingredient = ingredientFactory.createIngredient(name = getTestIngredientDTO().name)
-        mockMvc.delete(getIngredientUrl(ingredient.event.id!!, ingredient.id!!))
+        mockMvc.delete(getIngredientUrl(ingredient.event.id!!, ingredient.id!!)){
+            with(httpBasic(username, password))
+        }
             .andDo { print() }
             .andExpect {
                 status { isNoContent() }

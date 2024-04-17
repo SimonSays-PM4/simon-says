@@ -44,6 +44,9 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
+        envFrom:
+          - secretRef:
+                name: {{ .Values.backend.config.adminSecretName }}
         ports:
           - containerPort: {{ .Values.backend.deployment.port }}
         resources:

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
@@ -34,6 +35,9 @@ class MenuItemIntegrationTest : IntegrationTest() {
     private val tooLongMenuItemName: String = "hafdnvgnumnluizouvsathtjeyqpnelscybzbgpkyizsdtxnhjfyfomhdlbouwwqz"
     private val arbitraryId = 9999999999
 
+    private val username = "admin"
+    private val password = "mysecretpassword"
+
     private lateinit var testEvent: Event
     private lateinit var testIngredient: Ingredient
 
@@ -48,6 +52,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     fun `Test menu item creation should work with correct input`() {
         val menuItem = getCreateUpdateMenuItemDTO()
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(menuItem)
         }
@@ -72,6 +77,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         )
         // when/then
         mockMvc.put(getMenuItemUrl(1)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(menuItem)
         }
@@ -98,6 +104,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         )
         // when/then
         mockMvc.put(getMenuItemUrl(1)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(menuItem)
         }
@@ -117,7 +124,9 @@ class MenuItemIntegrationTest : IntegrationTest() {
         menuItemFactory.createMenuItem(name = "test", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
         menuItemFactory.createMenuItem("name", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
 
-        mockMvc.get(getMenuItemUrl(testEvent.id!!))
+        mockMvc.get(getMenuItemUrl(testEvent.id!!)){
+            with(httpBasic(username, password))
+        }
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
@@ -134,7 +143,9 @@ class MenuItemIntegrationTest : IntegrationTest() {
         val menuItem: MenuItem = menuItemFactory.createMenuItem("MenuItem Test", testEvent.id!!, listOf(testIngredient))
         val expectedJson = getMenuItemDTO(id = menuItem.id!!, ingredientDTOs = listOf(getTestIngredientDTO(id = testIngredient.id, name = testIngredient.name)))
 
-        mockMvc.get("${getMenuItemUrl(testEvent.id!!)}/${menuItem.id}")
+        mockMvc.get("${getMenuItemUrl(testEvent.id!!)}/${menuItem.id}"){
+            with(httpBasic(username, password))
+        }
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
@@ -154,7 +165,9 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 null
         )
 
-        mockMvc.get("${getMenuItemUrl(1)}/${arbitraryId}")
+        mockMvc.get("${getMenuItemUrl(1)}/${arbitraryId}"){
+            with(httpBasic(username, password))
+        }
                 .andDo { print() }
                 .andExpect {
                     status { isNotFound() }
@@ -173,6 +186,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         val expectedReturn = getMenuItemDTO(menuItem.id!!, "integrationtest", listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
 
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateMenuItem)
         }
@@ -209,6 +223,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         )
 
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateMenuItem)
         }
@@ -250,6 +265,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         )
 
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateMenuItem)
         }
@@ -275,6 +291,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         )
 
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateMenuItem)
         }
@@ -298,6 +315,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         )
 
         mockMvc.delete("${getMenuItemUrl(1)}/${arbitraryId}") {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
                 .andDo { print() }
@@ -315,6 +333,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     fun `Delete menu item should succeed`() {
         val menuitem: MenuItem = menuItemFactory.createMenuItem(name = "testitem", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
         mockMvc.delete("${getMenuItemUrl(testEvent.id!!)}/${menuitem.id}") {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
                 .andDo { print() }
@@ -333,6 +352,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
                 null
         )
         mockMvc.put(getMenuItemUrl(arbitraryId)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(menuItem)
         }
@@ -375,6 +395,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         )
 
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateMenuItem)
         }
@@ -405,6 +426,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
         )
         // when/then
         mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(menuItem)
         }

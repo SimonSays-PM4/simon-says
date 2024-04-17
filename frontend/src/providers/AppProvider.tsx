@@ -9,7 +9,7 @@ export interface IAppProviderProvideProps {
 }
 
 const AppProvider: React.FC<IAppProviderProvideProps> = ({ children }: IAppProviderProvideProps) => {
-    const [loginInfo, setLoginInfo] = React.useState<LoginInfo>(new LoginInfo(false, "-"));
+    const [loginInfo, setLoginInfo] = React.useState<LoginInfo>(new LoginInfo(false, "-", ""));
     const addNotification = (type:NotificationType, message:string) => {
         if (type === NotificationType.OK) {
             toast.success(message, {

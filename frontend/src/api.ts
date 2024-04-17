@@ -1,10 +1,21 @@
-import {EventControllerApi, HealthControllerApi, IngredientControllerApi, MenuItemControllerApi} from "./gen/api";
+import axios from "axios";
+import { EventControllerApi, HealthControllerApi, IngredientControllerApi, MenuItemControllerApi } from "./gen/api";
 
 export const API_URL = process.env.VITE_API_URL || import.meta.env.VITE_API_URL;
-const eventService = new EventControllerApi(undefined, API_URL, undefined);
-const ingredientService = new IngredientControllerApi(undefined, API_URL, undefined);
 
-const menuItemService = new MenuItemControllerApi(undefined, API_URL, undefined);
-const healthService = new HealthControllerApi(undefined, API_URL || import.meta.env.VITE_API_URL, undefined);
+const getEventService = (username: string, password: string) => {
+    const axiosInstance = axios.create({ auth: { username: username, password: password } });
+    return new EventControllerApi(undefined, API_URL, axiosInstance);
+};
+const getIngredientService = (username: string, password: string) => {
+    const axiosInstance = axios.create({ auth: { username: username, password: password } });
+    return new IngredientControllerApi(undefined, API_URL, axiosInstance);
+};
+const getMenuItemService = (username: string, password: string) => {
+    const axiosInstance = axios.create({ auth: { username: username, password: password } });
+    return new MenuItemControllerApi(undefined, API_URL, axiosInstance);
+};
 
-export { eventService, healthService, ingredientService, menuItemService };
+const healthService = new HealthControllerApi(undefined, API_URL, undefined);
+
+export { healthService, getEventService, getIngredientService, getMenuItemService };
