@@ -11,6 +11,9 @@ EXPOSE 3000
 # Copy over the printer-api-lib
 WORKDIR /app
 
+# Install net-tools 
+RUN apt-get update && apt-get install -y net-tools
+
 # Copy the printer-api-lib
 COPY printer-api-lib ./printer-api-lib
 
