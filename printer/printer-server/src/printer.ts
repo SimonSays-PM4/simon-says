@@ -2,6 +2,7 @@ import { PrinterTypes, ThermalPrinter } from "node-thermal-printer";
 import arp from "@network-utils/arp-lookup";
 import { PrintQueueJobDto } from "printer-api-lib/src/dtos";
 import scanForDevicesInNetwork from "local-devices";
+import os from "os";
 
 const networkScanMaxTimeoutInMs = 20_000;
 
@@ -28,23 +29,18 @@ export class Printer {
         }
         console.log(`Initializing printer ${this.name} with mac ${this.mac}`);
         // First we try to find the ip address of the printer in our arp cache because this is the fastest way
-        let ip = await arp.toIP(this.mac);
+        //let ip: string | null | undefined = await arp.toIP(this.mac);
+        let ip: string | null | undefined = null
         if (!ip) {
             console.error(`Failed to resolve printer ip for mac ${this.mac} in arp cache. Starting network scan.`);
             // Attempting network scan
             try {
                 // timeout the network scan after a certain time
-                const networkDevices = await Promise.race([
-                    scanForDevicesInNetwork(),
-                    new Promise<scanForDevicesInNetwork.IDevice[]>((_, reject) => setTimeout(() => reject("Network scan timeout"), networkScanMaxTimeoutInMs))
-                ]);
-
-                const printerDevice = networkDevices.find(device => device.mac === this.mac);
-                if (!printerDevice) {
+                ip = await this.findPrinterIpWithNetworkScan();
+                if (!ip) {
                     console.error(`Failed to resolve printer ip for mac ${this.mac} in network scan.`);
                     return false;
                 }
-                ip = printerDevice.ip;
             }
             catch (error) {
                 console.error(`Failed to resolve printer ip for mac ${this.mac} in network scan: ${error}`);
@@ -150,6 +146,65 @@ export class Printer {
         } catch (error) {
             throw new Error(`Failed to print job ${printJob.id} on printer ${this.name} with mac ${this.mac}: ${error}`);
         }
+    }
+
+    private async findPrinterIpWithNetworkScan(): Promise<string | undefined> {
+        const networks = os.networkInterfaces();
+        
+        const networksToScan = [];
+        for (const networkName in networks) {
+            // we only scan networks prefixed with "eth" or "wlan"
+            if (!networkName.startsWith("eth") && !networkName.startsWith("wlan") && !networkName.startsWith("Ethernet") && !networkName.startsWith("Wi-Fi")) {
+                continue;
+            }
+            
+            const network = networks[networkName];
+
+            // skip all internal networks
+            if (!network) {
+                continue;
+            }
+
+            for (const networkInterface of network) {
+                if (networkInterface.family === "IPv4") {
+                    const cidr = networkInterface.cidr;
+                    // If cidr is not available we skip this network
+                    if(!cidr) {
+                        console.warn(`Skipping network ${networkName} because no cidr is available`);
+                        continue;
+                    }
+
+                    // if the network is bigger than /24 we skip it since it would take too long to scan
+                    try {
+                        const networkSize = parseInt(cidr.split("/")[1]);
+                        if(networkSize > 24) {
+                            console.warn(`Skipping network ${networkName} because it is bigger than /24`);
+                            continue;
+                        }
+                    } catch (error) {
+                        console.warn(`Skipping network ${networkName} because we could not parse the cidr: ${cidr}`, error);
+                        continue;
+                    }
+
+                    console.log(`Scanning network ${networkName} with cidr ${cidr}`);
+                    networksToScan.push(cidr);
+                }
+            }
+
+        }
+
+        const networkScanPromises = networksToScan.map(
+            networkToScan => scanForDevicesInNetwork({address: networkToScan, skipNameResolution: true})
+            .then(devices => devices.find(device => device.mac === this.mac))
+        );
+
+        const printer = await Promise.race([
+            ...networkScanPromises,  
+            new Promise<scanForDevicesInNetwork.IDevice>((_, reject) => setTimeout(() => reject("Network scan timeout"), networkScanMaxTimeoutInMs))
+        ]);
+
+
+        return printer?.ip;
     }
 
     /**
