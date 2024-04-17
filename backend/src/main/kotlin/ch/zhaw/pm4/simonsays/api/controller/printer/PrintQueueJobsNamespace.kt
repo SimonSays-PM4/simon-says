@@ -188,7 +188,9 @@ class PrintQueueJobsNamespace(
                 statusMessage = if (jobJson.has("statusMessage")) jobJson.getString("statusMessage") else existingPrintQueueJob.statusMessage,
             )
             // warn client if they want to change something else than status or status message
-            if (jobJson.keys().asSequence().any { it != "status" && it != "statusMessage" && it != "id" && it != "lastUpdateDateTime" }) {
+            if (jobJson.keys().asSequence()
+                    .any { it != "status" && it != "statusMessage" && it != "id" && it != "lastUpdateDateTime" }
+            ) {
                 onApplicationError(
                     socket,
                     "INVALID_CHANGE_DATA",
@@ -199,9 +201,15 @@ class PrintQueueJobsNamespace(
             updatedPrintQueueJobDto
         }
 
-        val savedPrintQueueJob = printQueueJobService.savePrintQueueJob(printQueueId, printQueueJobDto)
-        // Send updated data to subscribers
-        onChange(savedPrintQueueJob)
+        try {
+            val savedPrintQueueJob = printQueueJobService.savePrintQueueJob(printQueueId, printQueueJobDto)
+            // Send updated data to subscribers
+            onChange(savedPrintQueueJob)
+        } catch (error: Exception) {
+            return onApplicationError(
+                socket, "SAVE_ERROR", "Error saving print queue job: ${error.message}"
+            )
+        }
     }
 
     /**
@@ -303,7 +311,15 @@ class PrintQueueJobsNamespace(
 
     override fun onChange(data: PrintQueueJobDto) {
         val jobId = data.id
-        val printQueueId = printQueueJobService.getPrintQueueIdForJob(jobId)
+        val printQueueId = try {
+            printQueueJobService.getPrintQueueIdForJob(jobId)
+        } catch (e: Exception) {
+            return onApplicationError(
+                jobId, ApplicationErrorDto(
+                    "UNABLE_TO_FIND_PRINT_QUEUE_ID", "Unable to find print queue id for job $jobId. Error: ${e.message}"
+                )
+            )
+        }
 
         // Notify all queue subscribers
         subscribersToAllPrintQueueJobs[printQueueId]?.forEach { it.sendPojo(CHANGE_EVENT, data) }

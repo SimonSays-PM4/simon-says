@@ -9,6 +9,5 @@ import org.mapstruct.Mapping
 interface PrinterServerMapper {
     fun mapToPrinterServerDto(printerServer: PrinterServer): PrinterServerDto
 
-    // TODO(LUKAS) Doesn't work, not sure how we can fix thisD
     fun mapToPrinterServer(printerServerDto: PrinterServerDto): PrinterServer
 }

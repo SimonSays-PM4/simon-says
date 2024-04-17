@@ -19,7 +19,8 @@ export class Printer {
      * @returns true if the printer was successfully initialized, false otherwise.
      */
     async init(): Promise<boolean> {
-        if (this.thermalPrinter) {
+        // If already initialized return true or if the printer is in dry run mode
+        if (this.thermalPrinter || process.env.DRY_RUN_PRINTER_MAC_ADDRESS === this.mac) {
             return true;
         }
         console.log(`Initializing printer ${this.name} with mac ${this.mac}`);
@@ -46,7 +47,7 @@ export class Printer {
         if (!initSuccessul) {
             return false;
         }
-        return await this.thermalPrinter!.isPrinterConnected();
+        return  process.env.DRY_RUN_PRINTER_MAC_ADDRESS === this.mac || (await this.thermalPrinter!.isPrinterConnected());
     }
 
     /**
@@ -66,6 +67,11 @@ export class Printer {
             throw new Error(`Failed to print job because printer ${this.name} with mac ${this.mac} is not connected`);
         }
 
+        // Dry run the print job if in dry run mode
+        if(process.env.DRY_RUN) {
+            return this.dryRun(printJob);
+        }
+
         // Print the job
         // Print the logo if available
         if (printJob.base64PngLogoImage) {
@@ -74,6 +80,7 @@ export class Printer {
             await this.thermalPrinter!.printImageBuffer(imageBuffer);
             this.thermalPrinter!.alignLeft();
             this.thermalPrinter!.newLine();
+            this.thermalPrinter!.newLine();
         }
 
         // print header if available
@@ -81,15 +88,19 @@ export class Printer {
             this.thermalPrinter!.alignCenter();
             this.thermalPrinter!.println(printJob.header);
             this.thermalPrinter!.alignLeft();
+            this.thermalPrinter!.newLine();
         }
 
         // Print title if available
         if (printJob.title) {
             this.thermalPrinter!.alignCenter();
             this.thermalPrinter!.bold(true);
+            this.thermalPrinter!.setTextQuadArea();
             this.thermalPrinter!.println(printJob.title);
+            this.thermalPrinter!.setTextNormal();
             this.thermalPrinter!.bold(false);
             this.thermalPrinter!.alignLeft();
+            this.thermalPrinter!.newLine();
         }
 
         // Print body
@@ -101,6 +112,7 @@ export class Printer {
             this.thermalPrinter!.newLine();
             this.thermalPrinter!.printQR(printJob.qrCode);
             this.thermalPrinter!.alignLeft();
+            this.thermalPrinter!.newLine();
         }
 
         // Print footer if available
@@ -112,17 +124,103 @@ export class Printer {
         // Cut the paper and execute the print job
         this.thermalPrinter!.cut();
         try {
-            console.log(`PRINTING JOB ${printJob.id}
-            
-            
-            body: ${printJob.body}
-            
-            
-            
-            `);
             await this.thermalPrinter!.execute({docname: printJob.id, waitForResponse: false});
         } catch (error) {
             throw new Error(`Failed to print job ${printJob.id} on printer ${this.name} with mac ${this.mac}: ${error}`);
         }
+    }
+
+    /**
+     * Dry run the print job. This will not actually print the job but only log the output.
+     */
+    private dryRun(printJob: PrintQueueJobDto): void {
+        const virtualPaperWidth = 48;
+
+        const center = (text: string): string => {
+            const resultLines: string[] = [];
+            text.split("\n").forEach(line => {
+                const whiteSpaces = Math.floor((virtualPaperWidth - line.length) / 2);
+                let resultLine = "";
+                for (let i = 0; i < whiteSpaces; i++) {
+                    resultLine += " ";
+                }
+                resultLine += line;
+                resultLines.push(resultLine);
+            });
+            return resultLines.join("\n");
+        }
+
+        const splitIfTooLong = (text: string): string => {
+            if (text.length > virtualPaperWidth) {
+                const result = [];
+                const words = text.split(" ");
+                let line = "";
+                for (let i = 0; i < words.length; i++) {
+                    if (line.length + words[i].length + 1 > virtualPaperWidth) {
+                        result.push(line);
+                        line = words[i];
+                    } else {
+                        if (line.length > 0) {
+                            line += " ";
+                        }
+                        line += words[i];
+                    }
+                }
+                result.push(line);
+                return result.join("\n");
+            } else {
+                return text;
+            }
+        }
+
+        let virtualPaper = "\n";
+        if (printJob.base64PngLogoImage) {
+            virtualPaper += center("<LOGO>");
+            virtualPaper += "\n\n";
+        }
+        if (printJob.header) {
+            virtualPaper += center(splitIfTooLong(printJob.header));
+            virtualPaper += "\n\n";
+        }
+        if (printJob.title) {
+            virtualPaper += center(splitIfTooLong(`*${printJob.title}*`));
+            virtualPaper += "\n\n";
+        }
+        
+        virtualPaper += splitIfTooLong(printJob.body) + "\n\n";
+        
+        if (printJob.qrCode) {
+            virtualPaper += center("<QR-CODE>");
+            virtualPaper += "\n\n";
+        }
+        if (printJob.footer) {
+            virtualPaper += center(splitIfTooLong(printJob.footer));
+            virtualPaper += "\n\n";
+        }
+
+        // add frame around the virtual paper
+        // +-----..-----+
+        // |            |
+        // ..           ..
+        // |            |
+        // +-----..-----+
+        let frame = "";
+        for (let i = 0; i < virtualPaperWidth; i++) {
+            frame += "-";
+        }
+        frame = "+-" + frame + "-+";
+        const virtualPaperLines = virtualPaper.split("\n");
+        for (let i = 0; i < virtualPaperLines.length; i++) {
+            if (virtualPaperLines[i].length < virtualPaperWidth) {
+                const whiteSpaces = virtualPaperWidth - virtualPaperLines[i].length;
+                for (let j = 0; j < whiteSpaces; j++) {
+                    virtualPaperLines[i] += " ";
+                }
+            }
+            virtualPaperLines[i] = "| " + virtualPaperLines[i] + " |";
+        }
+        virtualPaper = `${frame}\n${virtualPaperLines.join("\n")}\n${frame}\n`;
+
+        console.log(virtualPaper);
     }
 }

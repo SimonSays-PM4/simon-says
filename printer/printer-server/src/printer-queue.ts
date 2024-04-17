@@ -95,11 +95,6 @@ export class PrinterQueue {
         try {
             await this.nextPrintQueueJobConnection.sendChange(update);
         } catch (error) {
-            // try again after a short delay
-            console.log("Failed to send update of printer job. Retrying in 1 seconds.", error);
-            setTimeout(async () => {
-                await this.updatePrintQueueJob(update);
-            }, 1);
             console.error("An error occured while sending update of printer job", error) 
         }
     }

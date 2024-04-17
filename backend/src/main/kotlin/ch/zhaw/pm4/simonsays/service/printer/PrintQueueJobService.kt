@@ -6,6 +6,7 @@ import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
 import ch.zhaw.pm4.simonsays.entity.printer.JobStatus
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueJobRepository
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -14,6 +15,7 @@ class PrintQueueJobService(
     private val printQueueRepository: PrintQueueRepository,
     private val printQueueJobMapper: PrintQueueJobMapper,
 ) {
+    private val log = LoggerFactory.getLogger(javaClass)
 
     fun doesPrintQueueJobExist(id: String): Boolean {
         return printQueueJobRepository.existsById(id)
@@ -63,35 +65,22 @@ class PrintQueueJobService(
         return printQueueJob.printQueue.id
     }
 
-    init {
+    private final fun createSampleData() {
         // create some sample data
         val printQueue = "eb589790-b209-4e53-adc4-34da3ce89f01"
-
-        val printQueueJob1 = PrintQueueJobDto(
-            id = "eb589790-b209-4e53-adc4-34da3ce89f02",
-            status = JobStatusDto.PENDING,
-            body = "Hello World",
-            creationDateTime = System.currentTimeMillis(),
-            lastUpdateDateTime = System.currentTimeMillis(),
-        )
-        //savePrintQueueJob(printQueue, printQueueJob1)
-
-        val printQueueJob2 = PrintQueueJobDto(
-            id = "eb589790-b209-4e53-adc4-34da3ce89f03",
-            status = JobStatusDto.PENDING,
-            body = "hello mars",
-            creationDateTime = System.currentTimeMillis(),
-            lastUpdateDateTime = System.currentTimeMillis(),
-        )
-        //savePrintQueueJob(printQueue, printQueueJob2)
 
         val printQueueJob3 = PrintQueueJobDto(
             id = "eb589790-b209-4e53-adc4-34da3ce89f04",
             status = JobStatusDto.PRINTED,
-            body = "hello universe",
+            body = "Sample Print Job",
             creationDateTime = System.currentTimeMillis(),
             lastUpdateDateTime = System.currentTimeMillis(),
         )
-        //savePrintQueueJob(printQueue, printQueueJob3)
+        savePrintQueueJob(printQueue, printQueueJob3)
+    }
+
+    init {
+        log.debug("Creating sample data")
+        createSampleData()
     }
 }

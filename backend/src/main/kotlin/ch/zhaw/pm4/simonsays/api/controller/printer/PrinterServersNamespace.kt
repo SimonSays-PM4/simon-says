@@ -128,9 +128,15 @@ class PrinterServersNamespace(
             )
         }
 
-        val updatePrinterServer = printerServerService.savePrinterServer(printerServerDto)
-        // Send updated data to subscribers
-        onChange(updatePrinterServer)
+        try {
+            val updatePrinterServer = printerServerService.savePrinterServer(printerServerDto)
+            // Send updated data to subscribers
+            onChange(updatePrinterServer)
+        } catch (error: Exception) {
+            return onApplicationError(
+                socket, "SAVE_ERROR", "Error saving printer server: ${error.message}"
+            )
+        }
     }
 
     /**
