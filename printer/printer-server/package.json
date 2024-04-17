@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "nodemon",
     "start": "ts-node --transpile-only src/main.ts",
-    "build-id": "node create.build.id.js",
     "patch": "npx auto-version --patch",
     "minor": "npx auto-version --minor",
     "major": "npx auto-version --major"

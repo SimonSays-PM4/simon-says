@@ -1,6 +1,6 @@
-import { buildId } from '../build/build-id.json';
 import { PrinterServer } from './printer-server';
 import 'dotenv/config'
+import packageJson from '../package.json'
 
 console.log(`
 _____ _                      _____                                                   
@@ -14,7 +14,7 @@ ___/ / / / / / / / /_/ / / / /__/ / /_/ / /_/ (__  )
               / ____/ /  / / / / / /_/  __/ /  /_____/__/ /  __/ /   | |/ /  __/ /    
              /_/   /_/  /_/_/ /_/\\__/\\___/_/        /____/\\___/_/    |___/\\___/_/             
 
-Version: ${buildId}
+Version: ${packageJson.version}
 `);
 
 console.log('Starting printer server...');
