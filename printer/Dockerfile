@@ -17,6 +17,9 @@ COPY printer-api-lib ./printer-api-lib
 # Copy the printer-server
 COPY printer-server ./printer-server
 
+WORKDIR /app/printer-api-lib
+RUN npm ci
+
 WORKDIR /app/printer-server
 RUN npm ci
 
