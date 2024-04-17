@@ -16,6 +16,7 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
@@ -34,6 +35,9 @@ class StationIntegrationTest : IntegrationTest() {
     private val tooLongStationName: String = "hafdnvgnumnluizouvsathtjeyqpnelscybzbgpkyizsdtxnhjfyfomhdlbouwwqz"
     private val arbitraryId = 9999999999
 
+    private val username = "admin"
+    private val password = "mysecretpassword"
+
     private lateinit var testEvent: Event
     private lateinit var testIngredient: Ingredient
 
@@ -48,12 +52,13 @@ class StationIntegrationTest : IntegrationTest() {
     fun `Test station creation should work with correct input`() {
         val station = getCreateUpdateStationDTO()
         mockMvc.put(getStationUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(station)
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         jsonPath("$.name", CoreMatchers.equalTo(getCreateUpdateStationDTO().name))
@@ -72,6 +77,7 @@ class StationIntegrationTest : IntegrationTest() {
         )
         // when/then
         mockMvc.put(getStationUrl(1)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(station)
         }
@@ -98,6 +104,7 @@ class StationIntegrationTest : IntegrationTest() {
         )
         // when/then
         mockMvc.put(getStationUrl(1)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(station)
         }
@@ -117,10 +124,12 @@ class StationIntegrationTest : IntegrationTest() {
         stationFactory.createStation(name = "test", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
         stationFactory.createStation("name", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
 
-        mockMvc.get(getStationUrl(testEvent.id!!))
+        mockMvc.get(getStationUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
+        }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         jsonPath("$", IsCollectionWithSize.hasSize<Any>(2))
@@ -134,10 +143,12 @@ class StationIntegrationTest : IntegrationTest() {
         val station: Station = stationFactory.createStation("Station test", testEvent.id!!, listOf(testIngredient))
         val expectedJson = getStationDTO(id = station.id!!, ingredientDTOs = listOf(getTestIngredientDTO(id = testIngredient.id, name = testIngredient.name)))
 
-        mockMvc.get("${getStationUrl(testEvent.id!!)}/${station.id}")
+        mockMvc.get("${getStationUrl(testEvent.id!!)}/${station.id}") {
+            with(httpBasic(username, password))
+        }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedJson))
@@ -154,7 +165,9 @@ class StationIntegrationTest : IntegrationTest() {
                 null
         )
 
-        mockMvc.get("${getStationUrl(1)}/${arbitraryId}")
+        mockMvc.get("${getStationUrl(1)}/${arbitraryId}") {
+            with(httpBasic(username, password))
+        }
                 .andDo { print() }
                 .andExpect {
                     status { isNotFound() }
@@ -173,12 +186,13 @@ class StationIntegrationTest : IntegrationTest() {
         val expectedReturn = getStationDTO(station.id!!, "integrationtest", listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
 
         mockMvc.put(getStationUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateStation)
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -209,12 +223,13 @@ class StationIntegrationTest : IntegrationTest() {
         )
 
         mockMvc.put(getStationUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateStation)
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -250,12 +265,13 @@ class StationIntegrationTest : IntegrationTest() {
         )
 
         mockMvc.put(getStationUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateStation)
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
@@ -275,6 +291,7 @@ class StationIntegrationTest : IntegrationTest() {
         )
 
         mockMvc.put(getStationUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateStation)
         }
@@ -298,6 +315,7 @@ class StationIntegrationTest : IntegrationTest() {
         )
 
         mockMvc.delete("${getStationUrl(testEvent.id!!)}/${arbitraryId}") {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
                 .andDo { print() }
@@ -315,11 +333,12 @@ class StationIntegrationTest : IntegrationTest() {
     fun `Delete station should succeed`() {
         val station: Station = stationFactory.createStation(name = "teststation", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
         mockMvc.delete("${getStationUrl(testEvent.id!!)}/${station.id}") {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
                 .andDo { print() }
                 .andExpect {
-                    status { is2xxSuccessful() }
+                    status { isNoContent() }
                 }
     }
 
@@ -333,6 +352,7 @@ class StationIntegrationTest : IntegrationTest() {
                 null
         )
         mockMvc.put(getStationUrl(arbitraryId)) {
+            with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(station)
         }

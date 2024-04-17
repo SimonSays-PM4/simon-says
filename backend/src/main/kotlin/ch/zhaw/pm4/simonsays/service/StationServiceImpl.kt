@@ -34,7 +34,7 @@ class StationServiceImpl(
 
     override fun createUpdateStation(station: StationCreateUpdateDTO, eventId: Long): StationDTO {
         val event = eventService.getEvent(eventId)
-        val ingredients = ingredientRepository.findByIdIn(station.ingredients!!.map { it.id.toInt() })
+        val ingredients = ingredientRepository.findByIdIn(station.ingredients!!.map { it.id })
         val isUpdateOperation = station.id != null
         val stationToBeSaved = if (isUpdateOperation) {
             makeStationReadyForUpdate(station, eventId, ingredients)
