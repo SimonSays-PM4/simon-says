@@ -11,7 +11,6 @@ import org.mapstruct.*
 interface MenuItemMapper {
     @Mappings(
         Mapping(target = "name", source = "menuItem.name"),
-        Mapping(target = "ingredients")
     )
     fun mapToMenuItemDTO(menuItem: MenuItem): MenuItemDTO
 

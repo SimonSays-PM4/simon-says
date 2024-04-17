@@ -1,7 +1,5 @@
 package ch.zhaw.pm4.simonsays.service
 
-import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
-import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapper
 import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
@@ -36,7 +34,7 @@ class MenuItemServiceImpl(
 
     override fun createUpdateMenuItem(menuItem: MenuItemCreateUpdateDTO, eventId: Long): MenuItemDTO {
         val event = eventService.getEvent(eventId)
-        val ingredients = ingredientRepository.findByIdIn(menuItem.ingredients!!.map { it.id.toInt() })
+        val ingredients = ingredientRepository.findByIdIn(menuItem.ingredients!!.map { it.id })
         val isUpdateOperation = menuItem.id != null
         val menuItemToBeSaved = if (isUpdateOperation) {
             makeMenuItemReadyForUpdate(menuItem, eventId, ingredients)
@@ -55,6 +53,7 @@ class MenuItemServiceImpl(
         menuItemToSave.name = menuItem.name!!
         menuItemToSave.event = eventService.getEventEntity(eventId)
         menuItemToSave.ingredients = ingredients
+        menuItemToSave.price = menuItem.price
         return menuItemToSave
     }
 

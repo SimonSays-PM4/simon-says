@@ -3,7 +3,8 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FieldValues } from "react-hook-form";
 import { EventContext } from "../../providers/EventContext";
-import { ingredientService } from "../../api";
+import { getIngredientService } from "../../api";
+import { AppContext } from "../../providers/AppContext";
 
 type IngredientActions = {
     deleteIngredient: () => void;
@@ -30,6 +31,8 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
+    const { loginInfo } = useContext(AppContext);
+    const ingredientService = getIngredientService(loginInfo.userName, loginInfo.password);
 
     useEffect(() => {
         if (ingredientId && ingredientId > 0) {

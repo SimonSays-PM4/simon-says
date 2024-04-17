@@ -8,9 +8,6 @@ export interface IEventProviderProps {
 
 const EventProvider: React.FC<IEventProviderProps> = ({ children }) => {
     const { eventId } = useParams();
-
-    console.log("EventProvider eventId: ", eventId);
-
     // TODO: what if no eventId is provided??
 
     return (
