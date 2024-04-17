@@ -199,7 +199,7 @@ export class Printer {
         );
 
         const printer = await Promise.race([
-            ...networkScanPromises,  
+            Promise.all(networkScanPromises).then(devices => devices.find(device => device !== undefined)),  
             new Promise<scanForDevicesInNetwork.IDevice>((_, reject) => setTimeout(() => reject("Network scan timeout"), networkScanMaxTimeoutInMs))
         ]);
 
