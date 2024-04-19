@@ -5,6 +5,7 @@ import ch.zhaw.pm4.simonsays.api.types.StationCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.StationDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.Station
+import ch.zhaw.pm4.simonsays.exception.AssemblyStationAlreadyDefinedException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
@@ -34,6 +35,10 @@ class StationServiceImpl(
 
     override fun createUpdateStation(station: StationCreateUpdateDTO, eventId: Long): StationDTO {
         val event = eventService.getEvent(eventId)
+        val assemblyStationFound = stationRepository.findByEventIdAndAssemblyStation(eventId, true)
+        if(assemblyStationFound.isPresent) {
+            throw AssemblyStationAlreadyDefinedException()
+        }
         val ingredients = ingredientRepository.findByIdIn(station.ingredients!!.map { it.id })
         val isUpdateOperation = station.id != null
         val stationToBeSaved = if (isUpdateOperation) {
@@ -51,6 +56,7 @@ class StationServiceImpl(
             ResourceNotFoundException("Station not found with ID: ${station.id}")
         }
         stationToSave.name = station.name!!
+        stationToSave.assemblyStation = station.assemblyStation!!
         stationToSave.event = eventService.getEventEntity(eventId)
         stationToSave.ingredients = ingredients
         return stationToSave

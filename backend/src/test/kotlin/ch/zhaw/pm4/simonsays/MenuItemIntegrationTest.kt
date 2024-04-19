@@ -5,7 +5,6 @@ import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.MenuItem
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
-import ch.zhaw.pm4.simonsays.factory.MenuItemFactory
 import jakarta.transaction.Transactional
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.collection.IsCollectionWithSize.hasSize
@@ -25,9 +24,6 @@ import org.springframework.test.web.servlet.put
 class MenuItemIntegrationTest : IntegrationTest() {
 
     private fun getMenuItemUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/menuitem"
-
-    @Autowired
-    protected lateinit var menuItemFactory: MenuItemFactory
 
     @Autowired
     protected lateinit var ingredientMapper: IngredientMapper
@@ -141,7 +137,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Transactional
     fun `Test retrieve menu item`() {
         val menuItem: MenuItem = menuItemFactory.createMenuItem("MenuItem Test", testEvent.id!!, listOf(testIngredient))
-        val expectedJson = getMenuItemDTO(ingredientDTOs = listOf(getTestIngredientDTO(id = testIngredient.id, name = testIngredient.name)))
+        val expectedJson = getMenuItemDTO(id = menuItem.id!!, ingredientDTOs = listOf(getTestIngredientDTO(id = testIngredient.id, name = testIngredient.name)))
 
         mockMvc.get("${getMenuItemUrl(testEvent.id!!)}/${menuItem.id}"){
             with(httpBasic(username, password))

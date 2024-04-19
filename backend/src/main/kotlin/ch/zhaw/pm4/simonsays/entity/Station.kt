@@ -12,6 +12,9 @@ data class Station (
     @Column(nullable = false)
     var name: String,
 
+    @Column(nullable = false)
+    var assemblyStation: Boolean,
+
     @ManyToOne
     @JoinColumn(name = "event_id")
     var event: Event,

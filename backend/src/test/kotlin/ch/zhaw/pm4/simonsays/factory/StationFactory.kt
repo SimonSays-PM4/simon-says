@@ -14,11 +14,12 @@ class StationFactory(
 ) {
     fun createStation(
             name: String = "Default Station Name",
+            assemblyStation: Boolean = false,
             eventId: Long = 1,
             ingredients: List<Ingredient> = listOf()
     ): Station {
         val event = eventRepository.findById(eventId).orElse(null) // Fetch the Event by ID
-        val station = Station(name = name, event = event, ingredients = ingredients) // Use the Event entity
+        val station = Station(name = name, assemblyStation = assemblyStation, event = event, ingredients = ingredients) // Use the Event entity
         return stationRepository.save(station)
     }
 }

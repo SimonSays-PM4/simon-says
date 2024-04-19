@@ -1,11 +1,11 @@
 package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
+import ch.zhaw.pm4.simonsays.api.types.StationCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.Station
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
-import ch.zhaw.pm4.simonsays.factory.StationFactory
 import jakarta.transaction.Transactional
 import org.hamcrest.CoreMatchers
 import org.hamcrest.collection.IsCollectionWithSize
@@ -25,9 +25,6 @@ import org.springframework.test.web.servlet.put
 class StationIntegrationTest : IntegrationTest() {
 
     private fun getStationUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/station"
-
-    @Autowired
-    protected lateinit var stationFactory: StationFactory
 
     @Autowired
     protected lateinit var ingredientMapper: IngredientMapper
@@ -69,14 +66,14 @@ class StationIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test station creation should fail if station name is missing`() {
-        val station = getCreateUpdateStationDTO(null, null, null)
+        val station = getCreateUpdateStationDTO(null, null, false,null)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
                 mapOf("name" to "Station name must be provided")
         )
         // when/then
-        mockMvc.put(getStationUrl(1)) {
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(station)
@@ -93,8 +90,33 @@ class StationIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
+    fun `Test creating second assembly station leads to bad request`() {
+        stationFactory.createStation(eventId = testEvent.id!!, assemblyStation = true)
+        val createUpdateStation: StationCreateUpdateDTO = getCreateUpdateStationDTO(assemblyStation = true)
+        val errorDto = ErrorMessageModel(
+                HttpStatus.BAD_REQUEST.value(),
+                "An assembly station is already defined for this event",
+                null
+        )
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(createUpdateStation)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(errorDto))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
     fun `Test station creation should fail and display all errors`() {
-        val station = getCreateUpdateStationDTO(null, tooLongStationName, listOf(getTestIngredientDTO()))
+        val station = getCreateUpdateStationDTO(null, tooLongStationName, false, listOf(getTestIngredientDTO()))
         val stationDTO = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
@@ -140,7 +162,7 @@ class StationIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test retrieve station`() {
-        val station: Station = stationFactory.createStation("Station test", testEvent.id!!, listOf(testIngredient))
+        val station: Station = stationFactory.createStation(name = "Station test", eventId =  testEvent.id!!, ingredients = listOf(testIngredient))
         val expectedJson = getStationDTO(id = station.id!!, ingredientDTOs = listOf(getTestIngredientDTO(id = testIngredient.id, name = testIngredient.name)))
 
         mockMvc.get("${getStationUrl(testEvent.id!!)}/${station.id}") {
@@ -182,8 +204,8 @@ class StationIntegrationTest : IntegrationTest() {
     @Transactional
     fun `Test update station`() {
         val station: Station = stationFactory.createStation(eventId = testEvent.id!!, ingredients = listOf(testIngredient))
-        val updateStation = getCreateUpdateStationDTO(station.id, "integrationtest", listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
-        val expectedReturn = getStationDTO(station.id!!, "integrationtest", listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
+        val updateStation = getCreateUpdateStationDTO(station.id, "integrationtest", false, listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
+        val expectedReturn = getStationDTO(station.id!!, "integrationtest", false, listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
 
         mockMvc.put(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
@@ -208,6 +230,7 @@ class StationIntegrationTest : IntegrationTest() {
         val updateStation = getCreateUpdateStationDTO(
                 station.id,
                 "teststation",
+                false,
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                         ingredientMapper.mapToIngredientDTO(secondIngredient)
@@ -216,6 +239,7 @@ class StationIntegrationTest : IntegrationTest() {
         val expectedReturn = getStationDTO(
                 station.id!!,
                 "teststation",
+                false,
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                         ingredientMapper.mapToIngredientDTO(secondIngredient)
@@ -242,9 +266,9 @@ class StationIntegrationTest : IntegrationTest() {
     fun `test station update removing an ingredient`() {
         val secondIngredient: Ingredient = ingredientFactory.createIngredient()
         val station: Station = stationFactory.createStation(
-                "teststation",
-                testEvent.id!!,
-                listOf(
+                name = "teststation",
+                eventId = testEvent.id!!,
+                ingredients = listOf(
                         testIngredient,
                         secondIngredient
                 )
@@ -252,6 +276,7 @@ class StationIntegrationTest : IntegrationTest() {
         val updateStation = getCreateUpdateStationDTO(
                 station.id,
                 "teststation",
+                false,
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                 )
@@ -259,6 +284,7 @@ class StationIntegrationTest : IntegrationTest() {
         val expectedReturn = getStationDTO(
                 station.id!!,
                 "teststation",
+                false,
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                 )
