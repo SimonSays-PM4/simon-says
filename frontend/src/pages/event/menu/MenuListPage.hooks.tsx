@@ -53,7 +53,7 @@ export const useMenuListPage = (): MenuListPageReturnProps => {
             if (menuToDelete.id && menuToDelete.id > 0) {
                 setIsLoading(true);
 
-                menuService.deleteMenu(menuToDelete.id, eventId).then(() => {
+                menuService.deleteMenu(eventId, menuToDelete.id).then(() => {
                     setShowDeletePopup(false);
                 });
             }

@@ -1,5 +1,5 @@
 import React from "react";
-import { useEventMenuPage } from "./EventMenuPage.hooks.ts";
+import { useEventMenuPage } from "./EventMenuPage.hooks.tsx";
 import { Loader } from "../../../components/Loader.tsx";
 import { ColumnType } from "../../../models/ColumnType.ts";
 import { MenuItemDTO } from "../../../gen/api";

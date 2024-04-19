@@ -24,15 +24,19 @@ export const MenuListPageComponent: React.FC = () => {
         {
             key: "name",
             name: "Name",
+            type: "column"
         },
         {
             key: "price",
             name: "Price",
+            type: "column"
         },
-        {
-            key: "menuItems",
-            name: "Menu Items", // TODO: find better name
-        },
+        // TODO: show menu items in table
+        //{
+        //    key: "menuItems",
+        //    name: "Menu Items",
+        //    type: "column"
+        //},
         {
             key: "id",
             name: "Bearbeiten",
@@ -55,7 +59,7 @@ export const MenuListPageComponent: React.FC = () => {
                 <DataTable<MenuDTO> title="Menus" columns={columns} rows={data} onCreateClick={() => navigate(`../menu/create`)} />
             )}
 
-            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={menuActions.deleteMenu} modalText={'Zutate "' + menuActions.menuToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
+            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={menuActions.deleteMenu} modalText={'Menu "' + menuActions.menuToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }

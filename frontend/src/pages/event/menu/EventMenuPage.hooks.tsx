@@ -1,6 +1,6 @@
 import { getEventService, getMenuItemService } from "../../../api.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { EventDTO, MenuItemDTO } from "../../../gen/api";
+import { EventDTO, MenuItemDTO } from "../../../gen/api/dist/index";
 import { EventContext } from "../../../providers/EventContext.tsx";
 import { AppContext } from "../../../providers/AppContext.tsx";
 import { NotificationType } from "../../../enums/NotificationType.ts";
