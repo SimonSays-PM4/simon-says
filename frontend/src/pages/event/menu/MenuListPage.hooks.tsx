@@ -1,9 +1,9 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { EventContext } from "../../../providers/EventContext";
-import { MenuDTO } from "../../../gen/api/dist";
 import { AppContext } from "../../../providers/AppContext";
 import { getMenuService } from "../../../api";
 import { NotificationType } from "../../../enums/NotificationType";
+import { MenuDTO } from "../../../gen/api";
 
 type MenuActions = {
     deleteMenu: () => void,

@@ -2,11 +2,12 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FieldErrors, FieldValues, UseFormGetValues, UseFormHandleSubmit, UseFormRegister, UseFormSetValue, useForm } from "react-hook-form";
 import { EventContext } from "../../../providers/EventContext";
-import { MenuCreateUpdateDTO, MenuItemDTO } from "../../../gen/api/dist";
 import { AppContext } from "../../../providers/AppContext";
 import { getMenuItemService, getMenuService } from "../../../api";
 import { ValueLabel } from "../../../models/ValueLabel";
 import { NotificationType } from "../../../enums/NotificationType";
+import { MenuCreateUpdateDTO } from "../../../gen/api";
+import { MenuItemDTO } from "../../../gen/api";
 
 type MenuActions = {
     deleteMenu: () => void;
@@ -67,7 +68,7 @@ export const useMenuCreatePage = (): MenuCreateReturnProps => {
                 const response = await menuService.getMenu(eventId, menuId);
                 const receivedMenu = response.data as MenuCreateUpdateDTO;
                 setMenu(receivedMenu);
-                setSelectedMenuItemOptions([...receivedMenu.menuItems.map((item) => { return { value: item.id, label: item.name } })]);
+                setSelectedMenuItemOptions([...receivedMenu.menuItems.map((item: MenuItemDTO) => { return { value: item.id, label: item.name } })]);
             }
         }
         catch (_) {
