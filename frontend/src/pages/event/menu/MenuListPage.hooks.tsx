@@ -3,6 +3,7 @@ import { EventContext } from "../../../providers/EventContext";
 import { MenuDTO } from "../../../gen/api/dist";
 import { AppContext } from "../../../providers/AppContext";
 import { getMenuService } from "../../../api";
+import { NotificationType } from "../../../enums/NotificationType";
 
 type MenuActions = {
     deleteMenu: () => void,
@@ -14,15 +15,17 @@ type MenuListPageReturnProps = {
     isLoading: boolean,
     showDeletePopup: boolean
     setShowDeletePopup: (show: boolean) => void,
-    data: MenuDTO[]
+    menuList: MenuDTO[]
 };
 
 export const useMenuListPage = (): MenuListPageReturnProps => {
     const { eventId } = useContext(EventContext);
+    const appContext = useContext(AppContext);
+
     const [menuToDelete, setMenuToDelete] = useState<MenuDTO>({ id: 0, name: "", menuItems: [], price: 0 });
     const [isLoading, setIsLoading] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
-    const [data, setData] = useState<MenuDTO[]>([]);
+    const [menuList, setMenuList] = useState<MenuDTO[]>([]);
 
     const { loginInfo } = useContext(AppContext);
     const menuService = getMenuService(loginInfo.userName, loginInfo.password);
@@ -37,11 +40,11 @@ export const useMenuListPage = (): MenuListPageReturnProps => {
         try {
             setIsLoading(true);
             menuService.getMenus(eventId).then((response) => {
-                setData(response.data);
+                setMenuList(response.data);
             });
         }
-        catch (error) {
-            // TOOD: handle error
+        catch (_) {
+            appContext.addNotification(NotificationType.ERR, `Beim Laden der Menus ist ein Fehler aufgetreten.`);
         }
         finally {
             setIsLoading(false);
@@ -58,8 +61,8 @@ export const useMenuListPage = (): MenuListPageReturnProps => {
                 });
             }
         }
-        catch (error) {
-            // TOOD: handle error
+        catch (_) {
+            appContext.addNotification(NotificationType.ERR, `Beim Löschen des Menus ist ein Fehler aufgetreten.`);
         }
         finally {
             setIsLoading(false);
@@ -72,5 +75,5 @@ export const useMenuListPage = (): MenuListPageReturnProps => {
         menuToDelete
     };
 
-    return { menuActions, isLoading, showDeletePopup, setShowDeletePopup, data };
+    return { menuActions, isLoading, showDeletePopup, setShowDeletePopup, menuList };
 }

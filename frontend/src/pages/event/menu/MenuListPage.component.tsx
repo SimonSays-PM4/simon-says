@@ -5,13 +5,14 @@ import { Loader } from "../../../components/Loader.tsx";
 import { useNavigate } from "react-router-dom";
 import { Popup } from "../../../components/Popup.tsx";
 import { useMenuListPage } from "./MenuListPage.hooks.tsx";
-import { MenuCreateUpdateDTO, MenuDTO } from "../../../gen/api/api.ts";
+import { MenuDTO } from "../../../gen/api/api.ts";
+import { MenuDisplayModel } from "../../../models/MenuDisplayModel.ts";
 
 export const MenuListPageComponent: React.FC = () => {
-    const { isLoading, menuActions, showDeletePopup, setShowDeletePopup, data } = useMenuListPage();
+    const { isLoading, menuActions, showDeletePopup, setShowDeletePopup, menuList } = useMenuListPage();
     const navigate = useNavigate();
 
-    const onEditClick = (row: MenuCreateUpdateDTO) => {
+    const onEditClick = (row: MenuDTO) => {
         navigate(`../menu/create/` + row.id);
     };
 
@@ -20,7 +21,7 @@ export const MenuListPageComponent: React.FC = () => {
         setShowDeletePopup(true);
     };
 
-    const columns: Array<ColumnType<MenuDTO>> = [
+    const columns: Array<ColumnType<MenuDisplayModel>> = [
         {
             key: "name",
             name: "Name",
@@ -28,15 +29,14 @@ export const MenuListPageComponent: React.FC = () => {
         },
         {
             key: "price",
-            name: "Price",
+            name: "Preis",
             type: "column"
         },
-        // TODO: show menu items in table
-        //{
-        //    key: "menuItems",
-        //    name: "Menu Items",
-        //    type: "column"
-        //},
+        {
+            key: "menuItemsString",
+            name: "Menu Items",
+            type: "column"
+        },
         {
             key: "id",
             name: "Bearbeiten",
@@ -56,7 +56,7 @@ export const MenuListPageComponent: React.FC = () => {
             {isLoading ? (
                 <div className="w-[100px] block mx-auto"><Loader /></div>
             ) : (
-                <DataTable<MenuDTO> title="Menus" columns={columns} rows={data} onCreateClick={() => navigate(`../menu/create`)} />
+                <DataTable<MenuDisplayModel> title="Menus" columns={columns} rows={menuList.map((menu) => new MenuDisplayModel(menu.id, menu.name, menu.menuItems, menu.price, menu.menuItems.map((item) => item.name).join(", ")))} onCreateClick={() => navigate(`../menu/create`)} />
             )}
 
             <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={menuActions.deleteMenu} modalText={'Menu "' + menuActions.menuToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />

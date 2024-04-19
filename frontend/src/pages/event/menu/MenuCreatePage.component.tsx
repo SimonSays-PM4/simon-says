@@ -1,5 +1,4 @@
 import React from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "../../../components/Button.tsx";
 import { FormInput } from "../../../components/form/FormInput.tsx";
 import { nameof } from "ts-simple-nameof";
@@ -12,26 +11,19 @@ import { MenuCreateUpdateDTO } from "../../../gen/api/api.ts";
 import Select from "react-select";
 
 export const MenuCreatePageComponent: React.FC = () => {
-    const { menu, selectedMenuItemOptions, setSelectedMenuItemOptions, menuActions, isLoading, isSaving, menuItemOptions } = useMenuCreatePage();
+    const { menu, selectedMenuItemOptions, setSelectedMenuItemOptions, menuActions, isLoading, isSaving, menuItemOptions, formErrors, formRegister, formGetValues, handleSubmit, setValue } = useMenuCreatePage();
     const navigate = useNavigate();
 
     const isUpdating = menu.id != undefined && menu.id > 0;
     const fieldRequiredMessage = "Dieses Feld ist erforderlich.";
     const fieldLengthMessage = "Die Eingabe ist muss zwischen 1 und 64 Zeichen sein.";
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        getValues,
-    } = useForm();
-
     const getErrorMessage = (fieldId: string) => {
-        if (errors && errors[fieldId] !== undefined) {
-            if (errors[fieldId]!.type === "required") {
+        if (formErrors && formErrors[fieldId] !== undefined) {
+            if (formErrors[fieldId]!.type === "required") {
                 return fieldRequiredMessage;
             }
-            if (errors[fieldId]!.type === "minLength" || errors[fieldId]!.type === "maxLength") {
+            if (formErrors[fieldId]!.type === "minLength" || formErrors[fieldId]!.type === "maxLength") {
                 return fieldLengthMessage;
             }
 
@@ -46,26 +38,31 @@ export const MenuCreatePageComponent: React.FC = () => {
                 : (<>
                     <h2 className="text-xl font-semibold text-default-800 mb-4">{isUpdating ? <>Menu <b>"{menu.name}"</b> bearbeiten</> : "Menu erstellen"}</h2>
 
-                    <form onSubmit={handleSubmit(() => menuActions.saveMenu(getValues()), () => menuActions.onFormInvalid(getValues()))}>
+                    <form id="menuCreateForm" onSubmit={handleSubmit((data) => menuActions.saveMenu(data), () => menuActions.onFormInvalid(formGetValues()))}>
                         <FormInput id={nameof<MenuCreateUpdateDTO>(e => e.name)}
-                            defaultValue={menu.name}
-                            label={"Name"}
+                            label="Name"
                             type="text"
-                            register={register}
+                            register={formRegister}
                             isRequired={true}
                             minLength={1}
                             maxLength={64}
+                            defaultValue={menu?.name ?? undefined}
+                            onChange={(e) => setValue("name", e.target.value)}
                             validationError={getErrorMessage(nameof<MenuCreateUpdateDTO>(e => e.name))} />
 
                         <label className="mb-2 block text-sm font-medium text-default-900">
-                            Menu Items
+                            Menu Items *
                         </label>
                         <Select
                             isMulti
                             name="menuItems"
+                            id="menuItems"
                             options={menuItemOptions}
                             value={selectedMenuItemOptions}
-                            onChange={(values) => setSelectedMenuItemOptions(() => Array.from(values))}
+                            onChange={(values) => {
+                                setValue("menuItems", Array.from(values));
+                                setSelectedMenuItemOptions(() => Array.from(values));
+                            }}
                             className="basic-multi-select"
                             classNamePrefix="select" />
 
