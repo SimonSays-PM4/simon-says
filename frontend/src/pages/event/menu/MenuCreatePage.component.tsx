@@ -9,9 +9,10 @@ import { LoadingButton } from "../../../components/LoadingButton.tsx";
 import { useMenuCreatePage } from "./MenuCreatePage.hooks.tsx";
 import { MenuCreateUpdateDTO } from "../../../gen/api/api.ts";
 import Select from "react-select";
+import { Controller } from "react-hook-form";
 
 export const MenuCreatePageComponent: React.FC = () => {
-    const { menu, selectedMenuItemOptions, setSelectedMenuItemOptions, menuActions, isLoading, isSaving, menuItemOptions, formErrors, formRegister, formGetValues, handleSubmit, setValue } = useMenuCreatePage();
+    const { menu, selectedMenuItemOptions, menuActions, isLoading, isSaving, menuItemOptions, formErrors, formControl, formRegister, formGetValues, handleSubmit } = useMenuCreatePage();
     const navigate = useNavigate();
 
     const isUpdating = menu.id != undefined && menu.id > 0;
@@ -38,7 +39,7 @@ export const MenuCreatePageComponent: React.FC = () => {
                 : (<>
                     <h2 className="text-xl font-semibold text-default-800 mb-4">{isUpdating ? <>Menu <b>"{menu.name}"</b> bearbeiten</> : "Menu erstellen"}</h2>
 
-                    <form id="menuCreateForm" onSubmit={handleSubmit((data) => menuActions.saveMenu(data), () => menuActions.onFormInvalid(formGetValues()))}>
+                    <form id="menuCreateForm" onSubmit={handleSubmit(() => menuActions.saveMenu(formGetValues()), () => menuActions.onFormInvalid(formGetValues()))}>
                         <FormInput id={nameof<MenuCreateUpdateDTO>(e => e.name)}
                             label="Name"
                             type="text"
@@ -47,24 +48,31 @@ export const MenuCreatePageComponent: React.FC = () => {
                             minLength={1}
                             maxLength={64}
                             defaultValue={menu?.name ?? undefined}
-                            onChange={(e) => setValue("name", e.target.value)}
+                            onChange={(e) => { menu.name = e.target.value }}
                             validationError={getErrorMessage(nameof<MenuCreateUpdateDTO>(e => e.name))} />
 
                         <label className="mb-2 block text-sm font-medium text-default-900">
                             Menu Items *
                         </label>
-                        <Select
-                            isMulti
-                            name="menuItems"
-                            id="menuItems"
-                            options={menuItemOptions}
-                            value={selectedMenuItemOptions}
-                            onChange={(values) => {
-                                setValue("menuItems", Array.from(values));
-                                setSelectedMenuItemOptions(() => Array.from(values));
-                            }}
-                            className="basic-multi-select"
-                            classNamePrefix="select" />
+
+                        <Controller
+                            name={nameof<MenuCreateUpdateDTO>(e => e.menuItems)}
+                            rules={{ required: true, minLength: 1 }}
+                            defaultValue={selectedMenuItemOptions}
+                            control={formControl}
+                            render={({ field: { onChange, value, ref } }) => (
+                                <Select
+                                    isMulti
+                                    ref={ref}
+                                    options={menuItemOptions}
+                                    defaultValue={value}
+                                    onChange={(values) => {
+                                        onChange(values);
+                                    }}
+                                    className="basic-multi-select"
+                                    classNamePrefix="select" />
+                            )}
+                        />
 
                         <div className="flex min-h-[60px] items-end ml-auto">
                             <LoadingButton buttonText={isUpdating ? "Speichern" : "Erstellen"} className="my-2" type="submit" buttonType={ButtonType.Primary} isLoading={isSaving} />

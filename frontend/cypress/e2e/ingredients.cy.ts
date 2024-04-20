@@ -27,7 +27,7 @@ describe("Ingredient CRUD", () => {
         cy.url().should("include", "/events");
     });
 
-    it("should create a ingredient", () => {
+    it("should create an ingredient", () => {
         cy.contains("button", "Ingredients").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");

@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FieldErrors, FieldValues, UseFormGetValues, UseFormHandleSubmit, UseFormRegister, UseFormSetValue, useForm } from "react-hook-form";
+import { Control, FieldErrors, FieldValues, UseFormGetValues, UseFormHandleSubmit, UseFormRegister, useForm } from "react-hook-form";
 import { EventContext } from "../../../providers/EventContext";
 import { AppContext } from "../../../providers/AppContext";
 import { getMenuItemService, getMenuService } from "../../../api";
@@ -8,6 +8,7 @@ import { ValueLabel } from "../../../models/ValueLabel";
 import { NotificationType } from "../../../enums/NotificationType";
 import { MenuCreateUpdateDTO } from "../../../gen/api";
 import { MenuItemDTO } from "../../../gen/api";
+import { nameof } from "ts-simple-nameof";
 
 type MenuActions = {
     deleteMenu: () => void;
@@ -18,7 +19,6 @@ type MenuCreateReturnProps = {
     menu: MenuCreateUpdateDTO;
     menuItemOptions: ValueLabel[];
     selectedMenuItemOptions: ValueLabel[];
-    setSelectedMenuItemOptions: React.Dispatch<React.SetStateAction<ValueLabel[]>>;
     menuActions: MenuActions;
     isLoading: boolean;
     isSaving: boolean;
@@ -27,7 +27,7 @@ type MenuCreateReturnProps = {
     handleSubmit: UseFormHandleSubmit<FieldValues, undefined>;
     formErrors: FieldErrors<FieldValues>;
     formGetValues: UseFormGetValues<FieldValues>;
-    setValue: UseFormSetValue<FieldValues>;
+    formControl: Control<FieldValues, any>;
 };
 
 export const useMenuCreatePage = (): MenuCreateReturnProps => {
@@ -54,7 +54,8 @@ export const useMenuCreatePage = (): MenuCreateReturnProps => {
         handleSubmit,
         formState: { errors },
         getValues,
-        setValue
+        setValue,
+        control
     } = useForm();
 
     const loadMenuItem = useCallback(async () => {
@@ -64,11 +65,16 @@ export const useMenuCreatePage = (): MenuCreateReturnProps => {
             setMenuItems(availableMenuItems);
             setMenuItemOptions([...availableMenuItems.map((item) => { return { value: item.id, label: item.name } })]);
 
+            register(nameof<MenuCreateUpdateDTO>(e => e.menuItems), { value: [] });
+
             if (menuId && menuId > 0) {
                 const response = await menuService.getMenu(eventId, menuId);
                 const receivedMenu = response.data as MenuCreateUpdateDTO;
                 setMenu(receivedMenu);
-                setSelectedMenuItemOptions([...receivedMenu.menuItems.map((item: MenuItemDTO) => { return { value: item.id, label: item.name } })]);
+
+                const receivedMenuItems = receivedMenu.menuItems.map((item: MenuItemDTO) => { return { value: item.id, label: item.name } });
+                setSelectedMenuItemOptions(Array.from(receivedMenuItems));
+                setValue(nameof<MenuCreateUpdateDTO>(e => e.menuItems), Array.from(receivedMenuItems));
             }
         }
         catch (_) {
@@ -85,42 +91,40 @@ export const useMenuCreatePage = (): MenuCreateReturnProps => {
     const onFormInvalid = (data: FieldValues) => {
         const formMenuItems = data.menuItems as ValueLabel[];
         const menuToSave = data as MenuCreateUpdateDTO;
+
         menuToSave.id = menuId > 0 ? menuId : 0;
         menuToSave.menuItems = menuItems.filter((item) => formMenuItems.some((selected) => selected.value === item.id));
 
         setMenu(menuToSave);
     };
 
-    const saveMenu = useCallback(
-        (data: FieldValues) => {
-            setIsSaving(true);
+    const saveMenu = (data: FieldValues) => {
+        setIsSaving(true);
 
-            const formMenuItems = data.menuItems as ValueLabel[];
-            const menuToSave = data as MenuCreateUpdateDTO;
-            menuToSave.id = menuId > 0 ? menuId : undefined;
-            menuToSave.menuItems = menuItems.filter((item) => formMenuItems.some((selected) => selected.value === item.id));
+        const formMenuItems = data.menuItems as ValueLabel[];
+        const menuToSave = data as MenuCreateUpdateDTO;
 
-            setMenu(menuToSave);
+        menuToSave.id = menuId > 0 ? menuId : undefined;
+        menuToSave.menuItems = menuItems.filter((item) => formMenuItems.some((selected) => selected.value === item.id));
+        setMenu(menuToSave);
 
-            menuService
-                .putMenu(eventId, menuToSave)
-                .then((response) => {
-                    if (response.status === 201 || response.status === 200) {
-                        navigate("../menu");
-                        appContext.addNotification(NotificationType.OK, `Menu '${menuToSave.name}' wurde erfolgreich ${menuId > 0 ? "bearbeitet" : "erstellt"}.`);
-                    } else {
-                        appContext.addNotification(NotificationType.ERR, `Beim ${menuId > 0 ? "Speichern" : "Erstellen"} des Menus ist ein Fehler aufgetreten.`);
-                    }
-                })
-                .catch(() => {
+        menuService
+            .putMenu(eventId, menuToSave)
+            .then((response) => {
+                if (response.status === 201 || response.status === 200) {
+                    navigate("../menu");
+                    appContext.addNotification(NotificationType.OK, `Menu '${menuToSave.name}' wurde erfolgreich ${menuId > 0 ? "bearbeitet" : "erstellt"}.`);
+                } else {
                     appContext.addNotification(NotificationType.ERR, `Beim ${menuId > 0 ? "Speichern" : "Erstellen"} des Menus ist ein Fehler aufgetreten.`);
-                })
-                .finally(() => {
-                    setIsSaving(false);
-                });
-        },
-        [menu]
-    );
+                }
+            })
+            .catch(() => {
+                appContext.addNotification(NotificationType.ERR, `Beim ${menuId > 0 ? "Speichern" : "Erstellen"} des Menus ist ein Fehler aufgetreten.`);
+            })
+            .finally(() => {
+                setIsSaving(false);
+            });
+    };
 
     const deleteMenu = useCallback(() => {
         if (menuId > 0) {
@@ -146,5 +150,5 @@ export const useMenuCreatePage = (): MenuCreateReturnProps => {
         onFormInvalid
     };
 
-    return { menu, selectedMenuItemOptions, setSelectedMenuItemOptions, menuItemOptions, menuActions, isLoading, isSaving, formErrors: errors, formGetValues: getValues, formRegister: register, handleSubmit, setValue };
+    return { menu, selectedMenuItemOptions, menuItemOptions, menuActions, isLoading, isSaving, formErrors: errors, formGetValues: getValues, formRegister: register, formControl: control, handleSubmit };
 };
