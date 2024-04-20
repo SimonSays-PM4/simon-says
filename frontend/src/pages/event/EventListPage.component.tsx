@@ -15,6 +15,10 @@ export const EventListPageComponent: React.FC = () => {
         navigate("../event/create/" + row.id)
     }
 
+    const onClickMenuItem = (row: EventCreateUpdateDTO) => {
+        navigate("../" + row.id + "/menuItem")
+    }
+
     const onClickMenu = (row: EventCreateUpdateDTO) => {
         navigate("../" + row.id + "/menu")
     }
@@ -52,6 +56,12 @@ export const EventListPageComponent: React.FC = () => {
             name: "Delete",
             type: "action",
             action: onDeleteClick
+        },
+        {
+            key: "id",
+            name: "Menu Item",
+            type: "action",
+            action: onClickMenuItem
         },
         {
             key: "id",

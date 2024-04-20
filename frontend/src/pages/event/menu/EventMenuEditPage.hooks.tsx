@@ -26,11 +26,12 @@ type MenuItemActions = {
 }
 
 export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
-
-    const { menuId } = useParams();
     const appContext = useContext(AppContext);
-    const menuItemId = menuId ? Number(menuId) : 0;
     const { eventId } = useContext(EventContext);
+
+    const { menuItemId: id } = useParams();
+    const menuItemId = id ? Number(id) : 0;
+
     const [menuItem, setMenuItem] = useState<MenuItemDTO>({ id: 0, name: "", price: 0.0, ingredients: [] });
     const [selectedIngredients, setSelectedIngredients] = useState<ValueLabel[]>([]);
     const [isLoading, setLoading] = useState(false);
@@ -42,7 +43,7 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
     const menuItemService = getMenuItemService(appContext.loginInfo.userName, appContext.loginInfo.password);
 
     useEffect(() => {
-        console.log(menuId)
+        console.log(menuItemId)
         if (eventId > 0) {
             if (menuItemId > 0) {
                 menuItemService.getMenuItem(eventId, menuItemId).then((item) => {
