@@ -20,12 +20,12 @@ data class OrderMenu (
     @JoinColumn(name = "menu_id", nullable = false)
     var menu: Menu,
 
-    @OneToMany(mappedBy = "orderMenu")
+    @OneToMany(mappedBy = "orderMenu", cascade = [CascadeType.PERSIST])
     var orderMenuItems: Set<OrderMenuItem>,
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "order_id", nullable = false)
-    val order: FoodOrder? = null,
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    var order: FoodOrder? = null,
 
     @Column(nullable = false)
     var state: State,

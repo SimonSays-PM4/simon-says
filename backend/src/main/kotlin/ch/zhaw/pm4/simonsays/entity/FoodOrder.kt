@@ -13,11 +13,11 @@ data class FoodOrder (
     @JoinColumn(name = "event_id", nullable = false)
     var event: Event,
 
-    @OneToMany(mappedBy = "order")
-    val menus: Set<OrderMenu>? = HashSet(),
+    @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL])
+    val menus: MutableSet<OrderMenu>? = HashSet(),
 
-    @OneToMany(mappedBy = "order")
-    var menuItems: Set<OrderMenuItem>? = HashSet(),
+    @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL])
+    var menuItems: MutableSet<OrderMenuItem>? = HashSet(),
 
     @Column(nullable = false)
     var state: State,
@@ -27,4 +27,14 @@ data class FoodOrder (
 
     @Column(nullable = false)
     var totalPrice: Double
-)
+) {
+    fun addMenu(menu: OrderMenu) {
+        menus?.add(menu)
+        menu.order = this
+    }
+
+    fun addMenuItem(menuItem: OrderMenuItem) {
+        menuItems?.add(menuItem)
+        menuItem.order = this
+    }
+}

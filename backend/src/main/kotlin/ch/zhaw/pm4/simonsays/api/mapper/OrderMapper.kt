@@ -49,4 +49,10 @@ interface OrderMapper {
     fun mapMenuDtoToOrderMenu(menuDTO: MenuDTO, event: EventDTO, menu: Menu, orderMenuItems: Set<OrderMenuItem>, state: State = State.IN_PROGRESS): OrderMenu
 
     fun mapOrderToOrderDTO(order: FoodOrder): OrderDTO
+
+    @Mapping(target="menuItems", source="orderMenuItems")
+    fun mapOrderMenuToOrderMenuDTO(orderMenu: OrderMenu): OrderMenuDTO
+    fun mapOrderIngredientToOrderIngredientDTO(orderIngredient: OrderIngredient): OrderIngredientDTO
+    @Mapping(target="ingredients", source="orderIngredients")
+    fun mapOrderMenuItemToOrderMenuItemDTO(orderMenuItem: OrderMenuItem): OrderMenuItemDTO
 }

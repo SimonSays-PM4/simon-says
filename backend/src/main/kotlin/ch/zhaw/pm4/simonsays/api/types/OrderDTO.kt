@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 
 data class OrderDTO(
     @field:Schema(description = "List of menus")
-    val menus: List<OrderMenu>,
+    val menus: List<OrderMenuDTO>?,
     @field:Schema(description = "List of menu items")
-    var menuItems: List<OrderMenuItem>,
+    var menuItems: List<OrderMenuItemDTO>?,
     @field:Schema(description = "Table number")
     var tableNumber: Long,
     @field:Schema(description = "the price of the order")

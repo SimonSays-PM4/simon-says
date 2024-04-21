@@ -22,7 +22,7 @@ data class OrderIngredient(
 
     @ManyToOne
     @JoinColumn(name = "orderMenuItem_id")
-    val orderMenuItem: OrderMenuItem? = null,
+    var orderMenuItem: OrderMenuItem? = null,
 
     @Column(nullable = false)
     var state: State,

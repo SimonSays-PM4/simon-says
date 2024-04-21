@@ -27,23 +27,21 @@ class OrderServiceImpl (
     override fun createOrder(order: OrderCreateDTO, eventId: Long): OrderDTO {
         val event = eventService.getEvent(eventId)
         val menus = mutableSetOf<OrderMenu>()
+        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, menus, setOf(), 0.0)
         order.menus.forEach { menu ->
             val menuItems = mutableSetOf<OrderMenuItem>()
             menu.menuItems.forEach { menuItem ->
                 val ingredients = mutableSetOf<OrderIngredient>()
                 menuItem.ingredients.forEach { ingredient ->
                     ingredients.add(orderMapper.mapIngredientDtoToOrderIngredient(ingredient, event, ingredientRepository.findByIdAndEventId(ingredient.id, eventId).get()))
-                    //orderIngredientRepository.save(orderIngredient)
                 }
                 menuItems.add(orderMapper.mapMenuItemDtoToOrderMenuItem(menuItem, event, menuItemRepository.findByIdAndEventId(menuItem.id, eventId).get(), ingredients))
             }
-            menus.add(orderMapper.mapMenuDtoToOrderMenu(menu, event,menuRepository.findByIdAndEventId(menu.id, eventId).get(), menuItems))
+            orderToSave.addMenu((orderMapper.mapMenuDtoToOrderMenu(menu, event,menuRepository.findByIdAndEventId(menu.id, eventId).get(), menuItems)))
         }
 
-        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, menus, setOf(), 0.0)
 
         val savedOrder = orderRepository.save(orderToSave)
-        println(savedOrder.tableNumber)
         return orderMapper.mapOrderToOrderDTO(savedOrder)
     }
 
