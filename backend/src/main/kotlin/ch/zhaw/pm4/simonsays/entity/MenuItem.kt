@@ -23,5 +23,8 @@ data class MenuItem (
         var price: Double,
 
         @ManyToMany(mappedBy = "menuItems")
-        val menus: List<Menu>?
+        val menus: List<Menu>?,
+
+        @OneToMany(mappedBy = "menuItem")
+        val orderMenuItem: Set<OrderMenuItem>? = HashSet()
 )

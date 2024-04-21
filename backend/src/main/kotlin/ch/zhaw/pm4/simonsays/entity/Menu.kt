@@ -19,4 +19,7 @@ class Menu (
     @ManyToMany(fetch = FetchType.EAGER)
     var menuItems: List<MenuItem>,
 
+    @OneToMany(mappedBy = "menu")
+    val orderMenu: Set<OrderMenu>? = HashSet()
+
 )

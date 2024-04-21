@@ -4,7 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @NoArgAnnotation
-data class Ingredient(
+data class OrderIngredient(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -16,10 +16,15 @@ data class Ingredient(
     @JoinColumn(name = "event_id")
     val event: Event,
 
-    @ManyToMany(mappedBy = "ingredients")
-    val menuItems: List<MenuItem>?,
+    @ManyToOne
+    @JoinColumn(name = "ingredient_id")
+    val ingredient: Ingredient,
 
-    @OneToMany(mappedBy = "ingredient")
-    val orderIngredients: Set<OrderIngredient>? = HashSet()
+    @ManyToOne
+    @JoinColumn(name = "orderMenuItem_id")
+    val orderMenuItem: OrderMenuItem? = null,
 
-)
+    @Column(nullable = false)
+    var state: State,
+
+    )
