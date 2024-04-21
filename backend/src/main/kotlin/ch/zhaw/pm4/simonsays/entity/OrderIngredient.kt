@@ -16,15 +16,17 @@ data class OrderIngredient(
     @JoinColumn(name = "event_id")
     val event: Event,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id")
     val ingredient: Ingredient,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderMenuItem_id")
     var orderMenuItem: OrderMenuItem? = null,
 
     @Column(nullable = false)
     var state: State,
 
-    )
+    ){
+    override fun hashCode(): Int = id?.hashCode() ?: 0
+}

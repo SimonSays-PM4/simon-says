@@ -3,13 +3,9 @@ package ch.zhaw.pm4.simonsays.service
 import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.types.OrderCreateDTO
 import ch.zhaw.pm4.simonsays.api.types.OrderDTO
-import ch.zhaw.pm4.simonsays.entity.OrderIngredient
 import ch.zhaw.pm4.simonsays.entity.OrderMenu
-import ch.zhaw.pm4.simonsays.entity.OrderMenuItem
-import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.*
 import org.springframework.stereotype.Service
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class OrderServiceImpl (
@@ -29,15 +25,16 @@ class OrderServiceImpl (
         val menus = mutableSetOf<OrderMenu>()
         val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, menus, setOf(), 0.0)
         order.menus.forEach { menu ->
-            val menuItems = mutableSetOf<OrderMenuItem>()
+            val menuToSave = orderMapper.mapMenuDtoToOrderMenu(menu, event,menuRepository.findByIdAndEventId(menu.id, eventId).get(), setOf())
             menu.menuItems.forEach { menuItem ->
-                val ingredients = mutableSetOf<OrderIngredient>()
+                val menuItemToSave = orderMapper.mapMenuItemDtoToOrderMenuItem(menuItem, event, menuItemRepository.findByIdAndEventId(menuItem.id, eventId).get(), setOf())
                 menuItem.ingredients.forEach { ingredient ->
-                    ingredients.add(orderMapper.mapIngredientDtoToOrderIngredient(ingredient, event, ingredientRepository.findByIdAndEventId(ingredient.id, eventId).get()))
+                    menuItemToSave.addOrderIngredient(orderMapper.mapIngredientDtoToOrderIngredient(ingredient, event, ingredientRepository.findByIdAndEventId(ingredient.id, eventId).get()))
                 }
-                menuItems.add(orderMapper.mapMenuItemDtoToOrderMenuItem(menuItem, event, menuItemRepository.findByIdAndEventId(menuItem.id, eventId).get(), ingredients))
+                orderToSave.addMenuItemOnlySetOrder(menuItemToSave)
+                menuToSave.addOrderMenuItem(menuItemToSave)
             }
-            orderToSave.addMenu((orderMapper.mapMenuDtoToOrderMenu(menu, event,menuRepository.findByIdAndEventId(menu.id, eventId).get(), menuItems)))
+            orderToSave.addMenu(menuToSave)
         }
 
 

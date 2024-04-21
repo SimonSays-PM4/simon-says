@@ -37,4 +37,9 @@ data class FoodOrder (
         menuItems?.add(menuItem)
         menuItem.order = this
     }
+
+    fun addMenuItemOnlySetOrder(menuItem: OrderMenuItem) {
+        menuItem.order = this
+    }
+    override fun hashCode(): Int = id?.hashCode() ?: 0
 }
