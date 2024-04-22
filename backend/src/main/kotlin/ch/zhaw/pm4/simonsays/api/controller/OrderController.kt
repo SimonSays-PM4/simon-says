@@ -23,4 +23,12 @@ class OrderController(
     fun putMenu(@PathVariable("eventId") eventId: Long, @Valid @RequestBody request: OrderCreateDTO): OrderDTO {
         return orderService.createOrder(request, eventId)
     }
+
+    @Operation(summary = "get a orders", security = [SecurityRequirement(name = "basicAuth")])
+    @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    @AdminEndpoint
+    fun getMenus(@PathVariable("eventId") eventId: Long): List<OrderDTO> {
+        return orderService.listOrders(eventId)
+    }
 }

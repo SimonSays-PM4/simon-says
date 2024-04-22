@@ -31,10 +31,17 @@ class OrderServiceImpl (
                 menuItem.ingredients.forEach { ingredient ->
                     menuItemToSave.addOrderIngredient(orderMapper.mapIngredientDtoToOrderIngredient(ingredient, event, ingredientRepository.findByIdAndEventId(ingredient.id, eventId).get()))
                 }
-                orderToSave.addMenuItemOnlySetOrder(menuItemToSave)
                 menuToSave.addOrderMenuItem(menuItemToSave)
             }
             orderToSave.addMenu(menuToSave)
+        }
+
+        order.menuItems.forEach { menuItem ->
+            val menuItemToSave = orderMapper.mapMenuItemDtoToOrderMenuItem(menuItem, event, menuItemRepository.findByIdAndEventId(menuItem.id, eventId).get(), setOf())
+            menuItem.ingredients.forEach { ingredient ->
+                menuItemToSave.addOrderIngredient(orderMapper.mapIngredientDtoToOrderIngredient(ingredient, event, ingredientRepository.findByIdAndEventId(ingredient.id, eventId).get()))
+            }
+            orderToSave.addMenuItem(menuItemToSave)
         }
 
 
@@ -42,8 +49,10 @@ class OrderServiceImpl (
         return orderMapper.mapOrderToOrderDTO(savedOrder)
     }
 
-    override fun listOrders(eventId: Long): List<OrderCreateDTO> {
-        return listOf()
+    override fun listOrders(eventId: Long): List<OrderDTO> {
+        return orderRepository.findAllByEventId(eventId).map { order ->
+            orderMapper.mapOrderToOrderDTO(order)
+        }
     }
 
     override fun deleteOrder(orderId: Long, eventId: Long) {
