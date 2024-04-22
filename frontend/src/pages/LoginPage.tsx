@@ -36,7 +36,7 @@ export const LoginPage: React.FC = () => {
     return (
         <main
             role="main"
-            className="w-full px-[20px] py-[24px] md:px-[46px] md:py-[48px] bg-white"
+            className="relative w-full px-[20px] py-[24px] md:px-[46px] md:py-[48px] bg-white"
         >
             <div className="w-full flex items-center justify-center h-[90%] min-h-[450px]">
                 <div className="w-[500px] h-fit grid justify-center items-center">
@@ -46,7 +46,6 @@ export const LoginPage: React.FC = () => {
                     <div className="grid h-fit mt-6">
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <FormInput id="code" label="Code" register={register} type="text" />
-
                             <Button
                                 buttonText="Login"
                                 type="submit"
