@@ -4,7 +4,7 @@ import { PrintQueueJobDto } from "printer-api-lib/src/dtos";
 import os from "os";
 import Arpping from "arpping";
 
-const networkScanMaxTimeoutInS = 10;
+const networkScanMaxTimeoutInS = 15;
 
 export class Printer {
     readonly mac: string;
@@ -151,7 +151,6 @@ export class Printer {
 
     private async findPrinterIpWithNetworkScan(): Promise<string | null> {
         const networks = os.networkInterfaces();
-        const networksToScan = [];
         for (const networkName in networks) {
             // we only scan networks prefixed with "eth" or "wlan"
             if (!networkName.startsWith("eth") && !networkName.startsWith("wlan") && !networkName.startsWith("Ethernet") && !networkName.startsWith("Wi-Fi")) {
@@ -187,38 +186,45 @@ export class Printer {
                     }
 
                     console.log(`Scanning network ${networkName} with cidr ${cidr}`);
-                    networksToScan.push(networkName);
+                    const arrping = new Arpping({
+                        timeout: networkScanMaxTimeoutInS,
+                        interfaceFilters: {
+                            family: ["IPv4"],
+                            // @ts-ignore (somehow the type definition is wrong here and does not support windows)
+                            interface: [networkName],
+                            internal: [false]
+                        },
+                        useCache: false,
+                        debug: true
+                    })
+            
+                    const result = await arrping.searchByMacAddress([this.mac])
+                    if (result.hosts.length === 0) {
+                        console.log(`No host found in network ${networkName} with mac ${this.mac}`);
+                        continue;
+                    }
+
+                    if (result.hosts.length > 1) {
+                        console.warn(`Found more than one host with mac ${this.mac}. This should not happen??. Better check the network configuration.`);
+                    }
+
+                    const printer = result.hosts[0];
+                    console.log(`Discovered Printer device`, printer);
+                    return printer.ip;
                 }
             }
 
         }
 
-        const arrping = new Arpping({
-            timeout: networkScanMaxTimeoutInS,
-            interfaceFilters: {
-                family: ["IPv4"],
-                // @ts-ignore (somehow the type definition is wrong here and does not support windows)
-                interface: networksToScan,
-                internal: [false]
-            },
-            useCache: false,
-            debug: true // TODO remove
-        })
-
-        const result = await arrping.searchByMacAddress([this.mac])
-
-        if (result.hosts.length === 0) {
-            return null;
+        // On windows it sometimes still does not find the printer and we need to check the arp cache again
+        if (process.platform === "win32") {
+            console.warn(`Network scan on windows failed. This somehow happens but the arp cache may still be populated. Trying to resolve printer ip for mac ${this.mac} in arp cache again.`);
+            return await arp.toIP(this.mac);
         }
 
-        if (result.hosts.length > 1) {
-            console.warn(`Found more than one host with mac ${this.mac}. This should not happen??.`);
-        } 
-
-        const printer = result.hosts[0];
-        console.log(`Discovered Printer device`, printer);
-
-        return printer.ip;
+        // If we reach this point we did not find the printer
+        console.error(`Failed to find printer with mac ${this.mac} in any network`);
+        return null;
     }
 
     /**
