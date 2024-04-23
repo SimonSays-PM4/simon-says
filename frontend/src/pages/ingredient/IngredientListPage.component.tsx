@@ -8,7 +8,7 @@ import { Popup } from "../../components/Popup.tsx";
 import { useIngredientListPage } from "./IngredientListPage.hooks.tsx";
 
 export const IngredientListPageComponent: React.FC = () => {
-    const { isLoading, eventActions, showDeletePopup, setShowDeletePopup, data } = useIngredientListPage();
+    const { isLoading, ingredientActions, showDeletePopup, setShowDeletePopup, data } = useIngredientListPage();
     const navigate = useNavigate();
 
     const onEditClick = (row: IngredientCreateUpdateDTO) => {
@@ -16,7 +16,7 @@ export const IngredientListPageComponent: React.FC = () => {
     };
 
     const onDeleteClick = (row: IngredientDTO) => {
-        eventActions.setIngredientToDelete(row);
+        ingredientActions.setIngredientToDelete(row);
         setShowDeletePopup(true);
     };
 
@@ -48,7 +48,7 @@ export const IngredientListPageComponent: React.FC = () => {
                 <DataTable<IngredientDTO> title="Zutaten" columns={columns} rows={data} onCreateClick={() => navigate(`../ingredient/create`)}  />
             )}
 
-            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteIngredient} modalText={'Zutate "' + eventActions.ingredientToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
+            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={ingredientActions.deleteIngredient} modalText={'Zutate "' + ingredientActions.ingredientToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }
