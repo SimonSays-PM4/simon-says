@@ -11,6 +11,7 @@ import java.util.*
 interface MenuItemRepository : JpaRepository<MenuItem, Long> {
     fun findAllByEventId(eventId: Long): List<MenuItem>
     fun findByIdAndEventId(id: Long, eventId: Long): Optional<MenuItem>
+    fun findByIdIn(id: List<Long>): List<MenuItem>
 
 }
 

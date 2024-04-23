@@ -19,7 +19,7 @@ class MenuItemFactory(
             price: Double = 1.0
     ): MenuItem {
         val event = eventRepository.findById(eventId).orElse(null) // Fetch the Event by ID
-        val menuItem = MenuItem(name = name, event = event, ingredients = ingredients, price = price) // Use the Event entity
+        val menuItem = MenuItem(name = name, event = event, ingredients = ingredients, price = price, menus = null) // Use the Event entity
         return menuItemRepository.save(menuItem)
     }
 }

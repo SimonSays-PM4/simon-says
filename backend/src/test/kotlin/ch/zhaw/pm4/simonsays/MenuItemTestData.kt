@@ -34,7 +34,8 @@ fun getMenuItem(
             name,
             event,
             ingredients,
-            price
+            price,
+        null
     )
 }
 

@@ -5,4 +5,7 @@ export enum ActivePageType {
     IngredientList = 3,
     Ingredient = 4,
     MenuItem = 5,
+    MenuItemList = 6,
+    MenuList = 7,
+    Menu = 8
 }

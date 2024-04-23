@@ -141,7 +141,7 @@ class MenuItemIntegrationTest : IntegrationTest() {
     @Transactional
     fun `Test retrieve menu item`() {
         val menuItem: MenuItem = menuItemFactory.createMenuItem("MenuItem Test", testEvent.id!!, listOf(testIngredient))
-        val expectedJson = getMenuItemDTO(ingredientDTOs = listOf(getTestIngredientDTO(id = testIngredient.id, name = testIngredient.name)))
+        val expectedJson = getMenuItemDTO(id = menuItem.id!!, ingredientDTOs = listOf(getTestIngredientDTO(id = testIngredient.id, name = testIngredient.name)))
 
         mockMvc.get("${getMenuItemUrl(testEvent.id!!)}/${menuItem.id}"){
             with(httpBasic(username, password))
