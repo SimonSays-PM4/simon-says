@@ -1,10 +1,10 @@
 import { PrinterTypes, ThermalPrinter } from "node-thermal-printer";
 import arp from "@network-utils/arp-lookup";
 import { PrintQueueJobDto } from "printer-api-lib/src/dtos";
-import scanForDevicesInNetwork from "local-devices";
 import os from "os";
+import Arpping from "arpping";
 
-const networkScanMaxTimeoutInMs = 20_000;
+const networkScanMaxTimeoutInS = 10;
 
 export class Printer {
     readonly mac: string;
@@ -29,8 +29,7 @@ export class Printer {
         }
         console.log(`Initializing printer ${this.name} with mac ${this.mac}`);
         // First we try to find the ip address of the printer in our arp cache because this is the fastest way
-        //let ip: string | null | undefined = await arp.toIP(this.mac);
-        let ip: string | null | undefined = null
+        let ip = await arp.toIP(this.mac);
         if (!ip) {
             console.error(`Failed to resolve printer ip for mac ${this.mac} in arp cache. Starting network scan.`);
             // Attempting network scan
@@ -145,12 +144,13 @@ export class Printer {
             await this.thermalPrinter!.execute({ docname: printJob.id, waitForResponse: false });
         } catch (error) {
             throw new Error(`Failed to print job ${printJob.id} on printer ${this.name} with mac ${this.mac}: ${error}`);
+        } finally {
+            await this.thermalPrinter!.clear();
         }
     }
 
-    private async findPrinterIpWithNetworkScan(): Promise<string | undefined> {
+    private async findPrinterIpWithNetworkScan(): Promise<string | null> {
         const networks = os.networkInterfaces();
-        
         const networksToScan = [];
         for (const networkName in networks) {
             // we only scan networks prefixed with "eth" or "wlan"
@@ -187,24 +187,38 @@ export class Printer {
                     }
 
                     console.log(`Scanning network ${networkName} with cidr ${cidr}`);
-                    networksToScan.push(cidr);
+                    networksToScan.push(networkName);
                 }
             }
 
         }
 
-        const networkScanPromises = networksToScan.map(
-            networkToScan => scanForDevicesInNetwork({address: networkToScan, skipNameResolution: true})
-            .then(devices => devices.find(device => device.mac === this.mac))
-        );
+        const arrping = new Arpping({
+            timeout: networkScanMaxTimeoutInS,
+            interfaceFilters: {
+                family: ["IPv4"],
+                // @ts-ignore (somehow the type definition is wrong here and does not support windows)
+                interface: networksToScan,
+                internal: [false]
+            },
+            useCache: false,
+            debug: true // TODO remove
+        })
 
-        const printer = await Promise.race([
-            Promise.all(networkScanPromises).then(devices => devices.find(device => device !== undefined)),  
-            new Promise<scanForDevicesInNetwork.IDevice>((_, reject) => setTimeout(() => reject("Network scan timeout"), networkScanMaxTimeoutInMs))
-        ]);
+        const result = await arrping.searchByMacAddress([this.mac])
 
+        if (result.hosts.length === 0) {
+            return null;
+        }
 
-        return printer?.ip;
+        if (result.hosts.length > 1) {
+            console.warn(`Found more than one host with mac ${this.mac}. This should not happen??.`);
+        } 
+
+        const printer = result.hosts[0];
+        console.log(`Discovered Printer device`, printer);
+
+        return printer.ip;
     }
 
     /**
