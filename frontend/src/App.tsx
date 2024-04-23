@@ -14,6 +14,7 @@ import { MenuListPageComponent } from "./pages/event/menu/MenuListPage.component
 import { MenuCreatePageComponent } from "./pages/event/menu/MenuCreatePage.component.tsx";
 import { EventMenuPage } from "./pages/event/menu/EventMenuPage.component.tsx";
 import { EventMenuEditPage } from "./pages/event/menu/EventMenuEditPage.component.tsx";
+import { OrderCreatePageComponent } from "./pages/order/OrderPageCreate.component.tsx";
 
 export default function App() {
     return (
@@ -41,6 +42,11 @@ export default function App() {
                             <Route path="/admin/:eventId/menu/create" element={<AuthorizedEventRoute activePageType={ActivePageType.Menu}><MenuCreatePageComponent /></AuthorizedEventRoute>}>
                                 <Route path="/admin/:eventId/menu/create/:menuId" element={<AuthorizedEventRoute activePageType={ActivePageType.Menu}><MenuCreatePageComponent /></AuthorizedEventRoute>} />
                             </Route>
+                        </Route>
+                    </Route>
+                    <Route path="/:eventId/order">
+                        <Route path="/:eventId/order/create" element={<AuthorizedEventRoute activePageType={ActivePageType.Order}><OrderCreatePageComponent /></AuthorizedEventRoute>}>
+                            <Route path="/:eventId/order/create/:orderId" element={<AuthorizedEventRoute activePageType={ActivePageType.Order}><OrderCreatePageComponent /></AuthorizedEventRoute>} />
                         </Route>
                     </Route>
 
