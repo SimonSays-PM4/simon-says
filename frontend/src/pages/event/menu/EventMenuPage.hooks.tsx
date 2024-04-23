@@ -1,9 +1,9 @@
 import { getEventService, getMenuItemService } from "../../../api.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { EventDTO, MenuItemDTO } from "../../../gen/api";
 import { EventContext } from "../../../providers/EventContext.tsx";
 import { AppContext } from "../../../providers/AppContext.tsx";
 import { NotificationType } from "../../../enums/NotificationType.ts";
+import { EventDTO, MenuItemDTO } from "../../../gen/api/api.ts";
 
 type EventMenuActions = {
     setMenuItemToDelete: (menuItem: MenuItemDTO) => void;

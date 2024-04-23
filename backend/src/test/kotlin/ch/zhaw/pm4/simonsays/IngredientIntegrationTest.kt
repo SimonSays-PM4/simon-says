@@ -105,7 +105,7 @@ class IngredientIntegrationTest : IntegrationTest() {
                 status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
-                    jsonPath("$.name", CoreMatchers.equalTo(ingredient.name))
+                    jsonPath("$.name", CoreMatchers.equalTo(getTestIngredientDTO().name))
                 }
             }
     }

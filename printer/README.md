@@ -48,3 +48,11 @@ This directory contains source code important to the printer-system of SimonSays
             |              |        ------------------
             ---------------- 
 ```
+
+## Build Printer Server Docker Image
+
+Go to this directory and run the following command:
+
+```bash
+docker build -t printer-server -f Printer-Server-Dockerfile .
+```

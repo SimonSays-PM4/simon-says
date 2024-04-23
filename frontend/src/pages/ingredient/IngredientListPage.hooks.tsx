@@ -10,7 +10,7 @@ type IngredientActions = {
     ingredientToDelete: IngredientDTO
 };
 type IngredientListPageReturnProps = {
-    eventActions: IngredientActions
+    ingredientActions: IngredientActions
     isLoading: boolean,
     showDeletePopup: boolean
     setShowDeletePopup: (show: boolean) => void,
@@ -66,11 +66,11 @@ export const useIngredientListPage = (): IngredientListPageReturnProps => {
         }
     }, [ingredientToDelete.id]);
 
-    const eventActions: IngredientActions = {
+    const ingredientActions: IngredientActions = {
         deleteIngredient,
         setIngredientToDelete,
         ingredientToDelete
     };
 
-    return { eventActions, isLoading, showDeletePopup, setShowDeletePopup, data };
+    return { ingredientActions, isLoading, showDeletePopup, setShowDeletePopup, data };
 }

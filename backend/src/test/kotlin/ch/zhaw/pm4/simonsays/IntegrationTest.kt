@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.factory.EventFactory
 import ch.zhaw.pm4.simonsays.factory.IngredientFactory
 import ch.zhaw.pm4.simonsays.factory.MenuItemFactory
 import ch.zhaw.pm4.simonsays.factory.StationFactory
+import ch.zhaw.pm4.simonsays.factory.MenuFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,5 +36,8 @@ class IntegrationTest {
 
     @Autowired
     protected lateinit var stationFactory: StationFactory
+
+    @Autowired
+    protected lateinit var menuFactory: MenuFactory
 
 }
