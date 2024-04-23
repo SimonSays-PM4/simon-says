@@ -4,7 +4,7 @@ import { PrintQueueJobDto } from "printer-api-lib/src/dtos";
 import os from "os";
 import Arpping from "arpping";
 
-const networkScanMaxTimeoutInS = 15;
+const networkScanMaxTimeoutInS = 10;
 
 export class Printer {
     readonly mac: string;
