@@ -1,6 +1,7 @@
 import { SocketApi } from 'printer-api-lib/src/socket-api';
-import { PrintQueueDto, PrintQueueJobDto, PrintQueueJobUpdateDto } from 'printer-api-lib/src/dtos';
+import { ApplicationErrorDto, PrintQueueDto, PrintQueueJobDto, PrintQueueJobUpdateDto } from 'printer-api-lib/src/dtos';
 import { Printer } from "./printer";
+import { error } from 'console';
 
 export class PrinterQueue {
     readonly printServerId: string;
@@ -18,9 +19,10 @@ export class PrinterQueue {
             process.env.PRINTER_QUEUE_SERVER_BASE_URL!,
             this.printServerId,
             this.printQueueDto.id,
-            this.onPrintQueueJobInitialData,
-            this.onPrintQueueJobChange,
-            this.onPrintQueueJobRemove
+            (printQueueJob) => this.onPrintQueueJobInitialData(printQueueJob),
+            (printQueueJob) => this.onPrintQueueJobChange(printQueueJob),
+            (printQueueJob) => this.onPrintQueueJobRemove(printQueueJob),
+            (error) => this.onApplicationError(error)
         );
     }
 
@@ -29,10 +31,12 @@ export class PrinterQueue {
     }
 
     onPrintQueueJobInitialData(printQueueJob: PrintQueueJobDto): void {
+        console.log(`Initial data received for print job ${printQueueJob.id}`);
         this.print(printQueueJob);
     }
 
     onPrintQueueJobChange(printQueueJob: PrintQueueJobDto): void {
+        console.log(`Change received for print job ${printQueueJob.id}`);
         this.print(printQueueJob);
     }
 
@@ -41,7 +45,16 @@ export class PrinterQueue {
         console.warn(`Print job ${printQueueJob.id} was removed from the queue. The print server does not support removing/stopping print jobs.`);
     }
 
+    onApplicationError(error: ApplicationErrorDto): void {
+        console.error("Error in printer queue socket connection", error);
+    }
+
     async print(printJob: PrintQueueJobDto): Promise<void> {
+        if(printJob.status !== "PENDING") {
+            console.log(`Print job ${printJob.id} is not pending. Nothing to print here.`);
+            return;
+        }
+
         // Collect all errors that occur during printing
         const printErrors = [];
 
@@ -53,7 +66,7 @@ export class PrinterQueue {
                     await printer.print(printJob);
                     await this.updatePrintQueueJob({
                         id: printJob.id,
-                        status: "printed"
+                        status: "PRINTED"
                     });
                     return;
                 } catch (error) {
@@ -69,16 +82,20 @@ export class PrinterQueue {
         }
 
         // If we reach this point, no printer was able to print the job
-        const errorMessage = `Failed to print job ${printJob.id} because no printer was able to print the job. Errors: ${printErrors.join(", ")}`;
-        console.error(errorMessage);
+        var errorMessage = `Failed to print job ${printJob.id} because no printer was able to print the job.`;
+        console.error('%s', errorMessage, printErrors);
         await this.updatePrintQueueJob({
             id: printJob.id,
-            status: "error",
+            status: "ERROR",
             statusMessage: errorMessage
         });
     }
 
     async updatePrintQueueJob(update: PrintQueueJobUpdateDto): Promise<void> {
-        await this.nextPrintQueueJobConnection.sendChange<PrintQueueJobUpdateDto>(update);
+        try {
+            await this.nextPrintQueueJobConnection.sendChange(update);
+        } catch (error) {
+            console.error("An error occured while sending update of printer job", error) 
+        }
     }
 }
