@@ -10,7 +10,7 @@ plugins {
     kotlin("plugin.noarg") version "1.7.10"
     kotlin("kapt") version "1.9.10"
     jacoco
-    id("io.gitlab.arturbosch.detekt") version "1.23.5"
+    id("io.gitlab.arturbosch.detekt") version "1.23.6"
 }
 
 group = "ch.zhaw.pm4"
