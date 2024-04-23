@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.spring") version "1.9.22"
     kotlin("plugin.noarg") version "1.7.10"
-    kotlin("kapt") version "1.9.10"
+    kotlin("kapt") version "1.9.23"
     jacoco
     id("io.gitlab.arturbosch.detekt") version "1.23.5"
 }
