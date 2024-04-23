@@ -16,19 +16,27 @@ import org.springframework.web.bind.annotation.*
 class OrderController(
     private val orderService: OrderService
 ) {
-    @Operation(summary = "Update/Create a order", security = [SecurityRequirement(name = "basicAuth")])
+    @Operation(summary = "Update/Create an order", security = [SecurityRequirement(name = "basicAuth")])
     @PutMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     @AdminEndpoint
-    fun putMenu(@PathVariable("eventId") eventId: Long, @Valid @RequestBody request: OrderCreateDTO): OrderDTO {
+    fun putOrder(@PathVariable("eventId") eventId: Long, @Valid @RequestBody request: OrderCreateDTO): OrderDTO {
         return orderService.createOrder(request, eventId)
     }
 
-    @Operation(summary = "get a orders", security = [SecurityRequirement(name = "basicAuth")])
+    @Operation(summary = "get orders", security = [SecurityRequirement(name = "basicAuth")])
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     @AdminEndpoint
-    fun getMenus(@PathVariable("eventId") eventId: Long): List<OrderDTO> {
+    fun getOrders(@PathVariable("eventId") eventId: Long): List<OrderDTO> {
         return orderService.listOrders(eventId)
+    }
+
+    @Operation(summary = "delete an order", security = [SecurityRequirement(name = "basicAuth")])
+    @DeleteMapping("{orderId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @AdminEndpoint
+    fun deleteOrder(@PathVariable("eventId") eventId: Long, @PathVariable("orderId") orderId: Long){
+        orderService.deleteOrder(orderId, eventId)
     }
 }
