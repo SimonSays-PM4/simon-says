@@ -56,12 +56,12 @@ export class SocketApi<OnConnectType, OnChangeType> {
     }
 
     async sendChange(data: Partial<OnChangeType>): Promise<void> {
-        console.debug(`Sending change to ${this.socketUrl}`, data);
+        console.debug('Sending change to %s', this.socketUrl, data);
         await this.socket.emit('change', data);
     }
 
     async sendRemove<T>(data: Partial<OnChangeType>): Promise<void> {
-        console.debug(`Sending remove to ${this.socketUrl}`, data);
+        console.debug('Sending remove to %s', this.socketUrl, data);
         await this.socket.emit('remove', data);
     }
 

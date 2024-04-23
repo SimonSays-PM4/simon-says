@@ -83,7 +83,7 @@ export class PrinterQueue {
 
         // If we reach this point, no printer was able to print the job
         var errorMessage = `Failed to print job ${printJob.id} because no printer was able to print the job.`;
-        console.error(errorMessage, printErrors);
+        console.error('%s', errorMessage, printErrors);
         await this.updatePrintQueueJob({
             id: printJob.id,
             status: "ERROR",

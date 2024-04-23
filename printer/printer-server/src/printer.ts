@@ -177,11 +177,11 @@ export class Printer {
                     try {
                         const networkSize = parseInt(cidr.split("/")[1]);
                         if(networkSize > 24) {
-                            console.warn(`Skipping network ${networkName} because it is bigger than /24`);
+                            console.warn('Skipping network %s because it is bigger than /24', networkName);
                             continue;
                         }
                     } catch (error) {
-                        console.warn(`Skipping network ${networkName} because we could not parse the cidr: ${cidr}`, error);
+                        console.warn('Skipping network %s because we could not parse the cidr: %s', networkName, cidr, error);
                         continue;
                     }
 
