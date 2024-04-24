@@ -1,0 +1,15 @@
+input: .
+output: .retype
+url: https://retype.com
+branding:
+  title: Simon Says
+  label: Docs
+links:
+- text: Getting Started
+  link: https://retype.com/guides/getting-started/
+footer:
+  copyright: "&copy; Copyright {{ year }}. All rights reserved."
+
+# Exclude README.md from the output
+exclude:
+  - "README.md"

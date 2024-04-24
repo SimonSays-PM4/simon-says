@@ -1,0 +1,23 @@
+name: publish customer documentation to github pages
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    name: Publish to retype branch
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Retype Website
+        uses: retypeapp/action-build@latest
+        with:
+          config: documentation/retype
+      - name: Deploy to GitHub Pages
+        uses: retypeapp/action-github-pages@latest
+        with:
+          update-branch: true
