@@ -37,6 +37,7 @@ export const useOrderListPage = (): OrderListPageReturnProps => {
         try {
             setIsLoading(true);
             orderService.getOrders(eventId).then((response) => {
+                console.log(response.data);
                 setData(response.data);
             });
         }
