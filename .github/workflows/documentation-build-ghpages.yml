@@ -16,7 +16,7 @@ jobs:
       - name: Build Retype Website
         uses: retypeapp/action-build@latest
         with:
-          config: documentation/retype/retype.yml
+          config: documentation/retype
       - name: Deploy to GitHub Pages
         uses: retypeapp/action-github-pages@latest
         with:
