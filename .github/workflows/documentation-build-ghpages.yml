@@ -8,20 +8,15 @@ on:
 jobs:
   publish:
     name: Publish to retype branch
-
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Build Retype Website
         uses: retypeapp/action-build@latest
         with:
-          working-directory: documentation/retype
-
+          config: documentation/retype/retype.yml
       - name: Deploy to GitHub Pages
         uses: retypeapp/action-github-pages@latest
         with:
