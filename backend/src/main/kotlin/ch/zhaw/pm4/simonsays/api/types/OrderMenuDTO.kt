@@ -11,7 +11,7 @@ class OrderMenuDTO(
     @field:Schema(description = "List of menu items")
     var menuItems: List<OrderMenuItemDTO>,
     @field:Schema(description = "Price of the menu")
-    var price: Long,
+    var price: Double,
     @field:Schema(description = "the state of the order", enumAsRef = true)
     var state: State,
 )

@@ -20,7 +20,7 @@ data class OrderMenuItem(
     @JoinColumn(name = "menuItem_id", nullable = false)
     var menuItem: MenuItem,
 
-    @OneToMany(mappedBy = "orderMenuItem", cascade = [CascadeType.PERSIST])
+    @OneToMany(mappedBy = "orderMenuItem", cascade = [CascadeType.ALL])
     var orderIngredients: MutableSet<OrderIngredient>,
 
     @Column

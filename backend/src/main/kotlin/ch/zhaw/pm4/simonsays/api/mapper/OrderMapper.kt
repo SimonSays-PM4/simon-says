@@ -5,7 +5,6 @@ import ch.zhaw.pm4.simonsays.entity.*
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.Mappings
-import org.springframework.beans.factory.annotation.Autowired
 
 @Mapper(componentModel = "spring")
 interface OrderMapper {
@@ -35,7 +34,7 @@ interface OrderMapper {
         Mapping(target= "menuItem", source = "menuItem"),
         Mapping(target= "price", source = "menuItemDTO.price"),
     )
-    fun mapMenuItemDtoToOrderMenuItem(menuItemDTO: MenuItemDTO, event: EventDTO, menuItem: MenuItem, orderIngredients: Set<OrderIngredient>, state: State = State.IN_PROGRESS): OrderMenuItem
+    fun mapMenuItemDtoToOrderMenuItem(menuItemDTO: MenuItemDTO, event: EventDTO, menuItem: MenuItem, orderIngredients: Set<OrderIngredient> = setOf(), state: State = State.IN_PROGRESS): OrderMenuItem
 
     @Mappings(
         Mapping(target= "id", ignore = true),
@@ -47,7 +46,7 @@ interface OrderMapper {
         Mapping(target= "price", source = "menuDTO.price"),
 
     )
-    fun mapMenuDtoToOrderMenu(menuDTO: MenuDTO, event: EventDTO, menu: Menu, orderMenuItems: Set<OrderMenuItem>, state: State = State.IN_PROGRESS): OrderMenu
+    fun mapMenuDtoToOrderMenu(menuDTO: MenuDTO, event: EventDTO, menu: Menu, orderMenuItems: Set<OrderMenuItem> = setOf(), state: State = State.IN_PROGRESS): OrderMenu
 
     fun mapOrderToOrderDTO(order: FoodOrder): OrderDTO
 

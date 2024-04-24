@@ -20,7 +20,7 @@ data class OrderMenu (
     @JoinColumn(name = "menu_id", nullable = false)
     var menu: Menu,
 
-    @OneToMany(mappedBy = "orderMenu", cascade = [CascadeType.PERSIST])
+    @OneToMany(mappedBy = "orderMenu", cascade = [CascadeType.ALL])
     var orderMenuItems: MutableSet<OrderMenuItem>,
 
     @ManyToOne(fetch = FetchType.LAZY)
