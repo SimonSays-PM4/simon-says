@@ -1,8 +1,6 @@
 package ch.zhaw.pm4.simonsays.entity
 
 import jakarta.persistence.*
-import java.awt.Menu
-
 
 @Entity
 @NoArgAnnotation
