@@ -1,11 +1,11 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { EventContext } from "../../providers/EventContext";
 import { AppContext } from "../../providers/AppContext";
 import { getMenuItemService, getMenuService, getOrderService } from "../../api";
 import { NotificationType } from "../../enums/NotificationType";
 import { MenuDTO, MenuItemDTO, OrderCreateDTO } from "../../gen/api";
 import { FieldValues } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 type OrderActions = {
     saveOrder: (orderToSave: FieldValues) => void;
@@ -28,8 +28,7 @@ type OrderCreatePageReturnProps = {
 export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
     const { eventId } = useContext(EventContext);
     const appContext = useContext(AppContext);
-
-    const { orderId: id } = useParams();
+    const navigate = useNavigate();
 
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -51,13 +50,10 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
     const reloadMenus = useCallback(async () => {
         try {
             setIsLoading(true);
-            console.log(eventId);
             const response = await menuService.getMenus(eventId);
-            console.log(response.data);
             setMenuList(response.data);
 
             const responseMenuItem = await menuItemService.getMenuItems(eventId);
-            console.log(responseMenuItem.data);
             setMenuItemList(responseMenuItem.data);
         }
         catch (_) {
@@ -72,33 +68,29 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         console.log(data);
     };
 
-    const saveOrder = useCallback(
-        (data: FieldValues) => {
-            setIsSaving(true);
+    const saveOrder = (data: FieldValues) => {
+        setIsSaving(true);
 
-            const orderToSave = data as OrderCreateDTO;
-            orderToSave.menus = selectedMenus;
-            orderToSave.menuItems = selectedMenuItems;
-            console.log(orderToSave);
+        const orderToSave = data as OrderCreateDTO;
+        orderToSave.menus = selectedMenus;
+        orderToSave.menuItems = selectedMenuItems;
 
-            orderService
-                .putOrder(eventId, orderToSave)
-                .then((response) => {
-                    if (response.status === 201 || response.status === 200) {
-                        console.log(response.data);
-                    } else {
-                        setErrorMessage(`Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
-                    }
-                })
-                .catch(() => {
+        orderService
+            .putOrder(eventId, orderToSave)
+            .then((response) => {
+                if (response.status === 201 || response.status === 200) {
+                    navigate("../");
+                } else {
                     setErrorMessage(`Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
-                })
-                .finally(() => {
-                    setIsSaving(false);
-                });
-        },
-        []
-    );
+                }
+            })
+            .catch(() => {
+                setErrorMessage(`Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
+            })
+            .finally(() => {
+                setIsSaving(false);
+            });
+    };
 
     const orderActions: OrderActions = {
         onFormInvalid,
