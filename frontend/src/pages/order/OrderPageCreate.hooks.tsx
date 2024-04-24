@@ -52,7 +52,7 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         try {
             setIsLoading(true);
             console.log(eventId);
-            const response = await menuService.getMenus1(eventId);
+            const response = await menuService.getMenus(eventId);
             console.log(response.data);
             setMenuList(response.data);
 
@@ -82,7 +82,7 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
             console.log(orderToSave);
 
             orderService
-                .putMenu(eventId, orderToSave)
+                .putOrder(eventId, orderToSave)
                 .then((response) => {
                     if (response.status === 201 || response.status === 200) {
                         console.log(response.data);
