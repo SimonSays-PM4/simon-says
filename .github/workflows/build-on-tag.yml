@@ -9,6 +9,7 @@ env:
   # GENERAL
   BACKEND_DIRECTORY: backend
   FRONTEND_DIRECTORY: frontend
+  PRINTER_DIRECTORY: printer
   # JAVA env
   JAVA_VERSION: 17
   JAVA_DIST: corretto
@@ -60,4 +61,17 @@ jobs:
           image-name: ${{ github.repository }}/frontend
           tags: ${{ github.ref_name }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-  # TODO: add printer server build
+  printer-server:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
+      - name: image-build
+        uses: ./.github/actions/image-build
+        with:
+          working-directory: ${{ env.PRINTER_DIRECTORY }}
+          registry: ${{ env.REGISTRY }}
+          image-name: ${{ github.repository }}/printer-server
+          tags: ${{ github.ref_name }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          platforms: linux/arm64
