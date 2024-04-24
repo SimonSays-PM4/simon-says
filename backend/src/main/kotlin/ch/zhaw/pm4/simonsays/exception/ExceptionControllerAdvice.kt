@@ -2,6 +2,7 @@ package ch.zhaw.pm4.simonsays.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -77,6 +78,24 @@ class ExceptionControllerAdvice {
                 ex.message
         )
         return ResponseEntity(errorMessage, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadableException(ex: HttpMessageNotReadableException): ResponseEntity<ErrorMessageModel> {
+        val errorMessage = ErrorMessageModel(
+                HttpStatus.BAD_REQUEST.value(),
+                "HTTP Request body couldn't be processed, did you send one?"
+        )
+        return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(AssemblyStationAlreadyDefinedException::class)
+    fun handleAssemblyStationAlreadyDefinedException(ex: RuntimeException): ResponseEntity<ErrorMessageModel> {
+        val errorMessage = ErrorMessageModel(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.message
+        )
+        return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)
     }
 
 }

@@ -15,3 +15,10 @@ spring:
 debug: on
 application:
   url: "https://simonsays-stage.pm4.init-lab.ch/"
+
+# The printer-queue-server application configuration
+printer-queue-server:
+  # List of frontend origins allowed to communicate with the printer server
+  frontend-origins:
+    # TODO: Add the URL of your deployed frontend here
+    - https://simonsays-stage.pm4.init-lab.ch

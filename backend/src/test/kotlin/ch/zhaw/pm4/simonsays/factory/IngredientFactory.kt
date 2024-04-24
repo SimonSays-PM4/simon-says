@@ -17,7 +17,9 @@ class IngredientFactory(
     ): Ingredient {
         val ingredient = Ingredient(
             name = name,
-            event = event
+            event = event,
+            menuItems = null,
+            stations = null
         )
         return ingredientRepository.save(ingredient)
     }

@@ -14,14 +14,16 @@ export interface IFormInputProps {
     validationError?: string;
     minLength?: number;
     maxLength?: number;
+    step?: number;
     register: UseFormRegister<FieldValues>;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const FormInput: React.FC<IFormInputProps> = ({
-    classNames,
     id,
     label,
     type,
+    classNames,
     defaultValue,
     placeholderValue,
     disabled = false,
@@ -29,7 +31,9 @@ export const FormInput: React.FC<IFormInputProps> = ({
     validationError,
     minLength,
     maxLength,
-    register
+    step = undefined,
+    register,
+    onChange
 }) => {
     return (
         <div className={"sm:grid sm:grid-flow-row sm:grid-cols-1 sm:items-end my-4 " + (classNames ?? "")} key={id + defaultValue}>
@@ -40,15 +44,18 @@ export const FormInput: React.FC<IFormInputProps> = ({
             <div className="mt-1 sm:mt-0 sm:col-span-1 stroke-secondaryfont flex flex-row items-center">
                 <div className="w-full relative">
                     <input
+                        key={id}
                         id={id}
                         className={
                             "form-input rounded-lg border border-default-200 px-4 py-2.5"
                         }
+                        {...register(id, { required: isRequired, disabled: disabled, value: defaultValue, minLength: minLength, maxLength: maxLength })}
+                        onChange={onChange}
                         type={type}
                         disabled={disabled}
                         placeholder={placeholderValue}
                         aria-required={isRequired}
-                        {...register(id, { required: isRequired, disabled: disabled, value: defaultValue, minLength: minLength, maxLength: maxLength })}
+                        step={step}
                     />
                 </div>
             </div>

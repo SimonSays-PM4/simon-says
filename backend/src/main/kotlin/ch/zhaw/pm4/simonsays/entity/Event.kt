@@ -2,10 +2,14 @@ package ch.zhaw.pm4.simonsays.entity
 
 import jakarta.persistence.*
 
-
 @Entity
 @NoArgAnnotation
 data class Event(
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val id: Long? = null,
+
         @Column(nullable = false)
         var name: String,
 
@@ -15,10 +19,15 @@ data class Event(
         @Column(nullable = false)
         var numberOfTables: Long,
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long? = null,
+        @OneToMany(mappedBy = "event")
+        val ingredients: Set<Ingredient>? = HashSet(),
 
         @OneToMany(mappedBy = "event")
-        val ingredients: Set<Ingredient>? = HashSet()
+        val menuItems: Set<MenuItem>? = HashSet(),
+
+        @OneToMany(mappedBy = "event")
+        val menus: Set<Menu>? = HashSet(),
+
+        @OneToMany(mappedBy = "event")
+        val stations: Set<Station>? = HashSet()
 )

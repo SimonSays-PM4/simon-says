@@ -1,0 +1,23 @@
+name: ci running on each commit
+
+on:
+  - push
+env:
+  # HELM env
+  HELM_DIRECTORY: helm
+  HELM_RELEASE_NAME: simonsays
+  # K8S env
+  K8S_API: https://pm4.init-lab.ch/k8s/clusters/local
+  K8S_NAMESPACE: simonsays-stage
+
+
+jobs:
+  test-helm-chart:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
+      - name: test helm
+        uses: ./.github/actions/helm-test
+        with:
+          helm-directory: ${{ env.HELM_DIRECTORY }}

@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "nodemon",
     "start": "ts-node --transpile-only src/main.ts",
-    "build-id": "node create.build.id.js",
     "patch": "npx auto-version --patch",
     "minor": "npx auto-version --minor",
     "major": "npx auto-version --major"
@@ -21,6 +20,7 @@
   },
   "dependencies": {
     "@network-utils/arp-lookup": "^2.1.0",
+    "arpping": "^4.0.0",
     "dotenv": "^16.4.5",
     "node-thermal-printer": "^4.4.2",
     "printer-api-lib": "file:../printer-api-lib"
