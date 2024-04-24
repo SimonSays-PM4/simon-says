@@ -1,0 +1,28 @@
+name: Publish Retype powered website to GitHub Pages
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - KAN-116-setup-documentation
+
+jobs:
+  publish:
+    name: Publish to retype branch
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Retype Website
+        uses: retypeapp/action-build@latest
+        with:
+          working-directory: documentation/retype
+
+      - name: Deploy to GitHub Pages
+        uses: retypeapp/action-github-pages@latest
+        with:
+          update-branch: true
