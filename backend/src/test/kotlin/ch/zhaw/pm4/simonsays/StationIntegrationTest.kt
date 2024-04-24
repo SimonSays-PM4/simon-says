@@ -1,13 +1,14 @@
 package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
+import ch.zhaw.pm4.simonsays.api.types.StationCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.Ingredient
-import ch.zhaw.pm4.simonsays.entity.MenuItem
+import ch.zhaw.pm4.simonsays.entity.Station
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import jakarta.transaction.Transactional
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.collection.IsCollectionWithSize.hasSize
+import org.hamcrest.CoreMatchers
+import org.hamcrest.collection.IsCollectionWithSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
@@ -21,14 +22,14 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class MenuItemIntegrationTest : IntegrationTest() {
+class StationIntegrationTest : IntegrationTest() {
 
-    private fun getMenuItemUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/menuitem"
+    private fun getStationUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/station"
 
     @Autowired
     protected lateinit var ingredientMapper: IngredientMapper
 
-    private val tooLongMenuItemName: String = "hafdnvgnumnluizouvsathtjeyqpnelscybzbgpkyizsdtxnhjfyfomhdlbouwwqz"
+    private val tooLongStationName: String = "hafdnvgnumnluizouvsathtjeyqpnelscybzbgpkyizsdtxnhjfyfomhdlbouwwqz"
     private val arbitraryId = 9999999999
 
     private val username = "admin"
@@ -45,37 +46,37 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Test menu item creation should work with correct input`() {
-        val menuItem = getCreateUpdateMenuItemDTO()
-        mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+    fun `Test station creation should work with correct input`() {
+        val station = getCreateUpdateStationDTO()
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(menuItem)
+            content = objectMapper.writeValueAsString(station)
         }
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        jsonPath("$.name", equalTo(getCreateUpdateMenuItemDTO().name))
+                        jsonPath("$.name", CoreMatchers.equalTo(getCreateUpdateStationDTO().name))
                     }
                 }
     }
 
     @Test
     @Transactional
-    fun `Test menu item creation should fail if menu item name is missing`() {
-        val menuItem = getCreateUpdateMenuItemDTO(null, null, null)
+    fun `Test station creation should fail if station name is missing`() {
+        val station = getCreateUpdateStationDTO(null, null, false,null)
         val eventDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
-                mapOf("name" to "Menu item name must be provided")
+                mapOf("name" to "Station name must be provided")
         )
         // when/then
-        mockMvc.put(getMenuItemUrl(1)) {
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(menuItem)
+            content = objectMapper.writeValueAsString(station)
         }
                 .andDo { print() }
                 .andExpect {
@@ -89,38 +90,63 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Test menuitem creation should fail and display all errors`() {
-        val menuItem = getCreateUpdateMenuItemDTO(null, tooLongMenuItemName, listOf(getTestIngredientDTO()))
-        val menuItemDTO = ErrorMessageModel(
+    fun `Test creating second assembly station leads to bad request`() {
+        stationFactory.createStation(eventId = testEvent.id!!, assemblyStation = true)
+        val createUpdateStation: StationCreateUpdateDTO = getCreateUpdateStationDTO(assemblyStation = true)
+        val errorDto = ErrorMessageModel(
                 HttpStatus.BAD_REQUEST.value(),
-                "Validation failed",
-                mapOf(
-                        "name" to "Menu item name must be between 1 and 64 chars long",
-                )
+                "An assembly station is already defined for this event",
+                null
         )
-        // when/then
-        mockMvc.put(getMenuItemUrl(1)) {
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(menuItem)
+            content = objectMapper.writeValueAsString(createUpdateStation)
         }
                 .andDo { print() }
                 .andExpect {
                     status { isBadRequest() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(menuItemDTO))
+                        json(objectMapper.writeValueAsString(errorDto))
                     }
                 }
     }
 
     @Test
     @Transactional
-    fun `Test retrieve all events`() {
-        menuItemFactory.createMenuItem(name = "test", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
-        menuItemFactory.createMenuItem("name", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
+    fun `Test station creation should fail and display all errors`() {
+        val station = getCreateUpdateStationDTO(null, tooLongStationName, false, listOf(getTestIngredientDTO()))
+        val stationDTO = ErrorMessageModel(
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation failed",
+                mapOf(
+                        "name" to "Station name must be between 1 and 64 chars long",
+                )
+        )
+        // when/then
+        mockMvc.put(getStationUrl(1)) {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(station)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(stationDTO))
+                    }
+                }
+    }
 
-        mockMvc.get(getMenuItemUrl(testEvent.id!!)){
+    @Test
+    @Transactional
+    fun `Test retrieve all stations`() {
+        stationFactory.createStation(name = "test", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
+        stationFactory.createStation("name", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
+
+        mockMvc.get(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
         }
                 .andDo { print() }
@@ -128,18 +154,18 @@ class MenuItemIntegrationTest : IntegrationTest() {
                     status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        jsonPath("$", hasSize<Any>(2))
+                        jsonPath("$", IsCollectionWithSize.hasSize<Any>(2))
                     }
                 }
     }
 
     @Test
     @Transactional
-    fun `Test retrieve menu item`() {
-        val menuItem: MenuItem = menuItemFactory.createMenuItem("MenuItem Test", testEvent.id!!, listOf(testIngredient))
-        val expectedJson = getMenuItemDTO(id = menuItem.id!!, ingredientDTOs = listOf(getTestIngredientDTO(id = testIngredient.id, name = testIngredient.name)))
+    fun `Test retrieve station`() {
+        val station: Station = stationFactory.createStation(name = "Station test", eventId =  testEvent.id!!, ingredients = listOf(testIngredient))
+        val expectedJson = getStationDTO(id = station.id!!, ingredientDTOs = listOf(getTestIngredientDTO(id = testIngredient.id, name = testIngredient.name)))
 
-        mockMvc.get("${getMenuItemUrl(testEvent.id!!)}/${menuItem.id}"){
+        mockMvc.get("${getStationUrl(testEvent.id!!)}/${station.id}") {
             with(httpBasic(username, password))
         }
                 .andDo { print() }
@@ -154,14 +180,14 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Test retrieving non existing menu item leads to not found`() {
+    fun `Test retrieving non existing station leads to not found`() {
         val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
-                "Menu item not found with ID: ${arbitraryId}",
+                "Station not found with ID: ${arbitraryId}",
                 null
         )
 
-        mockMvc.get("${getMenuItemUrl(1)}/${arbitraryId}"){
+        mockMvc.get("${getStationUrl(1)}/${arbitraryId}") {
             with(httpBasic(username, password))
         }
                 .andDo { print() }
@@ -176,15 +202,15 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Test update menu item`() {
-        val menuItem: MenuItem = menuItemFactory.createMenuItem(eventId = testEvent.id!!, ingredients = listOf(testIngredient))
-        val updateMenuItem = getCreateUpdateMenuItemDTO(menuItem.id, "integrationtest", listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
-        val expectedReturn = getMenuItemDTO(menuItem.id!!, "integrationtest", listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
+    fun `Test update station`() {
+        val station: Station = stationFactory.createStation(eventId = testEvent.id!!, ingredients = listOf(testIngredient))
+        val updateStation = getCreateUpdateStationDTO(station.id, "integrationtest", false, listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
+        val expectedReturn = getStationDTO(station.id!!, "integrationtest", false, listOf(ingredientMapper.mapToIngredientDTO(testIngredient)))
 
-        mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(updateMenuItem)
+            content = objectMapper.writeValueAsString(updateStation)
         }
                 .andDo { print() }
                 .andExpect {
@@ -198,30 +224,32 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Test menu item update adding an ingredient`() {
-        val menuItem: MenuItem = menuItemFactory.createMenuItem(name = "testmenuitem", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
+    fun `Test station update adding an ingredient`() {
+        val station: Station = stationFactory.createStation(name = "teststation", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
         val secondIngredient: Ingredient = ingredientFactory.createIngredient()
-        val updateMenuItem = getCreateUpdateMenuItemDTO(
-                menuItem.id,
-                "integrationtest",
+        val updateStation = getCreateUpdateStationDTO(
+                station.id,
+                "teststation",
+                false,
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                         ingredientMapper.mapToIngredientDTO(secondIngredient)
                 )
         )
-        val expectedReturn = getMenuItemDTO(
-                menuItem.id!!,
-                "integrationtest",
+        val expectedReturn = getStationDTO(
+                station.id!!,
+                "teststation",
+                false,
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                         ingredientMapper.mapToIngredientDTO(secondIngredient)
                 )
         )
 
-        mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(updateMenuItem)
+            content = objectMapper.writeValueAsString(updateStation)
         }
                 .andDo { print() }
                 .andExpect {
@@ -235,35 +263,37 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `test menu item update removing an ingredient`() {
+    fun `test station update removing an ingredient`() {
         val secondIngredient: Ingredient = ingredientFactory.createIngredient()
-        val menuItem: MenuItem = menuItemFactory.createMenuItem(
-                "testmenuitem",
-                testEvent.id!!,
-                listOf(
-                    testIngredient,
-                    secondIngredient
+        val station: Station = stationFactory.createStation(
+                name = "teststation",
+                eventId = testEvent.id!!,
+                ingredients = listOf(
+                        testIngredient,
+                        secondIngredient
                 )
         )
-        val updateMenuItem = getCreateUpdateMenuItemDTO(
-                menuItem.id,
-                "integrationtest",
+        val updateStation = getCreateUpdateStationDTO(
+                station.id,
+                "teststation",
+                false,
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                 )
         )
-        val expectedReturn = getMenuItemDTO(
-                menuItem.id!!,
-                "integrationtest",
+        val expectedReturn = getStationDTO(
+                station.id!!,
+                "teststation",
+                false,
                 listOf(
                         ingredientMapper.mapToIngredientDTO(testIngredient),
                 )
         )
 
-        mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(updateMenuItem)
+            content = objectMapper.writeValueAsString(updateStation)
         }
                 .andDo { print() }
                 .andExpect {
@@ -277,19 +307,19 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Test menu item update should fail when invalid id provided`() {
-        menuItemFactory.createMenuItem("testitem", eventId = testEvent.id!!)
-        val updateMenuItem = getCreateUpdateMenuItemDTO(arbitraryId)
+    fun `Test station update should fail when invalid id provided`() {
+        stationFactory.createStation(name = "teststation", eventId = testEvent.id!!)
+        val updateStation = getCreateUpdateStationDTO(arbitraryId)
         val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
-                "Menu item not found with ID: ${arbitraryId}",
+                "Station not found with ID: ${arbitraryId}",
                 null
         )
 
-        mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(updateMenuItem)
+            content = objectMapper.writeValueAsString(updateStation)
         }
                 .andDo { print() }
                 .andExpect {
@@ -303,14 +333,14 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Test delete menu item should fail when invalid id provided`() {
+    fun `Test delete station should fail when invalid id provided`() {
         val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
-                "Menu item not found with ID: ${arbitraryId}",
+                "Station not found with ID: ${arbitraryId}",
                 null
         )
 
-        mockMvc.delete("${getMenuItemUrl(1)}/${arbitraryId}") {
+        mockMvc.delete("${getStationUrl(testEvent.id!!)}/${arbitraryId}") {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
@@ -326,9 +356,9 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Delete menu item should succeed`() {
-        val menuitem: MenuItem = menuItemFactory.createMenuItem(name = "testitem", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
-        mockMvc.delete("${getMenuItemUrl(testEvent.id!!)}/${menuitem.id}") {
+    fun `Delete station should succeed`() {
+        val station: Station = stationFactory.createStation(name = "teststation", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
+        mockMvc.delete("${getStationUrl(testEvent.id!!)}/${station.id}") {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
@@ -340,17 +370,17 @@ class MenuItemIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Test create menu item should fail when invalid event id provided`() {
-        val menuItem = getCreateUpdateMenuItemDTO()
+    fun `Test create station should fail when invalid event id provided`() {
+        val station = getCreateUpdateStationDTO()
         val expectedReturn = ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
                 "Event not found with ID: ${arbitraryId}",
                 null
         )
-        mockMvc.put(getMenuItemUrl(arbitraryId)) {
+        mockMvc.put(getStationUrl(arbitraryId)) {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(menuItem)
+            content = objectMapper.writeValueAsString(station)
         }
                 .andDo { print() }
                 .andExpect {
@@ -358,80 +388,6 @@ class MenuItemIntegrationTest : IntegrationTest() {
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))
-                    }
-                }
-    }
-
-    @Test
-    @Transactional
-    fun `Test menu item price update`() {
-        val menuItem: MenuItem = menuItemFactory.createMenuItem(
-                "testmenuitem",
-                testEvent.id!!,
-                listOf(
-                        testIngredient,
-                ),
-                10.0
-        )
-        val updateMenuItem = getCreateUpdateMenuItemDTO(
-                menuItem.id,
-                "integrationtest",
-                listOf(
-                        ingredientMapper.mapToIngredientDTO(testIngredient),
-                ),
-                15.0
-        )
-        val expectedReturn = getMenuItemDTO(
-                menuItem.id!!,
-                "integrationtest",
-                listOf(
-                        ingredientMapper.mapToIngredientDTO(testIngredient),
-                ),
-                15.0
-        )
-
-        mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
-            with(httpBasic(username, password))
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(updateMenuItem)
-        }
-                .andDo { print() }
-                .andExpect {
-                    status { isOk() }
-                    content {
-                        contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(expectedReturn))
-                    }
-                }
-    }
-
-    @Test
-    @Transactional
-    fun `Test menu item update should fail when invalid price provided`() {
-        val menuItem = getCreateUpdateMenuItemDTO(
-                null,
-                "testitem",
-                listOf(
-                        ingredientMapper.mapToIngredientDTO(testIngredient)
-                ),
-                -5.0)
-        val eventDto = ErrorMessageModel(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation failed",
-                mapOf("price" to "Price of the menu item must be 1 or higher")
-        )
-        // when/then
-        mockMvc.put(getMenuItemUrl(testEvent.id!!)) {
-            with(httpBasic(username, password))
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(menuItem)
-        }
-                .andDo { print() }
-                .andExpect {
-                    status { isBadRequest() }
-                    content {
-                        contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(eventDto))
                     }
                 }
     }

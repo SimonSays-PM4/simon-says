@@ -196,9 +196,8 @@ class EventIntegrationTest : IntegrationTest() {
     @Transactional
     fun `Test update event`() {
         val event: Event = eventFactory.createEvent("test", "test", 0)
-        val updateEvent = EventCreateUpdateDTO(event.id, "integrationtest", "testtest", 3)
-        val expectedReturn =
-            EventDTO(id = event.id, name = "integrationtest", password = "testtest", numberOfTables = 3)
+        val updateEvent = EventCreateUpdateDTO(event.id,"integrationtest", "testtest", 3)
+        val expectedReturn = EventDTO(id = event.id, name = "integrationtest", password = "testtest", numberOfTables = 3)
 
         mockMvc.put("/rest-api/v1/event") {
             with(httpBasic(username, password))
@@ -257,25 +256,19 @@ class EventIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Test delete event should fail when invalid id provided`() {
-        val expectedReturn = ErrorMessageModel(
-            HttpStatus.NOT_FOUND.value(),
-            "Event not found with ID: ${arbitraryId}",
-            null
-        )
-
-        mockMvc.delete("/rest-api/v1/event/${arbitraryId}") {
+    fun `Test delete event should succeed when items are still linked`() {
+        val event: Event = eventFactory.createEvent("test", "test", 0)
+        menuItemFactory.createMenuItem(eventId = event.id!!)
+        ingredientFactory.createIngredient(event = event)
+        stationFactory.createStation(eventId = event.id!!)
+        mockMvc.delete("/rest-api/v1/event/${event.id}") {
             with(httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
-            .andDo { print() }
-            .andExpect {
-                status { isNotFound() }
-                content {
-                    contentType(MediaType.APPLICATION_JSON)
-                    json(objectMapper.writeValueAsString(expectedReturn))
+                .andDo { print() }
+                .andExpect {
+                    status { isNoContent() }
                 }
-            }
     }
 
 }
