@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - KAN-116-setup-documentation
+      - main
 
 jobs:
   publish:

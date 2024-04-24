@@ -1,6 +1,6 @@
 input: .
 output: .retype
-url: # Add your website address here
+url: https://retype.com
 branding:
   title: Simon Says
   label: Docs
@@ -9,3 +9,7 @@ links:
   link: https://retype.com/guides/getting-started/
 footer:
   copyright: "&copy; Copyright {{ year }}. All rights reserved."
+
+# Exclude README.md from the output
+exclude:
+  - "README.md"
