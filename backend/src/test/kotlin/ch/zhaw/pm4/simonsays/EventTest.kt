@@ -120,4 +120,6 @@ class EventTest {
         Assertions.assertEquals("Event not found with ID: 1", error.message)
     }
 
+
+
 }

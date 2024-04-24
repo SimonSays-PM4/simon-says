@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.simonsays.entity
 
 import jakarta.persistence.*
+import kotlin.reflect.jvm.internal.impl.descriptors.deserialization.PlatformDependentDeclarationFilter.All
 
 @Entity
 @NoArgAnnotation

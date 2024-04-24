@@ -26,7 +26,9 @@ interface IngredientMapper {
     @Mappings(
         Mapping(target = "id", ignore = true),
         Mapping(target = "name", source = "ingredient.name"),
-        Mapping(target = "event.ingredients", ignore = true)
+        Mapping(target = "event.ingredients", ignore = true),
+        Mapping(target= "event.menuItems", ignore = true),
+        Mapping(target= "event.stations", ignore = true)
     )
     fun mapCreateDTOToIngredient(ingredient: IngredientCreateUpdateDTO, event: EventDTO): Ingredient
 }

@@ -4,7 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @NoArgAnnotation
-data class Ingredient(
+data class Station (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -12,14 +12,13 @@ data class Ingredient(
     @Column(nullable = false)
     var name: String,
 
+    @Column(nullable = false)
+    var assemblyStation: Boolean,
+
     @ManyToOne
     @JoinColumn(name = "event_id")
-    val event: Event,
+    var event: Event,
 
-    @ManyToMany(mappedBy = "ingredients")
-    val menuItems: List<MenuItem>?,
-
-    @ManyToMany(mappedBy = "ingredients")
-    val stations: List<Station>?
-
+    @ManyToMany(fetch = FetchType.EAGER)
+    var ingredients: List<Ingredient>
 )

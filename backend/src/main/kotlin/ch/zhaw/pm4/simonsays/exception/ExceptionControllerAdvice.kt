@@ -89,4 +89,13 @@ class ExceptionControllerAdvice {
         return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)
     }
 
+    @ExceptionHandler(AssemblyStationAlreadyDefinedException::class)
+    fun handleAssemblyStationAlreadyDefinedException(ex: RuntimeException): ResponseEntity<ErrorMessageModel> {
+        val errorMessage = ErrorMessageModel(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.message
+        )
+        return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)
+    }
+
 }

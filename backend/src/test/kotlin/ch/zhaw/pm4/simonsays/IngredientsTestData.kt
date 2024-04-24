@@ -11,7 +11,7 @@ fun createUpdateTestIngredientDTO(id: Long? = null, name: String? = "TestIngredi
     name = name
 )
 
-fun getTestIngredient1(name: String? = "TestIngredient") = Ingredient(name = name!!, id = 1, event = getTestEvent(), menuItems = null)
+fun getTestIngredient1(name: String? = "TestIngredient") = Ingredient(name = name!!, id = 1, event = getTestEvent(), menuItems = null, stations = null)
 
 fun getTestIngredientDTO(name: String? = "TestIngredient", id: Long? = 1) = IngredientDTO(name = name!!, id = id!!)
 
