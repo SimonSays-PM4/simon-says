@@ -36,8 +36,10 @@ class StationServiceImpl(
     override fun createUpdateStation(station: StationCreateUpdateDTO, eventId: Long): StationDTO {
         val event = eventService.getEvent(eventId)
         val assemblyStationFound = stationRepository.findByEventIdAndAssemblyStation(eventId, true)
-        if(assemblyStationFound.isPresent && station.assemblyStation!! && station.id != assemblyStationFound.get().id) {
-            throw AssemblyStationAlreadyDefinedException()
+        if(station.assemblyStation!!) {
+            if(assemblyStationFound.isPresent && station.id != assemblyStationFound.get().id) {
+                throw AssemblyStationAlreadyDefinedException()
+            }
         }
         val ingredients = ingredientRepository.findByIdIn(station.ingredients!!.map { it.id })
         val isUpdateOperation = station.id != null
