@@ -9,7 +9,6 @@ import java.util.*
 interface StationRepository : JpaRepository<Station, Long> {
     fun findAllByEventId(eventId: Long): List<Station>
     fun findByIdAndEventId(id: Long, eventId: Long): Optional<Station>
-
     fun findByEventIdAndAssemblyStation(eventId: Long, assemblyStation: Boolean) : Optional<Station>
 
 }

@@ -11,7 +11,6 @@ import org.mapstruct.Mappings
 interface StationMapper {
     @Mappings(
             Mapping(target = "name", source = "station.name"),
-            Mapping(target = "ingredients")
     )
     fun mapToStationDTO(station: Station): StationDTO
 
