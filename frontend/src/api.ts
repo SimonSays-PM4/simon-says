@@ -1,7 +1,6 @@
 import axios from "axios";
 import {
     EventControllerApi,
-    HealthControllerApi,
     IngredientControllerApi,
     MenuItemControllerApi,
     MenuControllerApi
@@ -26,6 +25,4 @@ const getMenuService = (username: string, password: string) => {
     return new MenuControllerApi(undefined, API_URL, axiosInstance);
 };
 
-const healthService = new HealthControllerApi(undefined, API_URL, undefined);
-
-export { healthService, getEventService, getIngredientService, getMenuService, getMenuItemService };
+export { getEventService, getIngredientService, getMenuService, getMenuItemService };
