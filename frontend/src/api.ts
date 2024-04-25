@@ -1,7 +1,6 @@
 import axios from "axios";
 import {
     EventControllerApi,
-    HealthControllerApi,
     IngredientControllerApi,
     MenuItemControllerApi,
     MenuControllerApi,
@@ -26,11 +25,10 @@ const getMenuService = (username: string, password: string) => {
     const axiosInstance = axios.create({ auth: { username: username, password: password } });
     return new MenuControllerApi(undefined, API_URL, axiosInstance);
 };
+
 const getOrderService = (username: string, password: string) => {
     const axiosInstance = axios.create({ auth: { username: username, password: password } });
     return new OrderControllerApi(undefined, API_URL, axiosInstance);
 };
 
-const healthService = new HealthControllerApi(undefined, API_URL, undefined);
-
-export { healthService, getEventService, getIngredientService, getMenuService, getMenuItemService, getOrderService };
+export { getEventService, getIngredientService, getMenuService, getMenuItemService, getOrderService };

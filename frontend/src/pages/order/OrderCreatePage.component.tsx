@@ -2,7 +2,7 @@ import React from "react";
 import { useOrderCreatePage } from "./OrderCreatePage.hooks.tsx";
 import { Loader } from "../../components/Loader.tsx";
 import { useForm } from "react-hook-form";
-import { IngredientDTO, MenuDTO, MenuItemDTO, OrderCreateDTO } from "../../gen/api/api.ts";
+import { IngredientDTO, OrderCreateDTO, OrderMenuDTO, OrderMenuItemDTO } from "../../gen/api/api.ts";
 import { LoadingButton } from "../../components/LoadingButton.tsx";
 import { ButtonType } from "../../enums/ButtonType.ts";
 import { Button } from "../../components/Button.tsx";
@@ -10,10 +10,17 @@ import { classNames } from "../../helpers/ClassNameHelper.ts";
 import { FormInput } from "../../components/form/FormInput.tsx";
 import { nameof } from "ts-simple-nameof";
 import { useNavigate } from "react-router-dom";
-import { Disclosure, Tab } from "@headlessui/react";
+import { Tab } from "@headlessui/react";
+import { OrderMenuModel } from "../../models/OrderMenuModel.ts";
+import { OrderMenuItemModel } from "../../models/OrderMenuItemModel.ts";
+import { OrderIngredientModel } from "../../models/OrderIngredientModel.ts";
 
 export const OrderCreatePageComponent: React.FC = () => {
     const { isLoading, isSaving, menuList, selectedMenus, setSelectedMenus, menuItemList, selectedMenuItems, setSelectedMenuItems, orderActions } = useOrderCreatePage();
+
+    const menuIndex = React.useRef<number>(0);
+    const menuItemIndex = React.useRef<number>(0);
+
     const {
         handleSubmit,
         register,
@@ -21,26 +28,18 @@ export const OrderCreatePageComponent: React.FC = () => {
     } = useForm();
     const navigate = useNavigate();
 
-    const selectMenu = (menu: MenuDTO) => {
-        const isSelected = selectedMenus.some((selectedMenu) => selectedMenu.id === menu.id);
-        if (isSelected) {
-            setSelectedMenus(selectedMenus.filter((selectedMenu) => selectedMenu.id !== menu.id));
-        } else {
-            setSelectedMenus([...selectedMenus, menu]);
-        }
+    const selectMenu = (menu: OrderMenuDTO) => {
+        setSelectedMenus([...selectedMenus, new OrderMenuModel(menuIndex.current + 1, menu)]);
+        menuIndex.current = menuIndex.current + 1;
     };
 
-    const selectMenuItem = (menuItem: MenuItemDTO) => {
-        const isSelected = selectedMenuItems.some((selectedMenu) => selectedMenu.id === menuItem.id);
-        if (isSelected) {
-            setSelectedMenuItems(selectedMenuItems.filter((selectedMenu) => selectedMenu.id !== menuItem.id));
-        } else {
-            setSelectedMenuItems([...selectedMenuItems, menuItem]);
-        }
+    const selectMenuItem = (menuItem: OrderMenuItemDTO) => {
+        setSelectedMenuItems([...selectedMenuItems, new OrderMenuItemModel(menuItemIndex.current + 1, menuItem)]);
+        menuItemIndex.current = menuItemIndex.current + 1;
     };
 
-    const removeIngredientFromMenuItem = (menuItemId: number, ingredient: IngredientDTO) => {
-        const selectedMenuItem = selectedMenuItems.find((selectedMenu) => selectedMenu.id === menuItemId);
+    const removeIngredientFromMenuItem = (menuItemIndex: number, ingredient: IngredientDTO) => {
+        const selectedMenuItem = selectedMenuItems.find((selectedMenu) => selectedMenu.index === menuItemIndex);
         if (selectedMenuItem && selectedMenuItem.ingredients.length > 1) { // can not delete last ingredients
             selectedMenuItem.ingredients = selectedMenuItem.ingredients.filter((selectedIngredient) => selectedIngredient.id !== ingredient.id);
             setSelectedMenuItems([...selectedMenuItems]);
@@ -92,38 +91,17 @@ export const OrderCreatePageComponent: React.FC = () => {
                             <Tab.Panels>
                                 <Tab.Panel>
                                     {menuList.length > 0 ? (
-                                        <div className="max-h-[345px] overflow-y-auto overscroll-auto grid w-full rounded-lg border border-primary p-2 mb-12">
-                                            {menuList.map((menu: MenuDTO) => {
-                                                const isSelected = selectedMenus.some((selectedMenu) => selectedMenu.id === menu.id);
-
+                                        <div className="max-h-[345px] overflow-y-auto overscroll-auto grid grid-cols-2 w-full rounded-lg p-2 mb-12">
+                                            {menuList.map((menu: OrderMenuDTO) => {
                                                 return (
-                                                    <div className="flex">
-                                                        <Disclosure>
-                                                            <Disclosure.Button className="py-2">
-                                                                <div
-                                                                    key={menu.id}
-                                                                    onClick={() => selectMenu(menu)}
-                                                                    className={classNames("rounded-[6px] cursor-pointer md:flex mr-2 mb-2 py-[15px] px-[15px] md:py-[20px] md:pl-[40px] md:pr-[24px] min-h-[30px] gap-3 border border-[#000] border-opacity-[.15]",
-                                                                        isSelected ? "border-2 border-primary border-opacity-100" : "")}
-                                                                >
-                                                                    <span className="my-auto text-secondaryfont">
-                                                                        x Mal
-                                                                    </span>
-                                                                    <p className="min-w-fit my-auto text-secondaryfont break-all">
-                                                                        {menu.name}: {menu.price.toFixed(2)} CHF
-                                                                    </p>
-                                                                </div>
-                                                            </Disclosure.Button>
-                                                            <Disclosure.Panel className="text-gray-500">
-                                                                <ul>
-                                                                    {menu.menuItems.map((menuItem) => (
-                                                                        <li key={menuItem.id} className="text-xs text-secondaryfont">
-                                                                            {menuItem.name}
-                                                                        </li>
-                                                                    ))}
-                                                                </ul>
-                                                            </Disclosure.Panel>
-                                                        </Disclosure>
+                                                    <div
+                                                        key={menu.id}
+                                                        onClick={() => selectMenu(menu)}
+                                                        className={"rounded-[6px] cursor-pointer md:flex mr-2 mb-2 py-[15px] px-[15px] md:py-[20px] md:pl-[40px] md:pr-[24px] min-h-[30px] gap-3 border border-[#000] border-opacity-[.15]"}
+                                                    >
+                                                        <p className="min-w-fit my-auto text-secondaryfont break-all">
+                                                            {menu.name}: {menu.price.toFixed(2)} CHF
+                                                        </p>
                                                     </div>
                                                 );
                                             })}
@@ -134,45 +112,17 @@ export const OrderCreatePageComponent: React.FC = () => {
                                 </Tab.Panel>
                                 <Tab.Panel>
                                     {menuItemList.length > 0 ? (
-                                        <div className="max-h-[345px] overflow-y-auto overscroll-auto grid rounded-lg border border-primary p-2 mb-12">
-                                            {menuItemList.map((menuItem: MenuItemDTO) => {
-                                                const isSelected = selectedMenuItems.some((selectedMenu) => selectedMenu.id === menuItem.id);
-
+                                        <div className="max-h-[345px] overflow-y-auto overscroll-auto grid grid-cols-2 rounded-lg p-2 mb-12">
+                                            {menuItemList.map((menuItem: OrderMenuItemDTO) => {
                                                 return (
-                                                    <div className="flex">
-                                                        <div
-                                                            key={menuItem.id}
-                                                            onClick={() => selectMenuItem(menuItem)}
-                                                            className={classNames("rounded-[6px] cursor-pointer md:flex mr-2 mb-2 py-[15px] px-[15px] md:py-[20px] md:pl-[40px] md:pr-[24px] min-h-[30px] gap-3 border border-[#000] border-opacity-[.15]",
-                                                                isSelected ? "border-2 border-primary border-opacity-100" : "")}
-                                                        >
-                                                            <span className="my-auto text-secondaryfont">
-                                                                x Mal
-                                                            </span>
-                                                            <p className="min-w-fit my-auto text-secondaryfont break-all">
-                                                                {menuItem.name}: {menuItem.price.toFixed(2)} CHF
-                                                            </p>
-                                                        </div>
-
-                                                        {isSelected && menuItem.ingredients.length > 0 ? (
-                                                            <div className="grid">
-                                                                {menuItem.ingredients.map((ingredient) => (
-                                                                    <div key={ingredient.id}>
-                                                                        <span>{ingredient.name}</span>
-
-                                                                        {menuItem.ingredients.length > 1
-                                                                            ? (
-                                                                                <a className="text-primary cursor-pointer ml-4" onClick={() => removeIngredientFromMenuItem(menuItem.id, ingredient)}>
-                                                                                    {"<- Entfernen"}
-                                                                                </a>
-                                                                            )
-                                                                            : (<></>)
-                                                                        }
-                                                                    </div>
-                                                                ))}
-                                                            </div>)
-                                                            : (<></>)
-                                                        }
+                                                    <div
+                                                        key={menuItem.id}
+                                                        onClick={() => selectMenuItem(menuItem)}
+                                                        className={"rounded-[6px] cursor-pointer md:flex mr-2 mb-2 py-[15px] px-[15px] md:py-[20px] md:pl-[40px] md:pr-[24px] min-h-[30px] gap-3 border border-[#000] border-opacity-[.15]"}
+                                                    >
+                                                        <p className="min-w-fit my-auto text-secondaryfont break-all">
+                                                            {menuItem.name}: {menuItem.price.toFixed(2)} CHF
+                                                        </p>
                                                     </div>
                                                 );
                                             })}
@@ -184,7 +134,51 @@ export const OrderCreatePageComponent: React.FC = () => {
                             </Tab.Panels>
                         </Tab.Group>
 
-                        <p className="font-bold">Preis: {(selectedMenus.reduce((sum, menu) => sum + menu.price, 0) + (selectedMenuItems.reduce((sum, menuItem) => sum + menuItem.price, 0))).toFixed(2)} CHF</p>
+                        <div className="grid w-full border-t-2 mb-6">
+                            <p>Selektierte Menus</p>
+                            {selectedMenus.map((menu) => {
+                                return (
+                                    <div key={menu.id} className="w-full">
+                                        <p className="font-bold">{menu.name}: {menu.price.toFixed(2)} CHF</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="grid w-full border-t-2 mb-12">
+                            <p>Selektierte Menu Items</p>
+                            {selectedMenuItems.map((menuItem) => {
+                                return (
+                                    <div key={menuItem.index} className="w-full">
+                                        <p className="font-bold">{menuItem.name}: {menuItem.price.toFixed(2)} CHF</p>
+
+                                        {menuItem.ingredients.length > 0 ? (
+                                            <div className="grid">
+                                                {menuItem.ingredients.map((ingredient: OrderIngredientModel) => (
+                                                    <div key={ingredient.id}>
+                                                        <span>{ingredient.name}</span>
+
+                                                        {menuItem.ingredients.length > 1
+                                                            ? (
+                                                                <a className="text-primary cursor-pointer ml-4" onClick={() => removeIngredientFromMenuItem(menuItem.index, ingredient)}>
+                                                                    {"<- Entfernen"}
+                                                                </a>
+                                                            )
+                                                            : (<></>)
+                                                        }
+                                                    </div>
+                                                ))}
+                                            </div>)
+                                            : (<></>)
+                                        }
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="w-full border-t-2">
+                            <p className="font-bold">Preis: {(selectedMenus.reduce((sum, menu) => sum + menu.price, 0) + (selectedMenuItems.reduce((sum, menuItem) => sum + menuItem.price, 0))).toFixed(2)} CHF</p>
+                        </div>
 
                         <div className="flex min-h-[60px] items-end ml-auto">
                             <LoadingButton buttonText="Bestellung aufgeben" className="my-2" type="submit" buttonType={ButtonType.Primary} isLoading={isSaving} />
