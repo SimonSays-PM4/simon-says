@@ -30,14 +30,14 @@ class StationController(private val stationService: StationService) {
     @PutMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     @AdminEndpoint
-    fun putMenuItem(@PathVariable("eventId") eventId: Long, @Valid @RequestBody request: StationCreateUpdateDTO): StationDTO {
+    fun putStation(@PathVariable("eventId") eventId: Long, @Valid @RequestBody request: StationCreateUpdateDTO): StationDTO {
         return stationService.createUpdateStation(request, eventId)
     }
     @Operation(summary = "Delete a station", security = [SecurityRequirement(name = "basicAuth")])
     @DeleteMapping("{stationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @AdminEndpoint
-    fun deleteMenuItem(@PathVariable("eventId") eventId: Long, @PathVariable("stationId") stationId: Long) {
+    fun deleteStation(@PathVariable("eventId") eventId: Long, @PathVariable("stationId") stationId: Long) {
         stationService.deleteStation(stationId, eventId)
     }
 }
