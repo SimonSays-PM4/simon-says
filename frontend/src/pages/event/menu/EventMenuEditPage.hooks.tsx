@@ -75,7 +75,7 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
             menuItemToSave.ingredients = menuItem.ingredients;
 
             menuItemService
-                .putMenuItem(eventId, menuItemToSave)
+                .putMenuItem1(eventId, menuItemToSave)
                 .then((response) => {
                     setLoading(false);
                     navigate("./" + response.data.id);
@@ -90,7 +90,7 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
     );
 
     const deleteMenuItem = useCallback(() => {
-        menuItemService.deleteMenuItem(eventId, menuItemId).then(response => {
+        menuItemService.deleteMenuItem1(eventId, menuItemId).then(response => {
             if (response.status == 200 || response.status == 201) {
                 navigate("./../")
                 appContext.addNotification(NotificationType.OK, "Deleted Menu Item")

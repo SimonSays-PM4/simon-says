@@ -54,7 +54,7 @@ export const useEventMenuPage = (): EventMenuReturnProps => {
 
     const deleteMenuItem = useCallback(() => {
         setLoading(true);
-        menuItemService.deleteMenuItem(eventId, menuItemToDelete.id).then(() => {
+        menuItemService.deleteMenuItem1(eventId, menuItemToDelete.id).then(() => {
             appContext.addNotification(NotificationType.OK, "Deleted Menu Item");
             setShowDeletePopup(false);
             setLoading(false);
