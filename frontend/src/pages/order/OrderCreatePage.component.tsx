@@ -140,35 +140,39 @@ export const OrderCreatePageComponent: React.FC = () => {
 
                                                 return (
                                                     <div className="flex">
-                                                        <Disclosure>
-                                                            <Disclosure.Button className="py-2">
-                                                                <div
-                                                                    key={menuItem.id}
-                                                                    onClick={() => selectMenuItem(menuItem)}
-                                                                    className={classNames("rounded-[6px] cursor-pointer md:flex mr-2 mb-2 py-[15px] px-[15px] md:py-[20px] md:pl-[40px] md:pr-[24px] min-h-[30px] gap-3 border border-[#000] border-opacity-[.15]",
-                                                                        isSelected ? "border-2 border-primary border-opacity-100" : "")}
-                                                                >
-                                                                    <span className="my-auto text-secondaryfont">
-                                                                        x Mal
-                                                                    </span>
-                                                                    <p className="min-w-fit my-auto text-secondaryfont break-all">
-                                                                        {menuItem.name}: {menuItem.price.toFixed(2)} CHF
-                                                                    </p>
-                                                                </div>
-                                                            </Disclosure.Button>
-                                                            <Disclosure.Panel className="text-gray-500">
-                                                                <div className="grid">
-                                                                    {menuItem.ingredients.map((ingredient) => (
-                                                                        <div key={ingredient.id}>
-                                                                            <span>{ingredient.name}:  </span>
-                                                                            <a className="text-secondaryfont cursor-pointer" onClick={() => removeIngredientFromMenuItem(menuItem.id, ingredient)}>
-                                                                                Remove
-                                                                            </a>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </Disclosure.Panel>
-                                                        </Disclosure>
+                                                        <div
+                                                            key={menuItem.id}
+                                                            onClick={() => selectMenuItem(menuItem)}
+                                                            className={classNames("rounded-[6px] cursor-pointer md:flex mr-2 mb-2 py-[15px] px-[15px] md:py-[20px] md:pl-[40px] md:pr-[24px] min-h-[30px] gap-3 border border-[#000] border-opacity-[.15]",
+                                                                isSelected ? "border-2 border-primary border-opacity-100" : "")}
+                                                        >
+                                                            <span className="my-auto text-secondaryfont">
+                                                                x Mal
+                                                            </span>
+                                                            <p className="min-w-fit my-auto text-secondaryfont break-all">
+                                                                {menuItem.name}: {menuItem.price.toFixed(2)} CHF
+                                                            </p>
+                                                        </div>
+
+                                                        {isSelected && menuItem.ingredients.length > 0 ? (
+                                                            <div className="grid">
+                                                                {menuItem.ingredients.map((ingredient) => (
+                                                                    <div key={ingredient.id}>
+                                                                        <span>{ingredient.name}</span>
+
+                                                                        {menuItem.ingredients.length > 1
+                                                                            ? (
+                                                                                <a className="text-primary cursor-pointer ml-4" onClick={() => removeIngredientFromMenuItem(menuItem.id, ingredient)}>
+                                                                                    {"<- Entfernen"}
+                                                                                </a>
+                                                                            )
+                                                                            : (<></>)
+                                                                        }
+                                                                    </div>
+                                                                ))}
+                                                            </div>)
+                                                            : (<></>)
+                                                        }
                                                     </div>
                                                 );
                                             })}
