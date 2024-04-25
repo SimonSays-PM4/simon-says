@@ -19,6 +19,9 @@ data class Ingredient(
     @ManyToMany(mappedBy = "ingredients")
     val menuItems: List<MenuItem>?,
 
+    @ManyToMany(mappedBy = "ingredients")
+    val stations: List<Station>?,
+
     @OneToMany(mappedBy = "ingredient")
     val orderIngredients: Set<OrderIngredient>? = HashSet()
 

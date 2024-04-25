@@ -2,7 +2,6 @@ package ch.zhaw.pm4.simonsays.entity
 
 import jakarta.persistence.*
 
-
 @Entity
 @NoArgAnnotation
 data class Event(
@@ -28,6 +27,9 @@ data class Event(
 
     @OneToMany(mappedBy = "event")
     val menus: Set<Menu>? = HashSet(),
+
+    @OneToMany(mappedBy = "event")
+    val stations: Set<Station>? = HashSet(),
 
     @OneToMany(mappedBy = "event")
     val order: Set<FoodOrder>? = HashSet(),

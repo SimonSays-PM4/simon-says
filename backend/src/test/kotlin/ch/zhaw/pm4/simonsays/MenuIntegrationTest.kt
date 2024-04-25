@@ -28,9 +28,6 @@ class MenuIntegrationTest : IntegrationTest() {
     @Autowired
     protected lateinit var menuItemMapper: MenuItemMapper
 
-    @Autowired
-    protected lateinit var menuItemFactory: MenuItemFactory
-
     private val tooLongMenuName: String = "hafdnvgnumnluizouvsathtjeyqpnelscybzbgpkyizsdtxnhjfyfomhdlbouwwqz"
     private val arbitraryId = 9999999999
 

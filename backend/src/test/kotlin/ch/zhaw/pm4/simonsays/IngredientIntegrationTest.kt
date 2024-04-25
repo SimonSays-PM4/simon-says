@@ -93,7 +93,6 @@ class IngredientIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    @Order(1)
     fun `should add new ingredient`() {
         val ingredient = createUpdateTestIngredientDTO()
         mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {

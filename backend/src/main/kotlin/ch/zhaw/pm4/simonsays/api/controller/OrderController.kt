@@ -2,7 +2,6 @@ package ch.zhaw.pm4.simonsays.api.controller
 
 import ch.zhaw.pm4.simonsays.api.types.OrderCreateDTO
 import ch.zhaw.pm4.simonsays.api.types.OrderDTO
-import ch.zhaw.pm4.simonsays.config.AdminEndpoint
 import ch.zhaw.pm4.simonsays.service.OrderService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -19,7 +18,6 @@ class OrderController(
     @Operation(summary = "Update/Create an order", security = [SecurityRequirement(name = "basicAuth")])
     @PutMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    @AdminEndpoint
     fun putOrder(@PathVariable("eventId") eventId: Long, @Valid @RequestBody request: OrderCreateDTO): OrderDTO {
         return orderService.createOrder(request, eventId)
     }
@@ -27,7 +25,6 @@ class OrderController(
     @Operation(summary = "get orders", security = [SecurityRequirement(name = "basicAuth")])
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    @AdminEndpoint
     fun getOrders(@PathVariable("eventId") eventId: Long): List<OrderDTO> {
         return orderService.listOrders(eventId)
     }
@@ -35,8 +32,29 @@ class OrderController(
     @Operation(summary = "delete an order", security = [SecurityRequirement(name = "basicAuth")])
     @DeleteMapping("{orderId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @AdminEndpoint
     fun deleteOrder(@PathVariable("eventId") eventId: Long, @PathVariable("orderId") orderId: Long){
         orderService.deleteOrder(orderId, eventId)
     }
+
+    @Operation(summary = "update order ingredient state", security = [SecurityRequirement(name = "basicAuth")])
+    @PutMapping("{orderId}/ingredient/{orderIngredientId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun updateOrderIngredientState(@PathVariable("eventId") eventId: Long, @PathVariable("orderId") orderId: Long, @PathVariable("orderIngredientId") orderIngredientId: Long) {
+        orderService.updateOrderIngredientState(orderIngredientId)
+    }
+
+    @Operation(summary = "update order menu item state", security = [SecurityRequirement(name = "basicAuth")])
+    @PutMapping("{orderId}/menuitem/{orderMenuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun updateOrderMenuItemState(@PathVariable("eventId") eventId: Long, @PathVariable("orderId") orderId: Long, @PathVariable("orderMenuItemId") orderMenuItemId: Long) {
+        orderService.updateOrderMenuItemState(orderMenuItemId)
+    }
+
+    @Operation(summary = "update order menu state", security = [SecurityRequirement(name = "basicAuth")])
+    @PutMapping("{orderId}/menu/{orderMenuId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun updateOrderMenuState(@PathVariable("eventId") eventId: Long, @PathVariable("orderId") orderId: Long, @PathVariable("orderMenuId") orderMenuId: Long) {
+        orderService.updateOrderMenuState(orderMenuId)
+    }
+
 }
