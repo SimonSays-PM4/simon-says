@@ -26,7 +26,10 @@ data class FoodOrder (
     var tableNumber: Long? = null,
 
     @Column(nullable = false)
-    var totalPrice: Double
+    var totalPrice: Double,
+
+    @Column(nullable = false)
+    var isTakeAway: Boolean = false
 ) {
     fun addMenu(menu: OrderMenu) {
         menus?.add(menu)
@@ -38,8 +41,8 @@ data class FoodOrder (
         menuItem.order = this
     }
 
-    fun addMenuItemOnlySetOrder(menuItem: OrderMenuItem) {
-        menuItem.order = this
+    fun getTakeAwayNr(): Long? {
+        return if (isTakeAway) this.id?.rem(1000) else null
     }
     override fun hashCode(): Int = id?.hashCode() ?: 0
 }

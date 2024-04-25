@@ -31,7 +31,7 @@ class OrderServiceImpl (
         // TODO handle menuitem und menu not emtpy
         // TODO check table number between one and given on event
         val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, menus, setOf(), totalPrice)
-        order.menus.forEach { menu ->
+        order.menus?.forEach { menu ->
             val menuToSave = orderMapper.mapMenuDtoToOrderMenu(menu, event,menuRepository.findByIdAndEventId(menu.id, eventId).get())
             menu.menuItems.forEach { menuItem ->
                 val menuItemToSave = prepareMenuItemForSave(menuItem, event)
@@ -41,7 +41,7 @@ class OrderServiceImpl (
             orderToSave.addMenu(menuToSave)
         }
 
-        order.menuItems.forEach { menuItem ->
+        order.menuItems?.forEach { menuItem ->
             val menuItemToSave = prepareMenuItemForSave(menuItem, event)
             totalPrice = totalPrice.plus(menuItemToSave.price)
             orderToSave.addMenuItem(menuItemToSave)
