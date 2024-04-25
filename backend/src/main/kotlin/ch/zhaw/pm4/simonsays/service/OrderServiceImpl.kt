@@ -2,6 +2,7 @@ package ch.zhaw.pm4.simonsays.service
 
 import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.types.*
+import ch.zhaw.pm4.simonsays.entity.OrderIngredient
 import ch.zhaw.pm4.simonsays.entity.OrderMenu
 import ch.zhaw.pm4.simonsays.entity.OrderMenuItem
 import ch.zhaw.pm4.simonsays.entity.State
@@ -26,6 +27,9 @@ class OrderServiceImpl (
         val event = eventService.getEvent(eventId)
         val menus = mutableSetOf<OrderMenu>()
         var totalPrice = 0.0
+        // TODO verfiy items with eventid and item id
+        // TODO handle menuitem und menu not emtpy
+        // TODO check table number between one and given on event
         val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, menus, setOf(), totalPrice)
         order.menus.forEach { menu ->
             val menuToSave = orderMapper.mapMenuDtoToOrderMenu(menu, event,menuRepository.findByIdAndEventId(menu.id, eventId).get())
@@ -61,10 +65,8 @@ class OrderServiceImpl (
         orderRepository.delete(order)
     }
 
-    override fun getOrderIngredientByIngredientId(ingredientId: Long): List<OrderIngredientDTO> {
-        return orderIngredientRepository.findAllByIngredientId(ingredientId).map { orderIngredient ->
-            orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient)
-        }
+    override fun getOrderIngredientByIngredientIds(ingredientIds: List<Long>): List<OrderIngredient> {
+        return orderIngredientRepository.findAllByIngredientIdInAndStateEquals(ingredientIds, State.IN_PROGRESS)
     }
 
     override fun updateOrderIngredientState(orderIngredientId: Long): OrderIngredientDTO {
