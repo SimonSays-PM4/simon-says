@@ -1,5 +1,5 @@
 import React from "react";
-import { useEventMenuPage } from "./EventMenuPage.hooks.tsx";
+import { useMenuItemPage } from "./MenuItemPage.hooks.tsx";
 import { Loader } from "../../../components/Loader.tsx";
 import { ColumnType } from "../../../models/ColumnType.ts";
 import { MenuItemDTO } from "../../../gen/api";
@@ -7,8 +7,8 @@ import { DataTable } from "../../../components/data-tables/DataTable.tsx";
 import { useNavigate } from "react-router-dom";
 import { Popup } from "../../../components/Popup.tsx";
 
-export const EventMenuPage: React.FC = () => {
-    const { event, menuItems, isLoading, menuItemActions, showDeletePopup, setShowDeletePopup } = useEventMenuPage();
+export const MenuItemPage: React.FC = () => {
+    const { event, menuItems, isLoading, menuItemActions, showDeletePopup, setShowDeletePopup } = useMenuItemPage();
     const navigate = useNavigate();
 
     if (isLoading) {

@@ -12,8 +12,8 @@ import { IngredientCreatePageComponent } from "./pages/ingredient/IngredientCrea
 import { AuthorizedEventRoute } from "./routing/AuthorizedEventRoute.tsx";
 import { MenuListPageComponent } from "./pages/event/menu/MenuListPage.component.tsx";
 import { MenuCreatePageComponent } from "./pages/event/menu/MenuCreatePage.component.tsx";
-import { EventMenuPage } from "./pages/event/menu/EventMenuPage.component.tsx";
-import { EventMenuEditPage } from "./pages/event/menu/EventMenuEditPage.component.tsx";
+import { MenuItemPage } from "./pages/event/menu/MenuItemPage.component.tsx";
+import { MenuItemEditPage } from "./pages/event/menu/MenuItemEditPage.component.tsx";
 
 export default function App() {
     return (
@@ -30,9 +30,9 @@ export default function App() {
 
                         <Route path="/admin/:eventId">
                             <Route path="/admin/:eventId/ingredients" element={<AuthorizedEventRoute activePageType={ActivePageType.IngredientList}><IngredientListPageComponent /></AuthorizedEventRoute>} />
-                            <Route path="/admin/:eventId/menuItem" element={<AuthorizedEventRoute activePageType={ActivePageType.MenuItem}><EventMenuPage /></AuthorizedEventRoute>} />
-                            <Route path="/admin/:eventId/menuItem/create" element={<AuthorizedEventRoute activePageType={ActivePageType.MenuItem}><EventMenuEditPage /></AuthorizedEventRoute>}>
-                                <Route path="/admin/:eventId/menuItem/create/:menuItemId" element={<AuthorizedEventRoute activePageType={ActivePageType.MenuItem}><EventMenuEditPage /></AuthorizedEventRoute>} />
+                            <Route path="/admin/:eventId/menuItem" element={<AuthorizedEventRoute activePageType={ActivePageType.MenuItem}><MenuItemPage /></AuthorizedEventRoute>} />
+                            <Route path="/admin/:eventId/menuItem/create" element={<AuthorizedEventRoute activePageType={ActivePageType.MenuItem}><MenuItemEditPage /></AuthorizedEventRoute>}>
+                                <Route path="/admin/:eventId/menuItem/create/:menuItemId" element={<AuthorizedEventRoute activePageType={ActivePageType.MenuItem}><MenuItemEditPage /></AuthorizedEventRoute>} />
                             </Route>
                             <Route path="/admin/:eventId/ingredient/create" element={<AuthorizedEventRoute activePageType={ActivePageType.Ingredient}><IngredientCreatePageComponent /></AuthorizedEventRoute>}>
                                 <Route path="/admin/:eventId/ingredient/create/:id" element={<AuthorizedEventRoute activePageType={ActivePageType.Ingredient}><IngredientCreatePageComponent /></AuthorizedEventRoute>} />
