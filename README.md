@@ -82,7 +82,8 @@ This is an opensource project and we welcome contributions.
 
 ## Documentation
 
-You can find the end-user guide [here](https://simonsays-pm4.github.io/simon-says/).
+You can find the end-user guide [here](https://simonsays-pm4.github.io/simon-says/).\
+If you want to update the documentation, please read more in the [documentation README](documentation/retype/README.md).
 
 ## License
 
