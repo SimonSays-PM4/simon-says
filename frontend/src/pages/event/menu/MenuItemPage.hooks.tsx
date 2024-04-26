@@ -3,23 +3,24 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { EventContext } from "../../../providers/EventContext.tsx";
 import { AppContext } from "../../../providers/AppContext.tsx";
 import { NotificationType } from "../../../enums/NotificationType.ts";
-import { EventDTO, MenuItemDTO } from "../../../gen/api/api.ts";
+import { EventDTO, MenuItemDTO } from "../../../gen/api";
 
-type EventMenuActions = {
+type MenuItemActions = {
     setMenuItemToDelete: (menuItem: MenuItemDTO) => void;
     menuItemToDelete: MenuItemDTO;
     deleteMenuItem: () => void;
 };
-type EventMenuReturnProps = {
+
+type MenuItemReturnParams = {
     menuItems: MenuItemDTO[];
     isLoading: boolean;
     event: EventDTO;
-    menuItemActions: EventMenuActions;
+    menuItemActions: MenuItemActions;
     setShowDeletePopup: (show: boolean) => void;
     showDeletePopup: boolean;
 };
 
-export const useEventMenuPage = (): EventMenuReturnProps => {
+export const useMenuItemPage = (): MenuItemReturnParams => {
     const { eventId } = useContext(EventContext);
     const [menuItemToDelete, setMenuItemToDelete] = useState<MenuItemDTO>({
         id: 0,
