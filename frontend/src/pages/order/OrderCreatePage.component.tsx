@@ -16,7 +16,7 @@ import { OrderMenuItemModel } from "../../models/OrderMenuItemModel.ts";
 import { OrderIngredientModel } from "../../models/OrderIngredientModel.ts";
 
 export const OrderCreatePageComponent: React.FC = () => {
-    const { isLoading, isSaving, menuList, selectedMenus, setSelectedMenus, menuItemList, selectedMenuItems, setSelectedMenuItems, orderActions } = useOrderCreatePage();
+    const { isLoading, isSaving, menuList, selectedMenus, setSelectedMenus, menuItemList, selectedMenuItems, setSelectedMenuItems, orderActions, isTakeAway, setIsTakeAway } = useOrderCreatePage();
 
     const menuIndex = React.useRef<number>(0);
     const menuItemIndex = React.useRef<number>(0);
@@ -54,12 +54,32 @@ export const OrderCreatePageComponent: React.FC = () => {
                     <h2 className="text-xl font-semibold text-default-800 mb-4">Bestellung</h2>
 
                     <form onSubmit={handleSubmit((data) => orderActions.saveOrder(data), () => orderActions.onFormInvalid(getValues()))}>
-                        <FormInput id={nameof<OrderCreateDTO>(e => e.tableNumber)}
-                            label={"Tischnummer"}
-                            type="number"
-                            register={register}
-                            isRequired={true}
-                        />
+                        <div className="flex">
+                            <div className="sm:grid sm:grid-flow-row sm:grid-cols-1 sm:items-end my-4">
+                                <label htmlFor="isTakeAway" className="mb-2 block text-sm font-medium text-default-900">
+                                    Takeaway
+                                </label>
+
+                                <div className="mt-1 sm:mt-0 sm:col-span-1 stroke-secondaryfont flex flex-row items-center">
+                                    <div className="w-full relative">
+                                        <input
+                                            id="isTakeAway"
+                                            className="form-input rounded-lg border border-default-200 px-4 py-2.5 scale-[2] ml-2 mt-3 mb-6"
+                                            onChange={(e) => setIsTakeAway(e.target.checked)}
+                                            type="checkbox"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <FormInput id={nameof<OrderCreateDTO>(e => e.tableNumber)}
+                                label="Tischnummer"
+                                type="number"
+                                register={register}
+                                classNames="ml-12"
+                                disabled={isTakeAway}
+                            />
+                        </div>
 
                         <Tab.Group>
                             <Tab.List className="flex space-x-1 rounded-xl p-1">
@@ -138,8 +158,19 @@ export const OrderCreatePageComponent: React.FC = () => {
                             <p>Selektierte Menus</p>
                             {selectedMenus.map((menu) => {
                                 return (
-                                    <div key={menu.id} className="w-full">
+                                    <div key={menu.index + menu.id} className="w-full">
                                         <p className="font-bold">{menu.name}: {menu.price.toFixed(2)} CHF</p>
+
+                                        {menu.menuItems.length > 0 ? (
+                                            <div className="grid">
+                                                {menu.menuItems.map((menuItem: OrderMenuItemModel) => (
+                                                    <div key={menu.index + menuItem.id}>
+                                                        <span>{menuItem.name}</span>
+                                                    </div>
+                                                ))}
+                                            </div>)
+                                            : (<></>)
+                                        }
                                     </div>
                                 );
                             })}
@@ -149,13 +180,13 @@ export const OrderCreatePageComponent: React.FC = () => {
                             <p>Selektierte Menu Items</p>
                             {selectedMenuItems.map((menuItem) => {
                                 return (
-                                    <div key={menuItem.index} className="w-full">
+                                    <div key={menuItem.id + menuItem.index} className="w-full">
                                         <p className="font-bold">{menuItem.name}: {menuItem.price.toFixed(2)} CHF</p>
 
                                         {menuItem.ingredients.length > 0 ? (
                                             <div className="grid">
                                                 {menuItem.ingredients.map((ingredient: OrderIngredientModel) => (
-                                                    <div key={ingredient.id}>
+                                                    <div key={menuItem.index + ingredient.id}>
                                                         <span>{ingredient.name}</span>
 
                                                         {menuItem.ingredients.length > 1

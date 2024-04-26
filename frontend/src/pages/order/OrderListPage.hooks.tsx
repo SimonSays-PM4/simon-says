@@ -3,6 +3,7 @@ import { EventContext } from "../../providers/EventContext";
 import { getOrderService } from "../../api";
 import { OrderDTO, State } from "../../gen/api";
 import { AppContext } from "../../providers/AppContext";
+import { NotificationType } from "../../enums/NotificationType";
 
 type OrderActions = {
     deleteOrder: () => void,
@@ -19,13 +20,14 @@ type OrderListPageReturnProps = {
 
 export const useOrderListPage = (): OrderListPageReturnProps => {
     const { eventId } = useContext(EventContext);
-    const [orderToDelete, setOrderToDelete] = useState<OrderDTO>({ id: 0, tableNumber: 0, totalPrice: 0, menuItems: [], menus: [], state: State.InProgress });
+    const appContext = useContext(AppContext);
+
+    const [orderToDelete, setOrderToDelete] = useState<OrderDTO>({ id: 0, tableNumber: 0, totalPrice: 0, menuItems: [], menus: [], state: State.InProgress, isTakeAway: false });
     const [isLoading, setIsLoading] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [data, setData] = useState<OrderDTO[]>([]);
 
-    const { loginInfo } = useContext(AppContext);
-    const orderService = getOrderService(loginInfo.userName, loginInfo.password);
+    const orderService = getOrderService(appContext.loginInfo.userName, appContext.loginInfo.password);
 
     useEffect(() => {
         if (!showDeletePopup) {
@@ -37,12 +39,11 @@ export const useOrderListPage = (): OrderListPageReturnProps => {
         try {
             setIsLoading(true);
             orderService.getOrders(eventId).then((response) => {
-                console.log(response.data);
                 setData(response.data);
             });
         }
-        catch (error) {
-            // TOOD: handle error
+        catch (_) {
+            appContext.addNotification(NotificationType.ERR, `Beim Laden der Bestellungen ist ein Fehler aufgetreten.`);
         }
         finally {
             setIsLoading(false);
@@ -59,8 +60,8 @@ export const useOrderListPage = (): OrderListPageReturnProps => {
                 });
             }
         }
-        catch (error) {
-            // TOOD: handle error
+        catch (_) {
+            appContext.addNotification(NotificationType.ERR, `Beim Löschen der Bestellung ist ein Fehler aufgetreten.`);
         }
         finally {
             setIsLoading(false);

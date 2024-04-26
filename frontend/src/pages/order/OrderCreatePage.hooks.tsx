@@ -22,9 +22,10 @@ type OrderCreatePageReturnProps = {
     menuItemList: OrderMenuItemDTO[];
     selectedMenuItems: OrderMenuItemModel[];
     setSelectedMenuItems: React.Dispatch<React.SetStateAction<OrderMenuItemModel[]>>;
+    isTakeAway: boolean;
+    setIsTakeAway: React.Dispatch<React.SetStateAction<boolean>>;
     isLoading: boolean;
     isSaving: boolean;
-    errorMessage?: string;
 };
 
 export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
@@ -32,7 +33,6 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
     const appContext = useContext(AppContext);
     const navigate = useNavigate();
 
-    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
@@ -40,6 +40,7 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
     const [selectedMenus, setSelectedMenus] = useState<OrderMenuModel[]>([]);
     const [menuItemList, setMenuItemList] = useState<OrderMenuItemDTO[]>([]);
     const [selectedMenuItems, setSelectedMenuItems] = useState<OrderMenuItemModel[]>([]);
+    const [isTakeAway, setIsTakeAway] = useState<boolean>(false);
 
     const menuService = getMenuService(appContext.loginInfo.userName, appContext.loginInfo.password);
     const menuItemService = getMenuItemService(appContext.loginInfo.userName, appContext.loginInfo.password);
@@ -76,6 +77,7 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         const orderToSave = data as OrderCreateDTO;
         orderToSave.menus = selectedMenus;
         orderToSave.menuItems = selectedMenuItems;
+        orderToSave.isTakeAway = isTakeAway;
 
         orderService
             .putOrder(eventId, orderToSave)
@@ -83,11 +85,11 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
                 if (response.status === 201 || response.status === 200) {
                     navigate("../");
                 } else {
-                    setErrorMessage(`Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
+                    appContext.addNotification(NotificationType.ERR, `Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
                 }
             })
             .catch(() => {
-                setErrorMessage(`Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
+                appContext.addNotification(NotificationType.ERR, `Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
             })
             .finally(() => {
                 setIsSaving(false);
@@ -99,5 +101,5 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         saveOrder
     };
 
-    return { orderActions, menuList, selectedMenus, setSelectedMenus, menuItemList, selectedMenuItems, setSelectedMenuItems, isLoading, isSaving, errorMessage };
+    return { orderActions, menuList, selectedMenus, setSelectedMenus, menuItemList, selectedMenuItems, setSelectedMenuItems, isTakeAway, setIsTakeAway, isLoading, isSaving };
 }

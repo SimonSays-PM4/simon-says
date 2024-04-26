@@ -25,7 +25,14 @@ export const OrderListPageComponent: React.FC = () => {
         {
             key: "totalPrice",
             name: "Preis",
-            type: "column"
+            type: "column",
+            formatter: (order) => `${order.totalPrice.toFixed(2)} CHF`
+        },
+        {
+            key: "takeAway",
+            name: "Take Away",
+            type: "column",
+            formatter: (order) => `${order.takeAway ? "Ja" : "Nein"}`,
         },
         {
             key: "tableNumber",
