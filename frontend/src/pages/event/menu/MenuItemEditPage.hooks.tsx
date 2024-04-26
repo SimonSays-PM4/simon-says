@@ -1,15 +1,15 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { getIngredientService, getMenuItemService } from "../../../api.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import { IngredientDTO, MenuItemCreateUpdateDTO, MenuItemDTO } from "../../../gen/api";
+import {IngredientDTO, MenuItemCreateUpdateDTO} from "../../../gen/api";
 import { FieldValues } from "react-hook-form";
 import { EventContext } from "../../../providers/EventContext.tsx";
 import { AppContext } from "../../../providers/AppContext.tsx";
 import { NotificationType } from "../../../enums/NotificationType.ts";
 import { ValueLabel } from "../../../models/ValueLabel.ts";
 
-type EventMenuEditReturnProps = {
-    menuItem: MenuItemDTO,
+type MenuItemEditReturnProps = {
+    menuItem: MenuItemCreateUpdateDTO,
     menuItemActions: MenuItemActions,
     isLoading: boolean,
     setShowDeleteModal: (show: boolean) => void,
@@ -22,17 +22,18 @@ type EventMenuEditReturnProps = {
 
 type MenuItemActions = {
     saveMenuItem: (menuItemToSave: FieldValues) => void,
+    onFormInvalid: (data:FieldValues) => void,
     deleteMenuItem: () => void,
 }
 
-export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
+export const useMenuItemEditPage = (): MenuItemEditReturnProps => {
     const appContext = useContext(AppContext);
     const { eventId } = useContext(EventContext);
 
     const { menuItemId: id } = useParams();
     const menuItemId = id ? Number(id) : 0;
+    const [menuItem, setMenuItem] = useState<MenuItemCreateUpdateDTO>({ id: 0, name: "", price: 0.0, ingredients: [] });
 
-    const [menuItem, setMenuItem] = useState<MenuItemDTO>({ id: 0, name: "", price: 0.0, ingredients: [] });
     const [selectedIngredients, setSelectedIngredients] = useState<ValueLabel[]>([]);
     const [isLoading, setLoading] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -50,7 +51,8 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
                     setSelectedIngredients(item.data.ingredients.map((ing) => {
                         return { value: ing.id, label: ing.name }
                     }))
-                    setMenuItem(item.data)
+                    const menuItemCreateUpdateDTO : MenuItemCreateUpdateDTO  = {id:item.data.id, name:item.data.name,price:item.data.price,ingredients:item.data.ingredients};
+                    setMenuItem(menuItemCreateUpdateDTO)
                 }).catch(() => appContext.addNotification(NotificationType.ERR, "Failed to Fetch Menu Item"))
             }
             ingredientService.listIngredients(eventId).then((ingredients) => {
@@ -59,6 +61,15 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
         }
     }, [eventId, menuItemId])
 
+    const onFormInvalid = (data?: FieldValues) => {
+        const newMenuItem = data as MenuItemCreateUpdateDTO;
+        newMenuItem.id = menuItemId > 0 ? menuItemId : 0;
+        newMenuItem.ingredients = menuItem.ingredients;
+        newMenuItem.price = data && data['price'] ? Number(data['price']) : 0;
+
+        setMenuItem(newMenuItem);
+    };
+
     const setIngredients = useCallback((ingredients: IngredientDTO[]) => {
         const newMenuItem = menuItem;
         newMenuItem.ingredients = ingredients;
@@ -66,28 +77,26 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
         setMenuItem(newMenuItem)
     }, [menuItem, menuItemId])
 
-    const saveMenuItem = useCallback(
-        (data: FieldValues) => {
+    const saveMenuItem = (data: FieldValues) => {
             setLoading(true);
 
             const menuItemToSave = data as MenuItemCreateUpdateDTO;
             menuItemToSave.id = menuItemId > 0 ? menuItemId : undefined;
-            menuItemToSave.ingredients = menuItem.ingredients;
+            menuItemToSave.ingredients = data["ingredients"].map((ing:ValueLabel) => { return { id: ing.value, name: ing.label } });
+            menuItemToSave.price = Number(data["price"])
 
             menuItemService
                 .putMenuItem(eventId, menuItemToSave)
-                .then((response) => {
+                .then(() => {
                     setLoading(false);
-                    navigate("./" + response.data.id);
+                    navigate("../menuItem");
                     appContext.addNotification(NotificationType.OK, "Saved Menu Item \"" + menuItemToSave.name + "\"")
                 })
                 .catch(() => {
                     setLoading(false);
                     appContext.addNotification(NotificationType.ERR, "Failed to save \"" + menuItemToSave.name + "\"");
                 });
-        },
-        [menuItem]
-    );
+        };
 
     const deleteMenuItem = useCallback(() => {
         menuItemService.deleteMenuItem(eventId, menuItemId).then(response => {
@@ -101,7 +110,8 @@ export const useEventMenuEditPage = (): EventMenuEditReturnProps => {
 
     const menuItemActions: MenuItemActions = {
         saveMenuItem: saveMenuItem,
-        deleteMenuItem: deleteMenuItem
+        deleteMenuItem: deleteMenuItem,
+        onFormInvalid: onFormInvalid
     };
 
     return { menuItem, menuItemActions, isLoading, setShowDeleteModal, showDeleteModal, navigate, setIngredients, ingredientOptions: options, selectedIngredients }
