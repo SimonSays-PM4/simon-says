@@ -16,4 +16,6 @@ data class OrderDTO(
     var totalPrice: Double,
     @field:Schema(description = "the state of the order", enumAsRef = true)
     var state: State,
+    @field:Schema(description = "indicates if the order is a take away order")
+    var isTakeAway: Boolean,
 )

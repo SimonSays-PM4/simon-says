@@ -37,23 +37,23 @@ class OrderController(
     }
 
     @Operation(summary = "update order ingredient state", security = [SecurityRequirement(name = "basicAuth")])
-    @PutMapping("{orderId}/ingredient/{orderIngredientId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PutMapping("ingredient/{orderIngredientId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun updateOrderIngredientState(@PathVariable("eventId") eventId: Long, @PathVariable("orderId") orderId: Long, @PathVariable("orderIngredientId") orderIngredientId: Long) {
+    fun updateOrderIngredientState(@PathVariable("eventId") eventId: Long, @PathVariable("orderIngredientId") orderIngredientId: Long) {
         orderService.updateOrderIngredientState(orderIngredientId)
     }
 
     @Operation(summary = "update order menu item state", security = [SecurityRequirement(name = "basicAuth")])
-    @PutMapping("{orderId}/menuitem/{orderMenuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PutMapping("menuitem/{orderMenuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun updateOrderMenuItemState(@PathVariable("eventId") eventId: Long, @PathVariable("orderId") orderId: Long, @PathVariable("orderMenuItemId") orderMenuItemId: Long) {
+    fun updateOrderMenuItemState(@PathVariable("eventId") eventId: Long, @PathVariable("orderMenuItemId") orderMenuItemId: Long) {
         orderService.updateOrderMenuItemState(orderMenuItemId)
     }
 
     @Operation(summary = "update order menu state", security = [SecurityRequirement(name = "basicAuth")])
-    @PutMapping("{orderId}/menu/{orderMenuId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PutMapping("menu/{orderMenuId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun updateOrderMenuState(@PathVariable("eventId") eventId: Long, @PathVariable("orderId") orderId: Long, @PathVariable("orderMenuId") orderMenuId: Long) {
+    fun updateOrderMenuState(@PathVariable("eventId") eventId: Long, @PathVariable("orderMenuId") orderMenuId: Long) {
         orderService.updateOrderMenuState(orderMenuId)
     }
 

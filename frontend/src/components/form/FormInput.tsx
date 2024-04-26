@@ -14,6 +14,8 @@ export interface IFormInputProps {
     validationError?: string;
     minLength?: number;
     maxLength?: number;
+    min?: number;
+    max?: number;
     step?: number;
     register: UseFormRegister<FieldValues>;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -31,6 +33,8 @@ export const FormInput: React.FC<IFormInputProps> = ({
     validationError,
     minLength,
     maxLength,
+    min,
+    max,
     step = undefined,
     register,
     onChange
@@ -49,7 +53,7 @@ export const FormInput: React.FC<IFormInputProps> = ({
                         className={
                             "form-input rounded-lg border border-default-200 px-4 py-2.5"
                         }
-                        {...register(id, { required: isRequired, disabled: disabled, value: defaultValue, minLength: minLength, maxLength: maxLength })}
+                        {...register(id, { required: isRequired, disabled: disabled, value: defaultValue, minLength: minLength, maxLength: maxLength, min:min, max:max })}
                         onChange={onChange}
                         type={type}
                         disabled={disabled}
