@@ -24,7 +24,7 @@ export default function App() {
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/:eventId/join" element={<JoinPage />} />
-                    <Route path="/:eventId" element={<UserPage/>}/>
+                    <Route path="/:eventId" element={<AuthorizedEventRoute activePageType={ActivePageType.Home}><UserPage /></AuthorizedEventRoute>} />
                     <Route path="/" element={<AuthorizedRoute activePageType={ActivePageType.Home}><HomePage /></AuthorizedRoute>} />
                     <Route path="/admin">
                         <Route path="/admin/events" element={<AuthorizedRoute activePageType={ActivePageType.EventList}><EventListPageComponent /></AuthorizedRoute>} />

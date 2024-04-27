@@ -7,11 +7,12 @@ import { FormInput } from "../../components/form/FormInput";
 import {getEventService} from "../../api.ts";
 import {AppContext} from "../../providers/AppContext.tsx";
 import { LoginInfo } from "../../models/LoginInfo.ts";
+import { NotificationType } from "../../enums/NotificationType.ts";
 
 export const JoinPage: React.FC = () => {
     const { eventId } = useParams();
     const navigate = useNavigate();
-    const { setLoginInfo } = useContext(AppContext);
+    const { setLoginInfo, addNotification } = useContext(AppContext);
 
 
     const {
@@ -24,9 +25,8 @@ export const JoinPage: React.FC = () => {
             eventService.getEvent(Number(eventId)).then(() => {
                 setLoginInfo(new LoginInfo(true, data["userName"], data["password"]));
                 navigate(`/${eventId}`);
-                alert("congrats")
             }).catch(() => {
-                alert("Invalid username or password");
+                addNotification(NotificationType.ERR, "Invalid username or password");
             });
     }
 
