@@ -40,21 +40,21 @@ class OrderController(
     @PutMapping("ingredient/{orderIngredientId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun updateOrderIngredientState(@PathVariable("eventId") eventId: Long, @PathVariable("orderIngredientId") orderIngredientId: Long) {
-        orderService.updateOrderIngredientState(orderIngredientId)
+        orderService.updateOrderIngredientState(eventId, orderIngredientId)
     }
 
     @Operation(summary = "update order menu item state", security = [SecurityRequirement(name = "basicAuth")])
     @PutMapping("menuitem/{orderMenuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun updateOrderMenuItemState(@PathVariable("eventId") eventId: Long, @PathVariable("orderMenuItemId") orderMenuItemId: Long) {
-        orderService.updateOrderMenuItemState(orderMenuItemId)
+        orderService.updateOrderMenuItemState(eventId, orderMenuItemId)
     }
 
     @Operation(summary = "update order menu state", security = [SecurityRequirement(name = "basicAuth")])
     @PutMapping("menu/{orderMenuId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun updateOrderMenuState(@PathVariable("eventId") eventId: Long, @PathVariable("orderMenuId") orderMenuId: Long) {
-        orderService.updateOrderMenuState(orderMenuId)
+        orderService.updateOrderMenuState(eventId, orderMenuId)
     }
 
 }

@@ -45,4 +45,18 @@ data class FoodOrder (
         return if (isTakeAway) this.id?.rem(1000) else null
     }
     override fun hashCode(): Int = id?.hashCode() ?: 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FoodOrder) return false
+
+        if (id != other.id) return false
+        if (state != other.state) return false
+        if (tableNumber != other.tableNumber) return false
+        if (totalPrice != other.totalPrice) return false
+        if (isTakeAway != other.isTakeAway) return false
+        if (event.id != other.event.id) return false
+
+        return true
+    }
 }

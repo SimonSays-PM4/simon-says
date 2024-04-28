@@ -1,7 +1,6 @@
 package ch.zhaw.pm4.simonsays.entity
 
 import jakarta.persistence.*
-import kotlin.reflect.jvm.internal.impl.descriptors.deserialization.PlatformDependentDeclarationFilter.All
 
 @Entity
 @NoArgAnnotation
@@ -28,4 +27,18 @@ data class MenuItem (
 
         @OneToMany(mappedBy = "menuItem")
         val orderMenuItem: Set<OrderMenuItem>? = HashSet()
-)
+){
+    override fun hashCode(): Int = id?.hashCode() ?: 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is MenuItem) return false
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (price != other.price) return false
+        if (event.id != other.event.id) return false
+
+        return true
+    }
+}
