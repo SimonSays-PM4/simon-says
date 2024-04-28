@@ -31,6 +31,7 @@ data class Station (
         if (id != other.id) return false
         if (name != other.name) return false
         if (assemblyStation != other.assemblyStation) return false
+        if (event.id != other.event.id) return false
 
         return true
     }

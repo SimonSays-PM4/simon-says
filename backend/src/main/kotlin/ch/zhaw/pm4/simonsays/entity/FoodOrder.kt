@@ -55,6 +55,7 @@ data class FoodOrder (
         if (tableNumber != other.tableNumber) return false
         if (totalPrice != other.totalPrice) return false
         if (isTakeAway != other.isTakeAway) return false
+        if (event.id != other.event.id) return false
 
         return true
     }

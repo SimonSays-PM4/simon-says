@@ -31,6 +31,7 @@ class Menu (
 
         if (id != other.id) return false
         if (name != other.name) return false
+        if (event.id != other.event.id) return false
 
         return true
     }

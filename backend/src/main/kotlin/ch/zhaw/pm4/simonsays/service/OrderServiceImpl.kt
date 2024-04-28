@@ -23,22 +23,24 @@ class OrderServiceImpl(
 ) : OrderService {
     override fun createOrder(order: OrderCreateDTO, eventId: Long): OrderDTO {
         val event = eventService.getEvent(eventId)
-        val menus = mutableSetOf<OrderMenu>()
+        val menus = menuRepository.findAllByEventId(eventId)
+        val menuItems = menuItemRepository.findAllByEventId(eventId)
+        val ingredients = ingredientRepository.findAllByEventId(eventId)
         var totalPrice = 0.0
-        // TODO verfiy items with eventid and item id
+
         validateTableNumber(order, event)
 
-        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, menus, setOf(), totalPrice)
+        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, setOf(), setOf(), totalPrice)
         order.menus?.forEach { menu ->
             validateMenu(menu)
             val menuToSave = orderMapper.mapMenuDtoToOrderMenu(
                 menu,
                 event,
-                menuRepository.findByIdAndEventId(menu.id, eventId).get()
+                menus.find { it.id == menu.id } ?: throw ResourceNotFoundException("Menu not found with ID: ${menu.id}")
             )
             menu.menuItems.forEach { menuItem ->
                 validateMenuItem(menuItem)
-                menuToSave.addOrderMenuItem(prepareMenuItemForSave(menuItem, event))
+                menuToSave.addOrderMenuItem(prepareMenuItemForSave(menuItem, menuItems, ingredients, event))
             }
             totalPrice = totalPrice.plus(menuToSave.price)
             orderToSave.addMenu(menuToSave)
@@ -46,7 +48,7 @@ class OrderServiceImpl(
 
         order.menuItems?.forEach { menuItem ->
             validateMenuItem(menuItem)
-            val menuItemToSave = prepareMenuItemForSave(menuItem, event)
+            val menuItemToSave = prepareMenuItemForSave(menuItem, menuItems, ingredients, event)
             totalPrice = totalPrice.plus(menuItemToSave.price)
             orderToSave.addMenuItem(menuItemToSave)
         }
@@ -102,18 +104,18 @@ class OrderServiceImpl(
         return orderMapper.mapOrderMenuToOrderMenuDTO(savedOrderMenu)
     }
 
-    private fun prepareMenuItemForSave(menuItem: MenuItemDTO, event: EventDTO): OrderMenuItem {
+    private fun prepareMenuItemForSave(menuItem: MenuItemDTO, menuItems: List<MenuItem>, ingredients: List<Ingredient>, event: EventDTO): OrderMenuItem {
         val menuItemToSave = orderMapper.mapMenuItemDtoToOrderMenuItem(
             menuItem,
             event,
-            menuItemRepository.findByIdAndEventId(menuItem.id, event.id!!).get()
+            menuItems.find { it.id == menuItem.id } ?: throw ResourceNotFoundException("MenuItem not found with ID: ${menuItem.id}")
         )
         menuItem.ingredients.forEach { ingredient ->
             menuItemToSave.addOrderIngredient(
                 orderMapper.mapIngredientDtoToOrderIngredient(
                     ingredient,
                     event,
-                    ingredientRepository.findByIdAndEventId(ingredient.id, event.id).get()
+                    ingredients.find { it.id == ingredient.id } ?: throw ResourceNotFoundException("Ingredient not found with ID: ${ingredient.id}")
                 )
             )
         }
@@ -149,4 +151,5 @@ class OrderServiceImpl(
             throw ValidationException("Menu must have at least one menu item")
         }
     }
+
 }
