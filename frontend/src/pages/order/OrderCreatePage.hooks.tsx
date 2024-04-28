@@ -11,7 +11,6 @@ import { OrderMenuItemModel } from "../../models/OrderMenuItemModel";
 
 type OrderActions = {
     saveOrder: (orderToSave: FieldValues) => void;
-    onFormInvalid: (orderToSave: FieldValues) => void;
 };
 
 type OrderCreatePageReturnProps = {
@@ -56,10 +55,10 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         try {
             setIsLoading(true);
             const response = await menuService.getMenus(eventId);
-            setMenuList(response.data as OrderMenuDTO[]); // TODO: ugly
+            setMenuList(response.data as OrderMenuDTO[]);
 
             const responseMenuItem = await menuItemService.getMenuItems(eventId);
-            setMenuItemList(responseMenuItem.data as OrderMenuItemDTO[]); // TODO: ugly
+            setMenuItemList(responseMenuItem.data as OrderMenuItemDTO[]);
         }
         catch (_) {
             appContext.addNotification(NotificationType.ERR, `Beim Laden der Menus ist ein Fehler aufgetreten.`);
@@ -68,10 +67,6 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
             setIsLoading(false);
         }
     }, []);
-
-    const onFormInvalid = (data?: FieldValues) => {
-        console.log(data);
-    };
 
     const saveOrder = (data: FieldValues) => {
         setIsSaving(true);
@@ -86,8 +81,6 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
             setIsSaving(false);
             return;
         }
-
-        console.log(orderToSave);
 
         orderService
             .putOrder(eventId, orderToSave)
@@ -112,7 +105,6 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
     };
 
     const orderActions: OrderActions = {
-        onFormInvalid,
         saveOrder
     };
 

@@ -31,7 +31,6 @@ export const OrderCreatePageComponent: React.FC = () => {
     const {
         handleSubmit,
         register,
-        getValues,
         setValue
     } = useForm();
     const navigate = useNavigate();
@@ -113,7 +112,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                 : (<>
                     <h2 className="text-xl font-semibold text-default-800 mb-4">Bestellung</h2>
 
-                    <form onSubmit={handleSubmit((data) => orderActions.saveOrder(data), () => orderActions.onFormInvalid(getValues()))}>
+                    <form onSubmit={handleSubmit((data) => orderActions.saveOrder(data))}>
                         <div className="flex">
                             <div className="sm:grid sm:grid-flow-row sm:grid-cols-1 sm:items-end my-4">
                                 <label htmlFor="isTakeAway" className="mb-2 block text-sm font-medium text-default-900">
@@ -292,7 +291,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                 setIsOpen={setIsEditMenuDialogOpen}>
                 <>
                     {menuToEdit && menuToEdit.menuItems.length > 0 ? (
-                        <div className="grid">
+                        <div className="grid my-2">
                             {menuToEdit.menuItems.map((menuItem: OrderMenuItemModel) => (
                                 <div key={menuToEdit.index + menuItem.id} className="rounded-lg border-2 mb-4">
                                     <div className="grid grid-cols-2 border-b-2 pb-2 mb-2 pl-3">
@@ -307,8 +306,8 @@ export const OrderCreatePageComponent: React.FC = () => {
                                     </div>
 
                                     <div className="grid ml-6">
-                                        {menuItem.ingredients.map((ingredient: OrderIngredientModel) => (
-                                            <div key={menuItem.index + ingredient.id} className="grid grid-cols-2 border-b-2">
+                                        {menuItem.ingredients.map((ingredient: OrderIngredientModel, index) => (
+                                            <div key={menuItem.index + ingredient.id} className={`grid grid-cols-2 ${index === menuItem.ingredients.length - 1 ? " my-2" : "border-b-2"}`}>
                                                 <p className="my-auto">{ingredient.name}</p>
 
                                                 {menuItem.ingredients.length > 1
@@ -337,9 +336,9 @@ export const OrderCreatePageComponent: React.FC = () => {
                 setIsOpen={setIsEditMenuItemDialogOpen}>
                 <>
                     {menuItemToEdit && menuItemToEdit.ingredients.length > 0 ? (
-                        <div className="grid">
-                            {menuItemToEdit.ingredients.map((ingredient: OrderIngredientModel) => (
-                                <div key={menuItemToEdit.index + ingredient.id} className="grid grid-cols-2 border-b-2">
+                        <div className="grid my-2">
+                            {menuItemToEdit.ingredients.map((ingredient: OrderIngredientModel, index) => (
+                                <div key={menuItemToEdit.index + ingredient.id} className={`grid grid-cols-2 ${index === menuItemToEdit.ingredients.length - 1 ? " my-2" : "border-b-2"}`}>
                                     <p className="my-auto">{ingredient.name}</p>
 
                                     {menuItemToEdit.ingredients.length > 1
