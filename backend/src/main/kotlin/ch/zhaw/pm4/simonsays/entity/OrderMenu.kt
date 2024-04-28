@@ -49,6 +49,7 @@ data class OrderMenu (
         if (name != other.name) return false
         if (state != other.state) return false
         if (event.id != other.event.id) return false
+        if (order?.id != other.order?.id) return false
 
         return true
     }

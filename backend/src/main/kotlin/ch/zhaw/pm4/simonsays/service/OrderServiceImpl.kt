@@ -28,8 +28,7 @@ class OrderServiceImpl(
         var totalPrice = 0.0
 
         validateTableNumber(order, event)
-
-        // TODO test that there is at least one menu or menu item
+        validateOrderHasItems(order)
 
         val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, listOf(), listOf(), totalPrice)
         order.menus?.forEach { menu ->
@@ -138,6 +137,12 @@ class OrderServiceImpl(
     private fun validateTableNumber(order: OrderCreateDTO, event: EventDTO) {
         if (!order.isTakeAway!! && (order.tableNumber == null || order.tableNumber!! < 1 || order.tableNumber!! > event.numberOfTables)) {
             throw ValidationException("Table number must be between 1 and ${event.numberOfTables}")
+        }
+    }
+
+    private fun validateOrderHasItems(order: OrderCreateDTO) {
+        if (order.menuItems.isNullOrEmpty() && order.menus.isNullOrEmpty()) {
+            throw ValidationException("Order must have at least one menu or menu item")
         }
     }
 

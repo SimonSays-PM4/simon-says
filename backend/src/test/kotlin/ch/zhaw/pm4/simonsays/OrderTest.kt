@@ -11,9 +11,9 @@ import ch.zhaw.pm4.simonsays.service.OrderServiceImpl
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.*
 
 
@@ -105,10 +105,26 @@ class OrderTest {
         every { menuItemRepository.findAllByEventId(any()) } returns listOf(getMenuItem())
         every { ingredientRepository.findAllByEventId(any()) } returns listOf(getTestIngredient1())
 
+        every { orderRepository.save(any()) } returns getOrder(menus = mutableSetOf(getOrderMenu(order = getOrder(), orderMenuItem = mutableListOf(getOrderMenuItem(order = getOrder())))))
+
+        val orderCreateDTO = getOrderCreateDTO(menus = listOf(getMenuDTO(menuItemDTOs = listOf(getMenuItemDTO(ingredientDTOs = listOf(getTestIngredientDTO()))))))
+        Assertions.assertEquals(getOrderDTO(menus = listOf(getOrderMenuDTO(menuItems = listOf(getOrderMenuItemDTO())))), orderService.createOrder(orderCreateDTO, 1))
+    }
+
+    @Test
+    fun `test create order no menu or menuItem`() {
+        every { eventService.getEvent(any()) } returns getTestEventDTO()
+        every { menuRepository.findAllByEventId(any()) } returns listOf(getMenu())
+        every { menuItemRepository.findAllByEventId(any()) } returns listOf(getMenuItem())
+        every { ingredientRepository.findAllByEventId(any()) } returns listOf(getTestIngredient1())
+
         every { orderRepository.save(any()) } returns getOrder()
 
         val orderCreateDTO = getOrderCreateDTO()
-        Assertions.assertEquals(getOrderDTO(), orderService.createOrder(orderCreateDTO, 1))
+        val error = Assertions.assertThrows(ValidationException::class.java) {
+            orderService.createOrder(orderCreateDTO, 1)
+        }
+        Assertions.assertEquals("Order must have at least one menu or menu item", error.message)
     }
 
     @Test
