@@ -8,7 +8,6 @@ import { getEventService } from "../../api.ts";
 import { AppContext } from "../../providers/AppContext.tsx";
 import { LoginInfo } from "../../models/LoginInfo.ts";
 import { NotificationType } from "../../enums/NotificationType.ts";
-import { UserRole } from "../../enums/UserRole.ts";
 
 export const JoinPage: React.FC = () => {
     const { eventId } = useParams();
@@ -23,7 +22,7 @@ export const JoinPage: React.FC = () => {
     const onSubmit = async (data: FieldValues) => {
         const eventService = getEventService(data["userName"], data["password"]);
         eventService.getEvent(Number(eventId)).then(() => {
-            setLoginInfo(new LoginInfo(true, data["userName"], data["password"], UserRole.User));
+            setLoginInfo(new LoginInfo(true, data["userName"], data["password"]));
             navigate(`/${eventId}`);
         }).catch(() => {
             addNotification(NotificationType.ERR, "Invalid username or password");
