@@ -79,6 +79,8 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         orderToSave.menuItems = selectedMenuItems;
         orderToSave.isTakeAway = isTakeAway;
 
+        console.log(orderToSave);
+
         orderService
             .putOrder(eventId, orderToSave)
             .then((response) => {

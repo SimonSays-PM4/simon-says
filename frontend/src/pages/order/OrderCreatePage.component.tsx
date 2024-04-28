@@ -218,7 +218,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                             <p>Selektierte Menus</p>
                             {selectedMenus.map((menu) => {
                                 return (
-                                    <div key={menu.index + menu.id} className="w-full flex my-2 border-b-2">
+                                    <div key={menu.index + menu.id} className="w-full flex my-2 border-t-2 pt-2">
                                         <div>
                                             <p className="font-bold">{menu.name}: {menu.price.toFixed(2)} CHF</p>
 
@@ -233,7 +233,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                                                 : (<></>)
                                             }
                                         </div>
-                                        <div className="ml-4">
+                                        <div className="ml-auto place-items-end">
                                             <Button buttonText="Bearbeiten" className="my-2" buttonType={ButtonType.Secondary} onClick={() => { setMenuToEdit(menu); setIsEditMenuDialogOpen(true); }} />
                                             <Button buttonText="Entfernen" className="my-2" buttonType={ButtonType.Secondary} onClick={() => removeMenu(menu.index)} />
                                         </div>
@@ -246,7 +246,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                             <p>Selektierte Menu Items</p>
                             {selectedMenuItems.map((menuItem) => {
                                 return (
-                                    <div key={menuItem.id + menuItem.index} className="w-full flex my-2 border-b-2">
+                                    <div key={menuItem.id + menuItem.index} className="w-full flex my-2 border-t-2 pt-2">
                                         <div>
                                             <p className="font-bold">{menuItem.name}: {menuItem.price.toFixed(2)} CHF</p>
                                             <span>{menuItem.name} - ({menuItem.ingredients.map((i) => i.name).join(", ")})</span>

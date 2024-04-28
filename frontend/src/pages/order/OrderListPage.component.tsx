@@ -32,7 +32,7 @@ export const OrderListPageComponent: React.FC = () => {
             key: "takeAway",
             name: "Take Away",
             type: "column",
-            formatter: (order) => `${order.takeAway ? "Ja" : "Nein"}`,
+            formatter: (order) => `${order.isTakeAway ? "Ja" : "Nein"}`,
         },
         {
             key: "tableNumber",

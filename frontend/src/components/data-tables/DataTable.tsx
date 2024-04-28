@@ -30,7 +30,6 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                             <thead className="bg-default-400/10">
                                 <tr>
                                     {columns.map((column) => {
-
                                         return column.type == "column" ? <th
                                             key={column.key as string}
                                             scope="col"
@@ -69,7 +68,7 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                                 <td className="flex min-h-[60px] items-end ml-auto">
                                                     {columns.filter((column) => column.type == "action" && column.action).map((column) => {
                                                         // @ts-ignore
-                                                        return <Button className="my-2 mx-2" buttonText={column.name} onClick={(() => column.action(row)) || console.log} />
+                                                        return <Button key={column.key} className="my-2 mx-2" buttonText={column.name} onClick={(() => column.action(row)) || console.log} />
                                                     })}
                                                 </td>
                                             </tr>
