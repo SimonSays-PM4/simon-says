@@ -5,6 +5,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { AppContext } from "../providers/AppContext";
 import React from "react";
 import { LoginInfo } from "../models/LoginInfo";
+import { UserRole } from "../enums/UserRole";
 
 export const LoginPage: React.FC = () => {
     const { setLoginInfo } = React.useContext(AppContext);
@@ -21,7 +22,7 @@ export const LoginPage: React.FC = () => {
     }
 
     const onSubmit = (data: FieldValues) => {
-        setLoginInfo(new LoginInfo(true, "admin", data["code"]));
+        setLoginInfo(new LoginInfo(true, "admin", data["code"], UserRole.Admin));
         const searchParams = new URLSearchParams(location.search);
         const returnUrl = searchParams.get('returnUrl');
 

@@ -1,19 +1,19 @@
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { FieldValues, useForm } from "react-hook-form";
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { Button } from "../../components/Button";
 import { FormInput } from "../../components/form/FormInput";
-import {getEventService} from "../../api.ts";
-import {AppContext} from "../../providers/AppContext.tsx";
+import { getEventService } from "../../api.ts";
+import { AppContext } from "../../providers/AppContext.tsx";
 import { LoginInfo } from "../../models/LoginInfo.ts";
 import { NotificationType } from "../../enums/NotificationType.ts";
+import { UserRole } from "../../enums/UserRole.ts";
 
 export const JoinPage: React.FC = () => {
     const { eventId } = useParams();
     const navigate = useNavigate();
     const { setLoginInfo, addNotification } = useContext(AppContext);
-
 
     const {
         register,
@@ -21,13 +21,13 @@ export const JoinPage: React.FC = () => {
     } = useForm();
 
     const onSubmit = async (data: FieldValues) => {
-            const eventService = getEventService(data["userName"], data["password"]);
-            eventService.getEvent(Number(eventId)).then(() => {
-                setLoginInfo(new LoginInfo(true, data["userName"], data["password"]));
-                navigate(`/${eventId}`);
-            }).catch(() => {
-                addNotification(NotificationType.ERR, "Invalid username or password");
-            });
+        const eventService = getEventService(data["userName"], data["password"]);
+        eventService.getEvent(Number(eventId)).then(() => {
+            setLoginInfo(new LoginInfo(true, data["userName"], data["password"], UserRole.User));
+            navigate(`/${eventId}`);
+        }).catch(() => {
+            addNotification(NotificationType.ERR, "Invalid username or password");
+        });
     }
 
     return (
