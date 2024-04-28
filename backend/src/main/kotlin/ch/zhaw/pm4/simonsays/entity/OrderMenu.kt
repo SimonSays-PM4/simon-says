@@ -21,7 +21,7 @@ data class OrderMenu (
     var menu: Menu,
 
     @OneToMany(mappedBy = "orderMenu", cascade = [CascadeType.ALL])
-    var orderMenuItems: MutableSet<OrderMenuItem>,
+    var orderMenuItems: MutableList<OrderMenuItem>,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")

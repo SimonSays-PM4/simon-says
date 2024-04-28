@@ -21,7 +21,7 @@ data class OrderMenuItem(
     var menuItem: MenuItem,
 
     @OneToMany(mappedBy = "orderMenuItem", cascade = [CascadeType.ALL])
-    var orderIngredients: MutableSet<OrderIngredient>,
+    var orderIngredients: MutableList<OrderIngredient>,
 
     @Column
     var price: Double,

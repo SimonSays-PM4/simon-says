@@ -16,7 +16,6 @@ class OrderServiceImpl(
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuItemRepository: OrderMenuItemRepository,
     private val eventService: EventService,
-    private val ingredientService: IngredientService,
     private val ingredientRepository: IngredientRepository,
     private val menuItemRepository: MenuItemRepository,
     private val menuRepository: MenuRepository
@@ -30,7 +29,9 @@ class OrderServiceImpl(
 
         validateTableNumber(order, event)
 
-        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, setOf(), setOf(), totalPrice)
+        // TODO test that there is at least one menu or menu item
+
+        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, listOf(), listOf(), totalPrice)
         order.menus?.forEach { menu ->
             validateMenu(menu)
             val menuToSave = orderMapper.mapMenuDtoToOrderMenu(
