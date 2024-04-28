@@ -17,7 +17,7 @@ import { OrderIngredientModel } from "../../models/OrderIngredientModel.ts";
 import { Dialog } from "../../components/Dialog.tsx";
 
 export const OrderCreatePageComponent: React.FC = () => {
-    const { isLoading, isSaving, menuList, selectedMenus, setSelectedMenus, menuItemList, selectedMenuItems, setSelectedMenuItems, orderActions, isTakeAway, setIsTakeAway } = useOrderCreatePage();
+    const { isLoading, isSaving, errorMessage, menuList, selectedMenus, setSelectedMenus, menuItemList, selectedMenuItems, setSelectedMenuItems, orderActions, isTakeAway, setIsTakeAway } = useOrderCreatePage();
 
     const menuIndex = useRef<number>(0);
     const menuItemIndex = useRef<number>(0);
@@ -141,6 +141,8 @@ export const OrderCreatePageComponent: React.FC = () => {
                             />
                         </div>
 
+                        {errorMessage && <p className="text-red-500 pb-4">{errorMessage}</p>}
+
                         <Tab.Group>
                             <Tab.List className="flex space-x-1 rounded-xl p-1">
                                 <Tab
@@ -233,9 +235,13 @@ export const OrderCreatePageComponent: React.FC = () => {
                                                 : (<></>)
                                             }
                                         </div>
-                                        <div className="ml-auto place-items-end">
-                                            <Button buttonText="Bearbeiten" className="my-2" buttonType={ButtonType.Secondary} onClick={() => { setMenuToEdit(menu); setIsEditMenuDialogOpen(true); }} />
-                                            <Button buttonText="Entfernen" className="my-2" buttonType={ButtonType.Secondary} onClick={() => removeMenu(menu.index)} />
+                                        <div className="flex my-auto grow justify-end">
+                                            <Button buttonText="Bearbeiten"
+                                                className="my-2"
+                                                buttonType={ButtonType.Primary}
+                                                disabled={menu.menuItems.length <= 1 && menu.menuItems[0].ingredients.length <= 1}
+                                                onClick={() => { setMenuToEdit(menu); setIsEditMenuDialogOpen(true); }} />
+                                            <Button buttonText="Entfernen" className="my-2 ml-2" buttonType={ButtonType.Secondary} onClick={() => removeMenu(menu.index)} />
                                         </div>
                                     </div>
                                 );
@@ -252,9 +258,13 @@ export const OrderCreatePageComponent: React.FC = () => {
                                             <span>{menuItem.name} - ({menuItem.ingredients.map((i) => i.name).join(", ")})</span>
                                         </div>
 
-                                        <div className="ml-4">
-                                            <Button buttonText="Bearbeiten" className="my-2" buttonType={ButtonType.Secondary} onClick={() => { setMenuItemToEdit(menuItem); setIsEditMenuItemDialogOpen(true); }} />
-                                            <Button buttonText="Entfernen" className="my-2" buttonType={ButtonType.Secondary} onClick={() => removeMenuItem(menuItem.index)} />
+                                        <div className="flex my-auto grow justify-end">
+                                            <Button buttonText="Bearbeiten"
+                                                className="my-2"
+                                                buttonType={ButtonType.Primary}
+                                                disabled={menuItem.ingredients.length <= 1}
+                                                onClick={() => { setMenuItemToEdit(menuItem); setIsEditMenuItemDialogOpen(true); }} />
+                                            <Button buttonText="Entfernen" className="my-2 ml-2" buttonType={ButtonType.Secondary} onClick={() => removeMenuItem(menuItem.index)} />
                                         </div>
                                     </div>
                                 );
@@ -290,7 +300,7 @@ export const OrderCreatePageComponent: React.FC = () => {
 
                                         {menuToEdit.menuItems.length > 1
                                             ? (
-                                                <Button buttonText="Entfernen" className="my-2" buttonType={ButtonType.Secondary} onClick={() => removeMenuItemFromMenu(menuToEdit.index, menuItem)} />
+                                                <Button buttonText="Entfernen" className="my-2 ml-auto mr-2" buttonType={ButtonType.Secondary} onClick={() => removeMenuItemFromMenu(menuToEdit.index, menuItem)} />
                                             )
                                             : (<></>)
                                         }
@@ -303,7 +313,7 @@ export const OrderCreatePageComponent: React.FC = () => {
 
                                                 {menuItem.ingredients.length > 1
                                                     ? (
-                                                        <Button buttonText="Entfernen" className="my-2" buttonType={ButtonType.Secondary} onClick={() => removeIngredientFromMenuItemInMenu(menuToEdit.index, menuItem.index, ingredient)} />
+                                                        <Button buttonText="Entfernen" className="my-2 ml-auto mr-2" buttonType={ButtonType.Secondary} onClick={() => removeIngredientFromMenuItemInMenu(menuToEdit.index, menuItem.index, ingredient)} />
                                                     )
                                                     : (<></>)
                                                 }
@@ -334,7 +344,7 @@ export const OrderCreatePageComponent: React.FC = () => {
 
                                     {menuItemToEdit.ingredients.length > 1
                                         ? (
-                                            <Button buttonText="Entfernen" className="my-2" buttonType={ButtonType.Secondary} onClick={() => removeIngredientFromMenuItem(menuItemToEdit.index, ingredient)} />
+                                            <Button buttonText="Entfernen" className="my-2 ml-auto mr-2" buttonType={ButtonType.Secondary} onClick={() => removeIngredientFromMenuItem(menuItemToEdit.index, ingredient)} />
                                         )
                                         : (<></>)
                                     }

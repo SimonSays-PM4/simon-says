@@ -26,6 +26,7 @@ type OrderCreatePageReturnProps = {
     setIsTakeAway: React.Dispatch<React.SetStateAction<boolean>>;
     isLoading: boolean;
     isSaving: boolean;
+    errorMessage?: string;
 };
 
 export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
@@ -41,6 +42,7 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
     const [menuItemList, setMenuItemList] = useState<OrderMenuItemDTO[]>([]);
     const [selectedMenuItems, setSelectedMenuItems] = useState<OrderMenuItemModel[]>([]);
     const [isTakeAway, setIsTakeAway] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const menuService = getMenuService(appContext.loginInfo.userName, appContext.loginInfo.password);
     const menuItemService = getMenuItemService(appContext.loginInfo.userName, appContext.loginInfo.password);
@@ -79,6 +81,12 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         orderToSave.menuItems = selectedMenuItems;
         orderToSave.isTakeAway = isTakeAway;
 
+        if (!isTakeAway && !orderToSave.tableNumber) {
+            setErrorMessage("Tischnummer muss angegeben werden");
+            setIsSaving(false);
+            return;
+        }
+
         console.log(orderToSave);
 
         orderService
@@ -87,10 +95,15 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
                 if (response.status === 201 || response.status === 200) {
                     navigate("../");
                 } else {
+                    if (response.status === 400) {
+                        console.log(response);
+                        setErrorMessage("Error");
+                    }
                     appContext.addNotification(NotificationType.ERR, `Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
                 }
             })
             .catch(() => {
+                console.log("response error");
                 appContext.addNotification(NotificationType.ERR, `Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
             })
             .finally(() => {
@@ -103,5 +116,5 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         saveOrder
     };
 
-    return { orderActions, menuList, selectedMenus, setSelectedMenus, menuItemList, selectedMenuItems, setSelectedMenuItems, isTakeAway, setIsTakeAway, isLoading, isSaving };
+    return { orderActions, menuList, selectedMenus, setSelectedMenus, menuItemList, selectedMenuItems, setSelectedMenuItems, isTakeAway, setIsTakeAway, isLoading, isSaving, errorMessage };
 }
