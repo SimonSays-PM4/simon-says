@@ -21,4 +21,17 @@ data class Station (
 
     @ManyToMany(fetch = FetchType.EAGER)
     var ingredients: List<Ingredient>
-)
+){
+    override fun hashCode(): Int = id?.hashCode() ?: 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Station) return false
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (assemblyStation != other.assemblyStation) return false
+
+        return true
+    }
+}

@@ -8,7 +8,7 @@ interface OrderService {
     fun listOrders(eventId: Long): List<OrderDTO>
     fun deleteOrder(orderId: Long, eventId: Long)
     fun getOrderIngredientByIngredientIds(ingredientIds: List<Long>): List<OrderIngredient>
-    fun updateOrderIngredientState(orderIngredientId: Long): OrderIngredientDTO
-    fun updateOrderMenuItemState(orderMenuItemId: Long): OrderMenuItemDTO
-    fun updateOrderMenuState(orderMenuId: Long): OrderMenuDTO
+    fun updateOrderIngredientState(eventId: Long, orderIngredientId: Long): OrderIngredientDTO
+    fun updateOrderMenuItemState(eventId: Long, orderMenuItemId: Long): OrderMenuItemDTO
+    fun updateOrderMenuState(eventId: Long, orderMenuId: Long): OrderMenuDTO
 }

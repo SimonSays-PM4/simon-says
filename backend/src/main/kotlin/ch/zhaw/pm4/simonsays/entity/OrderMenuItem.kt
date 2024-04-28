@@ -42,4 +42,15 @@ data class OrderMenuItem(
         orderIngredient.orderMenuItem = this
     }
     override fun hashCode(): Int = id?.hashCode() ?: 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is OrderMenuItem) return false
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (state != other.state) return false
+
+        return true
+    }
 }
