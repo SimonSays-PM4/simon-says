@@ -2,7 +2,7 @@ import React from "react";
 import { DataTable } from "../../components/data-tables/DataTable";
 import { ColumnType } from "../../models/ColumnType";
 import { Loader } from "../../components/Loader";
-import { OrderDTO } from "../../gen/api";
+import { OrderDTO, State } from "../../gen/api";
 import { useNavigate } from "react-router-dom";
 import { Popup } from "../../components/Popup.tsx";
 import { useOrderListPage } from "./OrderListPage.hooks.tsx";
@@ -42,7 +42,8 @@ export const OrderListPageComponent: React.FC = () => {
         {
             key: "state",
             name: "Status",
-            type: "column"
+            type: "column",
+            formatter: (order) => `${order.state === State.InProgress ? "In Arbeit" : "Abgeschlossen"}`,
         },
         {
             key: "id",
