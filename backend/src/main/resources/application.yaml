@@ -23,3 +23,17 @@ printer-queue-server:
   frontend-origins:
     # TODO: Add the URL of your deployed frontend here
     - https://simon-says.ch
+    - https://simonsays.pm4.init-lab.ch
+  dry-run: false
+  # Will automatically create the printer server on startup and add the respective printer will be assigned
+  printer-server-id: "a35e6a08-35ef-42c1-9a09-39d32fc2a5d6"
+  takeaway-printer-queue-id: "ef084926-d2be-4a03-9538-c8dd44f19e04"
+  takeaway-printer-mac: "50:57:9c:d2:12:53"
+  receipt-printer-queue-id: "6f7c2fa6-9401-457e-8a86-618e810b103a"
+  receipt-printer-mac: "50:57:9c:d2:12:53"
+  # The following settings are optional and can be used to customize the receipt that is printed
+  receipt-max-characters-per-line: 48
+  receipt-base64-png-logo: "iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAMAAAANIilAAAAAAXNSR0IArs4c6QAAAEtQTFRFR3BMADaQADWPADWP4AAqADWP5AAodyJl5AAoADaRADyZADWPBDaQADaQADaQ4QAp7gAe4wAo4wAo4AAq4AAq3QAr4QApADeR5AAp7JnuvwAAABd0Uk5TALg4Ujma7QP8"
+  receipt-qr-code-content: "https://cevi.net"
+  receipt-header: "Willkommen beim Cevi Burger Festival!"
+  receipt-footer: "https://cevi.net"

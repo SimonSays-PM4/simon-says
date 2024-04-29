@@ -1,11 +1,47 @@
 package ch.zhaw.pm4.simonsays.api.controller.printer
 
+import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.APPLICATION_ERROR_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.CHANGE_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.INITIAL_DATA_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.REMOVE_EVENT
+import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDto
+import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
+import ch.zhaw.pm4.simonsays.service.printer.PrintQueueJobService
+import ch.zhaw.pm4.simonsays.service.printer.PrintQueueService
+import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
+import ch.zhaw.pm4.simonsays.testutils.testObjectMapper
+import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import io.socket.socketio.server.SocketIoNamespace
+import io.socket.socketio.server.SocketIoSocket
+import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
+import java.util.*
 
 class PrintQueueJobsNamespaceTest {
+    private val mockPrinterServerService = mockk<PrinterServerService>(relaxed = true)
+    private val mockPrintQueueService = mockk<PrintQueueService>(relaxed = true)
+    private val mockPrintQueueJobService = mockk<PrintQueueJobService>(relaxed = true)
+    private val objectMapper = testObjectMapper()
+    private lateinit var namespace: PrintQueueJobsNamespace
+
+    @BeforeEach
+    fun setUp() {
+        namespace = PrintQueueJobsNamespace(
+            mockPrinterServerService,
+            mockPrintQueueService,
+            mockPrintQueueJobService,
+            objectMapper
+        )
+    }
+
     @ParameterizedTest
     @CsvSource(
         "/socket-api/v1/printer-servers/wxyz/print-queues/abcd/jobs, wxyz, abcd, ", // Both IDs without job id
@@ -39,5 +75,115 @@ class PrintQueueJobsNamespaceTest {
         assertNull(matchResult, "Expected no match for input: $input")
     }
 
+    @Test
+    fun `test isPartOfNamespace with valid and existing namespace`() {
+        val printerServerId = "server1"
+        val printQueueId = "queue1"
+        val jobId = "job1"
+        val namespaceString = "/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/$jobId"
+        every { mockPrinterServerService.doesPrinterServerExist(printerServerId) } returns true
+        every { mockPrintQueueService.doesPrintQueueExist(printQueueId) } returns true
+        every { mockPrintQueueJobService.doesPrintQueueJobExist(jobId) } returns true
+        assertTrue(namespace.isPartOfNamespace(namespaceString))
+    }
 
+    @Test
+    fun `test isPartOfNamespace with invalid namespace`() {
+        val namespaceString = "/wrong-namespace"
+        assertFalse(namespace.isPartOfNamespace(namespaceString))
+    }
+
+    @Test
+    fun `onConnection should subscribe to specific job and send initial data`() {
+        val printerServerId = "server1"
+        val printQueueId = "queue1"
+        val jobId = "job1"
+        val socket =
+            mockSocket("/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/$jobId")
+        val jobDto: PrintQueueJobDto = mockk(relaxed = true)
+
+        every { mockPrintQueueJobService.getPrintQueueJobById(jobId) } returns jobDto
+
+        namespace.onConnection(socket)
+
+        verify { socket.send(INITIAL_DATA_EVENT, any()) }
+        assertTrue(namespace.subscribersToSpecificPrintQueueJobs[jobId]?.contains(socket) ?: false)
+    }
+
+    @Test
+    fun `onChangeEventReceived should update job and notify subscribers`() {
+        val printerServerId = "server1"
+        val printQueueId = "queue1"
+        val jobId = "job1"
+        val socket =
+            mockSocket("/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/$jobId")
+        val initialJobDto: PrintQueueJobDto = mockk(relaxed = true)
+        every { initialJobDto.id } returns jobId
+        val updatedJobJson = JSONObject("""{"id":"$jobId","status":"PRINTED"}""")
+        val updatedJobDto: PrintQueueJobDto = mockk(relaxed = true)
+        every { updatedJobDto.id } returns jobId
+        every { updatedJobDto.status } returns JobStatusDto.PRINTED
+
+        every { mockPrintQueueJobService.getPrintQueueJobById(jobId) } returns initialJobDto
+        every { mockPrintQueueJobService.doesPrintQueueJobExist(jobId) } returns true
+        every { mockPrintQueueJobService.savePrintQueueJob(printQueueId, any()) } returns updatedJobDto
+
+        namespace.onConnection(socket) // Connect to set up the subscriber
+        namespace.onChangeEventReceived(arrayOf(updatedJobJson), printQueueId, jobId, socket)
+
+        verify { socket.send(CHANGE_EVENT, any()) }
+    }
+
+    @Test
+    fun `onRemoveEventReceived should remove job and notify subscribers`() {
+        val printerServerId = "server1"
+        val printQueueId = "queue1"
+        val jobId = "job1"
+        val socket =
+            mockSocket("/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/$jobId")
+        val jobDto: PrintQueueJobDto = mockk(relaxed = true)
+        every { jobDto.id } returns jobId
+        every { mockPrintQueueJobService.getPrintQueueJobById(jobId) } returns jobDto
+
+        namespace.onConnection(socket) // Connect to set up the subscriber
+        namespace.onRemoveEventReceived(arrayOf(JSONObject("""{"id":"$jobId"}""")), jobId, socket)
+
+        verify { socket.send(REMOVE_EVENT, any()) }
+        verify { mockPrintQueueJobService.removePrintQueueJob(jobId) }
+    }
+
+    @Test
+    fun `onChangeEventReceived with invalid data should emit error`() {
+        val socket = mockSocket("/socket-api/v1/printer-servers/server1/print-queues/queue1/jobs/job1")
+        namespace.onConnection(socket)
+        namespace.onChangeEventReceived(arrayOf("Invalid Data"), "queue1", "job1", socket)
+
+        verify { socket.send(APPLICATION_ERROR_EVENT, any()) }
+    }
+
+    @Test
+    fun `onConnection should subscribe to next job and send initial data`() {
+        val printerServerId = "server1"
+        val printQueueId = "queue1"
+        val namespaceString = "/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/next"
+        val socket = mockSocket(namespaceString)
+        val nextJobDto: PrintQueueJobDto = mockk(relaxed = true)
+        every { nextJobDto.id } returns UUID.randomUUID().toString()
+        every { nextJobDto.status } returns JobStatusDto.PENDING
+
+        every { mockPrintQueueJobService.getNextPendingPrintQueueJob(printQueueId) } returns nextJobDto
+
+        namespace.onConnection(socket)
+
+        verify { socket.send(INITIAL_DATA_EVENT, any()) }
+        assertTrue(namespace.subscribersToNextPrintQueueJob[printQueueId]?.contains(socket) ?: false)
+    }
+
+    private fun mockSocket(namespaceString: String): SocketIoSocket {
+        val socket = mockk<SocketIoSocket>(relaxed = true)
+        val namespace = mockk<SocketIoNamespace>()
+        every { namespace.name } returns namespaceString
+        every { socket.namespace } returns namespace
+        return socket
+    }
 }

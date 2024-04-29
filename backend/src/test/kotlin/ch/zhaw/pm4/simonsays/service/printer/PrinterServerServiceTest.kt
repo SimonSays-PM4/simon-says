@@ -2,6 +2,7 @@ package ch.zhaw.pm4.simonsays.service.printer
 
 import ch.zhaw.pm4.simonsays.api.mapper.printer.PrinterServerMapper
 import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDto
+import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import ch.zhaw.pm4.simonsays.entity.printer.PrinterServer
 import ch.zhaw.pm4.simonsays.repository.printer.PrinterServerRepository
 import io.mockk.every
@@ -17,13 +18,14 @@ class PrinterServerServiceTest {
     private lateinit var service: PrinterServerService
     private val printerServerRepository: PrinterServerRepository = mockk(relaxed = true)
     private val printerServerMapper: PrinterServerMapper = mockk(relaxed = true)
+    private val printerProperties: PrinterProperties = mockk(relaxed = true)
 
     private val printerServer: PrinterServer = mockk()
     private val printerServerDto: PrinterServerDto = mockk()
 
     @BeforeEach
     fun setUp() {
-        service = PrinterServerService(printerServerRepository, printerServerMapper)
+        service = PrinterServerService(printerServerRepository, printerServerMapper, printerProperties)
     }
 
     @Test
