@@ -105,7 +105,7 @@ class OrderTest {
         every { menuItemRepository.findAllByEventId(any()) } returns listOf(getMenuItem())
         every { ingredientRepository.findAllByEventId(any()) } returns listOf(getTestIngredient1())
 
-        every { orderRepository.save(any()) } returns getOrder(menus = mutableSetOf(getOrderMenu(order = getOrder(), orderMenuItem = mutableListOf(getOrderMenuItem(order = getOrder())))))
+        every { orderRepository.save(any()) } returns getOrder(menus = mutableSetOf(getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(getOrderMenuItem(order = getOrder())))))
 
         val orderCreateDTO = getOrderCreateDTO(menus = listOf(getMenuDTO(menuItemDTOs = listOf(getMenuItemDTO(ingredientDTOs = listOf(getTestIngredientDTO()))))))
         Assertions.assertEquals(getOrderDTO(menus = listOf(getOrderMenuDTO(menuItems = listOf(getOrderMenuItemDTO())))), orderService.createOrder(orderCreateDTO, 1))
@@ -229,10 +229,10 @@ class OrderTest {
 
     @Test
     fun `test update order menu state`() {
-        every { orderMenuRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrderMenu(order = getOrder(), orderMenuItem = mutableListOf(
+        every { orderMenuRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(
             getOrderMenuItem(order = getOrder()))
         ))
-        every { orderMenuRepository.save(any()) } returns getOrderMenu(order = getOrder(), orderMenuItem = mutableListOf(
+        every { orderMenuRepository.save(any()) } returns getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(
             getOrderMenuItem(order = getOrder())), state = State.DONE)
         every { orderRepository.findById(any()) } returns Optional.of(getOrder())
         every { orderRepository.save(any()) } returns getOrder()

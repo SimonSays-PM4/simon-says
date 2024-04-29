@@ -20,7 +20,7 @@ class OrderMenuItemFactory(
         name: String = "Test order menu item",
         eventId: Long = 1,
         menuItemId: Long = 1,
-        orderIngredients: MutableSet<OrderIngredient>,
+        orderIngredients: MutableList<OrderIngredient>,
         price: Double = 0.0,
         orderMenuId: Long? = null,
         order: FoodOrder = orderFactory.createOrder(),

@@ -21,7 +21,7 @@ class OrderMenuFactory(
             name: String = "Test order menu",
             eventId: Long = 1,
             menuId: Long = 1,
-            orderMenuItems: MutableSet<OrderMenuItem>,
+            orderMenuItems: MutableList<OrderMenuItem>,
             order: FoodOrder = orderFactory.createOrder(),
             state: State = State.IN_PROGRESS,
             price: Double = 0.0
