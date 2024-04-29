@@ -14,10 +14,10 @@ interface OrderMapper {
         Mapping(target = "menus", source = "menus"),
         Mapping(target = "menuItems", source = "menuItems"),
     )
-    fun mapOrderDtoToOrder(orderDto: OrderCreateDTO, event: EventDTO, menus: Set<OrderMenu>, menuItems: Set<OrderMenuItem>, totalPrice: Double, state: State = State.IN_PROGRESS): FoodOrder
+    fun mapOrderDtoToOrder(orderDto: OrderCreateDTO, event: EventDTO, menus: List<OrderMenu>, menuItems: List<OrderMenuItem>, totalPrice: Double, state: State = State.IN_PROGRESS): FoodOrder
     @Mappings(
         Mapping(target= "id", ignore = true),
-        Mapping(target = "name", source = "ingredientDTO.name"),
+        Mapping(target = "name", source = "ingredient.name"),
         Mapping(target= "event.menus", ignore = true),
         Mapping(target= "event.menuItems", ignore = true),
         Mapping(target= "event.ingredients", ignore = true),
@@ -27,18 +27,18 @@ interface OrderMapper {
 
     @Mappings(
         Mapping(target= "id", ignore = true),
-        Mapping(target = "name", source = "menuItemDTO.name"),
+        Mapping(target = "name", source = "menuItem.name"),
         Mapping(target= "event.menus", ignore = true),
         Mapping(target= "event.menuItems", ignore = true),
         Mapping(target= "event.ingredients", ignore = true),
         Mapping(target= "menuItem", source = "menuItem"),
-        Mapping(target= "price", source = "menuItemDTO.price"),
+        Mapping(target= "price", source = "menuItem.price"),
     )
-    fun mapMenuItemDtoToOrderMenuItem(menuItemDTO: MenuItemDTO, event: EventDTO, menuItem: MenuItem, orderIngredients: Set<OrderIngredient> = setOf(), state: State = State.IN_PROGRESS): OrderMenuItem
+    fun mapMenuItemDtoToOrderMenuItem(menuItemDTO: MenuItemDTO, event: EventDTO, menuItem: MenuItem, orderIngredients: List<OrderIngredient> = listOf(), state: State = State.IN_PROGRESS): OrderMenuItem
 
     @Mappings(
         Mapping(target= "id", ignore = true),
-        Mapping(target = "name", source = "menuDTO.name"),
+        Mapping(target = "name", source = "menu.name"),
         Mapping(target= "event.menus", ignore = true),
         Mapping(target= "event.menuItems", ignore = true),
         Mapping(target= "event.ingredients", ignore = true),
@@ -46,7 +46,7 @@ interface OrderMapper {
         Mapping(target= "price", source = "menuDTO.price"),
 
     )
-    fun mapMenuDtoToOrderMenu(menuDTO: MenuDTO, event: EventDTO, menu: Menu, orderMenuItems: Set<OrderMenuItem> = setOf(), state: State = State.IN_PROGRESS): OrderMenu
+    fun mapMenuDtoToOrderMenu(menuDTO: MenuDTO, event: EventDTO, menu: Menu, orderMenuItems: List<OrderMenuItem> = listOf(), state: State = State.IN_PROGRESS): OrderMenu
 
     fun mapOrderToOrderDTO(order: FoodOrder): OrderDTO
 

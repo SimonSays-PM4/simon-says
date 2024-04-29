@@ -16,7 +16,6 @@ class OrderServiceImpl(
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuItemRepository: OrderMenuItemRepository,
     private val eventService: EventService,
-    private val ingredientService: IngredientService,
     private val ingredientRepository: IngredientRepository,
     private val menuItemRepository: MenuItemRepository,
     private val menuRepository: MenuRepository
@@ -29,8 +28,9 @@ class OrderServiceImpl(
         var totalPrice = 0.0
 
         validateTableNumber(order, event)
+        validateOrderHasItems(order)
 
-        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, setOf(), setOf(), totalPrice)
+        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, listOf(), listOf(), totalPrice)
         order.menus?.forEach { menu ->
             validateMenu(menu)
             val menuToSave = orderMapper.mapMenuDtoToOrderMenu(
@@ -137,6 +137,12 @@ class OrderServiceImpl(
     private fun validateTableNumber(order: OrderCreateDTO, event: EventDTO) {
         if (!order.isTakeAway!! && (order.tableNumber == null || order.tableNumber!! < 1 || order.tableNumber!! > event.numberOfTables)) {
             throw ValidationException("Table number must be between 1 and ${event.numberOfTables}")
+        }
+    }
+
+    private fun validateOrderHasItems(order: OrderCreateDTO) {
+        if (order.menuItems.isNullOrEmpty() && order.menus.isNullOrEmpty()) {
+            throw ValidationException("Order must have at least one menu or menu item")
         }
     }
 
