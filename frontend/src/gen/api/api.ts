@@ -270,13 +270,7 @@ export interface OrderCreateDTO {
      * @type {boolean}
      * @memberof OrderCreateDTO
      */
-    'isTakeAway': boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof OrderCreateDTO
-     */
-    'takeAway'?: boolean;
+    'takeAway': boolean;
 }
 /**
  * 

@@ -74,7 +74,7 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         const orderToSave = data as OrderCreateDTO;
         orderToSave.menus = selectedMenus;
         orderToSave.menuItems = selectedMenuItems;
-        orderToSave.isTakeAway = isTakeAway;
+        orderToSave.takeAway = isTakeAway;
 
         if (!isTakeAway && !orderToSave.tableNumber) {
             setErrorMessage("Tischnummer muss angegeben werden");
@@ -96,7 +96,6 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
                 }
             })
             .catch(() => {
-                console.log("response error");
                 appContext.addNotification(NotificationType.ERR, `Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
             })
             .finally(() => {
