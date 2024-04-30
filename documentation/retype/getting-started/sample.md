@@ -1,6 +1,8 @@
 ---
-label: Sample
+label: Beispielseite
+author: Micha Guillet
+tags: [sample, metadata]
 ---
-# Sample
+# Beispiel
 
-This is a sample page demonstrating page metadata
+Dies ist ein Beispieltext
