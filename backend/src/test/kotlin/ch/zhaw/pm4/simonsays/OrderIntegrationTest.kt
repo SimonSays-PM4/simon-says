@@ -1,11 +1,11 @@
 package ch.zhaw.pm4.simonsays
 
+import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
+import ch.zhaw.pm4.simonsays.api.types.MenuDTO
+import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
 import ch.zhaw.pm4.simonsays.entity.*
-import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.*
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.test.web.servlet.delete
@@ -17,7 +17,6 @@ class OrderIntegrationTest : IntegrationTest() {
 
     private fun getOrderUrl(eventId: Long) = "/rest-api/v1/event/$eventId/order"
 
-    private val tooLongStationName: String = "hafdnvgnumnluizouvsathtjeyqpnelscybzbgpkyizsdtxnhjfyfomhdlbouwwqz"
     private val arbitraryId = 9999999999
 
     private val username = "admin"
@@ -59,28 +58,6 @@ class OrderIntegrationTest : IntegrationTest() {
                 )
             )
         )
-        val expectedReturn = getOrderDTO(
-            menus = mutableListOf(
-                getOrderMenuDTO(
-                    name = "Test Menu Name",
-                    price = 1.0,
-                    menuItems = mutableListOf(
-                        getOrderMenuItemDTO(
-                            id = 2,
-                            name = "Test Menu Item Name",
-                            price = 1.0,
-                            ingredients = mutableListOf(
-                                getOrderIngredientDTO(id = 2)
-                            )
-                        )
-                    )
-                )
-            ),
-            menuItems = mutableListOf(
-                getOrderMenuItemDTO(price = 1.0, name = "Test Menu Item Name")
-            ),
-            totalPrice = 2.0,
-        )
 
         mockMvc.put(getOrderUrl(testEvent.id!!)) {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
@@ -93,7 +70,7 @@ class OrderIntegrationTest : IntegrationTest() {
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                     json(
-                        objectMapper.writeValueAsString(expectedReturn)
+                        objectMapper.writeValueAsString(getOrderDTOCreated1())
                     )
                 }
             }
@@ -110,11 +87,6 @@ class OrderIntegrationTest : IntegrationTest() {
                 )
             ),
         )
-        val expectedReturn = ErrorMessageModel(
-            HttpStatus.NOT_FOUND.value(),
-            "Menu not found with ID: ${arbitraryId}",
-            null
-        )
 
         mockMvc.put(getOrderUrl(testEvent.id!!)) {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
@@ -127,7 +99,9 @@ class OrderIntegrationTest : IntegrationTest() {
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                     json(
-                        objectMapper.writeValueAsString(expectedReturn)
+                        objectMapper.writeValueAsString(
+                            getNotFoundError("Menu", arbitraryId)
+                        )
                     )
 
                 }
@@ -160,38 +134,6 @@ class OrderIntegrationTest : IntegrationTest() {
             isTakeAway = true
         )
 
-        val expectedReturn = getOrderDTO(
-            id = 2,
-            menus = mutableListOf(
-                getOrderMenuDTO(
-                    id = 2,
-                    name = "Test Menu Name",
-                    price = 1.0,
-                    menuItems = mutableListOf(
-                        getOrderMenuItemDTO(
-                            id = 4,
-                            name = "Test Menu Item Name",
-                            price = 1.0,
-                            ingredients = mutableListOf(
-                                getOrderIngredientDTO(id = 4)
-                            )
-                        )
-                    )
-                )
-            ),
-            menuItems = mutableListOf(
-                getOrderMenuItemDTO(
-                    id = 3,
-                    price = 1.0,
-                    name = "Test Menu Item Name",
-                    ingredients = mutableListOf(getOrderIngredientDTO(id = 3))
-                )
-            ),
-            totalPrice = 2.0,
-            tableNumber = null,
-            isTakeAway = true
-        )
-
         mockMvc.put(getOrderUrl(testEvent.id!!)) {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
@@ -203,10 +145,60 @@ class OrderIntegrationTest : IntegrationTest() {
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                     json(
-                        objectMapper.writeValueAsString(expectedReturn)
+                        objectMapper.writeValueAsString(getOrderDTOCreated2())
                     )
                 }
             }
+    }
+
+    @Test
+    @Transactional
+    @Order(4)
+    fun `test huge order should succeed`() {
+        val menus = mutableListOf<MenuDTO>()
+        val menuItems = mutableListOf<MenuItemDTO>()
+        val ingredients = mutableListOf<IngredientDTO>()
+        for (i in 1..10) {
+            getTestIngredientDTO(id = testIngredient.id!!).let { ingredients.add(it) }
+        }
+        for (i in 1..10) {
+            getMenuItemDTO(
+                id = testMenuItem.id!!,
+                ingredientDTOs = ingredients
+            ).let { menuItems.add(it) }
+        }
+        for (i in 1..10) {
+            getMenuDTO(
+                id = testMenu.id!!,
+                menuItemDTOs = menuItems
+            ).let { menus.add(it) }
+        }
+
+        val orderCreateDTO = getOrderCreateDTO(
+            menus = menus,
+            menuItems = menuItems
+        )
+
+        mockMvc.put(getOrderUrl(testEvent.id!!)) {
+            with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(orderCreateDTO)
+        }
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    jsonPath("$.menus.size()") { value(10) }
+                    jsonPath("$.menuItems.size()") { value(10) }
+                    jsonPath("$.totalPrice") { value(20.0) }
+                    jsonPath("$.menus[0].menuItems.size()") { value(10) }
+                    jsonPath("$.menus[0].menuItems[0].ingredients.size()") { value(10) }
+                    jsonPath("$.state") { value(State.IN_PROGRESS.name) }
+                }
+            }
+
     }
 
     @Test
@@ -249,11 +241,6 @@ class OrderIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `delete order should fail invalid id`() {
-        val expectedReturn = ErrorMessageModel(
-            HttpStatus.NOT_FOUND.value(),
-            "Order not found with ID: ${arbitraryId}",
-            null
-        )
 
         mockMvc.delete("${getOrderUrl(testEvent.id!!)}/${arbitraryId}") {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
@@ -264,7 +251,7 @@ class OrderIntegrationTest : IntegrationTest() {
                 status { isNotFound() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
-                    json(objectMapper.writeValueAsString(expectedReturn))
+                    json(objectMapper.writeValueAsString(getNotFoundError("Order", arbitraryId)))
                 }
             }
 
@@ -282,6 +269,10 @@ class OrderIntegrationTest : IntegrationTest() {
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(getNotFoundError("Order", order.id!!)))
+                }
             }
 
     }
@@ -289,15 +280,20 @@ class OrderIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `update order ingredient state should fail invalid event id`() {
-        val order = orderFactory.createOrder(eventId = testEvent.id!!)
+        val ingredientOrder =
+            orderIngredientFactory.createOrderIngredient(eventId = testEvent.id!!, ingredientId = testIngredient.id!!)
 
-        mockMvc.put("${getOrderUrl(arbitraryId)}/ingredient/${order.id!!}") {
+        mockMvc.put("${getOrderUrl(arbitraryId)}/ingredient/${ingredientOrder.id!!}") {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(getNotFoundError("OrderIngredient", ingredientOrder.id!!)))
+                }
             }
     }
 
@@ -305,14 +301,30 @@ class OrderIntegrationTest : IntegrationTest() {
     @Transactional
     fun `update order menu item state should fail invalid event id`() {
         val order = orderFactory.createOrder(eventId = testEvent.id!!)
+        val menuItemOrder =
+            orderMenuItemFactory.createOrderMenuItem(
+                eventId = testEvent.id!!,
+                menuItemId = testMenuItem.id!!,
+                order = order,
+                orderIngredients = mutableListOf(
+                    orderIngredientFactory.createOrderIngredient(
+                        eventId = testEvent.id!!,
+                        ingredientId = testIngredient.id!!
+                    )
+                )
+            )
 
-        mockMvc.put("${getOrderUrl(arbitraryId)}/menuitem/${order.id!!}") {
+        mockMvc.put("${getOrderUrl(arbitraryId)}/menuitem/${menuItemOrder.id!!}") {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(getNotFoundError("OrderMenuItem", menuItemOrder.id!!)))
+                }
             }
     }
 
@@ -320,22 +332,42 @@ class OrderIntegrationTest : IntegrationTest() {
     @Transactional
     fun `update order menu state should fail invalid event id`() {
         val order = orderFactory.createOrder(eventId = testEvent.id!!)
+        val menuOrder = orderMenuFactory.createOrderMenu(
+            eventId = testEvent.id!!,
+            menuId = testMenu.id!!,
+            order = order,
+            orderMenuItems = mutableListOf(
+                orderMenuItemFactory.createOrderMenuItem(
+                    eventId = testEvent.id!!,
+                    menuItemId = testMenuItem.id!!,
+                    order = order,
+                    orderIngredients = mutableListOf(
+                        orderIngredientFactory.createOrderIngredient(
+                            eventId = testEvent.id!!,
+                            ingredientId = testIngredient.id!!
+                        )
+                    )
+                )
+            )
+        )
 
-        mockMvc.put("${getOrderUrl(arbitraryId)}/menu/${order.id!!}") {
+        mockMvc.put("${getOrderUrl(arbitraryId)}/menu/${menuOrder.id!!}") {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
         }
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(getNotFoundError("OrderMenu", menuOrder.id!!)))
+                }
             }
     }
 
     @Test
     @Transactional
     fun `update order ingredient state should fail invalid order ingredient id`() {
-        val order = orderFactory.createOrder(eventId = testEvent.id!!)
-
         mockMvc.put("${getOrderUrl(testEvent.id!!)}/ingredient/${arbitraryId}") {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
@@ -343,14 +375,16 @@ class OrderIntegrationTest : IntegrationTest() {
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(getNotFoundError("OrderIngredient", arbitraryId)))
+                }
             }
     }
 
     @Test
     @Transactional
     fun `update order menu item state should fail invalid order menu item id`() {
-        val order = orderFactory.createOrder(eventId = testEvent.id!!)
-
         mockMvc.put("${getOrderUrl(testEvent.id!!)}/menuitem/${arbitraryId}") {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
@@ -358,14 +392,16 @@ class OrderIntegrationTest : IntegrationTest() {
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(getNotFoundError("OrderMenuItem", arbitraryId)))
+                }
             }
     }
 
     @Test
     @Transactional
     fun `update order menu state should fail invalid order menu id`() {
-        val order = orderFactory.createOrder(eventId = testEvent.id!!)
-
         mockMvc.put("${getOrderUrl(testEvent.id!!)}/menu/${arbitraryId}") {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
@@ -373,6 +409,10 @@ class OrderIntegrationTest : IntegrationTest() {
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(getNotFoundError("OrderMenu", arbitraryId)))
+                }
             }
     }
 
@@ -438,6 +478,10 @@ class OrderIntegrationTest : IntegrationTest() {
             order = order,
             orderIngredients = mutableListOf(orderIngredient)
         )
+        val expectedReturn = getOrderMenuItemDTO(
+            state = State.DONE, id = orderMenuItem.id!!,
+            ingredients = mutableListOf(getOrderIngredientDTO(id = orderIngredient.id!!))
+        )
         mockMvc.put("${getOrderUrl(testEvent.id!!)}/menuitem/${orderMenuItem.id!!}") {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
@@ -447,15 +491,7 @@ class OrderIntegrationTest : IntegrationTest() {
                 status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
-                    json(
-                        objectMapper.writeValueAsString(
-                            getOrderMenuItemDTO(
-                                id = orderMenuItem.id!!,
-                                state = State.DONE,
-                                ingredients = mutableListOf(getOrderIngredientDTO(id = orderIngredient.id!!))
-                            )
-                        )
-                    )
+                    json(objectMapper.writeValueAsString(expectedReturn))
                 }
             }
     }
@@ -468,7 +504,9 @@ class OrderIntegrationTest : IntegrationTest() {
             eventId = testEvent.id!!,
             ingredientId = testIngredient.id!!
         )
-
+        val expectedReturn = getOrderIngredientDTO(
+            state = State.DONE, id = orderIngredient.id!!
+        )
         mockMvc.put("${getOrderUrl(testEvent.id!!)}/ingredient/${orderIngredient.id!!}") {
             with(SecurityMockMvcRequestPostProcessors.httpBasic(username, password))
             contentType = MediaType.APPLICATION_JSON
@@ -478,7 +516,7 @@ class OrderIntegrationTest : IntegrationTest() {
                 status { isOk() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
-                    json(objectMapper.writeValueAsString(getOrderIngredientDTO(id = orderIngredient.id!!, state = State.DONE)))
+                    json(objectMapper.writeValueAsString(expectedReturn))
                 }
             }
     }

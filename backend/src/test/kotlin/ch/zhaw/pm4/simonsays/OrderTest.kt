@@ -105,7 +105,7 @@ class OrderTest {
         every { menuItemRepository.findAllByEventId(any()) } returns listOf(getMenuItem())
         every { ingredientRepository.findAllByEventId(any()) } returns listOf(getTestIngredient1())
 
-        every { orderRepository.save(any()) } returns getOrder(menus = mutableSetOf(getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(getOrderMenuItem(order = getOrder())))))
+        every { orderRepository.save(any()) } returns getOrder(menus = mutableListOf(getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(getOrderMenuItem(order = getOrder())))))
 
         val orderCreateDTO = getOrderCreateDTO(menus = listOf(getMenuDTO(menuItemDTOs = listOf(getMenuItemDTO(ingredientDTOs = listOf(getTestIngredientDTO()))))))
         Assertions.assertEquals(getOrderDTO(menus = listOf(getOrderMenuDTO(menuItems = listOf(getOrderMenuItemDTO())))), orderService.createOrder(orderCreateDTO, 1))
