@@ -463,7 +463,6 @@ class StationIntegrationTest : IntegrationTest() {
         )
         val order = orderFactory.createOrder(eventId = testEvent.id!!)
         val station = stationFactory.createStation(ingredients = listOf(testingredient1), eventId = testEvent.id!!)
-        val station1 = stationFactory.createStation(ingredients = listOf(testingredient2), eventId = testEvent.id!!)
         val menuItem = menuItemFactory.createMenuItem(
                 eventId = testEvent.id!!,
                 ingredients = listOf(

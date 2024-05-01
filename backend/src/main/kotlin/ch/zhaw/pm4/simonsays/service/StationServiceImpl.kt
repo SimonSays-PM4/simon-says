@@ -80,7 +80,7 @@ class StationServiceImpl(
             foodOrder.menuItems = orderService.getOrderMenuItems(eventId, foodOrder.id)
 
             if(!foodOrder.menus!!.isEmpty() || !foodOrder.menuItems!!.isEmpty()) {
-                processedOrders.addLast(foodOrder)
+                processedOrders.add(foodOrder)
             }
 
         }
