@@ -4,8 +4,12 @@ import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.mapper.StationMapperImpl
+import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
+import ch.zhaw.pm4.simonsays.api.types.OrderIngredientUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.StationDTO
+import ch.zhaw.pm4.simonsays.entity.State
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
+import ch.zhaw.pm4.simonsays.exception.ValidationException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
 import ch.zhaw.pm4.simonsays.repository.OrderIngredientRepository
@@ -139,16 +143,58 @@ class StationTest {
         )
     }
 
-    /*@Test
+    @Test
     fun `Test retrieve ingredients that need to be produced`() {
+        val orderIngredientDTO: OrderIngredientDTO = getOrderIngredientDTO()
         every { stationRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getStation())
         every { orderService.getOrderIngredientByIngredientIds(any()) } returns listOf(
             getOrderIngredient()
         )
+        every { orderMapper.mapOrderIngredientToOrderIngredientDTO(any()) } returns orderIngredientDTO
         Assertions.assertEquals(
-                listOf(getOrderIngredientDTO()),
+                listOf(orderIngredientDTO),
                 stationService.getStationView(1, 1)
         )
-    }*/
+    }
+
+    @Test
+    fun `Test mark ingredient as produced`() {
+        val orderIngredientDTODone = getOrderIngredientDTO(
+                state = State.DONE
+        )
+        every { ingredientRepository.findAllByStationsIdAndEventId(any(), any()) } returns listOf(
+                getTestIngredient1()
+        )
+        every { orderIngredientRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrderIngredient())
+        every { orderService.updateOrderIngredientState(any(), any()) } returns orderIngredientDTODone
+        Assertions.assertEquals(
+                orderIngredientDTODone,
+                stationService.processIngredient(1, 1, OrderIngredientUpdateDTO(1, "Test", State.IN_PROGRESS))
+        )
+    }
+
+    @Test
+    fun `Test throw exception when station updates out of scope order ingredient`() {
+        val orderIngredientUpdateDTO = OrderIngredientUpdateDTO(1, "Test", State.IN_PROGRESS)
+        every { ingredientRepository.findAllByStationsIdAndEventId(any(), any()) } returns listOf()
+        every { orderIngredientRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrderIngredient())
+        Assertions.assertThrows(
+                ValidationException::class.java,
+                { stationService.processIngredient(1, 1, OrderIngredientUpdateDTO(1, "Test", State.IN_PROGRESS)) },
+                "This station is not allowed to update the state of the ingredient with the id: ${orderIngredientUpdateDTO.id} (${orderIngredientUpdateDTO.name})"
+        )
+    }
+
+    @Test
+    fun `Test throw exception when station updates invalid order ingredient`() {
+        val orderIngredientUpdateDTO = OrderIngredientUpdateDTO(1, "Test", State.IN_PROGRESS)
+        every { ingredientRepository.findAllByStationsIdAndEventId(any(), any()) } returns listOf(getTestIngredient1())
+        every { orderIngredientRepository.findByIdAndEventId(any(), any()) } returns Optional.empty()
+        Assertions.assertThrows(
+                ResourceNotFoundException::class.java,
+                { stationService.processIngredient(1, 1, orderIngredientUpdateDTO) },
+                "No order ingredient found with the ID: ${orderIngredientUpdateDTO.id}"
+        )
+    }
 
 }

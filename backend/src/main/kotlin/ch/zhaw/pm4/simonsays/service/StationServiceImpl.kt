@@ -70,11 +70,9 @@ class StationServiceImpl(
     }
 
     override fun processIngredient(eventId: Long, stationId: Long, orderIngredientUpdate: OrderIngredientUpdateDTO): OrderIngredientDTO {
-        // Todo Validate Event
-        // Todo Validate Event to Station Mapping
         val stationIngredients: List<Ingredient> = ingredientRepository.findAllByStationsIdAndEventId(stationId, eventId)
         val stationIngredientIds: List<Long> = stationIngredients.map { it.id!! }
-        val orderIngredient: OrderIngredient = orderIngredientRepository.findByIdAndEventId(orderIngredientUpdate.id, eventId).orElseThrow {
+        val orderIngredient: OrderIngredient = orderIngredientRepository.findByIdAndEventId(orderIngredientUpdate.id, eventId).orElseThrow() {
             ResourceNotFoundException("No order ingredient found with the ID: ${orderIngredientUpdate.id}")
         }
         if(!stationIngredientIds.contains(orderIngredient.ingredient.id)) {
