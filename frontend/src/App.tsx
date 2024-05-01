@@ -12,8 +12,12 @@ import { IngredientCreatePageComponent } from "./pages/ingredient/IngredientCrea
 import { AuthorizedEventRoute } from "./routing/AuthorizedEventRoute.tsx";
 import { MenuListPageComponent } from "./pages/event/menu/MenuListPage.component.tsx";
 import { MenuCreatePageComponent } from "./pages/event/menu/MenuCreatePage.component.tsx";
+import { OrderCreatePageComponent } from "./pages/order/OrderCreatePage.component.tsx";
+import { OrderListPageComponent } from "./pages/order/OrderListPage.component.tsx";
 import { MenuItemPage } from "./pages/event/menu/MenuItemPage.component.tsx";
 import { MenuItemEditPage } from "./pages/event/menu/MenuItemEditPage.component.tsx";
+import { JoinPage } from "./pages/user/JoinPage.tsx";
+import { UserPage } from "./pages/user/UserPage.tsx";
 
 export default function App() {
     return (
@@ -21,6 +25,8 @@ export default function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/:eventId/join" element={<JoinPage />} />
+                    <Route path="/:eventId" element={<AuthorizedEventRoute activePageType={ActivePageType.Home}><UserPage /></AuthorizedEventRoute>} />
                     <Route path="/" element={<AuthorizedRoute activePageType={ActivePageType.Home}><HomePage /></AuthorizedRoute>} />
                     <Route path="/admin">
                         <Route path="/admin/events" element={<AuthorizedRoute activePageType={ActivePageType.EventList}><EventListPageComponent /></AuthorizedRoute>} />
@@ -41,6 +47,12 @@ export default function App() {
                             <Route path="/admin/:eventId/menu/create" element={<AuthorizedEventRoute activePageType={ActivePageType.Menu}><MenuCreatePageComponent /></AuthorizedEventRoute>}>
                                 <Route path="/admin/:eventId/menu/create/:menuId" element={<AuthorizedEventRoute activePageType={ActivePageType.Menu}><MenuCreatePageComponent /></AuthorizedEventRoute>} />
                             </Route>
+                        </Route>
+                    </Route>
+                    <Route path="/:eventId/order">
+                        <Route path="/:eventId/order" element={<AuthorizedEventRoute activePageType={ActivePageType.OrderList}><OrderListPageComponent /></AuthorizedEventRoute>}></Route>
+                        <Route path="/:eventId/order/create" element={<AuthorizedEventRoute activePageType={ActivePageType.Order}><OrderCreatePageComponent /></AuthorizedEventRoute>}>
+                            <Route path="/:eventId/order/create/:orderId" element={<AuthorizedEventRoute activePageType={ActivePageType.Order}><OrderCreatePageComponent /></AuthorizedEventRoute>} />
                         </Route>
                     </Route>
 

@@ -2,11 +2,13 @@ package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
+import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.mapper.StationMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.StationDTO
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
+import ch.zhaw.pm4.simonsays.repository.OrderIngredientRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
 import ch.zhaw.pm4.simonsays.service.*
 import com.ninjasquad.springmockk.MockkBean
@@ -24,6 +26,9 @@ class StationTest {
     protected lateinit var eventService: EventService
 
     @MockkBean(relaxed = true)
+    protected lateinit var orderService: OrderService
+
+    @MockkBean(relaxed = true)
     protected lateinit var eventMapper: EventMapper
 
     @MockkBean(relaxed = true)
@@ -38,6 +43,12 @@ class StationTest {
     @MockkBean(relaxed = true)
     protected lateinit var stationRepository: StationRepository
 
+    @MockkBean(relaxed = true)
+    protected lateinit var orderMapper: OrderMapper
+
+    @MockkBean(relaxed = true)
+    protected lateinit var orderIngredientRepository: OrderIngredientRepository
+
     private lateinit var stationService: StationService
 
     @BeforeEach
@@ -50,13 +61,19 @@ class StationTest {
         ingredientService = mockk(relaxed = true)
         eventMapper = mockk(relaxed = true)
         stationRepository = mockk(relaxed = true)
+        orderService = mockk(relaxed = true)
+        orderMapper = mockk(relaxed = true)
+        orderIngredientRepository = mockk(relaxed = true)
 
         // Construct the service with the mocked dependencies
         stationService = StationServiceImpl(
                 stationRepository,
                 StationMapperImpl(),
                 eventService,
-                ingredientRepository
+                ingredientRepository,
+                orderIngredientRepository,
+                orderService,
+                orderMapper
         )
     }
 
@@ -121,5 +138,17 @@ class StationTest {
                 "Station not found with ID: 1"
         )
     }
+
+    /*@Test
+    fun `Test retrieve ingredients that need to be produced`() {
+        every { stationRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getStation())
+        every { orderService.getOrderIngredientByIngredientIds(any()) } returns listOf(
+            getOrderIngredient()
+        )
+        Assertions.assertEquals(
+                listOf(getOrderIngredientDTO()),
+                stationService.getStationView(1, 1)
+        )
+    }*/
 
 }

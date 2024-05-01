@@ -13,6 +13,7 @@
         "api": "openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g typescript-axios -o ./src/gen/api --config api.json"
     },
     "dependencies": {
+        "@headlessui/react": "^1.7.19",
         "@testing-library/user-event": "^14.5.2",
         "autoprefixer": "^10.4.18",
         "axios": "^1.6.8",

@@ -19,3 +19,14 @@ To run the application you need to have a running mysql database. You can start 
 ```shell
 docker-compose up -d
 ```
+After that you can start the application with the following command:
+```shell
+./gradlew bootRun --args='--spring.profiles.active=dev'
+```
+
+## Testing
+In order to test the application you need to have a running instance of the DB.\
+To run the tests you can use the following command:
+```shell
+./gradlew test
+```

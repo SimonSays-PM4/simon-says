@@ -1,7 +1,6 @@
 package ch.zhaw.pm4.simonsays.api.controller
 
-import ch.zhaw.pm4.simonsays.api.types.StationCreateUpdateDTO
-import ch.zhaw.pm4.simonsays.api.types.StationDTO
+import ch.zhaw.pm4.simonsays.api.types.*
 import ch.zhaw.pm4.simonsays.config.AdminEndpoint
 import ch.zhaw.pm4.simonsays.service.StationService
 import io.swagger.v3.oas.annotations.Operation
@@ -39,5 +38,18 @@ class StationController(private val stationService: StationService) {
     @AdminEndpoint
     fun deleteStation(@PathVariable("eventId") eventId: Long, @PathVariable("stationId") stationId: Long) {
         stationService.deleteStation(stationId, eventId)
+    }
+    @Operation(summary = "Read all stations", security = [SecurityRequirement(name = "basicAuth")])
+    @GetMapping("{stationId}/view", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun getStationView(@PathVariable("eventId") eventId: Long, @PathVariable("stationId") stationId: Long): List<OrderIngredientDTO> {
+        return  stationService.getStationView(stationId, eventId)
+    }
+
+    @Operation(summary = "Read all stations", security = [SecurityRequirement(name = "basicAuth")])
+    @PostMapping("{stationId}/view", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun processIngredient(@PathVariable("eventId") eventId: Long, @PathVariable("stationId") stationId: Long, @Valid @RequestBody request: OrderIngredientUpdateDTO): OrderIngredientDTO {
+        return stationService.processIngredient(eventId, stationId, request)
     }
 }

@@ -42,4 +42,18 @@ data class Event(
 
     @OneToMany(mappedBy = "event")
     val oderMenu: Set<OrderMenu>? = HashSet()
-)
+){
+    override fun hashCode(): Int = id?.hashCode() ?: 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Event) return false
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (password != other.password) return false
+        if (numberOfTables != other.numberOfTables) return false
+
+        return true
+    }
+}

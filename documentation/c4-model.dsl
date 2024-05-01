@@ -19,7 +19,7 @@ workspace "Simon Says" "This workspace illustrates the software system designed 
 
 
         kitchenStaff -> kitchenDisplay "Views and completes tasks using"
-        webAppBackend -> database "Reads from and writes to" "SQL"
+        webAppBackend -> database "Reads from and writes to" "JPA"
         kitchenDisplay -> webAppBackend "Makes API calls to" "REST"
         adminDashboard -> webAppBackend "Makes API calls to" "REST"
         waiterView -> webAppBackend "Makes API calls to" "REST"
@@ -35,9 +35,9 @@ workspace "Simon Says" "This workspace illustrates the software system designed 
         }
 
         printerSystem = softwareSystem "Printer" {
-            description "Prints receipts for guests and for the kitchen"
+            description "Prints receipts for easy handling in the kitchen."
             tags "External"
-            printer1 = container "Printer Container"
+            printer1 = container "Printer1" "Prints receipts for easy handling in the kitchen."
 
         }
         printServer -> printer1 "Sends print jobs to" "IPP"
@@ -61,17 +61,14 @@ workspace "Simon Says" "This workspace illustrates the software system designed 
             element "Database" {
                 shape Cylinder
             }
-            element "Tablet" {
+            element "Tablet"{
                 shape WebBrowser
             }
-            element "Smartphone" {
+            element "Smartphone"{
                 shape MobileDeviceLandscape
             }
-            element "Dashboard" {
+            element "Dashboard"{
                 shape WebBrowser
-            }
-            element "Printer Container" {
-
             }
         }
         theme default

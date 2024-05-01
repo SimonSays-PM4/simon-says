@@ -1,7 +1,6 @@
 package ch.zhaw.pm4.simonsays.api.controller
 
-import ch.zhaw.pm4.simonsays.api.types.OrderCreateDTO
-import ch.zhaw.pm4.simonsays.api.types.OrderDTO
+import ch.zhaw.pm4.simonsays.api.types.*
 import ch.zhaw.pm4.simonsays.service.OrderService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -39,22 +38,22 @@ class OrderController(
     @Operation(summary = "update order ingredient state", security = [SecurityRequirement(name = "basicAuth")])
     @PutMapping("ingredient/{orderIngredientId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun updateOrderIngredientState(@PathVariable("eventId") eventId: Long, @PathVariable("orderIngredientId") orderIngredientId: Long) {
-        orderService.updateOrderIngredientState(orderIngredientId)
+    fun updateOrderIngredientState(@PathVariable("eventId") eventId: Long, @PathVariable("orderIngredientId") orderIngredientId: Long): OrderIngredientDTO {
+        return orderService.updateOrderIngredientState(eventId, orderIngredientId)
     }
 
     @Operation(summary = "update order menu item state", security = [SecurityRequirement(name = "basicAuth")])
     @PutMapping("menuitem/{orderMenuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun updateOrderMenuItemState(@PathVariable("eventId") eventId: Long, @PathVariable("orderMenuItemId") orderMenuItemId: Long) {
-        orderService.updateOrderMenuItemState(orderMenuItemId)
+    fun updateOrderMenuItemState(@PathVariable("eventId") eventId: Long, @PathVariable("orderMenuItemId") orderMenuItemId: Long): OrderMenuItemDTO {
+        return orderService.updateOrderMenuItemState(eventId, orderMenuItemId)
     }
 
     @Operation(summary = "update order menu state", security = [SecurityRequirement(name = "basicAuth")])
     @PutMapping("menu/{orderMenuId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun updateOrderMenuState(@PathVariable("eventId") eventId: Long, @PathVariable("orderMenuId") orderMenuId: Long) {
-        orderService.updateOrderMenuState(orderMenuId)
+    fun updateOrderMenuState(@PathVariable("eventId") eventId: Long, @PathVariable("orderMenuId") orderMenuId: Long): OrderMenuDTO {
+        return orderService.updateOrderMenuState(eventId, orderMenuId)
     }
 
 }
