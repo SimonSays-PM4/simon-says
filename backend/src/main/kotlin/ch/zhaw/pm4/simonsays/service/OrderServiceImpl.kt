@@ -6,6 +6,8 @@ import ch.zhaw.pm4.simonsays.entity.*
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.exception.ValidationException
 import ch.zhaw.pm4.simonsays.repository.*
+import org.apache.commons.lang3.mutable.Mutable
+import org.springframework.data.domain.Sort.Order
 import org.springframework.stereotype.Service
 
 @Service
@@ -45,6 +47,45 @@ class OrderServiceImpl(
 
     override fun getOrderIngredientByIngredientIds(ingredientIds: List<Long>): List<OrderIngredient> {
         return orderIngredientRepository.findAllByIngredientIdInAndStateEquals(ingredientIds, State.IN_PROGRESS)
+    }
+
+    override fun getOrderMenuItems(eventId: Long, orderId: Long): MutableList<OrderMenuItem> {
+        val menuItems: MutableList<OrderMenuItem> = orderMenuItemRepository.findAllByStateEqualsAndOrder_IdEqualsAndOrderMenuEquals(State.IN_PROGRESS, orderId, null)
+        val processedMenuItems: MutableList<OrderMenuItem> = mutableListOf()
+        menuItems.forEach { orderMenuItem ->
+            var allIngredientsComplete = true
+            orderMenuItem.orderIngredients.forEach { orderIngredient ->
+                if(orderIngredient.state != State.DONE) {
+                    allIngredientsComplete = false
+                }
+            }
+            if(allIngredientsComplete) {
+                processedMenuItems.add(orderMenuItem)
+            }
+        }
+        return processedMenuItems
+    }
+
+    override fun getOrderMenus(eventId: Long, orderId: Long): MutableList<OrderMenu> {
+        val menus = orderMenuRepository.findAllByStateEqualsAndOrder_IdEquals(State.IN_PROGRESS, orderId)
+        val processedMenus: MutableList<OrderMenu> = mutableListOf()
+        menus.forEach { orderMenu ->
+            var menuReady = true
+            orderMenu.orderMenuItems.forEach {orderMenuItem ->
+                orderMenuItem.orderIngredients.forEach { orderIngredient ->
+                    if(orderIngredient.state != State.DONE) {
+                        menuReady = false
+                    }
+                }
+            }
+
+            if(menuReady) {
+                processedMenus.add(orderMenu)
+            }
+
+        }
+
+        return processedMenus
     }
 
     override fun updateOrderIngredientState(eventId: Long, orderIngredientId: Long): OrderIngredientDTO {

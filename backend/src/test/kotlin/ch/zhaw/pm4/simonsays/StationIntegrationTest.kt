@@ -2,10 +2,7 @@ package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.types.StationCreateUpdateDTO
-import ch.zhaw.pm4.simonsays.entity.Event
-import ch.zhaw.pm4.simonsays.entity.Ingredient
-import ch.zhaw.pm4.simonsays.entity.State
-import ch.zhaw.pm4.simonsays.entity.Station
+import ch.zhaw.pm4.simonsays.entity.*
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import jakarta.transaction.Transactional
 import org.hamcrest.CoreMatchers
@@ -554,6 +551,26 @@ class StationIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
+    fun `Creating an assembly station works`() {
+        val station = getCreateUpdateStationDTO(assemblyStation = true, ingredients = null)
+        mockMvc.put(getStationUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(station)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        jsonPath("$.name", CoreMatchers.equalTo(station.name))
+                        jsonPath("$.assemblyStation", CoreMatchers.equalTo(station.assemblyStation))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
     fun `Test marking ingredient done for another station should fail`() {
         val testingredient1 = ingredientFactory.createIngredient("testingredient1")
         val testingredient2 = ingredientFactory.createIngredient("testingredient2")
@@ -609,4 +626,146 @@ class StationIntegrationTest : IntegrationTest() {
                 }
     }
 
+    @Test
+    @Transactional
+    fun `Display error when assembly view is accessed before assembly station exists`() {
+        val expectedReturn = ErrorMessageModel(
+                status = HttpStatus.NOT_FOUND.value(),
+                message = "The event with id: ${testEvent.id} does not yet have an assembly station",
+                errors = null
+        )
+        mockMvc.get(getStationUrl(testEvent.id!!) + "/assembly") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+        }
+            .andDo { print() }
+            .andExpect {
+                status { isNotFound() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(expectedReturn))
+                }
+        }
+    }
+
+    @Test
+    @Transactional
+    fun `Test assembly station should return nothing when nothing is ready`() {
+        stationFactory.createStation(assemblyStation = true, eventId = testEvent.id!!)
+        val order: FoodOrder = orderFactory.createOrder(eventId = testEvent.id!!)
+        val testingredient1 = ingredientFactory.createIngredient("testingredient1")
+        val orderingredient1 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                name = testingredient1.name,
+                ingredientId = testingredient1.id!!,
+                state = State.IN_PROGRESS
+        )
+        val menuItem = menuItemFactory.createMenuItem(
+                eventId = testEvent.id!!,
+                ingredients = listOf(
+                        testingredient1,
+                )
+        )
+        orderMenuItemFactory.createOrderMenuItem(
+                eventId = testEvent.id!!,
+                menuItemId = menuItem.id!!,
+                order = order,
+                orderIngredients = mutableListOf(
+                        orderingredient1,
+                )
+        )
+        mockMvc.get(getStationUrl(testEvent.id!!) + "/assembly") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        jsonPath("$", IsCollectionWithSize.hasSize<Any>(0))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
+    fun `Test assembly Station displays the correct amount of outstanding orders`() {
+        stationFactory.createStation(assemblyStation = true, eventId = testEvent.id!!)
+        val order: FoodOrder = orderFactory.createOrder(eventId = testEvent.id!!)
+        val testingredient1 = ingredientFactory.createIngredient("testingredient1")
+        val orderingredient1 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                name = testingredient1.name,
+                ingredientId = testingredient1.id!!,
+                state = State.DONE
+        )
+        val menuItem = menuItemFactory.createMenuItem(
+                eventId = testEvent.id!!,
+                ingredients = listOf(
+                        testingredient1,
+                )
+        )
+        orderMenuItemFactory.createOrderMenuItem(
+                eventId = testEvent.id!!,
+                menuItemId = menuItem.id!!,
+                order = order,
+                orderIngredients = mutableListOf(
+                        orderingredient1,
+                )
+        )
+        mockMvc.get(getStationUrl(testEvent.id!!) + "/assembly") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+        }
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    jsonPath("$", IsCollectionWithSize.hasSize<Any>(1))
+                }
+            }
+    }
+
+    /*@Test
+    @Transactional
+    fun `Test assembly station displays the correct information`() {
+        stationFactory.createStation(assemblyStation = true, eventId = testEvent.id!!)
+        val order: FoodOrder = orderFactory.createOrder(eventId = testEvent.id!!)
+        val testingredient1 = ingredientFactory.createIngredient("testingredient1")
+        val orderingredient1 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                name = testingredient1.name,
+                ingredientId = testingredient1.id!!,
+                state = State.DONE
+        )
+        val menuItem = menuItemFactory.createMenuItem(
+                eventId = testEvent.id!!,
+                ingredients = listOf(
+                        testingredient1,
+                )
+        )
+        orderMenuItemFactory.createOrderMenuItem(
+                eventId = testEvent.id!!,
+                menuItemId = menuItem.id!!,
+                order = order,
+                orderIngredients = mutableListOf(
+                        orderingredient1,
+                )
+        )
+
+        mockMvc.get(getStationUrl(testEvent.id!!) + "/assembly") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(order))
+                    }
+                }
+    }*/
 }
