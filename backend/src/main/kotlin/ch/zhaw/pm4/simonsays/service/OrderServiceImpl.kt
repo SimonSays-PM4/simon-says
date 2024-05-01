@@ -16,45 +16,17 @@ class OrderServiceImpl(
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuItemRepository: OrderMenuItemRepository,
     private val eventService: EventService,
-    private val ingredientService: IngredientService,
     private val ingredientRepository: IngredientRepository,
     private val menuItemRepository: MenuItemRepository,
     private val menuRepository: MenuRepository
 ) : OrderService {
     override fun createOrder(order: OrderCreateDTO, eventId: Long): OrderDTO {
         val event = eventService.getEvent(eventId)
-        val menus = menuRepository.findAllByEventId(eventId)
-        val menuItems = menuItemRepository.findAllByEventId(eventId)
-        val ingredients = ingredientRepository.findAllByEventId(eventId)
-        var totalPrice = 0.0
 
         validateTableNumber(order, event)
+        validateOrderHasItems(order)
 
-        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, setOf(), setOf(), totalPrice)
-        order.menus?.forEach { menu ->
-            validateMenu(menu)
-            val menuToSave = orderMapper.mapMenuDtoToOrderMenu(
-                menu,
-                event,
-                menus.find { it.id == menu.id } ?: throw ResourceNotFoundException("Menu not found with ID: ${menu.id}")
-            )
-            menu.menuItems.forEach { menuItem ->
-                validateMenuItem(menuItem)
-                menuToSave.addOrderMenuItem(prepareMenuItemForSave(menuItem, menuItems, ingredients, event))
-            }
-            totalPrice = totalPrice.plus(menuToSave.price)
-            orderToSave.addMenu(menuToSave)
-        }
-
-        order.menuItems?.forEach { menuItem ->
-            validateMenuItem(menuItem)
-            val menuItemToSave = prepareMenuItemForSave(menuItem, menuItems, ingredients, event)
-            totalPrice = totalPrice.plus(menuItemToSave.price)
-            orderToSave.addMenuItem(menuItemToSave)
-        }
-
-        orderToSave.totalPrice = totalPrice
-        val savedOrder = orderRepository.save(orderToSave)
+        val savedOrder = orderRepository.save(prepareOrderForSave(order, event))
         return orderMapper.mapOrderToOrderDTO(savedOrder)
     }
 
@@ -140,6 +112,12 @@ class OrderServiceImpl(
         }
     }
 
+    private fun validateOrderHasItems(order: OrderCreateDTO) {
+        if (order.menuItems.isNullOrEmpty() && order.menus.isNullOrEmpty()) {
+            throw ValidationException("Order must have at least one menu or menu item")
+        }
+    }
+
     private fun validateMenuItem(menuItem: MenuItemDTO) {
         if (menuItem.ingredients.isEmpty()) {
             throw ValidationException("Menu item must have at least one ingredient")
@@ -150,6 +128,39 @@ class OrderServiceImpl(
         if (menu.menuItems.isEmpty()) {
             throw ValidationException("Menu must have at least one menu item")
         }
+    }
+
+    private fun prepareOrderForSave(order: OrderCreateDTO, event: EventDTO): FoodOrder{
+        val menus = menuRepository.findAllByEventId(event.id!!)
+        val menuItems = menuItemRepository.findAllByEventId(event.id)
+        val ingredients = ingredientRepository.findAllByEventId(event.id)
+        var totalPrice = 0.0
+
+        val orderToSave = orderMapper.mapOrderDtoToOrder(order, event, listOf(), listOf(), totalPrice)
+        order.menus?.forEach { menu ->
+            validateMenu(menu)
+            val menuToSave = orderMapper.mapMenuDtoToOrderMenu(
+                menu,
+                event,
+                menus.find { it.id == menu.id } ?: throw ResourceNotFoundException("Menu not found with ID: ${menu.id}")
+            )
+            menu.menuItems.forEach { menuItem ->
+                validateMenuItem(menuItem)
+                menuToSave.addOrderMenuItem(prepareMenuItemForSave(menuItem, menuItems, ingredients, event))
+            }
+            totalPrice = totalPrice.plus(menuToSave.price)
+            orderToSave.addMenu(menuToSave)
+        }
+
+        order.menuItems?.forEach { menuItem ->
+            validateMenuItem(menuItem)
+            val menuItemToSave = prepareMenuItemForSave(menuItem, menuItems, ingredients, event)
+            totalPrice = totalPrice.plus(menuItemToSave.price)
+            orderToSave.addMenuItem(menuItemToSave)
+        }
+
+        orderToSave.totalPrice = totalPrice
+        return orderToSave
     }
 
 }

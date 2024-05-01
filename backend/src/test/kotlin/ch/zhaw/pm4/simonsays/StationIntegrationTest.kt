@@ -420,7 +420,7 @@ class StationIntegrationTest : IntegrationTest() {
                 eventId = testEvent.id!!,
                 menuItemId = menuItem.id!!,
                 order = order,
-                orderIngredients = mutableSetOf(
+                orderIngredients = mutableListOf(
                         orderingredient1,
                         orderingredient2
                 )
@@ -478,7 +478,7 @@ class StationIntegrationTest : IntegrationTest() {
                 eventId = testEvent.id!!,
                 menuItemId = menuItem.id!!,
                 order = order,
-                orderIngredients = mutableSetOf(
+                orderIngredients = mutableListOf(
                         orderingredient1,
                         orderingredient2
                 )
@@ -524,7 +524,7 @@ class StationIntegrationTest : IntegrationTest() {
                 eventId = testEvent.id!!,
                 menuItemId = menuItem.id!!,
                 order = order,
-                orderIngredients = mutableSetOf(
+                orderIngredients = mutableListOf(
                         orderingredient1,
                 )
         )
@@ -580,7 +580,7 @@ class StationIntegrationTest : IntegrationTest() {
                 eventId = testEvent.id!!,
                 menuItemId = menuItem.id!!,
                 order = order,
-                orderIngredients = mutableSetOf(
+                orderIngredients = mutableListOf(
                         orderingredient1,
                         orderingredient2
                 )

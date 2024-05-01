@@ -21,7 +21,7 @@ data class OrderMenuItem(
     var menuItem: MenuItem,
 
     @OneToMany(mappedBy = "orderMenuItem", cascade = [CascadeType.ALL])
-    var orderIngredients: MutableSet<OrderIngredient>,
+    var orderIngredients: MutableList<OrderIngredient>,
 
     @Column
     var price: Double,
@@ -51,6 +51,7 @@ data class OrderMenuItem(
         if (name != other.name) return false
         if (state != other.state) return false
         if (event.id != other.event.id) return false
+        if (order?.id != other.order?.id) return false
 
         return true
     }

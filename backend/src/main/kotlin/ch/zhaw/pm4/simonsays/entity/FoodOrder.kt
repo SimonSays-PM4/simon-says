@@ -14,10 +14,10 @@ data class FoodOrder (
     var event: Event,
 
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL])
-    val menus: MutableSet<OrderMenu>? = HashSet(),
+    val menus: MutableList<OrderMenu>? = mutableListOf(),
 
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL])
-    var menuItems: MutableSet<OrderMenuItem>? = HashSet(),
+    var menuItems: MutableList<OrderMenuItem>? = mutableListOf(),
 
     @Column(nullable = false)
     var state: State,
