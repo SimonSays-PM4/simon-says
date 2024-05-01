@@ -271,7 +271,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                         </div>
 
                         <div className="w-full border-t-2">
-                            <p className="font-bold">Preis: {(selectedMenus.reduce((sum, menu) => sum + menu.price, 0) + (selectedMenuItems.reduce((sum, menuItem) => sum + menuItem.price, 0))).toFixed(2)} CHF</p>
+                            <p className="font-bold">{`Preis: ${(selectedMenus.reduce((sum, menu) => sum + menu.price, 0) + (selectedMenuItems.reduce((sum, menuItem) => sum + menuItem.price, 0))).toFixed(2)} CHF`}</p>
                         </div>
 
                         <div className="flex min-h-[60px] items-end ml-auto">
