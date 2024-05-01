@@ -10,7 +10,7 @@ type IDataTableProps<T> = {
     onCreateClick: () => void,
 }
 
-export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows, title, onCreateClick}: IDataTableProps<DataType>) => {
+export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows, title, onCreateClick }: IDataTableProps<DataType>) => {
     return (
         <div className="overflow-hidden rounded-lg border border-default-200">
             <div className="overflow-hidden p-6 ">
@@ -28,45 +28,55 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                     <div className="overflow-hidden">
                         <table className="min-w-full divide-y divide-default-200">
                             <thead className="bg-default-400/10">
-                            <tr>
-                                {columns.map((column) => {
-
-                                    return column.type == "column" ? <th
-                                        key={column.key as string}
-                                        scope="col"
-                                        className="whitespace-nowrap px-5 py-3 text-start text-xs font-medium uppercase text-default-500"
-                                    >
-                                        {column.name}
-                                    </th>:<></>
-                                })}
-                                <th></th>
-                            </tr>
+                                <tr>
+                                    {columns.map((column) => {
+                                        return column.type == "column" ? <th
+                                            key={column.key as string}
+                                            scope="col"
+                                            className="whitespace-nowrap px-5 py-3 text-start text-xs font-medium uppercase text-default-500"
+                                        >
+                                            {column.name}
+                                        </th> : <></>
+                                    })}
+                                    <th></th>
+                                </tr>
                             </thead>
                             <tbody className="divide-y divide-default-200">
-                            {rows.length>0 ? rows.map((row, idx) => {
-                                return (
-                                    <tr key={idx}>
-                                        {columns.map((column, idx) => {
-                                            const tableData = row[column.key] as string;
+                                {rows.length > 0
+                                    ? rows.map((row, idx) => {
+                                        return (
+                                            <tr key={idx}>
+                                                {columns.map((column, idx) => {
+                                                    const tableData = row[column.key] as string;
 
-                                            return ( column.type == "column" ?
-                                                    <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
-                                                        {tableData}
-                                                    </td>:<></>
-                                            );
-                                        })}
+                                                    if (column.formatter) {
+                                                        return (
+                                                            <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
+                                                                {column.formatter(row)}
+                                                            </td>
+                                                        );
+                                                    }
+                                                    else {
+                                                        return (column.type == "column" ?
+                                                            <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
+                                                                {tableData}
+                                                            </td> : <></>
+                                                        );
+                                                    }
+                                                })}
 
-                                        <td className="flex min-h-[60px] items-end ml-auto">
-                                            {columns.filter((column)=> column.type=="action" && column.action).map((column) => {
-                                                // @ts-ignore
-                                                return <Button className="my-2 mx-2" buttonText={column.name} onClick={(()=> column.action(row))|| console.log}/>
-                                            })}
-                                        </td>
-                                    </tr>
-                                );
-                            }):<div className="whitespace-nowrap px-5 py-3 text-center text-sm text-default-800">
-                                No Items
-                            </div>}
+                                                <td className="flex min-h-[60px] items-end ml-auto">
+                                                    {columns.filter((column) => column.type == "action" && column.action).map((column) => {
+                                                        // @ts-ignore
+                                                        return <Button key={column.key} className="my-2 mx-2" buttonText={column.name} onClick={(() => column.action(row)) || console.log} />
+                                                    })}
+                                                </td>
+                                            </tr>
+                                        );
+                                    }) :
+                                    (<div className="whitespace-nowrap px-5 py-3 text-center text-sm text-default-800">
+                                        No Items
+                                    </div>)}
                             </tbody>
                         </table>
                     </div>

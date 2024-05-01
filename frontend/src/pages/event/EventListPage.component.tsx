@@ -27,6 +27,10 @@ export const EventListPageComponent: React.FC = () => {
         navigate("../" + row.id + "/ingredients")
     }
 
+    const onClickOrders = (row: EventCreateUpdateDTO) => {
+        navigate("../../" + row.id + "/order")
+    }
+
     const onDeleteClick = (row: EventDTO) => {
         if (row.id) {
             eventActions.setEventToDelete(row);
@@ -65,15 +69,21 @@ export const EventListPageComponent: React.FC = () => {
         },
         {
             key: "id",
-            name: "Menu",
+            name: "Menus",
             type: "action",
             action: onClickMenu
         },
         {
             key: "id",
-            name: "Ingredients",
+            name: "Zutaten",
             type: "action",
             action: onClickIngredients
+        },
+        {
+            key: "id",
+            name: "Bestellungen",
+            type: "action",
+            action: onClickOrders
         }
     ];
 

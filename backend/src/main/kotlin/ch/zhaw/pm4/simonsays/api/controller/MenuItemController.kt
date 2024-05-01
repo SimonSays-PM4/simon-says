@@ -17,14 +17,12 @@ class MenuItemController(private val menuItemService: MenuItemService) {
     @Operation(summary = "Read all menu items", security = [SecurityRequirement(name = "basicAuth")])
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    @AdminEndpoint
     fun getMenuItems(@PathVariable("eventId") eventId: Long): List<MenuItemDTO> {
         return  menuItemService.listMenuItems(eventId)
     }
     @Operation(summary = "Retrieve a single menu item", security = [SecurityRequirement(name = "basicAuth")])
     @GetMapping("{menuItemId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    @AdminEndpoint
     fun getMenuItem(@PathVariable("eventId") eventId: Long, @PathVariable("menuItemId") menuItemID: Long ): MenuItemDTO {
         return menuItemService.getMenuItem(menuItemID, eventId)
     }

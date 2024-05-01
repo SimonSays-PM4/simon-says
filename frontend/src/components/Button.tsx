@@ -26,6 +26,7 @@ export const Button: React.FC<IButtonProps> = ({
             className={classNames("w-fit min-h-[36px] flex items-center gap-[4px] px-[12px] text-[16px] leading-[22px] tracking-[0.4px] font-bold rounded-[6px]",
                 "hover:shadow-md hover:shadow-shadow disabled:hover:shadow-none disabled:bg-disabled disabled:text-disabledfont stroke-primaryfont disabled:stroke-disabledfont focus:shadow-lg focus:border-[#B7B7B7] border border-primary disabled:border-disabled",
                 className ?? "",
+                disabled ? "bg-slate-100 cursor-not-allowed border-slate-100" : "",
                 buttonType === ButtonType.Secondary ? "bg-white text-[#990000]" : "bg-primary text-white hover:bg-hoverprimary")}
             type={type}
             onClick={onClick}

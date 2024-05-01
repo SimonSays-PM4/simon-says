@@ -28,7 +28,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should create an ingredient", () => {
-        cy.contains("button", "Ingredients").click();
+        cy.contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -45,7 +45,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should load newly created ingredient", () => {
-        cy.contains("button", "Ingredients").click();
+        cy.contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -54,7 +54,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should update newly created ingredient", () => {
-        cy.contains("button", "Ingredients").click();
+        cy.contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -74,7 +74,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should load updated ingredient", () => {
-        cy.contains("button", "Ingredients").click();
+        cy.contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -83,7 +83,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should delete newly created ingredient", () => {
-        cy.contains("button", "Ingredients").click();
+        cy.contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -102,7 +102,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should not load newly created ingredient anymore", () => {
-        cy.contains("button", "Ingredients").click();
+        cy.contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 

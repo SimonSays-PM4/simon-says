@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.types.StationCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.Ingredient
+import ch.zhaw.pm4.simonsays.entity.State
 import ch.zhaw.pm4.simonsays.entity.Station
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import jakarta.transaction.Transactional
@@ -19,6 +20,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
@@ -385,6 +387,221 @@ class StationIntegrationTest : IntegrationTest() {
                 .andDo { print() }
                 .andExpect {
                     status { isNotFound() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedReturn))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
+    fun `Test creating an order should list the correct ingredients at the station`() {
+        val testingredient1 = ingredientFactory.createIngredient("testingredient1", event = testEvent)
+        val testingredient2 = ingredientFactory.createIngredient("testingredient2", event = testEvent)
+        val orderingredient1 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                ingredientId = testingredient1.id!!
+        )
+        val orderingredient2 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                ingredientId = testingredient2.id!!
+        )
+        val order = orderFactory.createOrder(eventId = testEvent.id!!)
+        val station = stationFactory.createStation(ingredients = listOf(testingredient1, testingredient2), eventId = testEvent.id!!)
+        val menuItem = menuItemFactory.createMenuItem(
+                eventId = testEvent.id!!,
+                ingredients = listOf(
+                    testingredient1,
+                    testingredient2
+                )
+        )
+        orderMenuItemFactory.createOrderMenuItem(
+                eventId = testEvent.id!!,
+                menuItemId = menuItem.id!!,
+                order = order,
+                orderIngredients = mutableListOf(
+                        orderingredient1,
+                        orderingredient2
+                )
+        )
+        val expectedReturn = listOf(
+                getOrderIngredientDTO(
+                        id = orderingredient1.id!!,
+                        name = orderingredient1.name,
+                        state = orderingredient1.state
+                ),
+                getOrderIngredientDTO(
+                        id = orderingredient2.id!!,
+                        name = orderingredient2.name,
+                        state = orderingredient2.state
+                )
+        )
+        mockMvc.get(getStationUrl(testEvent.id!!) + "/${station.id}/view") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedReturn))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
+    fun `Test creating an order with multiple involved stations shows correct view for station`() {
+        val testingredient1 = ingredientFactory.createIngredient("testingredient1", event = testEvent)
+        val testingredient2 = ingredientFactory.createIngredient("testingredient2", event = testEvent)
+        val orderingredient1 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                ingredientId = testingredient1.id!!
+        )
+        val orderingredient2 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                ingredientId = testingredient2.id!!
+        )
+        val order = orderFactory.createOrder(eventId = testEvent.id!!)
+        val station = stationFactory.createStation(ingredients = listOf(testingredient1), eventId = testEvent.id!!)
+        val station1 = stationFactory.createStation(ingredients = listOf(testingredient2), eventId = testEvent.id!!)
+        val menuItem = menuItemFactory.createMenuItem(
+                eventId = testEvent.id!!,
+                ingredients = listOf(
+                        testingredient1,
+                        testingredient2
+                )
+        )
+        orderMenuItemFactory.createOrderMenuItem(
+                eventId = testEvent.id!!,
+                menuItemId = menuItem.id!!,
+                order = order,
+                orderIngredients = mutableListOf(
+                        orderingredient1,
+                        orderingredient2
+                )
+        )
+        val expectedReturn = listOf(
+                getOrderIngredientDTO(
+                        id = orderingredient1.id!!,
+                        name = orderingredient1.name,
+                        state = orderingredient1.state
+                )
+        )
+        mockMvc.get(getStationUrl(testEvent.id!!) + "/${station.id}/view") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(expectedReturn))
+                    }
+                }
+    }
+
+    @Test
+    @Transactional
+    fun `Marking Ingredients as complete at an assembly station works`() {
+        val testingredient1 = ingredientFactory.createIngredient(name = "testingredient1", event = testEvent)
+        val orderingredient1 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                ingredientId = testingredient1.id!!
+        )
+        val order = orderFactory.createOrder(eventId = testEvent.id!!)
+        val station = stationFactory.createStation(ingredients = listOf(testingredient1), eventId = testEvent.id!!)
+        val menuItem = menuItemFactory.createMenuItem(
+                eventId = testEvent.id!!,
+                ingredients = listOf(
+                        testingredient1,
+                )
+        )
+        orderMenuItemFactory.createOrderMenuItem(
+                eventId = testEvent.id!!,
+                menuItemId = menuItem.id!!,
+                order = order,
+                orderIngredients = mutableListOf(
+                        orderingredient1,
+                )
+        )
+        val expectedReturn = getOrderIngredientDTO(
+                id = orderingredient1.id!!,
+                name = orderingredient1.name,
+                state = State.DONE
+        )
+        mockMvc.post(getStationUrl(testEvent.id!!) + "/${station.id}/view") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(getOrderIngredientDTO(
+                    id = orderingredient1.id!!,
+                    name = orderingredient1.name,
+                    state = orderingredient1.state
+            ))
+        }
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(expectedReturn))
+                }
+            }
+    }
+
+    @Test
+    @Transactional
+    fun `Test marking ingredient done for another station should fail`() {
+        val testingredient1 = ingredientFactory.createIngredient("testingredient1")
+        val testingredient2 = ingredientFactory.createIngredient("testingredient2")
+        val orderingredient1 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                name = testingredient1.name,
+                ingredientId = testingredient1.id!!
+        )
+        val orderingredient2 = orderIngredientFactory.createOrderIngredient(
+                eventId = testEvent.id!!,
+                name = testingredient2.name,
+                ingredientId = testingredient2.id!!
+        )
+        val order = orderFactory.createOrder(eventId = testEvent.id!!)
+        val station1 = stationFactory.createStation(ingredients = listOf(testingredient1), eventId = testEvent.id!!)
+        val menuItem = menuItemFactory.createMenuItem(
+                eventId = testEvent.id!!,
+                ingredients = listOf(
+                        testingredient1,
+                        testingredient2
+                )
+        )
+        orderMenuItemFactory.createOrderMenuItem(
+                eventId = testEvent.id!!,
+                menuItemId = menuItem.id!!,
+                order = order,
+                orderIngredients = mutableListOf(
+                        orderingredient1,
+                        orderingredient2
+                )
+        )
+        val expectedReturn = ErrorMessageModel(
+                status = HttpStatus.BAD_REQUEST.value(),
+                message = "This station is not allowed to update the state of the ingredient with the id: ${orderingredient2.id} (${orderingredient2.name})",
+                errors = null
+        )
+        mockMvc.post(getStationUrl(testEvent.id!!) + "/${station1.id}/view") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(getOrderIngredientDTO(
+                    id = orderingredient2.id!!,
+                    name = orderingredient2.name,
+                    state = orderingredient2.state
+            ))
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isBadRequest() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
                         json(objectMapper.writeValueAsString(expectedReturn))

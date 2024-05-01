@@ -62,6 +62,7 @@ export const MenuCreatePageComponent: React.FC = () => {
                             control={formControl}
                             render={({ field: { onChange, value, ref } }) => (
                                 <Select
+                                    id={"menuItemSelector"}
                                     isMulti
                                     ref={ref}
                                     options={menuItemOptions}
