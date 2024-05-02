@@ -1,0 +1,9 @@
+# Configured Code Owners for the repository
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
+
+/.github/ @simonstumpf
+/backend/ @larawaespe @M-Weirauch
+/documentation/ @michaguillet
+/frontend/ @koller-patrick @leoantferrari
+/helm/ @simonstumpf
+/printer/ @mcluky

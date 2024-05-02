@@ -76,6 +76,9 @@ The local development environment can be accessed at the following URLs:
 - **Waiter View**: http://localhost:3000/waiter (tbd)
 - **Backend Swagger UI**: http://localhost:8080/swagger-ui/index.html
 
+Staging environment can be accessed at the following URLs:
+- https://simonsays-stage.pm4.init-lab.ch/
+
 ## Contributing
 
 This is an opensource project and we welcome contributions.

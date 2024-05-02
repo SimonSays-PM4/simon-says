@@ -28,7 +28,7 @@ describe("Login", () => {
     });
 
     it("should create a ingredient", () => {
-        cy.contains("button", "Ingredients").click();
+        cy.contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -43,7 +43,6 @@ describe("Login", () => {
 
         cy.url().should("include", "/ingredients");
     });
-
 
     it("should create a menuItem", () => {
         cy.contains("button", "Menu").click();

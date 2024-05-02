@@ -69,7 +69,7 @@ export const EventListPageComponent: React.FC = () => {
         },
         {
             key: "id",
-            name: "Menu",
+            name: "Menus",
             type: "action",
             action: onClickMenu
         },
@@ -81,7 +81,7 @@ export const EventListPageComponent: React.FC = () => {
         },
         {
             key: "id",
-            name: "Bestellugen",
+            name: "Bestellungen",
             type: "action",
             action: onClickOrders
         }
