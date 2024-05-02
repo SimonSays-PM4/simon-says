@@ -44,24 +44,22 @@ describe("Login", () => {
         cy.url().should("include", "/ingredients");
     });
 
-    it("should create a menuItem", () => {
-        cy.contains("button", "Menu").click();
+    it("should create a station", () => {
+        cy.contains("button", "Station").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menu Items").should("exist");
+        cy.get("h2").contains("Stations").should("exist");
 
         cy.contains("button", "Erstellen").click();
 
-        cy.url().should("include", "/menuItem/create");
+        cy.url().should("include", "/station/create");
 
         cy.get("#name").type("Test-Menu-Item");
-        cy.get("#price").type("1.00");
         cy.get("#ingredientSelector").type("Test-Ingredient\n");
-
         cy.contains("button", "Erstellen").click();
 
         cy.wait(500);
 
-        cy.url().should("include", "/menuItem");
+        cy.url().should("include", "/station");
     });
 });
