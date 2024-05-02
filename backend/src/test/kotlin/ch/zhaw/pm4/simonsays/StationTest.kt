@@ -71,7 +71,7 @@ class StationTest {
         orderRepository = mockk(relaxed = true)
 
         // Construct the service with the mocked dependencies
-        stationService = StationServiceImpl(
+        stationService = StationService(
                 stationRepository,
                 StationMapperImpl(),
                 eventService,
