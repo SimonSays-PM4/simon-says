@@ -30,5 +30,5 @@ class PrinterProperties {
 
     var receiptFooter: String? = null
 
-    var receiptMaxCharactersPerLine: Int = 48 // default value if not set
+    var receiptMaxCharactersPerLine: Int = 49 // default value if not set
 }

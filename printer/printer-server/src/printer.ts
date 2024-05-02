@@ -1,8 +1,9 @@
-import { PrinterTypes, ThermalPrinter } from "node-thermal-printer";
+import { PrinterTypes } from "node-thermal-printer";
 import arp from "@network-utils/arp-lookup";
 import { PrintQueueJobDto } from "printer-api-lib/src/dtos";
 import os from "os";
 import Arpping from "arpping";
+import ThermalPrinter from "./thermal-printer-extension";
 
 const networkScanMaxTimeoutInS = 10;
 
@@ -102,7 +103,7 @@ export class Printer {
         // print header if available
         if (printJob.header) {
             this.thermalPrinter!.alignCenter();
-            this.thermalPrinter!.println(printJob.header);
+            this.thermalPrinter!.printWithCustomLineBreaks(printJob.header);
             this.thermalPrinter!.alignLeft();
             this.thermalPrinter!.newLine();
         }
@@ -112,7 +113,7 @@ export class Printer {
             this.thermalPrinter!.alignCenter();
             this.thermalPrinter!.bold(true);
             this.thermalPrinter!.setTextQuadArea();
-            this.thermalPrinter!.println(printJob.title);
+            this.thermalPrinter!.printWithCustomLineBreaks(printJob.title);
             this.thermalPrinter!.setTextNormal();
             this.thermalPrinter!.bold(false);
             this.thermalPrinter!.alignLeft();
@@ -120,7 +121,8 @@ export class Printer {
         }
 
         // Print body
-        this.thermalPrinter!.println(printJob.body);
+        this.thermalPrinter!.alignLeft();
+        this.thermalPrinter!.printWithCustomLineBreaks(printJob.body);
         this.thermalPrinter!.newLine();
 
         // Print QR code if available
@@ -133,9 +135,8 @@ export class Printer {
 
         // Print footer if available
         if (printJob.footer) {
-            this.thermalPrinter!.newLine();
             this.thermalPrinter!.alignCenter();
-            this.thermalPrinter!.println(printJob.footer);
+            this.thermalPrinter!.printWithCustomLineBreaks(printJob.footer);
             this.thermalPrinter!.alignLeft();
         }
 
@@ -270,7 +271,7 @@ export class Printer {
                 return text;
             }
         }
-
+        
         let virtualPaper = "\n";
         if (printJob.base64PngLogoImage) {
             virtualPaper += center("<LOGO>");

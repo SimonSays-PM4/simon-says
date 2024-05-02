@@ -221,7 +221,7 @@ class PrinterService(
     }
 
     private fun createLineSeparator(length: Int = printerProperties.receiptMaxCharactersPerLine): String {
-        return "-".repeat(length)
+        return "-".repeat(length - 1) // minus one because of the line break character
     }
 
     private fun formatPriceWithStartPadding(price: Double): String {
