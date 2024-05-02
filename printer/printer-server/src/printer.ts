@@ -97,7 +97,6 @@ export class Printer {
             await this.thermalPrinter!.printImageBuffer(imageBuffer);
             this.thermalPrinter!.alignLeft();
             this.thermalPrinter!.newLine();
-            this.thermalPrinter!.newLine();
         }
 
         // print header if available
@@ -122,11 +121,11 @@ export class Printer {
 
         // Print body
         this.thermalPrinter!.println(printJob.body);
+        this.thermalPrinter!.newLine();
 
         // Print QR code if available
         if (printJob.qrCode) {
             this.thermalPrinter!.alignCenter();
-            this.thermalPrinter!.newLine();
             this.thermalPrinter!.printQR(printJob.qrCode);
             this.thermalPrinter!.alignLeft();
             this.thermalPrinter!.newLine();
@@ -135,7 +134,9 @@ export class Printer {
         // Print footer if available
         if (printJob.footer) {
             this.thermalPrinter!.newLine();
+            this.thermalPrinter!.alignCenter();
             this.thermalPrinter!.println(printJob.footer);
+            this.thermalPrinter!.alignLeft();
         }
 
         // Cut the paper and execute the print job
