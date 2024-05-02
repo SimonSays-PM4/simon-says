@@ -18,6 +18,8 @@ import { MenuItemPage } from "./pages/event/menu/MenuItemPage.component.tsx";
 import { MenuItemEditPage } from "./pages/event/menu/MenuItemEditPage.component.tsx";
 import { JoinPage } from "./pages/user/JoinPage.tsx";
 import { UserPage } from "./pages/user/UserPage.tsx";
+import {StationListPageComponent} from "./pages/station/StationListPage.component.tsx";
+import {StationEditPageComponent} from "./pages/station/StationEditPage.component.tsx";
 
 export default function App() {
     return (
@@ -46,6 +48,10 @@ export default function App() {
                             <Route path="/admin/:eventId/menu" element={<AuthorizedEventRoute activePageType={ActivePageType.MenuList}><MenuListPageComponent /></AuthorizedEventRoute>} />
                             <Route path="/admin/:eventId/menu/create" element={<AuthorizedEventRoute activePageType={ActivePageType.Menu}><MenuCreatePageComponent /></AuthorizedEventRoute>}>
                                 <Route path="/admin/:eventId/menu/create/:menuId" element={<AuthorizedEventRoute activePageType={ActivePageType.Menu}><MenuCreatePageComponent /></AuthorizedEventRoute>} />
+                            </Route>
+                            <Route path="/admin/:eventId/station" element={<AuthorizedEventRoute activePageType={ActivePageType.MenuList}><StationListPageComponent /></AuthorizedEventRoute>} />
+                            <Route path="/admin/:eventId/station/create" element={<AuthorizedEventRoute activePageType={ActivePageType.Menu}><StationEditPageComponent /></AuthorizedEventRoute>}>
+                                <Route path="/admin/:eventId/station/create/:stationId" element={<AuthorizedEventRoute activePageType={ActivePageType.Menu}><StationEditPageComponent /></AuthorizedEventRoute>} />
                             </Route>
                         </Route>
                     </Route>

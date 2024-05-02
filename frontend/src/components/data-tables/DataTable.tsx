@@ -28,18 +28,19 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                     <div className="overflow-hidden">
                         <table className="min-w-full divide-y divide-default-200">
                             <thead className="bg-default-400/10">
-                                <tr>
-                                    {columns.map((column) => {
-                                        return column.type == "column" ? <th
-                                            key={column.key as string}
-                                            scope="col"
-                                            className="whitespace-nowrap px-5 py-3 text-start text-xs font-medium uppercase text-default-500"
-                                        >
-                                            {column.name}
-                                        </th> : <></>
-                                    })}
-                                    <th></th>
-                                </tr>
+                            <tr>
+                                {columns.map((column) => {
+
+                                    return column.type == "column" || column.type == "boolean" ? <th
+                                        key={column.key as string}
+                                        scope="col"
+                                        className="whitespace-nowrap px-5 py-3 text-start text-xs font-medium uppercase text-default-500"
+                                    >
+                                        {column.name}
+                                    </th>:<></>
+                                })}
+                                <th></th>
+                            </tr>
                             </thead>
                             <tbody className="divide-y divide-default-200">
                                 {rows.length > 0
@@ -57,13 +58,14 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                                         );
                                                     }
                                                     else {
-                                                        return (column.type == "column" ?
-                                                            <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
-                                                                {tableData}
-                                                            </td> : <></>
+                                                        return (column.type == "column" || column.type == "boolean" ?
+                                                                <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
+                                                                    {column.type == "column" ? tableData:<input type="checkbox" checked={Boolean(tableData)} disabled/>}
+                                                                </td> :<></>
                                                         );
                                                     }
                                                 })}
+
 
                                                 <td className="flex min-h-[60px] items-end ml-auto">
                                                     {columns.filter((column) => column.type == "action" && column.action).map((column) => {

@@ -3,8 +3,7 @@ import {
     EventControllerApi,
     IngredientControllerApi,
     MenuItemControllerApi,
-    MenuControllerApi,
-    OrderControllerApi
+    MenuControllerApi, StationControllerApi, OrderControllerApi
 } from "./gen/api/api";
 
 export const API_URL = process.env.VITE_API_URL || import.meta.env.VITE_API_URL;
@@ -31,4 +30,9 @@ const getOrderService = (username: string, password: string) => {
     return new OrderControllerApi(undefined, API_URL, axiosInstance);
 };
 
-export { getEventService, getIngredientService, getMenuService, getMenuItemService, getOrderService };
+const getStationService = (username: string, password: string) => {
+    const axiosInstance = axios.create({ auth: { username: username, password: password } });
+    return new StationControllerApi(undefined, API_URL, axiosInstance);
+};
+
+export { getEventService, getIngredientService, getMenuService, getMenuItemService, getStationService, getOrderService };
