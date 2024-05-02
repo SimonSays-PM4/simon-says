@@ -1,9 +1,10 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { EventContext } from "../../providers/EventContext";
-import { getOrderService } from "../../api";
-import { OrderDTO, State } from "../../gen/api";
+
+import {OrderDTO, State} from "../../gen/api";
 import { AppContext } from "../../providers/AppContext";
 import { NotificationType } from "../../enums/NotificationType";
+import {getOrderService} from "../../api.ts";
 
 type OrderActions = {
     deleteOrder: () => void,
@@ -28,7 +29,6 @@ export const useOrderListPage = (): OrderListPageReturnProps => {
     const [data, setData] = useState<OrderDTO[]>([]);
 
     const orderService = getOrderService(appContext.loginInfo.userName, appContext.loginInfo.password);
-
     useEffect(() => {
         if (!showDeletePopup) {
             reloadOrders();
