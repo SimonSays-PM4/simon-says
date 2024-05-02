@@ -276,12 +276,12 @@ class PrinterService(
         }
         virtualPaper = "${frame}\n${virtualPaperLines.joinToString("\n")}\n${frame}\n"
 
-        log.debug(
+        println(
             """
-            Dry run print job:
-            Print Job Id: ${printJob.id}
-            Print Queue Id: $printerQueueId
-            $virtualPaper            
+Dry run print job:
+Print Job Id: ${printJob.id}
+Print Queue Id: $printerQueueId
+$virtualPaper            
         """.trimIndent()
         )
     }
