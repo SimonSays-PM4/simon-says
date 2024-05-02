@@ -13,7 +13,7 @@ import {NotificationType} from "../../enums/NotificationType.ts";
 type StationActions = {
     deleteStation: () => void;
     saveStation: (stationToSave: FieldValues) => void;
-    onFormInvalid: (fieldErros: FieldErrors<FieldValues>) => void;
+    onFormInvalid: (fieldErrors: FieldErrors<FieldValues>) => void;
 };
 type StationCreateReturnProps = {
     station: StationCreateUpdateDTO;
@@ -92,7 +92,7 @@ export const useStationEditPage = (): StationCreateReturnProps => {
     }, [stationId, eventId]);
 
     const onFormInvalid = (data: FieldValues) => {
-        const formStationItems = data.stationItems as ValueLabel[];
+        const formStationItems = data.ingredients as ValueLabel[];
         const stationToSave = data as StationCreateUpdateDTO;
 
         stationToSave.id = stationId > 0 ? stationId : 0;
