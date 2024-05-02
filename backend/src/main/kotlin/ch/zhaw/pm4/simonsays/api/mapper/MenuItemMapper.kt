@@ -18,9 +18,16 @@ interface MenuItemMapper {
             Mapping(target = "id", ignore = true),
             Mapping(target = "name", source = "menuItem.name"),
             Mapping(target = "ingredients", source = "ingredients"),
-            Mapping(target= "event.menuItems", ignore = true),
             Mapping(target= "event.ingredients", ignore = true),
-            Mapping(target= "event.stations", ignore = true)
+            Mapping(target= "event.menus", ignore = true),
+            Mapping(target= "event.menuItems", ignore = true),
+            Mapping(target= "event.stations", ignore = true),
+            Mapping(target= "event.order", ignore = true),
+            Mapping(target= "event.orderIngredient", ignore = true),
+            Mapping(target= "event.orderMenuItem", ignore = true),
+            Mapping(target= "event.orderMenu", ignore = true),
+            Mapping(target= "menus", ignore = true),
+            Mapping(target= "orderMenuItem", ignore = true),
     )
     fun mapCreateDTOToMenuItem(menuItem: MenuItemCreateUpdateDTO, event: EventDTO, ingredients: List<Ingredient>): MenuItem
 }

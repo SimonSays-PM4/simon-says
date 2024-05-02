@@ -1,6 +1,8 @@
 package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
+import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
+import ch.zhaw.pm4.simonsays.api.types.OrderMenuItemDTO
 import ch.zhaw.pm4.simonsays.api.types.StationCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.entity.*
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
@@ -727,7 +729,7 @@ class StationIntegrationTest : IntegrationTest() {
             }
     }
 
-    /*@Test
+    @Test
     @Transactional
     fun `Test assembly station displays the correct information`() {
         stationFactory.createStation(assemblyStation = true, eventId = testEvent.id!!)
@@ -745,14 +747,31 @@ class StationIntegrationTest : IntegrationTest() {
                         testingredient1,
                 )
         )
-        orderMenuItemFactory.createOrderMenuItem(
+        val orderMenuItem = orderMenuItemFactory.createOrderMenuItem(
                 eventId = testEvent.id!!,
                 menuItemId = menuItem.id!!,
+                name = "Test order menu item",
                 order = order,
                 orderIngredients = mutableListOf(
                         orderingredient1,
                 )
         )
+        val orderDTO = listOf(getOrderDTO(
+            id = order.id!!,
+            menuItems = listOf(OrderMenuItemDTO(
+                    id = orderMenuItem.id!!,
+                    name = "Test order menu item",
+                    ingredients = listOf(
+                            OrderIngredientDTO(
+                                    id = orderingredient1.id!!,
+                                    name = testingredient1.name,
+                                    state = orderingredient1.state
+                            )
+                    ),
+                    price = orderMenuItem.price,
+                    state = orderMenuItem.state
+            ))
+        ))
 
         mockMvc.get(getStationUrl(testEvent.id!!) + "/assembly") {
             with(httpBasic(username, password))
@@ -763,8 +782,8 @@ class StationIntegrationTest : IntegrationTest() {
                     status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(order))
+                        json(objectMapper.writeValueAsString(orderDTO))
                     }
                 }
-    }*/
+    }
 }
