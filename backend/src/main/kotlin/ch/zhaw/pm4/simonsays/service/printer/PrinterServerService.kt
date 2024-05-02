@@ -15,6 +15,7 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class PrinterServerService(
     private val printerServerRepository: PrinterServerRepository,
+    private val printQueueRepository: PrintQueueRepository,
     private val printerServerMapper: PrinterServerMapper,
     private val printerProperties: PrinterProperties,
 ) {
@@ -38,6 +39,10 @@ class PrinterServerService(
     fun savePrinterServer(printerServerDto: PrinterServerDto): PrinterServerDto {
         // Update existing printer server
         val printerServer = printerServerMapper.mapToPrinterServer(printerServerDto)
+        // first save all print queues because they can exist on their own and are not tied to a printer server
+        printerServer.queues.forEach {
+            printQueueRepository.save(it)
+        }
         val updatedPrinterServer = printerServerRepository.save(printerServer)
         return printerServerMapper.mapToPrinterServerDto(updatedPrinterServer)
     }
@@ -48,21 +53,29 @@ class PrinterServerService(
     }
 
     private final fun createInitialData() {
-        val takeawayPrinter = PrinterDto(
-            mac = printerProperties.takeawayPrinterMac,
-            name = "Takeaway Printer",
-
-        )
+        val (takeawayPrinter, receiptPrinter) = if (printerProperties.takeawayPrinterMac == printerProperties.receiptPrinterMac) {
+            val printer = PrinterDto(
+                mac = printerProperties.takeawayPrinterMac,
+                name = "All Purpose Printer"
+            )
+            Pair(printer, printer)
+        } else {
+            val takeawayPrinter = PrinterDto(
+                mac = printerProperties.takeawayPrinterMac,
+                name = "Takeaway Printer"
+            )
+            val receiptPrinter = PrinterDto(
+                mac = printerProperties.receiptPrinterMac,
+                name = "Receipt Printer",
+            )
+            Pair(takeawayPrinter, receiptPrinter)
+        }
         val takeawayPrintQueue = PrintQueueDto(
             id = printerProperties.takeawayPrinterQueueId,
             name = "Takeaway Print Queue",
             printers = listOf(
                 takeawayPrinter,
             ),
-        )
-        val receiptPrinter = PrinterDto(
-            mac = printerProperties.receiptPrinterMac,
-            name = "Receipt Printer",
         )
         val receiptPrintQueue = PrintQueueDto(
             id = printerProperties.receiptPrinterQueueId,

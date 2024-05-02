@@ -10,7 +10,6 @@ import ch.zhaw.pm4.simonsays.service.printer.PrintQueueJobService
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueService
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
 import ch.zhaw.pm4.simonsays.testutils.testObjectMapper
-import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

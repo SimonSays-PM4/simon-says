@@ -62,7 +62,7 @@ class PrinterServiceTest {
         val takeawayOrder: FoodOrder = mockk(relaxed = true)
         every { takeawayOrder.isTakeAway } returns true
         every { takeawayOrder.getTakeAwayNr() } returns 420L
-        every { takeawayOrder.menuItems } returns mutableSetOf(burgerMenuItem, friesMenuItem)
+        every { takeawayOrder.menuItems } returns mutableListOf(burgerMenuItem, friesMenuItem)
         every { takeawayOrder.totalPrice } returns 15.0
 
         val printJobs = printerService.printFoodOrder(takeawayOrder)
@@ -83,7 +83,7 @@ class PrinterServiceTest {
         val takeawayOrder: FoodOrder = mockk(relaxed = true)
         every { takeawayOrder.isTakeAway } returns true
         every { takeawayOrder.getTakeAwayNr() } returns 420L
-        every { takeawayOrder.menuItems } returns mutableSetOf(burgerMenuItem)
+        every { takeawayOrder.menuItems } returns mutableListOf(burgerMenuItem)
         every { takeawayOrder.totalPrice } returns 10.5
 
         val printJobs = printerService.printFoodOrder(takeawayOrder)
@@ -104,12 +104,12 @@ class PrinterServiceTest {
         val burgerMenuItem: OrderMenuItem = mockk(relaxed = true)
         every { burgerMenuItem.name } returns "Burger"
         every { burgerMenuItem.price } returns 10.0
-        every { burgerMenuItem.orderIngredients } returns mutableSetOf(buns, meat)
+        every { burgerMenuItem.orderIngredients } returns mutableListOf(buns, meat)
 
         val takeawayOrder: FoodOrder = mockk(relaxed = true)
         every { takeawayOrder.isTakeAway } returns true
         every { takeawayOrder.getTakeAwayNr() } returns 420L
-        every { takeawayOrder.menuItems } returns mutableSetOf(burgerMenuItem)
+        every { takeawayOrder.menuItems } returns mutableListOf(burgerMenuItem)
         every { takeawayOrder.totalPrice } returns 10.5
 
         val printJobs = printerService.printFoodOrder(takeawayOrder)
@@ -130,12 +130,12 @@ class PrinterServiceTest {
         val longMenuItem: OrderMenuItem = mockk(relaxed = true)
         every { longMenuItem.name } returns longMenuItemName
         every { longMenuItem.price } returns 10000.0
-        every { longMenuItem.orderIngredients } returns mutableSetOf(longIngredient)
+        every { longMenuItem.orderIngredients } returns mutableListOf(longIngredient)
 
         val takeawayOrder: FoodOrder = mockk(relaxed = true)
         every { takeawayOrder.isTakeAway } returns true
         every { takeawayOrder.getTakeAwayNr() } returns 420L
-        every { takeawayOrder.menuItems } returns mutableSetOf(longMenuItem)
+        every { takeawayOrder.menuItems } returns mutableListOf(longMenuItem)
         every { takeawayOrder.totalPrice } returns 10000.0
 
         val printJobs = printerService.printFoodOrder(takeawayOrder)
