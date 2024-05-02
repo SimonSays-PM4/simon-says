@@ -1,6 +1,5 @@
 package ch.zhaw.pm4.simonsays.config
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod

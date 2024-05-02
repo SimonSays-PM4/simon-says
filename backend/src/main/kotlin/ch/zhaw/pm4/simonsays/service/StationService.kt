@@ -79,7 +79,7 @@ class StationService(
             foodOrder.menus = orderService.getOrderMenus(eventId, foodOrder.id!!)
             foodOrder.menuItems = orderService.getOrderMenuItems(eventId, foodOrder.id)
 
-            if(!foodOrder.menus!!.isEmpty() || !foodOrder.menuItems!!.isEmpty()) {
+            if(foodOrder.menus!!.isNotEmpty() || foodOrder.menuItems!!.isNotEmpty()) {
                 processedOrders.add(foodOrder)
             }
 

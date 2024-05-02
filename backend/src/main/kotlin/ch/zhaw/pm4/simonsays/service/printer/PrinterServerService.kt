@@ -4,7 +4,6 @@ import ch.zhaw.pm4.simonsays.api.mapper.printer.PrinterServerMapper
 import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrinterDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDto
-import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueRepository
 import ch.zhaw.pm4.simonsays.repository.printer.PrinterServerRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

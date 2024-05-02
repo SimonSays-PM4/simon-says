@@ -9,5 +9,5 @@ import java.util.*
 @Repository
 interface OrderMenuRepository: JpaRepository<OrderMenu, Long> {
     fun findByIdAndEventId(id: Long, eventId: Long): Optional<OrderMenu>
-    fun findAllByStateEqualsAndOrder_IdEquals(state: State, orderId: Long): MutableList<OrderMenu>
+    fun findAllByStateEqualsAndOrderIdEquals(state: State, orderId: Long): MutableList<OrderMenu>
 }
