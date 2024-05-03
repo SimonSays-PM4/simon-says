@@ -8,7 +8,7 @@
         "build": "tsc && vite build",
         "build:staging": "tsc && vite build --mode staging",
         "preview": "vite preview",
-        "e2e": "cross-env VITE_COVERAGE=true npx cypress run --browser chrome --headed",
+        "e2e": "npx cypress run --browser chrome",
         "lint": "eslint --max-warnings=0 \"src/**/*.{ts,tsx}\"",
         "api": "openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g typescript-axios -o ./src/gen/api --config api.json"
     },
@@ -39,7 +39,6 @@
         "@types/react-dom": "^18.2.19",
         "@vitejs/plugin-react": "^4.2.1",
         "cli-cursor": "^4.0.0",
-        "cross-env": "^7.0.3",
         "cypress": "^13.7.3",
         "identity-obj-proxy": "^3.0.0",
         "nyc": "^15.1.0",

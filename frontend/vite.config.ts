@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
                 include: "src/*",
                 exclude: ["node_modules", "cypress/*", "src/gen/*"],
                 cypress: true,
-                requireEnv: true
+                requireEnv: false
             })
         ],
         server: {
