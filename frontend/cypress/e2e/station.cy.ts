@@ -48,7 +48,7 @@ describe("Login", () => {
         cy.contains("button", "Station").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Stations").should("exist");
+        cy.get("h2").contains("Stationen").should("exist");
 
         cy.contains("button", "Erstellen").click();
 
