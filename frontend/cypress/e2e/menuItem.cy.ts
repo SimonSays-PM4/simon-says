@@ -45,7 +45,7 @@ describe("Login", () => {
     });
 
     it("should create a menuItem", () => {
-        cy.contains("button", "Menu").click();
+        cy.contains("button", "Menu Item").click();
 
         cy.wait(500);
         cy.get("h2").contains("Menu Items").should("exist");

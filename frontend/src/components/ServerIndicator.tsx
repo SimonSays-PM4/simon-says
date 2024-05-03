@@ -19,11 +19,11 @@ export const ServerIndicator: React.FC<ServerIndicatorProps> = () => {
     useEffect(() => {
         eventService.getEvents().then(() => {
             setStatus(StatusLevel.OK);
-            setMessage("Server Up")
+            setMessage("UP")
         }).catch((error) => {
             console.log(error)
             setStatus(StatusLevel.ERROR);
-            setMessage("Failed")
+            setMessage("DOWN")
         })
     })
 

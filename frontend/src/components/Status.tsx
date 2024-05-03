@@ -24,9 +24,9 @@ export const Status: React.FC<StatusProps> = ({text,status,textNext,tooltip}) =>
 
     return (<><div className="text-[0.75em]"><span
         title={tooltip}
-        className={color}>{text}
+        className={color}>{text} - {textNext} - {APP_VERSION}
 
-        </span> - {textNext}</div></>
+        </span></div></>
 
     );
 };
