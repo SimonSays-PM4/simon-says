@@ -6,6 +6,7 @@ import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
 import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import ch.zhaw.pm4.simonsays.entity.FoodOrder
+import ch.zhaw.pm4.simonsays.entity.OrderMenu
 import ch.zhaw.pm4.simonsays.entity.OrderMenuItem
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -153,8 +154,12 @@ class PrinterService(
     private fun getBodyForFoodOrder(foodOrder: FoodOrder): String {
         var body = ""
 
+        // Add list of ordered menus
+        body += foodOrder.menus?.joinToString("\n") { getTextForOrderMenu(it) }
+        body += "\n"
+
         // Add list of ordered items
-        body += foodOrder.menuItems?.map { getTextForOrderMenuItem(it) }?.joinToString("\n")
+        body += foodOrder.menuItems?.joinToString("\n") { getTextForOrderMenuItem(it) }
         body += "\n"
 
         // Add total
@@ -164,16 +169,46 @@ class PrinterService(
         return body
     }
 
-    private fun getTextForOrderMenuItem(orderMenuItem: OrderMenuItem): String {
-        // print price always with two decimal places
-        val price = formatPriceWithStartPadding(orderMenuItem.price)
-        val menuItemNameLines = splitPricedItemTextOntoMultipleLinesIfNecessary(orderMenuItem.name)
+    private fun getTextForOrderMenu(oderMenu: OrderMenu): String {
+        val price = formatPriceWithStartPadding(oderMenu.price)
+        val menuNameLines = splitPricedItemTextOntoMultipleLinesIfNecessary(oderMenu.name)
 
-        var menuItemText = menuItemNameLines.first().padEnd(maxCharactersPerLineWithoutPrice) + price
+        var menuText = menuNameLines.first().padEnd(maxCharactersPerLineWithoutPrice) + price
         // add the other lines of the title
-        if (menuItemNameLines.size > 1) {
-            menuItemText += "\n"
-            menuItemText += menuItemNameLines.subList(1, menuItemNameLines.size).joinToString("\n")
+        if (menuNameLines.size > 1) {
+            menuText += "\n"
+            menuText += menuNameLines.subList(1, menuNameLines.size).joinToString("\n")
+        }
+
+        // if we have no individual items, we are done
+        if (oderMenu.orderMenuItems.isEmpty()) {
+            return menuText
+        }
+
+        menuText += "\n"
+        menuText += oderMenu.orderMenuItems.joinToString("\n") { getTextForOrderMenuItem(it, "  ", showPrice = false) }
+        return menuText
+    }
+
+    private fun getTextForOrderMenuItem(
+        orderMenuItem: OrderMenuItem,
+        indent: String = "",
+        showPrice: Boolean = true,
+    ): String {
+        var menuItemText = if (showPrice) {
+            // print price always with two decimal places
+            val price = formatPriceWithStartPadding(orderMenuItem.price)
+            val menuItemNameLines = splitPricedItemTextOntoMultipleLinesIfNecessary(orderMenuItem.name, indent)
+
+            var menuItemText = menuItemNameLines.first().padEnd(maxCharactersPerLineWithoutPrice) + price
+            // add the other lines of the title
+            if (menuItemNameLines.size > 1) {
+                menuItemText += "\n"
+                menuItemText += menuItemNameLines.subList(1, menuItemNameLines.size).joinToString("\n")
+            }
+            menuItemText
+        } else {
+            splitPricedItemTextOntoMultipleLinesIfNecessary(orderMenuItem.name, indent).joinToString("\n")
         }
 
         // if we have no ingredients, we are done
@@ -187,15 +222,15 @@ class PrinterService(
         var ingredientsText = orderMenuItem.orderIngredients.joinToString(", ") { it.name }
         // put brackets around it
         ingredientsText = "($ingredientsText)"
-        ingredientsText = splitPricedItemTextOntoMultipleLinesIfNecessary(ingredientsText).joinToString("\n")
+        ingredientsText = splitPricedItemTextOntoMultipleLinesIfNecessary(ingredientsText, indent).joinToString("\n")
         menuItemText += ingredientsText
 
         return menuItemText
     }
 
-    private fun splitPricedItemTextOntoMultipleLinesIfNecessary(text: String): List<String> {
+    private fun splitPricedItemTextOntoMultipleLinesIfNecessary(text: String, indent: String = ""): List<String> {
         val lines = mutableListOf<String>()
-        var currentLine = ""
+        var currentLine = indent
         text.forEach { char ->
             if (currentLine.length >= maxCharactersPerLineWithoutPrice) {
                 // Check if the last or next character is a space before adding "-"
@@ -204,7 +239,7 @@ class PrinterService(
                 } else {
                     lines.add("$currentLine-")
                 }
-                currentLine = ""
+                currentLine = indent
             }
 
             // if the first character on a line would be blank we emit it

@@ -12,6 +12,11 @@ export class Printer {
     readonly name: string;
     /** The printer is only initalised as soon as it is used for the first time. */
     thermalPrinter: ThermalPrinter | undefined;
+    /**
+     * We are not allowed to call print on the printer while it is already printing.
+     * Hence we need to lock the printer while it is printing.
+    */
+    printLock = false
 
     constructor(mac: string, name: string) {
         this.mac = mac;
@@ -34,7 +39,7 @@ export class Printer {
         if (!ip) {
             console.error(`Failed to resolve printer ip for mac ${this.mac} in arp cache. Starting network scan.`);
             // Attempting network scan
-            try {
+            try { 
                 // timeout the network scan after a certain time
                 ip = await this.findPrinterIpWithNetworkScan();
                 if (!ip) {
@@ -74,6 +79,12 @@ export class Printer {
      * @throws error if the printer is not connected or if the print job could not be printed.
      */
     async print(printJob: PrintQueueJobDto): Promise<void> {
+        while (this.printLock) {
+            console.log(`Printer '${this.name}' with mac ${this.mac} is currently printing. Waiting for it to finish...`)
+            await new Promise(resolve => setTimeout(resolve, 100))
+        }
+        this.printLock = true
+
         // Initialize the printer if it is not already initialized
         const initSuccessul = await this.init();
         if (!initSuccessul) {
@@ -148,6 +159,7 @@ export class Printer {
             throw new Error(`Failed to print job ${printJob.id} on printer ${this.name} with mac ${this.mac}: ${error}`);
         } finally {
             await this.thermalPrinter!.clear();
+            this.printLock = false
         }
     }
 
