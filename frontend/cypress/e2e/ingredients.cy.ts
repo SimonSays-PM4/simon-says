@@ -62,7 +62,7 @@ describe("Ingredient CRUD", () => {
         cy.get("table")
             .contains("tr", "Test-Ingredient")
             .find("td:last-child")
-            .contains("button", "Bearbeiten")
+            .get('button[id="editAction"]')
             .click();
 
         cy.url().should("include", "/ingredient/create/");
@@ -91,7 +91,7 @@ describe("Ingredient CRUD", () => {
         cy.get("table")
             .contains("tr", "Test-Updated-Ingredient")
             .find("td:last-child")
-            .contains("button", "Löschen")
+            .find('button[id="deleteAction"]')
             .click();
 
         cy.wait(500); // wait for the popup to show up
@@ -112,7 +112,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should delete created event", () => {
-        cy.contains("button", "Delete").click();
+        cy.get('button[id="deleteAction"]').click()
 
         cy.wait(500); // wait for the popup to show up
 
@@ -120,13 +120,6 @@ describe("Ingredient CRUD", () => {
         cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
 
         cy.wait(500); // wait for the popup to close
-    });
-
-    it("should not load newly created event anymore", () => {
-        cy.get("h2").contains("Events").should("exist");
-
-        cy.get("table").should("exist");
-        cy.get("tbody").children().should("have.length", 1);
     });
 });
 */

@@ -6,9 +6,12 @@ import { MenuItemDTO } from "../../../gen/api";
 import { DataTable } from "../../../components/data-tables/DataTable.tsx";
 import { useNavigate } from "react-router-dom";
 import { Popup } from "../../../components/Popup.tsx";
+import {MdEditSquare} from "react-icons/md";
+import {FaRegTrashAlt} from "react-icons/fa";
+import {PiHamburgerDuotone} from "react-icons/pi";
 
 export const MenuItemPage: React.FC = () => {
-    const { event, menuItems, isLoading, menuItemActions, showDeletePopup, setShowDeletePopup } = useMenuItemPage();
+    const { menuItems, isLoading, menuItemActions, showDeletePopup, setShowDeletePopup } = useMenuItemPage();
     const navigate = useNavigate();
 
     if (isLoading) {
@@ -34,21 +37,27 @@ export const MenuItemPage: React.FC = () => {
         },
         {
             key: "id",
-            name: "Edit",
+            name: "Bearbeiten",
+            elementKey: "editAction",
             type: "action",
+            children: <MdEditSquare/>,
+            noText:true,
             action: onEditClick
         },
         {
             key: "id",
-            name: "Delete",
+            name: "Löschen",
+            elementKey:"deleteAction",
             type: "action",
+            children: <FaRegTrashAlt/>,
+            noText:true,
             action: onDeleteClick
-        }
+        },
     ];
 
 
-    return <div className="w-full"><h1>Edit Menu of <b>"{event.name}"</b></h1><br />
-        <DataTable rows={menuItems} columns={columns} title="Available Menu Items" onCreateClick={() => navigate("./create/0")} />
+    return <div className="w-full">
+        <DataTable rows={menuItems} columns={columns} title={"Menu Items"} icon={<PiHamburgerDuotone/>} onCreateClick={() => navigate("./create/0")} onBackClick={() => navigate("../../events")} />
         <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={menuItemActions.deleteMenuItem} modalText={'Delete "' + menuItemActions.menuItemToDelete.name + '"'} closeText="Abbrechen" acceptText="Löschen" />
     </div>
 }

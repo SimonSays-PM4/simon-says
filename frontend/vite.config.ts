@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
 
     return {
         define: {
+            APP_VERSION: JSON.stringify(process.env.npm_package_version),
             process: {
                 env: {
                     VITE_API_URL: api_url

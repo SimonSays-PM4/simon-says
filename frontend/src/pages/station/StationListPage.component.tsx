@@ -6,6 +6,9 @@ import {Popup} from "../../components/Popup.tsx";
 import {useNavigate} from "react-router-dom";
 import {StationDTO} from "../../gen/api";
 import {ColumnType} from "../../models/ColumnType.ts";
+import {MdEditSquare} from "react-icons/md";
+import {FaRegTrashAlt} from "react-icons/fa";
+import {PiChargingStationDuotone} from "react-icons/pi";
 
 export const StationListPageComponent: React.FC = () => {
     const {isLoading,stationList,stationActions,showDeletePopup,setShowDeletePopup} = useStationListPage();
@@ -34,22 +37,28 @@ export const StationListPageComponent: React.FC = () => {
         {
             key: "id",
             name: "Bearbeiten",
+            elementKey: "editAction",
             type: "action",
+            children: <MdEditSquare/>,
+            noText:true,
             action: onEditClick
         },
         {
             key: "id",
             name: "Löschen",
+            elementKey:"deleteAction",
             type: "action",
+            children: <FaRegTrashAlt/>,
+            noText:true,
             action: onDeleteClick
-        }
+        },
     ];
 
     return <div className="w-full">
         {isLoading ? (
             <div className="w-[100px] block mx-auto"><Loader /></div>
         ) : (
-            <DataTable<StationDTO> title="Stations" columns={columns} rows={stationList} onCreateClick={() => navigate(`../station/create`)} />
+            <DataTable<StationDTO> title="Stationen" icon={<PiChargingStationDuotone/>} columns={columns} rows={stationList} onCreateClick={() => navigate(`../station/create`)} onBackClick={() => navigate("../../events")}/>
         )}
 
         <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={stationActions.deleteStation} modalText={'Station "' + stationActions.stationToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
