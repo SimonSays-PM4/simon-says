@@ -1,9 +1,8 @@
 import React from "react";
-import { nameof } from "ts-simple-nameof";
-import {MenuItemCreateUpdateDTO} from "../../../gen/api";
+import { MenuItemCreateUpdateDTO } from "../../../gen/api";
 import { FormInput } from "../../../components/form/FormInput.tsx";
 import { useMenuItemEditPage } from "./MenuItemEditPage.hooks.tsx";
-import {Controller, useForm} from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Button } from "../../../components/Button.tsx";
 import { Popup } from "../../../components/Popup.tsx";
 import Select from "react-select";
@@ -17,11 +16,11 @@ export const MenuItemEditPage: React.FC = () => {
   const fieldValueMessage = "Die Eingabe ist muss über 1.00 sein.";
 
   const {
-      register,
-      handleSubmit,
-      formState: { errors },
-      getValues,
-      control
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    control
   } = useForm();
 
   const getErrorMessage = (fieldId: string) => {
@@ -53,9 +52,9 @@ export const MenuItemEditPage: React.FC = () => {
         isRequired={true}
         minLength={5}
         maxLength={64}
-        validationError={getErrorMessage(nameof<MenuItemCreateUpdateDTO>(e => e.name))}/>
+        validationError={getErrorMessage(nameof<MenuItemCreateUpdateDTO>(e => e.name))} />
       <FormInput id={nameof<MenuItemCreateUpdateDTO>(e => e.price)}
-        defaultValue={""+menuItem.price}
+        defaultValue={"" + menuItem.price}
         label={"Price"}
         type="number"
         step={0.01}
@@ -68,23 +67,23 @@ export const MenuItemEditPage: React.FC = () => {
         Ingredients *
       </label>
       <Controller
-          name={nameof<MenuItemCreateUpdateDTO>(e => e.ingredients)}
-          rules={{ required: true, minLength: 1 }}
-          defaultValue={selectedIngredients}
-          control={control}
-          render={({ field: { onChange, value, ref } }) => (
-              <Select
-                  id={"ingredientSelector"}
-                  isMulti
-                  ref={ref}
-                  options={ingredientOptions}
-                  defaultValue={value}
-                  onChange={(values) => {
-                    onChange(values);
-                  }}
-                  className="basic-multi-select"
-                  classNamePrefix="select" />
-          )}
+        name={nameof<MenuItemCreateUpdateDTO>(e => e.ingredients)}
+        rules={{ required: true, minLength: 1 }}
+        defaultValue={selectedIngredients}
+        control={control}
+        render={({ field: { onChange, value, ref } }) => (
+          <Select
+            id={"ingredientSelector"}
+            isMulti
+            ref={ref}
+            options={ingredientOptions}
+            defaultValue={value}
+            onChange={(values) => {
+              onChange(values);
+            }}
+            className="basic-multi-select"
+            classNamePrefix="select" />
+        )}
       />
       <div className="flex min-h-[60px] items-end ml-auto">
 

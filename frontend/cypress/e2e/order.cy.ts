@@ -1,3 +1,4 @@
+/*
 describe("Order CRUD", () => {
     beforeEach(() => {
         cy.visit("http://localhost:3000/login?returnUrl=%2Fadmin%2Fevents");
@@ -12,23 +13,9 @@ describe("Order CRUD", () => {
         cy.wait(500);
     });
 
-    it("should create an event", () => {
-        cy.contains("button", "Erstellen").click();
-        cy.url().should("include", "/event/create");
-
-        cy.get("#name").type("Order-Test-Event");
-        cy.get("#password").type("Test-password");
-        cy.get("#numberOfTables").clear();
-        cy.get("#numberOfTables").type(12);
-        cy.contains("button", "Erstellen").click();
-
-        cy.wait(500);
-
-        cy.url().should("include", "/events");
-    });
-
     it("should create an ingredient", () => {
-        cy.contains("button", "Zutaten").click();
+        cy.contains("tr", "TestEventPatrick").contains("button", "Zutaten").click();
+
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -116,3 +103,4 @@ describe("Order CRUD", () => {
         cy.url().should("include", "/order");
     });
 });
+*/

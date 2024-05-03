@@ -8,7 +8,6 @@ import { ButtonType } from "../../enums/ButtonType.ts";
 import { Button } from "../../components/Button.tsx";
 import { classNames } from "../../helpers/ClassNameHelper.ts";
 import { FormInput } from "../../components/form/FormInput.tsx";
-import { nameof } from "ts-simple-nameof";
 import { useNavigate } from "react-router-dom";
 import { Tab } from "@headlessui/react";
 import { OrderMenuModel } from "../../models/OrderMenuModel.ts";
