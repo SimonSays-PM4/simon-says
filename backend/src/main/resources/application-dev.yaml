@@ -21,7 +21,7 @@ printer-queue-server:
   frontend-origins:
     - http://localhost:3000
     - https://socket-test-client.netlify.app
-  dry-run: false
+  dry-run: true
   # Will automatically create the printer server on startup and add the respective printer will be assigned
   printer-server-id: "a35e6a08-35ef-42c1-9a09-39d32fc2a5d6"
   takeaway-printer-queue-id: "ef084926-d2be-4a03-9538-c8dd44f19e04"
