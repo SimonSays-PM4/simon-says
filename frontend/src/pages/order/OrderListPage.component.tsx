@@ -6,6 +6,8 @@ import { OrderDTO, State } from "../../gen/api";
 import { useNavigate } from "react-router-dom";
 import { Popup } from "../../components/Popup.tsx";
 import { useOrderListPage } from "./OrderListPage.hooks.tsx";
+import {FaRegTrashAlt} from "react-icons/fa";
+import {PiReceiptDuotone} from "react-icons/pi";
 
 export const OrderListPageComponent: React.FC = () => {
     const { isLoading, orderActions, showDeletePopup, setShowDeletePopup, data } = useOrderListPage();
@@ -48,9 +50,12 @@ export const OrderListPageComponent: React.FC = () => {
         {
             key: "id",
             name: "Löschen",
+            elementKey:"deleteAction",
             type: "action",
+            children: <FaRegTrashAlt/>,
+            noText:true,
             action: onDeleteClick
-        }
+        },
     ];
 
     return (
@@ -58,7 +63,7 @@ export const OrderListPageComponent: React.FC = () => {
             {isLoading ? (
                 <div className="w-[100px] block mx-auto"><Loader /></div>
             ) : (
-                <DataTable<OrderDTO> title="Bestellungen" columns={columns} rows={data} onCreateClick={() => navigate(`../create`)} />
+                <DataTable<OrderDTO> title="Bestellungen" icon={<PiReceiptDuotone/>} columns={columns} rows={data} onCreateClick={() => navigate(`../create`)}/>
             )}
 
             <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={orderActions.deleteOrder} modalText={'Bestellung löschen?'} closeText="Abbrechen" acceptText="Löschen" />
