@@ -17,7 +17,7 @@ import { OrderListPageComponent } from "./pages/order/OrderListPage.component.ts
 import { MenuItemPage } from "./pages/event/menu/MenuItemPage.component.tsx";
 import { MenuItemEditPage } from "./pages/event/menu/MenuItemEditPage.component.tsx";
 import { JoinPage } from "./pages/user/JoinPage.tsx";
-import { UserPage } from "./pages/user/UserPage.tsx";
+import { StationSelectionPage } from "./pages/user/StationSelectionPage.component.tsx";
 import {StationListPageComponent} from "./pages/station/StationListPage.component.tsx";
 import {StationEditPageComponent} from "./pages/station/StationEditPage.component.tsx";
 
@@ -28,7 +28,7 @@ export default function App() {
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/:eventId/join" element={<JoinPage />} />
-                    <Route path="/:eventId" element={<AuthorizedEventRoute activePageType={ActivePageType.Home}><UserPage /></AuthorizedEventRoute>} />
+                    <Route path="/:eventId" element={<AuthorizedEventRoute activePageType={ActivePageType.Home}><StationSelectionPage /></AuthorizedEventRoute>} />
                     <Route path="/" element={<AuthorizedRoute activePageType={ActivePageType.Home}><HomePage /></AuthorizedRoute>} />
                     <Route path="/admin">
                         <Route path="/admin/events" element={<AuthorizedRoute activePageType={ActivePageType.EventList}><EventListPageComponent /></AuthorizedRoute>} />
