@@ -1,11 +1,16 @@
 import React from "react";
-import { DataTable } from "../../components/data-tables/DataTable";
-import { ColumnType } from "../../models/ColumnType";
-import { Loader } from "../../components/Loader";
-import { useNavigate } from "react-router-dom";
-import { useEventListPage } from "./EventListPage.hooks.tsx";
-import { Popup } from "../../components/Popup.tsx";
-import { EventCreateUpdateDTO, EventDTO } from "../../gen/api";
+import {DataTable} from "../../components/data-tables/DataTable";
+import {ColumnType} from "../../models/ColumnType";
+import {Loader} from "../../components/Loader";
+import {useNavigate} from "react-router-dom";
+import {useEventListPage} from "./EventListPage.hooks.tsx";
+import {Popup} from "../../components/Popup.tsx";
+import {EventCreateUpdateDTO, EventDTO} from "../../gen/api";
+import {ButtonType} from "../../enums/ButtonType.ts";
+import {IoFastFoodOutline} from "react-icons/io5";
+import {PiChargingStationDuotone, PiCookieDuotone, PiHamburgerDuotone, PiReceiptDuotone} from "react-icons/pi";
+import {MdEditSquare} from "react-icons/md";
+import {FaRegTrashAlt} from "react-icons/fa";
 
 export const EventListPageComponent: React.FC = () => {
     const { loading, eventActions, showDeletePopup, setShowDeletePopup, data } = useEventListPage()
@@ -27,6 +32,14 @@ export const EventListPageComponent: React.FC = () => {
         navigate("../" + row.id + "/ingredients")
     }
 
+    const onClickOrders = (row: EventCreateUpdateDTO) => {
+        navigate("../../" + row.id + "/order")
+    }
+
+    const onClickStations = (row: EventCreateUpdateDTO) => {
+        navigate("../" + row.id + "/station")
+    }
+
     const onDeleteClick = (row: EventDTO) => {
         if (row.id) {
             eventActions.setEventToDelete(row);
@@ -43,38 +56,76 @@ export const EventListPageComponent: React.FC = () => {
         {
             key: "numberOfTables",
             name: "Anzahl Tische",
+            center:true,
+            formatter: (row) => {
+                return <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">{row.numberOfTables}</span>
+            },
+
             type: "column",
         },
         {
             key: "id",
-            name: "Edit",
+            name: "Menus",
+            elementKey: "menuAction",
             type: "action",
+            buttonType: ButtonType.Secondary,
+            children:<IoFastFoodOutline/>,
+            action: onClickMenu
+        },
+        {
+            key: "id",
+            name: "Menu Item",
+            elementKey: "menuItemAction",
+            type: "action",
+            buttonType: ButtonType.Secondary,
+            children: <PiHamburgerDuotone />,
+            action: onClickMenuItem
+        },
+        {
+            key: "id",
+            name: "Zutaten",
+            elementKey: "ingredientAction",
+            type: "action",
+            buttonType: ButtonType.Secondary,
+            children: <PiCookieDuotone/>,
+            action: onClickIngredients
+        },
+        {
+            key: "id",
+            name: "Bestellungen",
+            elementKey: "orderAction",
+            type: "action",
+            buttonType: ButtonType.Secondary,
+            children: <PiReceiptDuotone  />,
+            action: onClickOrders
+        },
+        {
+            key: "id",
+            name: "Stationen",
+            elementKey: "stationAction",
+            type: "action",
+            buttonType: ButtonType.Secondary,
+            children:<PiChargingStationDuotone/>,
+            action: onClickStations
+        },
+        {
+            key: "id",
+            name: "Edit",
+            elementKey: "editAction",
+            type: "action",
+            children: <MdEditSquare/>,
+            noText:true,
             action: onEditClick
         },
         {
             key: "id",
             name: "Delete",
+            elementKey:"deleteAction",
             type: "action",
+            children: <FaRegTrashAlt/>,
+            noText:true,
             action: onDeleteClick
         },
-        {
-            key: "id",
-            name: "Menu Item",
-            type: "action",
-            action: onClickMenuItem
-        },
-        {
-            key: "id",
-            name: "Menu",
-            type: "action",
-            action: onClickMenu
-        },
-        {
-            key: "id",
-            name: "Ingredients",
-            type: "action",
-            action: onClickIngredients
-        }
     ];
 
 

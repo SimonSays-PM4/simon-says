@@ -5,11 +5,16 @@ branding:
   title: Simon Says
   label: Docs
 links:
-- text: Getting Started
+- text: Hilfe
   link: https://retype.com/guides/getting-started/
 footer:
-  copyright: "&copy; Copyright {{ year }}. All rights reserved."
+  copyright: "ZHAW PM4 - {{ year }}"
+  links:
+    - text: Kontakt
+      link: mailto:hello@simonsays.ch
 
 # Exclude README.md from the output
 exclude:
   - "README.md"
+locale: de
+favicon: static/favicon.ico
