@@ -20,5 +20,11 @@
         "noEmit": true,
         "jsx": "react-jsx"
     },
-    "include": ["src", ".prettierrc.cjs", "eslintrc.cjs", "tests/*"]
+    "include": [
+      "src",
+      ".prettierrc.cjs",
+      "eslintrc.cjs",
+      "tests/*",
+      "env.d.ts"
+    ]
 }
