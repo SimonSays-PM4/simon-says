@@ -1,4 +1,4 @@
-describe("Login", () => {
+describe("Station", () => {
     beforeEach(() => {
         cy.visit("http://localhost:3000/login?returnUrl=%2Fadmin%2Fevents");
         cy.get("h1").contains("Login");
@@ -48,7 +48,7 @@ describe("Login", () => {
         cy.contains("button", "Station").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Stations").should("exist");
+        cy.get("h2").contains("Stationen").should("exist");
 
         cy.contains("button", "Erstellen").click();
 
