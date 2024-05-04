@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.simonsays
 
+import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.mapper.EventMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.EventCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
@@ -7,7 +8,6 @@ import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.service.EventService
-import ch.zhaw.pm4.simonsays.service.EventServiceImpl
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
@@ -27,7 +27,7 @@ class EventTest {
     fun setup() {
         // mockkStatic("kotlinx.coroutines.reactor.MonoKt")
         eventRepository = mockk(relaxed = true)
-        eventService = EventServiceImpl(eventRepository, EventMapperImpl())
+        eventService = EventService(eventRepository, EventMapperImpl())
     }
 
     @Test

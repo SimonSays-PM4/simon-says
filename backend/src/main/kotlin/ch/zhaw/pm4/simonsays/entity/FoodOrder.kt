@@ -14,7 +14,7 @@ data class FoodOrder (
     var event: Event,
 
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL])
-    val menus: MutableList<OrderMenu>? = mutableListOf(),
+    var menus: MutableList<OrderMenu>? = mutableListOf(),
 
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL])
     var menuItems: MutableList<OrderMenuItem>? = mutableListOf(),

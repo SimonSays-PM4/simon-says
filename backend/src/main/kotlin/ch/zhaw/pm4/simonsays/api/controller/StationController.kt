@@ -39,17 +39,25 @@ class StationController(private val stationService: StationService) {
     fun deleteStation(@PathVariable("eventId") eventId: Long, @PathVariable("stationId") stationId: Long) {
         stationService.deleteStation(stationId, eventId)
     }
-    @Operation(summary = "Read all stations", security = [SecurityRequirement(name = "basicAuth")])
+    @Operation(summary = "Get Station View", security = [SecurityRequirement(name = "basicAuth")])
     @GetMapping("{stationId}/view", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun getStationView(@PathVariable("eventId") eventId: Long, @PathVariable("stationId") stationId: Long): List<OrderIngredientDTO> {
         return  stationService.getStationView(stationId, eventId)
     }
 
-    @Operation(summary = "Read all stations", security = [SecurityRequirement(name = "basicAuth")])
+    @Operation(summary = "Get Assembly Station View", security = [SecurityRequirement(name = "basicAuth")])
+    @GetMapping("assembly", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun getAssemblyStationView(@PathVariable("eventId") eventId: Long): List<OrderDTO> {
+        return  stationService.getAssemblyStationView(eventId)
+    }
+
+    @Operation(summary = "Process Ingredient at Station", security = [SecurityRequirement(name = "basicAuth")])
     @PostMapping("{stationId}/view", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun processIngredient(@PathVariable("eventId") eventId: Long, @PathVariable("stationId") stationId: Long, @Valid @RequestBody request: OrderIngredientUpdateDTO): OrderIngredientDTO {
         return stationService.processIngredient(eventId, stationId, request)
     }
+
 }
