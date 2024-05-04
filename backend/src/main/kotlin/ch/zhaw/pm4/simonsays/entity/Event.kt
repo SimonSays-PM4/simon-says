@@ -41,7 +41,7 @@ data class Event(
     val orderMenuItem: Set<OrderMenuItem>? = HashSet(),
 
     @OneToMany(mappedBy = "event")
-    val oderMenu: Set<OrderMenu>? = HashSet()
+    val orderMenu: Set<OrderMenu>? = HashSet()
 ){
     override fun hashCode(): Int = id?.hashCode() ?: 0
 

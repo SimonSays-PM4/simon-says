@@ -3,8 +3,6 @@ package ch.zhaw.pm4.simonsays.api.mapper.printer
 import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
 import ch.zhaw.pm4.simonsays.entity.printer.PrintQueue
 import ch.zhaw.pm4.simonsays.entity.printer.PrintQueueJob
-import org.mapstruct.AfterMapping
-import org.mapstruct.Context
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 

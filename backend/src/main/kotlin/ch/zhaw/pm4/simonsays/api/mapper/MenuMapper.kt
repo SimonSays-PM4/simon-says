@@ -22,7 +22,13 @@ interface MenuMapper {
         Mapping(target = "menuItems", source = "menuItems"),
         Mapping(target= "event.menus", ignore = true),
         Mapping(target= "event.menuItems", ignore = true),
-        Mapping(target= "event.ingredients", ignore = true)
+        Mapping(target= "event.ingredients", ignore = true),
+        Mapping(target= "event.stations", ignore = true),
+        Mapping(target= "event.order", ignore = true),
+        Mapping(target= "event.orderIngredient", ignore = true),
+        Mapping(target= "event.orderMenuItem", ignore = true),
+        Mapping(target= "event.orderMenu", ignore = true),
+        Mapping(target= "orderMenu", ignore = true),
     )
     fun mapCreateDTOToMenu(menu: MenuCreateUpdateDTO, event: EventDTO, menuItems: List<MenuItem>): Menu
 }

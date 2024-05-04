@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.printer.PrinterServerMapper
 import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrinterDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDto
+import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueRepository
 import ch.zhaw.pm4.simonsays.repository.printer.PrinterServerRepository
 import org.slf4j.LoggerFactory
@@ -14,7 +15,9 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class PrinterServerService(
     private val printerServerRepository: PrinterServerRepository,
+    private val printQueueRepository: PrintQueueRepository,
     private val printerServerMapper: PrinterServerMapper,
+    private val printerProperties: PrinterProperties,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -36,6 +39,10 @@ class PrinterServerService(
     fun savePrinterServer(printerServerDto: PrinterServerDto): PrinterServerDto {
         // Update existing printer server
         val printerServer = printerServerMapper.mapToPrinterServer(printerServerDto)
+        // first save all print queues because they can exist on their own and are not tied to a printer server
+        printerServer.queues.forEach {
+            printQueueRepository.save(it)
+        }
         val updatedPrinterServer = printerServerRepository.save(printerServer)
         return printerServerMapper.mapToPrinterServerDto(updatedPrinterServer)
     }
@@ -45,29 +52,56 @@ class PrinterServerService(
         printerServerRepository.flush()
     }
 
-    private final fun createSampleData() {
-        val printer1 = PrinterDto(
-            mac = "00:00:00:00:00:01",
-            name = "Sample Printer",
-        )
-        val samplePrintQueue = PrintQueueDto(
-            id = "eb589790-b209-4e53-adc4-34da3ce89f01",
-            name = "Sample Print Queue",
+    private final fun createInitialData() {
+        val (takeawayPrinter, receiptPrinter) = if (printerProperties.takeawayPrinterMac == printerProperties.receiptPrinterMac) {
+            val printer = PrinterDto(
+                mac = printerProperties.takeawayPrinterMac,
+                name = "All Purpose Printer"
+            )
+            Pair(printer, printer)
+        } else {
+            val takeawayPrinter = PrinterDto(
+                mac = printerProperties.takeawayPrinterMac,
+                name = "Takeaway Printer"
+            )
+            val receiptPrinter = PrinterDto(
+                mac = printerProperties.receiptPrinterMac,
+                name = "Receipt Printer",
+            )
+            Pair(takeawayPrinter, receiptPrinter)
+        }
+        val takeawayPrintQueue = PrintQueueDto(
+            id = printerProperties.takeawayPrinterQueueId,
+            name = "Takeaway Print Queue",
             printers = listOf(
-                printer1
+                takeawayPrinter,
             ),
         )
-        val samplePrinterServer1 = PrinterServerDto(
-            id = "eb6c2108-82c2-4260-93b7-6a0937cf73ef",
-            name = "Sample Printer Server",
-            queues = listOf(samplePrintQueue),
+        val receiptPrintQueue = PrintQueueDto(
+            id = printerProperties.receiptPrinterQueueId,
+            name = "Receipt Print Queue",
+            printers = listOf(
+                receiptPrinter,
+            ),
         )
-        savePrinterServer(samplePrinterServer1)
+        val printerServer = PrinterServerDto(
+            id = printerProperties.printerServerId,
+            name = "Printer Server",
+            queues = listOf(
+                takeawayPrintQueue,
+                receiptPrintQueue,
+            ),
+        )
+        savePrinterServer(printerServer)
+        log.debug("Created initial printer data")
     }
 
     init {
-        log.debug("Creating sample data")
-        createSampleData()
+        if (printerProperties.createInitialData) {
+            log.debug("Creating initial printer data")
+            createInitialData()
+        } else {
+            log.debug("Not creating initial printer data")
+        }
     }
-
 }

@@ -7,7 +7,6 @@ import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.service.EventService
 import ch.zhaw.pm4.simonsays.service.IngredientService
-import ch.zhaw.pm4.simonsays.service.IngredientServiceImpl
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
@@ -30,7 +29,7 @@ class IngredientTest {
     fun setup() {
         ingredientRepository = mockk(relaxed = true)
         eventService = mockk(relaxed = true)
-        ingredientService = IngredientServiceImpl(ingredientRepository, IngredientMapperImpl(), eventService)
+        ingredientService = IngredientService(ingredientRepository, IngredientMapperImpl(), eventService)
     }
 
     @Test

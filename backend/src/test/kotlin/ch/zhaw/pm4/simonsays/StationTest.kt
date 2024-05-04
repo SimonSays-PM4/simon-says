@@ -10,10 +10,7 @@ import ch.zhaw.pm4.simonsays.api.types.StationDTO
 import ch.zhaw.pm4.simonsays.entity.State
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.exception.ValidationException
-import ch.zhaw.pm4.simonsays.repository.IngredientRepository
-import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
-import ch.zhaw.pm4.simonsays.repository.OrderIngredientRepository
-import ch.zhaw.pm4.simonsays.repository.StationRepository
+import ch.zhaw.pm4.simonsays.repository.*
 import ch.zhaw.pm4.simonsays.service.*
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -53,6 +50,9 @@ class StationTest {
     @MockkBean(relaxed = true)
     protected lateinit var orderIngredientRepository: OrderIngredientRepository
 
+    @MockkBean(relaxed = true)
+    protected lateinit var orderRepository: OrderRepository
+
     private lateinit var stationService: StationService
 
     @BeforeEach
@@ -68,14 +68,16 @@ class StationTest {
         orderService = mockk(relaxed = true)
         orderMapper = mockk(relaxed = true)
         orderIngredientRepository = mockk(relaxed = true)
+        orderRepository = mockk(relaxed = true)
 
         // Construct the service with the mocked dependencies
-        stationService = StationServiceImpl(
+        stationService = StationService(
                 stationRepository,
                 StationMapperImpl(),
                 eventService,
                 ingredientRepository,
                 orderIngredientRepository,
+                orderRepository,
                 orderService,
                 orderMapper
         )
