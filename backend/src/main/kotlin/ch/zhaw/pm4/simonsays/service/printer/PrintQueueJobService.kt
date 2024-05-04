@@ -64,23 +64,4 @@ class PrintQueueJobService(
             .orElseThrow { IllegalArgumentException("Print queue job not found") }
         return printQueueJob.printQueue.id
     }
-
-    private final fun createSampleData() {
-        // create some sample data
-        val printQueue = "eb589790-b209-4e53-adc4-34da3ce89f01"
-
-        val printQueueJob3 = PrintQueueJobDto(
-            id = "eb589790-b209-4e53-adc4-34da3ce89f04",
-            status = JobStatusDto.PRINTED,
-            body = "Sample Print Job",
-            creationDateTime = System.currentTimeMillis(),
-            lastUpdateDateTime = System.currentTimeMillis(),
-        )
-        savePrintQueueJob(printQueue, printQueueJob3)
-    }
-
-    init {
-        log.debug("Creating sample data")
-        createSampleData()
-    }
 }

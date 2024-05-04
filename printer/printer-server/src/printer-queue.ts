@@ -1,7 +1,6 @@
 import { SocketApi } from 'printer-api-lib/src/socket-api';
 import { ApplicationErrorDto, PrintQueueDto, PrintQueueJobDto, PrintQueueJobUpdateDto } from 'printer-api-lib/src/dtos';
 import { Printer } from "./printer";
-import { error } from 'console';
 
 export class PrinterQueue {
     readonly printServerId: string;

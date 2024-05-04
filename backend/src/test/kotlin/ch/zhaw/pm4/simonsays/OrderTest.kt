@@ -7,9 +7,12 @@ import ch.zhaw.pm4.simonsays.exception.ValidationException
 import ch.zhaw.pm4.simonsays.repository.*
 import ch.zhaw.pm4.simonsays.service.EventService
 import ch.zhaw.pm4.simonsays.service.OrderService
+import ch.zhaw.pm4.simonsays.service.OrderServiceImpl
+import ch.zhaw.pm4.simonsays.service.printer.PrinterService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,6 +45,9 @@ class OrderTest {
     @MockkBean(relaxed = true)
     protected lateinit var menuRepository: MenuRepository
 
+    @MockkBean(relaxed = true)
+    protected lateinit var printerService: PrinterService
+
     protected lateinit var orderService: OrderService
 
     @BeforeEach
@@ -55,9 +61,10 @@ class OrderTest {
         ingredientRepository = mockk(relaxed = true)
         menuItemRepository = mockk(relaxed = true)
         menuRepository = mockk(relaxed = true)
+        printerService = mockk(relaxed = true)
 
         // Construct the service with the mocked dependencies
-        orderService = OrderService(
+        orderService = OrderServiceImpl(
             OrderMapperImpl(),
             orderRepository,
             orderIngredientRepository,
@@ -66,7 +73,8 @@ class OrderTest {
             eventService,
             ingredientRepository,
             menuItemRepository,
-            menuRepository
+            menuRepository,
+            printerService
         )
     }
 
@@ -287,5 +295,19 @@ class OrderTest {
     fun `test get orderIngredient by ingredient ids`() {
         every { orderIngredientRepository.findAllByIngredientIdInAndStateEquals(any(), State.IN_PROGRESS) } returns listOf(getOrderIngredient())
         Assertions.assertEquals(1, orderService.getOrderIngredientByIngredientIds(listOf(1)).count())
+    }
+
+    @Test
+    fun `test order triggers printer`() {
+        every { eventService.getEvent(any()) } returns getTestEventDTO()
+        every { menuRepository.findAllByEventId(any()) } returns listOf(getMenu())
+        every { menuItemRepository.findAllByEventId(any()) } returns listOf(getMenuItem())
+        every { ingredientRepository.findAllByEventId(any()) } returns listOf(getTestIngredient1())
+
+        every { orderRepository.save(any()) } returns getOrder(menus = mutableListOf(getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(getOrderMenuItem(order = getOrder())))))
+
+        val orderCreateDTO = getOrderCreateDTO(menus = listOf(getMenuDTO(menuItemDTOs = listOf(getMenuItemDTO(ingredientDTOs = listOf(getTestIngredientDTO()))))))
+        orderService.createOrder(orderCreateDTO, 1)
+        verify { printerService.printFoodOrder(any()) }
     }
 }
