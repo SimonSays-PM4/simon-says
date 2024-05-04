@@ -313,7 +313,4 @@ class PrinterServersNamespaceTest {
         // Verify that a remove event is sent back to the client with the correct data
         verify { mockSocket.send(REMOVE_EVENT, any()) }
     }
-
-
-
 }

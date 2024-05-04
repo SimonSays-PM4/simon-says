@@ -1,8 +1,9 @@
-import { PrinterTypes, ThermalPrinter } from "node-thermal-printer";
+import { PrinterTypes } from "node-thermal-printer";
 import arp from "@network-utils/arp-lookup";
 import { PrintQueueJobDto } from "printer-api-lib/src/dtos";
 import os from "os";
 import Arpping from "arpping";
+import ThermalPrinter from "./thermal-printer-extension";
 
 const networkScanMaxTimeoutInS = 10;
 
@@ -11,6 +12,11 @@ export class Printer {
     readonly name: string;
     /** The printer is only initalised as soon as it is used for the first time. */
     thermalPrinter: ThermalPrinter | undefined;
+    /**
+     * We are not allowed to call print on the printer while it is already printing.
+     * Hence we need to lock the printer while it is printing.
+    */
+    printLock = false
 
     constructor(mac: string, name: string) {
         this.mac = mac;
@@ -33,7 +39,7 @@ export class Printer {
         if (!ip) {
             console.error(`Failed to resolve printer ip for mac ${this.mac} in arp cache. Starting network scan.`);
             // Attempting network scan
-            try {
+            try { 
                 // timeout the network scan after a certain time
                 ip = await this.findPrinterIpWithNetworkScan();
                 if (!ip) {
@@ -73,6 +79,12 @@ export class Printer {
      * @throws error if the printer is not connected or if the print job could not be printed.
      */
     async print(printJob: PrintQueueJobDto): Promise<void> {
+        while (this.printLock) {
+            console.log(`Printer '${this.name}' with mac ${this.mac} is currently printing. Waiting for it to finish...`)
+            await new Promise(resolve => setTimeout(resolve, 100))
+        }
+        this.printLock = true
+
         // Initialize the printer if it is not already initialized
         const initSuccessul = await this.init();
         if (!initSuccessul) {
@@ -97,13 +109,12 @@ export class Printer {
             await this.thermalPrinter!.printImageBuffer(imageBuffer);
             this.thermalPrinter!.alignLeft();
             this.thermalPrinter!.newLine();
-            this.thermalPrinter!.newLine();
         }
 
         // print header if available
         if (printJob.header) {
             this.thermalPrinter!.alignCenter();
-            this.thermalPrinter!.println(printJob.header);
+            this.thermalPrinter!.printWithCustomLineBreaks(printJob.header);
             this.thermalPrinter!.alignLeft();
             this.thermalPrinter!.newLine();
         }
@@ -113,7 +124,7 @@ export class Printer {
             this.thermalPrinter!.alignCenter();
             this.thermalPrinter!.bold(true);
             this.thermalPrinter!.setTextQuadArea();
-            this.thermalPrinter!.println(printJob.title);
+            this.thermalPrinter!.printWithCustomLineBreaks(printJob.title);
             this.thermalPrinter!.setTextNormal();
             this.thermalPrinter!.bold(false);
             this.thermalPrinter!.alignLeft();
@@ -121,12 +132,13 @@ export class Printer {
         }
 
         // Print body
-        this.thermalPrinter!.println(printJob.body);
+        this.thermalPrinter!.alignLeft();
+        this.thermalPrinter!.printWithCustomLineBreaks(printJob.body);
+        this.thermalPrinter!.newLine();
 
         // Print QR code if available
         if (printJob.qrCode) {
             this.thermalPrinter!.alignCenter();
-            this.thermalPrinter!.newLine();
             this.thermalPrinter!.printQR(printJob.qrCode);
             this.thermalPrinter!.alignLeft();
             this.thermalPrinter!.newLine();
@@ -134,8 +146,9 @@ export class Printer {
 
         // Print footer if available
         if (printJob.footer) {
-            this.thermalPrinter!.newLine();
-            this.thermalPrinter!.println(printJob.footer);
+            this.thermalPrinter!.alignCenter();
+            this.thermalPrinter!.printWithCustomLineBreaks(printJob.footer);
+            this.thermalPrinter!.alignLeft();
         }
 
         // Cut the paper and execute the print job
@@ -146,6 +159,7 @@ export class Printer {
             throw new Error(`Failed to print job ${printJob.id} on printer ${this.name} with mac ${this.mac}: ${error}`);
         } finally {
             await this.thermalPrinter!.clear();
+            this.printLock = false
         }
     }
 
@@ -269,7 +283,7 @@ export class Printer {
                 return text;
             }
         }
-
+        
         let virtualPaper = "\n";
         if (printJob.base64PngLogoImage) {
             virtualPaper += center("<LOGO>");
