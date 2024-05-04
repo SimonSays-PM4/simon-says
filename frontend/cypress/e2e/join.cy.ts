@@ -28,7 +28,7 @@ describe("Join", () => {
     });
 
     it("should join an event", () => {
-        cy.visit("http://localhost:3000/1/join");
+        cy.get("tr").contains("Test-Event").get("#joinAction").click();
         cy.get("h1").contains("Join Event");
         cy.get("#userName").type("user");
         cy.get("#password").type("Test-password");
