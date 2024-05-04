@@ -6,6 +6,9 @@ import { IngredientDTO, IngredientCreateUpdateDTO } from "../../gen/api";
 import { useNavigate } from "react-router-dom";
 import { Popup } from "../../components/Popup.tsx";
 import { useIngredientListPage } from "./IngredientListPage.hooks.tsx";
+import {MdEditSquare} from "react-icons/md";
+import {FaRegTrashAlt} from "react-icons/fa";
+import {PiCookieDuotone} from "react-icons/pi";
 
 export const IngredientListPageComponent: React.FC = () => {
     const { isLoading, ingredientActions, showDeletePopup, setShowDeletePopup, data } = useIngredientListPage();
@@ -27,17 +30,23 @@ export const IngredientListPageComponent: React.FC = () => {
             type:"column"
         },
         {
-            key:"id",
-            name:"Bearbeiten",
-            type:"action",
+            key: "id",
+            name: "Bearbeiten",
+            elementKey: "editAction",
+            type: "action",
+            children: <MdEditSquare/>,
+            noText:true,
             action: onEditClick
         },
         {
-            key:"id",
-            name:"Löschen",
-            type:"action",
+            key: "id",
+            name: "Löschen",
+            elementKey:"deleteAction",
+            type: "action",
+            children: <FaRegTrashAlt/>,
+            noText:true,
             action: onDeleteClick
-        }
+        },
     ];
 
     return (
@@ -45,7 +54,7 @@ export const IngredientListPageComponent: React.FC = () => {
             {isLoading ? (
                 <div className="w-[100px] block mx-auto"><Loader /></div>
             ) : (
-                <DataTable<IngredientDTO> title="Zutaten" columns={columns} rows={data} onCreateClick={() => navigate(`../ingredient/create`)}  />
+                <DataTable<IngredientDTO> icon={<PiCookieDuotone/>} title="Zutaten" columns={columns} rows={data} onCreateClick={() => navigate(`../ingredient/create`)} onBackClick={() => navigate("../../events")} />
             )}
 
             <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={ingredientActions.deleteIngredient} modalText={'Zutate "' + ingredientActions.ingredientToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />

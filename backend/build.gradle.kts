@@ -41,7 +41,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
     implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.1")
-    runtimeOnly ("com.mysql:mysql-connector-j")
+    runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.testcontainers:junit-jupiter:1.19.7")
     testImplementation("org.testcontainers:mysql:1.19.7")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -58,7 +58,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-tasks.test{
+tasks.test {
     // // report is always generated after tests run
     finalizedBy(tasks.jacocoTestReport)
 }
@@ -66,7 +66,7 @@ tasks.test{
 tasks.jacocoTestReport {
     // tests are required to run before generating the report
     dependsOn(tasks.test)
-    reports{
+    reports {
         xml.required = true
     }
 }
@@ -104,4 +104,9 @@ tasks.withType<Detekt>().configureEach {
 }
 tasks.withType<DetektCreateBaselineTask>().configureEach {
     jvmTarget = "1.8"
+}
+tasks.processResources {
+    filesMatching("version.properties") {
+        expand("version" to project.version)
+    }
 }
