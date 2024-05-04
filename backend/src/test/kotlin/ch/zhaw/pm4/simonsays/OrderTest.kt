@@ -7,7 +7,6 @@ import ch.zhaw.pm4.simonsays.exception.ValidationException
 import ch.zhaw.pm4.simonsays.repository.*
 import ch.zhaw.pm4.simonsays.service.EventService
 import ch.zhaw.pm4.simonsays.service.OrderService
-import ch.zhaw.pm4.simonsays.service.OrderServiceImpl
 import ch.zhaw.pm4.simonsays.service.printer.PrinterService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -64,17 +63,17 @@ class OrderTest {
         printerService = mockk(relaxed = true)
 
         // Construct the service with the mocked dependencies
-        orderService = OrderServiceImpl(
-            OrderMapperImpl(),
-            orderRepository,
-            orderIngredientRepository,
-            orderMenuRepository,
-            orderMenuItemRepository,
-            eventService,
-            ingredientRepository,
-            menuItemRepository,
-            menuRepository,
-            printerService
+        orderService = OrderService(
+                OrderMapperImpl(),
+                orderRepository,
+                orderIngredientRepository,
+                orderMenuRepository,
+                orderMenuItemRepository,
+                eventService,
+                ingredientRepository,
+                menuItemRepository,
+                menuRepository,
+                printerService
         )
     }
 

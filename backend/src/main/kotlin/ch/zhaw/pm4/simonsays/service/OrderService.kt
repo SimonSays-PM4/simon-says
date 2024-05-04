@@ -6,6 +6,7 @@ import ch.zhaw.pm4.simonsays.entity.*
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.exception.ValidationException
 import ch.zhaw.pm4.simonsays.repository.*
+import ch.zhaw.pm4.simonsays.service.printer.PrinterService
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,7 +19,8 @@ class OrderService(
     private val eventService: EventService,
     private val ingredientRepository: IngredientRepository,
     private val menuItemRepository: MenuItemRepository,
-    private val menuRepository: MenuRepository
+    private val menuRepository: MenuRepository,
+    private val printerService: PrinterService
 ) {
     fun createOrder(order: OrderCreateDTO, eventId: Long): OrderDTO {
         val event = eventService.getEvent(eventId)
@@ -27,6 +29,7 @@ class OrderService(
         validateOrderHasItems(order)
 
         val savedOrder = orderRepository.save(prepareOrderForSave(order, event))
+        printerService.printFoodOrder(savedOrder)
         return orderMapper.mapOrderToOrderDTO(savedOrder)
     }
 
