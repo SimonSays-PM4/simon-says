@@ -1,4 +1,4 @@
-describe("Login", () => {
+describe("Station", () => {
     beforeEach(() => {
         cy.visit("http://localhost:3000/login?returnUrl=%2Fadmin%2Fevents");
         cy.get("h1").contains("Login");
