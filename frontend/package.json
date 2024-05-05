@@ -9,6 +9,7 @@
         "build:staging": "tsc && vite build --mode staging",
         "preview": "vite preview",
         "e2e": "npx cypress run --browser chrome",
+        "test": "exit 0",
         "lint": "eslint --max-warnings=0 \"src/**/*.{ts,tsx}\"",
         "api": "openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g typescript-axios -o ./src/gen/api --config api.json"
     },
