@@ -1,11 +1,11 @@
 import React from "react";
 import { useMenuItemPage } from "./MenuItemPage.hooks.tsx";
-import { Loader } from "../../../components/Loader.tsx";
-import { ColumnType } from "../../../models/ColumnType.ts";
-import { MenuItemDTO } from "../../../gen/api";
-import { DataTable } from "../../../components/data-tables/DataTable.tsx";
+import { Loader } from "../../../../components/Loader.tsx";
+import { ColumnType } from "../../../../models/ColumnType.ts";
+import { MenuItemDTO } from "../../../../gen/api";
+import { DataTable } from "../../../../components/data-tables/DataTable.tsx";
 import { useNavigate } from "react-router-dom";
-import { Popup } from "../../../components/Popup.tsx";
+import { Popup } from "../../../../components/Popup.tsx";
 import {MdEditSquare} from "react-icons/md";
 import {FaRegTrashAlt} from "react-icons/fa";
 import {PiHamburgerDuotone} from "react-icons/pi";

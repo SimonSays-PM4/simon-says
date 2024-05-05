@@ -12,6 +12,7 @@ import { Loader } from "../../../components/Loader.tsx";
 export const MenuItemEditPage: React.FC = () => {
   const { menuItem, menuItemActions, setShowDeleteModal, showDeleteModal, navigate, ingredientOptions, selectedIngredients, isLoading, formControl, formGetValues, formErrors, formRegister, handleSubmit } = useMenuItemEditPage();
 
+  const { menuItem, menuItemActions, setShowDeleteModal, showDeleteModal, navigate, ingredientOptions, selectedIngredients } = useMenuItemEditPage();
   const fieldRequiredMessage = "Dieses Feld ist erforderlich.";
   const fieldLengthMessage = "Die Eingabe ist muss zwischen 5 und 64 Zeichen sein.";
   const fieldValueMessage = "Die Eingabe ist muss über 1.00 sein.";

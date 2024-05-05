@@ -1,8 +1,7 @@
 import * as React from "react";
-import { useContext, useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import { Status, StatusLevel } from "./Status.tsx";
-import { API_URL, getEventService } from "../api.ts";
-import { AppContext } from "../providers/AppContext.tsx";
+import {API_URL, getHealthService} from "../api.ts";
 
 type ServerIndicatorProps = {
 }
@@ -13,11 +12,10 @@ export const ServerIndicator: React.FC<ServerIndicatorProps> = () => {
 
     const currentStage = import.meta.env.MODE == "development" ? "DEV" : import.meta.env.MODE == "staging" ? "STAGING" : "PROD";
 
-    const { loginInfo } = useContext(AppContext);
-    const eventService = getEventService(loginInfo.userName, loginInfo.password);
+    const healthService = getHealthService();
 
-    useEffect(() => {
-        eventService.getEvents().then(() => {
+    const callHealth = useCallback(()=>{
+        healthService.health().then(() => {
             setStatus(StatusLevel.OK);
             setMessage("UP")
         }).catch((error) => {
@@ -25,6 +23,15 @@ export const ServerIndicator: React.FC<ServerIndicatorProps> = () => {
             setStatus(StatusLevel.ERROR);
             setMessage("DOWN")
         })
+    },[healthService])
+    useEffect(() => {
+        callHealth();
+        const intervalId = setInterval(()=> {
+            callHealth();
+        }, 2000)
+
+        return () => clearInterval(intervalId);
+
     })
 
     return (<Status tooltip={API_URL} text={message} status={status} textNext={currentStage} />);

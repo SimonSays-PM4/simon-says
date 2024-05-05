@@ -14,12 +14,13 @@ import { MenuListPageComponent } from "./pages/event/menu/MenuListPage.component
 import { MenuCreatePageComponent } from "./pages/event/menu/MenuCreatePage.component.tsx";
 import { OrderCreatePageComponent } from "./pages/order/OrderCreatePage.component.tsx";
 import { OrderListPageComponent } from "./pages/order/OrderListPage.component.tsx";
-import { MenuItemPage } from "./pages/event/menu/MenuItemPage.component.tsx";
-import { MenuItemEditPage } from "./pages/event/menu/MenuItemEditPage.component.tsx";
 import { JoinPage } from "./pages/user/JoinPage.tsx";
 import { StationSelectionPage } from "./pages/user/StationSelectionPage.component.tsx";
 import {StationListPageComponent} from "./pages/station/StationListPage.component.tsx";
 import {StationEditPageComponent} from "./pages/station/StationEditPage.component.tsx";
+import {StationViewComponent} from "./pages/station/user/StationView.component.tsx";
+import {MenuItemPage} from "./pages/event/menu/item/MenuItemPage.component.tsx";
+import {MenuItemEditPage} from "./pages/event/menu/item/MenuItemEditPage.component.tsx";
 
 export default function App() {
     return (
@@ -62,6 +63,7 @@ export default function App() {
                         </Route>
                     </Route>
 
+                    <Route path="/:eventId/station/:stationId" element={<AuthorizedEventRoute activePageType={ActivePageType.Event}><StationViewComponent/></AuthorizedEventRoute>}/>
                     <Route path="*" element={<Error404Page />} />
                 </Routes>
             </BrowserRouter>
