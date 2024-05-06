@@ -11,6 +11,7 @@ import {IoFastFoodOutline} from "react-icons/io5";
 import {PiChargingStationDuotone, PiCookieDuotone, PiHamburgerDuotone, PiReceiptDuotone} from "react-icons/pi";
 import {MdEditSquare} from "react-icons/md";
 import {FaRegTrashAlt} from "react-icons/fa";
+import { TbArrowsJoin } from "react-icons/tb";
 
 export const EventListPageComponent: React.FC = () => {
     const { loading, eventActions, showDeletePopup, setShowDeletePopup, data } = useEventListPage()
@@ -45,6 +46,10 @@ export const EventListPageComponent: React.FC = () => {
             eventActions.setEventToDelete(row);
             setShowDeletePopup(true);
         }
+    }
+
+    const onJoinClick = (row: EventCreateUpdateDTO) => {
+        navigate("../../" + row.id + "/join")
     }
 
     const columns: Array<ColumnType<EventDTO>> = [
@@ -107,6 +112,15 @@ export const EventListPageComponent: React.FC = () => {
             buttonType: ButtonType.Secondary,
             children:<PiChargingStationDuotone/>,
             action: onClickStations
+        },
+        {
+            key: "id",
+            name: "Join Event",
+            elementKey:"joinAction",
+            type: "action",
+            children: <TbArrowsJoin/>,
+            noText:true,
+            action: onJoinClick
         },
         {
             key: "id",

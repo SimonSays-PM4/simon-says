@@ -1,5 +1,3 @@
-# Pull Request Template
-
 ## Overview
 
 Please provide a brief description of what this pull request aims to achieve.
@@ -13,6 +11,10 @@ Link to the Jira Story and any relevant Sub-Tasks that are addressed by this pul
 - Summary of backend changes here
 
 ### Frontend Changes
+
+- Summary of frontend changes here
+
+### Printer Changes
 
 - Summary of frontend changes here
 
