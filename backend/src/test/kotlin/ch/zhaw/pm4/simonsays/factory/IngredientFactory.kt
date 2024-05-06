@@ -13,11 +13,13 @@ class IngredientFactory(
 ) {
     fun createIngredient(
         name: String = "Default Ingredient Name",
-        event: Event = eventFactory.createEvent()
+        event: Event = eventFactory.createEvent(),
+        mustBeProduced: Boolean = true
     ): Ingredient {
         val ingredient = Ingredient(
             name = name,
             event = event,
+            mustBeProduced = mustBeProduced,
             menuItems = null,
             stations = null
         )
