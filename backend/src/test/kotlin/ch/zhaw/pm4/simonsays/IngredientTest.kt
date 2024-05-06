@@ -92,7 +92,7 @@ class IngredientTest {
     }
 
     @Test
-    fun `Test ingredient update`() {
+    fun `Test ingredient update name`() {
         every { eventService.getEvent(any()) } returns getTestEventDTO()
         every { ingredientRepository.save(any()) } returns getTestIngredient1("TestingredientUpdated")
         every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getTestIngredient1())
@@ -100,6 +100,19 @@ class IngredientTest {
         Assertions.assertEquals(
             IngredientDTO(
                 1, "TestingredientUpdated", true
+            ), ingredientService.createUpdateIngredient(ingredientCreateUpdateDTO, 1)
+        )
+    }
+
+    @Test
+    fun `Test ingredient update mustBeProduced`() {
+        every { eventService.getEvent(any()) } returns getTestEventDTO()
+        every { ingredientRepository.save(any()) } returns getTestIngredient1( mustBeProduced = false)
+        every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getTestIngredient1())
+        val ingredientCreateUpdateDTO = createUpdateTestIngredientDTO(1, "TestingredientUpdated")
+        Assertions.assertEquals(
+            IngredientDTO(
+                1, "TestIngredient", false
             ), ingredientService.createUpdateIngredient(ingredientCreateUpdateDTO, 1)
         )
     }
