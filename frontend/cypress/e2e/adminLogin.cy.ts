@@ -11,4 +11,16 @@ describe("Admin Login", () => {
 
         cy.get('a[href="/admin/events"]').click();
     });
+
+    it("Should log out in without issues", () => {
+        cy.visit("http://localhost:3000/");
+        cy.get("h1").contains("Home Page");
+
+        cy.contains("button", "Logout").click();
+
+        cy.wait(500);
+
+        cy.url().should("include", "/login");
+        cy.get("h1").contains("Login");
+    });
 });
