@@ -6,15 +6,15 @@ import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 
-fun createUpdateTestIngredientDTO(id: Long? = null, name: String? = "TestIngredient") = IngredientCreateUpdateDTO(
+fun createUpdateTestIngredientDTO(id: Long? = null, name: String? = "TestIngredient", mustBeProduced: Boolean = true) = IngredientCreateUpdateDTO(
     id = id,
     name = name,
-    mustBeProduced = true
+    mustBeProduced = mustBeProduced
 )
 
-fun getTestIngredient1(name: String? = "TestIngredient") = Ingredient(name = name!!, id = 1, event = getTestEvent(), mustBeProduced = true, menuItems = null, stations = null)
+fun getTestIngredient1(name: String? = "TestIngredient", mustBeProduced: Boolean = true) = Ingredient(name = name!!, id = 1, event = getTestEvent(), mustBeProduced = mustBeProduced, menuItems = null, stations = null)
 
-fun getTestIngredientDTO(name: String? = "TestIngredient", id: Long? = 1) = IngredientDTO(name = name!!, id = id!!, mustBeProduced = true)
+fun getTestIngredientDTO(name: String? = "TestIngredient", id: Long? = 1, mustBeProduced: Boolean = true) = IngredientDTO(name = name!!, id = id!!, mustBeProduced = mustBeProduced)
 
 fun getTestEvent() = Event(id = 1, name = "TestEvent", password = "TestPassword", numberOfTables = 1)
 fun getTestEventDTO() = EventDTO(id = 1, name = "TestEvent", password = "TestPassword", numberOfTables = 1)
