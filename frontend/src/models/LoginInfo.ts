@@ -10,10 +10,6 @@ export class LoginInfo {
     }
 
     static isAuthenticated(loginInfo: LoginInfo) {
-        if (!loginInfo) {
-            return false;
-        }
-
-        return loginInfo.isAuthenticated;
+        return loginInfo?.isAuthenticated ?? false;
     }
 }

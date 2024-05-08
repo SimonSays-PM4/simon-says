@@ -7,7 +7,6 @@ import { EventContext } from "../../../providers/EventContext.tsx";
 import { AppContext } from "../../../providers/AppContext.tsx";
 import { NotificationType } from "../../../enums/NotificationType.ts";
 import { ValueLabel } from "../../../models/ValueLabel.ts";
-import { nameof } from "ts-simple-nameof";
 
 type MenuItemEditReturnProps = {
     menuItem: MenuItemCreateUpdateDTO,

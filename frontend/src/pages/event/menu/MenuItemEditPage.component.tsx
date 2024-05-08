@@ -8,7 +8,6 @@ import { Popup } from "../../../components/Popup.tsx";
 import Select from "react-select";
 import { ButtonType } from "../../../enums/ButtonType.ts";
 import { Loader } from "../../../components/Loader.tsx";
-import { nameof } from "ts-simple-nameof";
 
 export const MenuItemEditPage: React.FC = () => {
   const { menuItem, menuItemActions, setShowDeleteModal, showDeleteModal, navigate, ingredientOptions, selectedIngredients, isLoading, formControl, formGetValues, formErrors, formRegister, handleSubmit } = useMenuItemEditPage();

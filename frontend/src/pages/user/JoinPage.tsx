@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-
 import { FieldValues, useForm } from "react-hook-form";
 import React, { useContext } from "react";
 import { Button } from "../../components/Button";
@@ -8,6 +7,7 @@ import { getEventService } from "../../api.ts";
 import { AppContext } from "../../providers/AppContext.tsx";
 import { LoginInfo } from "../../models/LoginInfo.ts";
 import { NotificationType } from "../../enums/NotificationType.ts";
+import { encryptData } from "../../helpers/CryptoHelper.ts";
 
 export const JoinPage: React.FC = () => {
     const { eventId } = useParams();
@@ -22,6 +22,8 @@ export const JoinPage: React.FC = () => {
     const onSubmit = async (data: FieldValues) => {
         const eventService = getEventService(data["userName"], data["password"]);
         eventService.getEvent(Number(eventId)).then(() => {
+            const encryptedPw = encryptData(data["userName"] + ":" + data["password"]);
+            localStorage.setItem("encryptedCode", encryptedPw);
             setLoginInfo(new LoginInfo(true, data["userName"], data["password"]));
             navigate(`/${eventId}`);
         }).catch(() => {
