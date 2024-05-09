@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "../../../components/Button.tsx";
 import { FormInput } from "../../../components/form/FormInput.tsx";
-import { nameof } from "ts-simple-nameof";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "../../../components/Loader.tsx";
 import { ButtonType } from "../../../enums/ButtonType.ts";
