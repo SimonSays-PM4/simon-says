@@ -10,7 +10,12 @@ inputs:
   node-version:
     required: true
     description: node version
-
+  github-token:
+    required: false
+    description: github token
+  sonar-token:
+    required: false
+    description: sonar token
 runs:
   using: "composite"
   steps:

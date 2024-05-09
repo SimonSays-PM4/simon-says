@@ -32,3 +32,5 @@ jobs:
           working-directory: ${{ env.FRONTEND_DIRECTORY }}
           backend-working-directory: ${{ env.BACKEND_DIRECTORY }}
           node-version: ${{ env.NODE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
