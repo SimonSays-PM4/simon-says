@@ -150,11 +150,13 @@ class OrderService(
             menuItems.find { it.id == menuItem.id } ?: throw ResourceNotFoundException("MenuItem not found with ID: ${menuItem.id}")
         )
         menuItem.ingredients.forEach { ingredient ->
+            val originalIngredient: Ingredient = ingredients.find { it.id == ingredient.id } ?: throw ResourceNotFoundException("Ingredient not found with ID: ${ingredient.id}")
             menuItemToSave.addOrderIngredient(
                 orderMapper.mapIngredientDtoToOrderIngredient(
                     ingredient,
                     event,
-                    ingredients.find { it.id == ingredient.id } ?: throw ResourceNotFoundException("Ingredient not found with ID: ${ingredient.id}")
+                    originalIngredient,
+                    if(originalIngredient.mustBeProduced) State.IN_PROGRESS else State.DONE
                 )
             )
         }

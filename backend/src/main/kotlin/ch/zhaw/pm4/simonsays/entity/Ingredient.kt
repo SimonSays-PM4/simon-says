@@ -12,6 +12,9 @@ data class Ingredient(
     @Column(nullable = false)
     var name: String,
 
+    @Column(nullable = false)
+    var mustBeProduced: Boolean,
+
     @ManyToOne
     @JoinColumn(name = "event_id")
     val event: Event,
@@ -34,6 +37,7 @@ data class Ingredient(
 
         if (id != other.id) return false
         if (name != other.name) return false
+        if (mustBeProduced != other.mustBeProduced) return false
         if (event.id != other.event.id) return false
 
         return true
