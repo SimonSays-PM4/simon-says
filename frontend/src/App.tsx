@@ -18,8 +18,9 @@ import { MenuItemPage } from "./pages/event/menu/MenuItemPage.component.tsx";
 import { MenuItemEditPage } from "./pages/event/menu/MenuItemEditPage.component.tsx";
 import { JoinPage } from "./pages/user/JoinPage.tsx";
 import { StationSelectionPage } from "./pages/user/StationSelectionPage.component.tsx";
-import {StationListPageComponent} from "./pages/station/StationListPage.component.tsx";
-import {StationEditPageComponent} from "./pages/station/StationEditPage.component.tsx";
+import { StationListPageComponent } from "./pages/station/StationListPage.component.tsx";
+import { StationEditPageComponent } from "./pages/station/StationEditPage.component.tsx";
+import { SocketTestPage } from "./pages/socket/SocketTestPage.component.tsx";
 
 export default function App() {
     return (
@@ -27,6 +28,7 @@ export default function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/socket-test" element={<SocketTestPage />} />
                     <Route path="/:eventId/join" element={<JoinPage />} />
                     <Route path="/:eventId" element={<AuthorizedEventRoute activePageType={ActivePageType.Home}><StationSelectionPage /></AuthorizedEventRoute>} />
                     <Route path="/" element={<AuthorizedRoute activePageType={ActivePageType.Home}><HomePage /></AuthorizedRoute>} />
