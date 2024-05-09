@@ -46,12 +46,12 @@ class IngredientTest {
     fun `Test ingredient list`() {
         every { ingredientRepository.findAllByEventId(any()) } returns
                 listOf(
-                        Ingredient(1, "Testingredient", getEvent(), listOf(), listOf()),
-                        Ingredient(2, "Testingredient2", getEvent(), listOf(), listOf())
+                        Ingredient(1, "Testingredient", true, getEvent(), listOf(), listOf()),
+                        Ingredient(2, "Testingredient2", true, getEvent(), listOf(), listOf())
                 )
 
         Assertions.assertEquals(
-            listOf(IngredientDTO(1, "Testingredient"), IngredientDTO(2, "Testingredient2")),
+            listOf(IngredientDTO(1, "Testingredient", true), IngredientDTO(2, "Testingredient2", true)),
             ingredientService.listIngredients(1)
         )
     }
@@ -99,7 +99,7 @@ class IngredientTest {
         val ingredientCreateUpdateDTO = createUpdateTestIngredientDTO(1, "TestingredientUpdated")
         Assertions.assertEquals(
             IngredientDTO(
-                1, "TestingredientUpdated"
+                1, "TestingredientUpdated", true
             ), ingredientService.createUpdateIngredient(ingredientCreateUpdateDTO, 1)
         )
     }

@@ -15,15 +15,14 @@ spring:
     defer-datasource-initialization: true
 debug: on
 application:
+  frontend-origins:
+    - https://simon-says.ch
+    - https://simonsays.pm4.init-lab.ch
   url: "http://localhost:3000"
 
 # The printer-queue-server application configuration
 printer-queue-server:
   # List of frontend origins allowed to communicate with the printer server
-  frontend-origins:
-    # TODO: Add the URL of your deployed frontend here
-    - https://simon-says.ch
-    - https://simonsays.pm4.init-lab.ch
   dry-run: false
   # Will automatically create the printer server on startup and add the respective printer will be assigned
   printer-server-id: "a35e6a08-35ef-42c1-9a09-39d32fc2a5d6"
