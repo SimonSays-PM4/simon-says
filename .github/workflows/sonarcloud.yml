@@ -9,15 +9,24 @@ env:
 
 
 jobs:
-  gradle-build:
+  sonar-analysis:
     runs-on: ubuntu-22.04
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: SonarCloud Scan
+      - name: scan frontend
         uses: SonarSource/sonarcloud-github-action@v2.1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ${{ env.FRONTEND_DIRECTORY }}
+      - name: scan backend
+        uses: SonarSource/sonarcloud-github-action@v2.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ${{ env.BACKEND_DIRECTORY }}
