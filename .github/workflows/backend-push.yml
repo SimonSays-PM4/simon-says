@@ -2,6 +2,7 @@ name: backend running on each commit
 
 on:
   - push
+  - pull_request
 env:
   # GENERAL
   BACKEND_DIRECTORY: backend
