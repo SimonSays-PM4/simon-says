@@ -12,6 +12,12 @@ inputs:
     required: false
     description: skip tests
     default: false
+  github-token:
+    required: false
+    description: github token
+  sonar-token:
+    required: false
+    description: sonar token
 
 runs:
   using: "composite"
@@ -36,10 +42,11 @@ runs:
     - name: sonarcloud scan backend
       uses: SonarSource/sonarcloud-github-action@v2.1.1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
       with:
         projectBaseDir: ${{ inputs.working-directory }}
+      if: ${{ !inputs.skip-tests }}
     - name: upload build artifacts
       uses: actions/upload-artifact@v4
       with:
