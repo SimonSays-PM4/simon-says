@@ -70,9 +70,7 @@ class StationService(
     }
 
     fun getAssemblyStationView(eventId: Long): List<OrderDTO> {
-        stationRepository.findByEventIdAndAssemblyStation(eventId, true).orElseThrow {
-            ResourceNotFoundException("The event with id: $eventId does not yet have an assembly station")
-        }
+        doesEventHaveAssemblyStation(eventId)
         val orders: List<FoodOrder> = orderRepository.findAllByEventIdAndStateEquals(eventId, State.IN_PROGRESS)
         val processedOrders: MutableList<FoodOrder> = mutableListOf()
         orders.forEach { foodOrder ->
@@ -119,6 +117,13 @@ class StationService(
             ResourceNotFoundException("Station not found with ID: $stationId")
         }
         stationRepository.delete(menuItem)
+    }
+
+    fun doesEventHaveAssemblyStation(eventId: Long): Boolean {
+        stationRepository.findByEventIdAndAssemblyStation(eventId, true).orElseThrow {
+            ResourceNotFoundException("The event with id: $eventId does not yet have an assembly station")
+        }
+        return true
     }
 
 }

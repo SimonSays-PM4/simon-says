@@ -1,5 +1,8 @@
 package ch.zhaw.pm4.simonsays.service
 
+// import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
+import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
+import ch.zhaw.pm4.simonsays.api.controller.StationViewNamespace
 import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.types.*
 import ch.zhaw.pm4.simonsays.entity.*
@@ -20,7 +23,9 @@ class OrderService(
     private val ingredientRepository: IngredientRepository,
     private val menuItemRepository: MenuItemRepository,
     private val menuRepository: MenuRepository,
-    private val printerService: PrinterService
+    private val printerService: PrinterService,
+    private val stationViewNamespace: StationViewNamespace,
+    private val assemblyViewNamespace: AssemblyViewNamespace
 ) {
     fun createOrder(order: OrderCreateDTO, eventId: Long): OrderDTO {
         val event = eventService.getEvent(eventId)
@@ -29,6 +34,25 @@ class OrderService(
         validateOrderHasItems(order)
 
         val savedOrder = orderRepository.save(prepareOrderForSave(order, event))
+        assemblyViewNamespace.onChange(orderMapper.mapOrderToOrderDTO(savedOrder))
+        if(savedOrder.menus != null && savedOrder.menus!!.isNotEmpty()) {
+            savedOrder.menus!!.forEach { menu ->
+                menu.orderMenuItems.forEach { menuItem ->
+                    menuItem.orderIngredients.forEach { orderIngredient ->
+                        stationViewNamespace.onChange(orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient))
+                    }
+                }
+            }
+        }
+
+        if(savedOrder.menuItems != null && savedOrder.menuItems!!.isNotEmpty()) {
+            savedOrder.menuItems!!.forEach { menuItem ->
+                menuItem.orderIngredients.forEach { orderIngredient ->
+                    stationViewNamespace.onChange(orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient))
+                }
+            }
+        }
+
         printerService.printFoodOrder(savedOrder)
         return orderMapper.mapOrderToOrderDTO(savedOrder)
     }
@@ -95,6 +119,7 @@ class OrderService(
         }
         orderIngredient.state = State.DONE
         val savedOrderIngredient = orderIngredientRepository.save(orderIngredient)
+        stationViewNamespace.onChange(orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient))
         return orderMapper.mapOrderIngredientToOrderIngredientDTO(savedOrderIngredient)
     }
 

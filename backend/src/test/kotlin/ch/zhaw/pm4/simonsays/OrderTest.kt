@@ -1,5 +1,8 @@
 package ch.zhaw.pm4.simonsays
 
+//import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
+import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
+import ch.zhaw.pm4.simonsays.api.controller.StationViewNamespace
 import ch.zhaw.pm4.simonsays.api.mapper.OrderMapperImpl
 import ch.zhaw.pm4.simonsays.entity.State
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
@@ -47,6 +50,12 @@ class OrderTest {
     @MockkBean(relaxed = true)
     protected lateinit var printerService: PrinterService
 
+    @MockkBean(relaxed = true)
+    protected lateinit var stationViewNamespace: StationViewNamespace
+
+    @MockkBean(relaxed = true)
+    protected lateinit var assemblyViewNamespace: AssemblyViewNamespace
+
     protected lateinit var orderService: OrderService
 
     @BeforeEach
@@ -61,6 +70,8 @@ class OrderTest {
         menuItemRepository = mockk(relaxed = true)
         menuRepository = mockk(relaxed = true)
         printerService = mockk(relaxed = true)
+        stationViewNamespace = mockk(relaxed = true)
+        assemblyViewNamespace = mockk(relaxed = true)
 
         // Construct the service with the mocked dependencies
         orderService = OrderService(
@@ -73,7 +84,9 @@ class OrderTest {
                 ingredientRepository,
                 menuItemRepository,
                 menuRepository,
-                printerService
+                printerService,
+                stationViewNamespace,
+                assemblyViewNamespace
         )
     }
 
