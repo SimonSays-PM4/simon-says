@@ -10,7 +10,12 @@ inputs:
   node-version:
     required: true
     description: node version
-
+  github-token:
+    required: false
+    description: github token
+  sonar-token:
+    required: false
+    description: sonar token
 runs:
   using: "composite"
   steps:
@@ -47,6 +52,13 @@ runs:
       with:
         working-directory: ${{ inputs.working-directory }}
         browser: chrome
+    - name: sonarcloud scan frontend
+      uses: SonarSource/sonarcloud-github-action@v2.1.1
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+      with:
+        projectBaseDir: ${{ inputs.working-directory }}
     - name: stop all services
       shell: bash
       working-directory: ${{ inputs.backend-working-directory }}
