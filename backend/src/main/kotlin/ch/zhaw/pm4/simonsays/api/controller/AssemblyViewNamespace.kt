@@ -8,10 +8,7 @@ import ch.zhaw.pm4.simonsays.entity.OrderMenu
 import ch.zhaw.pm4.simonsays.entity.OrderMenuItem
 import ch.zhaw.pm4.simonsays.entity.State
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
-import ch.zhaw.pm4.simonsays.repository.OrderMenuItemRepository
-import ch.zhaw.pm4.simonsays.repository.OrderMenuRepository
-import ch.zhaw.pm4.simonsays.repository.OrderRepository
-import ch.zhaw.pm4.simonsays.repository.StationRepository
+import ch.zhaw.pm4.simonsays.repository.*
 import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
 import io.socket.socketio.server.SocketIoSocket
 import jakarta.transaction.Transactional
@@ -20,11 +17,12 @@ import org.springframework.stereotype.Component
 
 @Component
 class AssemblyViewNamespace(
+    private val eventRepository: EventRepository,
     private val stationRepository: StationRepository,
     private val orderRepository: OrderRepository,
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuItemRepository: OrderMenuItemRepository,
-    private val orderMapper: OrderMapper
+    private val orderMapper: OrderMapper,
 ): SocketIoNamespace<OrderDTO> {
     companion object {
         /**
@@ -47,6 +45,7 @@ class AssemblyViewNamespace(
 
         val eventId = getEventIdFromNamespace(requestedNamespace)
 
+        doesEventExist(eventId)
         return doesEventHaveAssemblyStation(eventId)
 
     }
@@ -95,6 +94,12 @@ class AssemblyViewNamespace(
         stationRepository.findByEventIdAndAssemblyStation(eventId, true).orElseThrow {
             ResourceNotFoundException("The event with id: $eventId does not yet have an assembly station")
         }
+        return true
+    }
+
+    fun doesEventExist(eventId: Long): Boolean {
+        eventRepository.findById(eventId)
+                .orElseThrow { ResourceNotFoundException("Event not found with ID: $eventId") }
         return true
     }
 

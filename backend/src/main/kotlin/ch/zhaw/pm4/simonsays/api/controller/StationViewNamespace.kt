@@ -7,6 +7,7 @@ import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.OrderIngredient
 import ch.zhaw.pm4.simonsays.entity.State
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
+import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.repository.OrderIngredientRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
@@ -20,7 +21,8 @@ class StationViewNamespace(
         private val stationRepository: StationRepository,
         private val orderMapper: OrderMapper,
         private val ingredientRepository: IngredientRepository,
-        private val orderIngredientRepository: OrderIngredientRepository
+        private val orderIngredientRepository: OrderIngredientRepository,
+        private val eventRepository: EventRepository
 ): SocketIoNamespace<OrderIngredientDTO> {
     companion object {
         /**
@@ -44,6 +46,7 @@ class StationViewNamespace(
         val eventId = getEventIdFromNamespace(requestedNamespace)
         val stationId = getStationIdFromNamespace(requestedNamespace)
 
+        doesEventExist(eventId)
         return doesStationExist(eventId, stationId)
     }
 
@@ -108,6 +111,12 @@ class StationViewNamespace(
 
     fun getOrderIngredientByIngredientIds(ingredientIds: List<Long>): List<OrderIngredient> {
         return orderIngredientRepository.findAllByIngredientIdInAndStateEquals(ingredientIds, State.IN_PROGRESS)
+    }
+
+    fun doesEventExist(eventId: Long): Boolean {
+        eventRepository.findById(eventId)
+                .orElseThrow { ResourceNotFoundException("Event not found with ID: $eventId") }
+        return true
     }
 
 
