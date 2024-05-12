@@ -3,7 +3,7 @@ import { EventContext } from "../../providers/EventContext";
 import { AppContext } from "../../providers/AppContext";
 import { getMenuItemService, getMenuService, getOrderService } from "../../api";
 import { NotificationType } from "../../enums/NotificationType";
-import { OrderCreateDTO, OrderMenuDTO, OrderMenuItemDTO } from "../../gen/api";
+import {MenuDTO, MenuItemDTO, OrderCreateDTO, OrderMenuDTO, OrderMenuItemDTO} from "../../gen/api";
 import { FieldValues } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { OrderMenuModel } from "../../models/OrderMenuModel";
@@ -72,8 +72,8 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         setIsSaving(true);
 
         const orderToSave = data as OrderCreateDTO;
-        orderToSave.menus = selectedMenus;
-        orderToSave.menuItems = selectedMenuItems;
+        orderToSave.menus = selectedMenus as MenuDTO[];
+        orderToSave.menuItems = selectedMenuItems as MenuItemDTO[];
         orderToSave.takeAway = isTakeAway;
 
         if (!isTakeAway && !orderToSave.tableNumber) {

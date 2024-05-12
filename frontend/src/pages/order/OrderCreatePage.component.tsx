@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useOrderCreatePage } from "./OrderCreatePage.hooks.tsx";
 import { Loader } from "../../components/Loader.tsx";
 import { useForm } from "react-hook-form";
-import { IngredientDTO, OrderCreateDTO, OrderMenuDTO, OrderMenuItemDTO } from "../../gen/api/api.ts";
+import { OrderCreateDTO, OrderIngredientDTO, OrderMenuDTO, OrderMenuItemDTO} from "../../gen/api/api.ts";
 import { LoadingButton } from "../../components/LoadingButton.tsx";
 import { ButtonType } from "../../enums/ButtonType.ts";
 import { Button } from "../../components/Button.tsx";
@@ -60,7 +60,7 @@ export const OrderCreatePageComponent: React.FC = () => {
         }
     }
 
-    const removeIngredientFromMenuItemInMenu = (menuIndex: number, menuItemIndex: number, ingredient: IngredientDTO) => {
+    const removeIngredientFromMenuItemInMenu = (menuIndex: number, menuItemIndex: number, ingredient: OrderIngredientDTO) => {
         const selectedMenu = selectedMenus.find((selectedMenu) => selectedMenu.index === menuIndex);
         if (selectedMenu) {
             const selectedMenuItem = selectedMenu.menuItems.find((selectedMenuItem) => selectedMenuItem.index === menuItemIndex);
@@ -71,7 +71,7 @@ export const OrderCreatePageComponent: React.FC = () => {
         }
     };
 
-    const removeIngredientFromMenuItem = (menuItemIndex: number, ingredient: IngredientDTO) => {
+    const removeIngredientFromMenuItem = (menuItemIndex: number, ingredient: OrderIngredientDTO) => {
         const selectedMenuItem = selectedMenuItems.find((selectedMenu) => selectedMenu.index === menuItemIndex);
         if (selectedMenuItem && selectedMenuItem.ingredients.length > 1) { // can not delete last ingredients
             selectedMenuItem.ingredients = selectedMenuItem.ingredients.filter((selectedIngredient) => selectedIngredient.id !== ingredient.id);
