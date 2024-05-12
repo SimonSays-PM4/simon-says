@@ -2,13 +2,12 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Control, FieldErrors, FieldValues, UseFormGetValues, UseFormHandleSubmit, UseFormRegister, useForm } from "react-hook-form";
 
-import { nameof } from "ts-simple-nameof";
-import {IngredientDTO, StationCreateUpdateDTO} from "../../gen/api";
-import {ValueLabel} from "../../models/ValueLabel.ts";
-import {AppContext} from "../../providers/AppContext.tsx";
-import {EventContext} from "../../providers/EventContext.tsx";
-import {getIngredientService, getStationService} from "../../api.ts";
-import {NotificationType} from "../../enums/NotificationType.ts";
+import { IngredientDTO, StationCreateUpdateDTO } from "../../gen/api";
+import { ValueLabel } from "../../models/ValueLabel.ts";
+import { AppContext } from "../../providers/AppContext.tsx";
+import { EventContext } from "../../providers/EventContext.tsx";
+import { getIngredientService, getStationService } from "../../api.ts";
+import { NotificationType } from "../../enums/NotificationType.ts";
 
 type StationActions = {
     deleteStation: () => void;
@@ -23,7 +22,7 @@ type StationCreateReturnProps = {
     isLoading: boolean;
     isSaving: boolean;
     isAssembly: boolean;
-    setIsAssembly: (is:boolean)=> void;
+    setIsAssembly: (is: boolean) => void;
 
     formRegister: UseFormRegister<FieldValues>;
     handleSubmit: UseFormHandleSubmit<FieldValues, undefined>;
@@ -40,7 +39,7 @@ export const useStationEditPage = (): StationCreateReturnProps => {
     const { stationId: id } = useParams();
     const stationId = id ? Number(id) : 0;
 
-    const [station, setStation] = useState<StationCreateUpdateDTO>({ id: 0, name: "", ingredients: [],assemblyStation:false });
+    const [station, setStation] = useState<StationCreateUpdateDTO>({ id: 0, name: "", ingredients: [], assemblyStation: false });
     const [ingredientOptions, setIngredientOptions] = useState<ValueLabel[]>([]);
     const [selectedIngredientOptions, setSelectedIngredientOptions] = useState<ValueLabel[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);

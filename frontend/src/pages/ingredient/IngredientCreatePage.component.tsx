@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { Button } from "../../components/Button";
 import { IngredientCreateUpdateDTO } from "../../gen/api";
 import { FormInput } from "../../components/form/FormInput";
-import { nameof } from "ts-simple-nameof";
 import { useIngredientCreatePage } from "./IngredientCreatePage.hooks.tsx";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "../../components/Loader.tsx";

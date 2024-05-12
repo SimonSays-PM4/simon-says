@@ -19,7 +19,7 @@ describe("Ingredient CRUD", () => {
         cy.get("#name").type("Test-Event");
         cy.get("#password").type("Test-password");
         cy.get("#numberOfTables").clear();
-        cy.get("#numberOfTables").type(12);
+        cy.get("#numberOfTables").type("12");
         cy.contains("button", "Erstellen").click();
 
         cy.wait(500);
@@ -28,7 +28,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should create an ingredient", () => {
-        cy.contains("button", "Zutaten").click();
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -45,7 +45,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should load newly created ingredient", () => {
-        cy.contains("button", "Zutaten").click();
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -54,15 +54,11 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should update newly created ingredient", () => {
-        cy.contains("button", "Zutaten").click();
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
-        cy.get("table")
-            .contains("tr", "Test-Ingredient")
-            .find("td:last-child")
-            .get('button[id="editAction"]')
-            .click();
+        cy.get("table").contains("tr", "Test-Ingredient").find("td:last-child").get('button[id="editAction"]').click();
 
         cy.url().should("include", "/ingredient/create/");
 
@@ -74,7 +70,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should load updated ingredient", () => {
-        cy.contains("button", "Zutaten").click();
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -83,7 +79,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should delete newly created ingredient", () => {
-        cy.contains("button", "Zutaten").click();
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -102,7 +98,7 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should not load newly created ingredient anymore", () => {
-        cy.contains("button", "Zutaten").click();
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -111,13 +107,11 @@ describe("Ingredient CRUD", () => {
     });
 
     it("should delete created event", () => {
-        cy.get('button[id="deleteAction"]').click()
+        cy.contains("tr", "Test-Event").find("td:last-child").find("button:last-child").click();
 
         cy.wait(500); // wait for the popup to show up
 
         cy.get('div[tabIndex="-1"].modal').should("exist");
         cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
-
-        cy.wait(500); // wait for the popup to close
     });
 });

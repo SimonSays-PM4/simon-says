@@ -2,15 +2,14 @@ import React from "react";
 
 import Select from "react-select";
 import { Controller } from "react-hook-form";
-import {useNavigate} from "react-router-dom";
-import {useStationEditPage} from "./StationEditPage.hooks.tsx";
-import {Loader} from "../../components/Loader.tsx";
-import {FormInput} from "../../components/form/FormInput.tsx";
-import {StationCreateUpdateDTO} from "../../gen/api";
-import {nameof} from "ts-simple-nameof";
-import {LoadingButton} from "../../components/LoadingButton.tsx";
-import {ButtonType} from "../../enums/ButtonType.ts";
-import {Button} from "../../components/Button.tsx";
+import { useNavigate } from "react-router-dom";
+import { useStationEditPage } from "./StationEditPage.hooks.tsx";
+import { Loader } from "../../components/Loader.tsx";
+import { FormInput } from "../../components/form/FormInput.tsx";
+import { StationCreateUpdateDTO } from "../../gen/api";
+import { LoadingButton } from "../../components/LoadingButton.tsx";
+import { ButtonType } from "../../enums/ButtonType.ts";
+import { Button } from "../../components/Button.tsx";
 
 export const StationEditPageComponent: React.FC = () => {
     const { station, selectedIngredientOptions, stationActions, isLoading, isSaving, ingredientOptions, formErrors, formControl, formRegister, formGetValues, handleSubmit, setIsAssembly, isAssembly } = useStationEditPage();

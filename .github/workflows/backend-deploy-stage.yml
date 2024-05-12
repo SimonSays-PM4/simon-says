@@ -32,6 +32,8 @@ jobs:
         uses: ./.github/actions/gradle-build
         with:
           working-directory: ${{ env.BACKEND_DIRECTORY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
   image-build:
     runs-on: ubuntu-22.04
     needs: [gradle-build]
