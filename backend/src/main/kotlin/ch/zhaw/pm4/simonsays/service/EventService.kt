@@ -36,7 +36,7 @@ class EventService(
 
     fun createUpdateEvent(event: EventCreateUpdateDTO): EventDTO {
 
-        val eventToBeSaved = if(event.id != null) {
+        val eventToBeSaved = if (event.id != null) {
             makeEventReadyForUpdate(event)
         } else {
             eventMapper.mapCreateDTOToEvent(event)

@@ -2,7 +2,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../../components/Button";
 import { FormInput } from "../../components/form/FormInput";
-import { nameof } from "ts-simple-nameof";
 import { Popup } from "../../components/Popup.tsx";
 import { useEventCreatePage } from "./EventCreatePage.hooks.ts";
 import { EventCreateUpdateDTO } from "../../gen/api";
@@ -38,7 +37,6 @@ export const EventCreatePageComponent: React.FC = () => {
 
             <form onSubmit={handleSubmit(() => eventActions.saveEvent(getValues()), () => eventActions.onFormInvalid(getValues()))}>
                 <FormInput id={nameof<EventCreateUpdateDTO>(e => e.name)}
-                    defaultValue={event.name}
                     label={"Name"}
                     type="text"
                     register={register}
@@ -48,7 +46,6 @@ export const EventCreatePageComponent: React.FC = () => {
                     validationError={getErrorMessage(nameof<EventCreateUpdateDTO>(e => e.name))} />
                 <FormInput id={nameof<EventCreateUpdateDTO>(e => e.password)}
                     label={"Passwort"}
-                    defaultValue={event.password}
                     type="password"
                     register={register}
                     isRequired={true}
@@ -57,7 +54,6 @@ export const EventCreatePageComponent: React.FC = () => {
                     validationError={getErrorMessage(nameof<EventCreateUpdateDTO>(e => e.password))} />
                 <FormInput id={nameof<EventCreateUpdateDTO>(e => e.numberOfTables)}
                     label={"Anzahl Tische"}
-                    defaultValue={String(event.numberOfTables)}
                     type="number"
                     register={register}
                     isRequired={true}

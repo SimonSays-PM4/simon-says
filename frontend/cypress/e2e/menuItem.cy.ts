@@ -19,7 +19,7 @@ describe("MenuItem", () => {
         cy.get("#name").type("Test-Event");
         cy.get("#password").type("Test-password");
         cy.get("#numberOfTables").clear();
-        cy.get("#numberOfTables").type(12);
+        cy.get("#numberOfTables").type("12");
         cy.contains("button", "Erstellen").click();
 
         cy.wait(500);
@@ -27,8 +27,8 @@ describe("MenuItem", () => {
         cy.url().should("include", "/events");
     });
 
-    it("should create a ingredient", () => {
-        cy.contains("button", "Zutaten").click();
+    it("should create an ingredient", () => {
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
         cy.wait(500);
         cy.get("h2").contains("Zutaten").should("exist");
 
@@ -45,7 +45,7 @@ describe("MenuItem", () => {
     });
 
     it("should create a menuItem", () => {
-        cy.contains("button", "Menu Item").click();
+        cy.contains("tr", "Test-Event").contains("button", "Menu Item").click();
 
         cy.wait(500);
         cy.get("h2").contains("Menu Items").should("exist");
@@ -63,5 +63,50 @@ describe("MenuItem", () => {
         cy.wait(500);
 
         cy.url().should("include", "/menuItem");
+    });
+
+    it("should delete created menuItem", () => {
+        cy.contains("tr", "Test-Event").contains("button", "Menu Item").click();
+
+        cy.wait(500);
+        cy.get("h2").contains("Menu Items").should("exist");
+
+        cy.contains("tr", "Test-Menu-Item").find("td:last-child").find("button:last-child").click();
+
+        cy.wait(500); // wait for the popup to show up
+
+        cy.get('div[tabIndex="-1"].modal').should("exist");
+        cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
+
+        cy.wait(500); // wait for the popup to close
+
+        cy.url().should("include", "/menuItem");
+    });
+
+    it("should delete created ingredient", () => {
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
+
+        cy.wait(500);
+        cy.get("h2").contains("Zutaten").should("exist");
+
+        cy.contains("tr", "Test-Ingredient").find("td:last-child").find("button:last-child").click();
+
+        cy.wait(500); // wait for the popup to show up
+
+        cy.get('div[tabIndex="-1"].modal').should("exist");
+        cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
+
+        cy.wait(500); // wait for the popup to close
+
+        cy.url().should("include", "/ingredients");
+    });
+
+    it("should delete created event", () => {
+        cy.contains("tr", "Test-Event").find("td:last-child").find("button:last-child").click();
+
+        cy.wait(500); // wait for the popup to show up
+
+        cy.get('div[tabIndex="-1"].modal').should("exist");
+        cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
     });
 });

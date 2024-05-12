@@ -9,6 +9,7 @@ export const Header: React.FC = () => {
     const navigate = useNavigate();
 
     const invokeLogout = () => {
+        localStorage.removeItem("encryptedCode");
         setLoginInfo(new LoginInfo(false, "-", ""));
         navigate("/login");
     };

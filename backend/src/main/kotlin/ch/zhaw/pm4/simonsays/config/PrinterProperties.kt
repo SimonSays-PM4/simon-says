@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties(prefix = "printer-queue-server")
 class PrinterProperties {
-    lateinit var frontendOrigins: Array<String>
-
     var dryRun = false
 
     lateinit var printerServerId: String

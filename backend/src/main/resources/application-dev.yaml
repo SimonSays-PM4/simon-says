@@ -14,13 +14,13 @@ debug: on
 application:
   url: "http://localhost:3000"
   adminToken: "mysecretpassword"
+  frontend-origins:
+    - http://localhost:3000
+    - https://socket-test-client.netlify.app
 
 # The printer-queue-server application configuration
 printer-queue-server:
   # List of frontend origins allowed to communicate with the printer server
-  frontend-origins:
-    - http://localhost:3000
-    - https://socket-test-client.netlify.app
   dry-run: true
   # Will automatically create the printer server on startup and add the respective printer will be assigned
   printer-server-id: "a35e6a08-35ef-42c1-9a09-39d32fc2a5d6"
