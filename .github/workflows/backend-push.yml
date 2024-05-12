@@ -34,3 +34,5 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew test jacocoTestReport sonar
+        shell: bash
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
