@@ -13,7 +13,7 @@ data class Ingredient(
     var name: String,
 
     @Column(nullable = false)
-    var mustBeProduced: Boolean,
+    var mustBeProduced: Boolean = true,
 
     @ManyToOne
     @JoinColumn(name = "event_id")
