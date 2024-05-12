@@ -1,16 +1,11 @@
 package ch.zhaw.pm4.simonsays.api.controller
 
-import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
 import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
-import ch.zhaw.pm4.simonsays.entity.Ingredient
-import ch.zhaw.pm4.simonsays.entity.OrderIngredient
-import ch.zhaw.pm4.simonsays.entity.State
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
-import ch.zhaw.pm4.simonsays.repository.IngredientRepository
-import ch.zhaw.pm4.simonsays.repository.OrderIngredientRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
+import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
 import io.socket.socketio.server.SocketIoSocket
 import org.slf4j.LoggerFactory
@@ -19,10 +14,8 @@ import org.springframework.stereotype.Component
 @Component
 class StationViewNamespace(
         private val stationRepository: StationRepository,
-        private val orderMapper: OrderMapper,
-        private val ingredientRepository: IngredientRepository,
-        private val orderIngredientRepository: OrderIngredientRepository,
-        private val eventRepository: EventRepository
+        private val eventRepository: EventRepository,
+        private val stationService: StationService
 ): SocketIoNamespace<OrderIngredientDTO> {
     companion object {
         /**
@@ -57,7 +50,7 @@ class StationViewNamespace(
             val stationId = getStationIdFromNamespace(namespace)
 
             subscribeToAssemblyStationEvents.add(socket)
-            val initialData = getStationView(eventId, stationId)
+            val initialData = stationService.getStationView(eventId, stationId)
             socket.sendPojo(SocketIoNamespace.INITIAL_DATA_EVENT, initialData)
             socket.on(SocketIoNamespace.APPLICATION_ERROR_EVENT) { error -> log.warn("Received application error event: $error from socket ${socket.id} with namespace $namespace") }
         } catch (e: Exception) {
@@ -99,18 +92,6 @@ class StationViewNamespace(
         stationRepository.findByIdAndEventId(stationId, eventId)
                 .orElseThrow { ResourceNotFoundException("Station not found with ID: $stationId") }
         return true
-    }
-
-    fun getStationView(stationId: Long, eventId: Long): List<OrderIngredientDTO> {
-        val stationIngredients: List<Ingredient> = ingredientRepository.findAllByStationsIdAndEventId(stationId, eventId)
-        val stationIngredientIds: List<Long> = stationIngredients.map { it.id!! }
-        val orderIngredients: List<OrderIngredient> = getOrderIngredientByIngredientIds(stationIngredientIds)
-        val orderIngredientsDTOs: List<OrderIngredientDTO> = orderIngredients.map { orderMapper.mapOrderIngredientToOrderIngredientDTO(it) }
-        return orderIngredientsDTOs
-    }
-
-    fun getOrderIngredientByIngredientIds(ingredientIds: List<Long>): List<OrderIngredient> {
-        return orderIngredientRepository.findAllByIngredientIdInAndStateEquals(ingredientIds, State.IN_PROGRESS)
     }
 
     fun doesEventExist(eventId: Long): Boolean {

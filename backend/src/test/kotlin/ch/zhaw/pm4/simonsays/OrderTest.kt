@@ -8,8 +8,7 @@ import ch.zhaw.pm4.simonsays.entity.State
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.exception.ValidationException
 import ch.zhaw.pm4.simonsays.repository.*
-import ch.zhaw.pm4.simonsays.service.EventService
-import ch.zhaw.pm4.simonsays.service.OrderService
+import ch.zhaw.pm4.simonsays.service.*
 import ch.zhaw.pm4.simonsays.service.printer.PrinterService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -57,6 +56,10 @@ class OrderTest {
     protected lateinit var assemblyViewNamespace: AssemblyViewNamespace
 
     protected lateinit var orderService: OrderService
+    protected lateinit var orderMenuService: OrderMenuService
+    protected lateinit var orderMenuItemService: OrderMenuItemService
+    protected lateinit var orderIngredientService: OrderIngredientService
+    protected lateinit var orderStateService: OrderStateService
 
     @BeforeEach
     fun setup() {
@@ -77,9 +80,6 @@ class OrderTest {
         orderService = OrderService(
                 OrderMapperImpl(),
                 orderRepository,
-                orderIngredientRepository,
-                orderMenuRepository,
-                orderMenuItemRepository,
                 eventService,
                 ingredientRepository,
                 menuItemRepository,
@@ -88,6 +88,30 @@ class OrderTest {
                 stationViewNamespace,
                 assemblyViewNamespace
         )
+
+        orderStateService = OrderStateService(
+                ingredientRepository,
+                orderRepository,
+                orderMenuItemRepository,
+                orderMenuRepository,
+                orderIngredientRepository,
+                assemblyViewNamespace,
+                stationViewNamespace,
+                OrderMapperImpl()
+        )
+
+        orderMenuService = OrderMenuService(
+                orderMenuRepository,
+        )
+
+        orderMenuItemService = OrderMenuItemService(
+                orderMenuItemRepository,
+        )
+
+        orderIngredientService = OrderIngredientService(
+                orderIngredientRepository,
+        )
+
     }
 
     @Test
@@ -255,14 +279,14 @@ class OrderTest {
             getOrderMenuItem(order = getOrder())), state = State.DONE)
         every { orderRepository.findById(any()) } returns Optional.of(getOrder())
         every { orderRepository.save(any()) } returns getOrder()
-        Assertions.assertEquals(getOrderMenuDTO(state = State.DONE), orderService.updateOrderMenuState(1, 1))
+        Assertions.assertEquals(getOrderMenuDTO(state = State.DONE), orderStateService.updateOrderMenuState(1, 1))
     }
 
     @Test
     fun `test update order menu state not found`() {
         every { orderMenuRepository.findByIdAndEventId(any(), any()) } returns Optional.empty()
         val error = Assertions.assertThrows(ResourceNotFoundException::class.java) {
-            orderService.updateOrderMenuState(1, 1)
+            orderStateService.updateOrderMenuState(1, 1)
         }
         Assertions.assertEquals("OrderMenu not found with ID: 1", error.message)
     }
@@ -273,14 +297,14 @@ class OrderTest {
         every { orderMenuItemRepository.save(any()) } returns getOrderMenuItem(order = getOrder(), state = State.DONE)
         every { orderRepository.findById(any()) } returns Optional.of(getOrder())
         every { orderRepository.save(any()) } returns getOrder()
-        Assertions.assertEquals(getOrderMenuItemDTO(state = State.DONE), orderService.updateOrderMenuItemState(1, 1))
+        Assertions.assertEquals(getOrderMenuItemDTO(state = State.DONE), orderStateService.updateOrderMenuItemState(1, 1))
     }
 
     @Test
     fun `test update order menu item state not found`() {
         every { orderMenuItemRepository.findByIdAndEventId(any(), any()) } returns Optional.empty()
         val error = Assertions.assertThrows(ResourceNotFoundException::class.java) {
-            orderService.updateOrderMenuItemState(1, 1)
+            orderStateService.updateOrderMenuItemState(1, 1)
         }
         Assertions.assertEquals("OrderMenuItem not found with ID: 1", error.message)
     }
@@ -291,14 +315,14 @@ class OrderTest {
         every { orderIngredientRepository.save(any()) } returns getOrderIngredient(state = State.DONE)
         every { orderRepository.findById(any()) } returns Optional.of(getOrder())
         every { orderRepository.save(any()) } returns getOrder()
-        Assertions.assertEquals(getOrderIngredientDTO(state = State.DONE), orderService.updateOrderIngredientState(1, 1))
+        Assertions.assertEquals(getOrderIngredientDTO(state = State.DONE), orderStateService.updateOrderIngredientState(1, 1))
     }
 
     @Test
     fun `test update order ingredient state not found`() {
         every { orderIngredientRepository.findByIdAndEventId(any(), any()) } returns Optional.empty()
         val error = Assertions.assertThrows(ResourceNotFoundException::class.java) {
-            orderService.updateOrderIngredientState(1, 1)
+            orderStateService.updateOrderIngredientState(1, 1)
         }
         Assertions.assertEquals("OrderIngredient not found with ID: 1", error.message)
     }
@@ -306,7 +330,7 @@ class OrderTest {
     @Test
     fun `test get orderIngredient by ingredient ids`() {
         every { orderIngredientRepository.findAllByIngredientIdInAndStateEquals(any(), State.IN_PROGRESS) } returns listOf(getOrderIngredient())
-        Assertions.assertEquals(1, orderService.getOrderIngredientByIngredientIds(listOf(1)).count())
+        Assertions.assertEquals(1, orderIngredientService.getOrderIngredientByIngredientIds(listOf(1)).count())
     }
 
     @Test

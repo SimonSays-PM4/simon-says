@@ -3,13 +3,11 @@ package ch.zhaw.pm4.simonsays
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace
 import ch.zhaw.pm4.simonsays.api.controller.StationViewNamespace
 import ch.zhaw.pm4.simonsays.api.controller.printer.PrinterServersNamespace
-import ch.zhaw.pm4.simonsays.api.mapper.OrderMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
-import ch.zhaw.pm4.simonsays.repository.IngredientRepository
-import ch.zhaw.pm4.simonsays.repository.OrderIngredientRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
+import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.testutils.mockSocket
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -32,26 +30,20 @@ class StationViewNamespaceTest {
     protected lateinit var stationRepository: StationRepository
 
     @MockkBean(relaxed = true)
-    protected lateinit var ingredientRepository: IngredientRepository
-
-    @MockkBean(relaxed = true)
-    protected lateinit var orderIngredientRepository: OrderIngredientRepository
-
-    @MockkBean(relaxed = true)
     protected lateinit var eventRepository: EventRepository
+
+    @MockkBean(relaxed = true)
+    protected lateinit var stationService: StationService
 
     @BeforeEach
     fun setup() {
         stationRepository = mockk(relaxed = true)
-        ingredientRepository = mockk(relaxed = true)
-        orderIngredientRepository = mockk(relaxed = true)
         eventRepository = mockk(relaxed = true)
+        stationService = mockk(relaxed = true)
         stationViewNamespace = StationViewNamespace(
                 stationRepository,
-                OrderMapperImpl(),
-                ingredientRepository,
-                orderIngredientRepository,
-                eventRepository
+                eventRepository,
+                stationService
         )
     }
 

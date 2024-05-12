@@ -2,13 +2,14 @@ package ch.zhaw.pm4.simonsays.service
 
 import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.mapper.StationMapper
-import ch.zhaw.pm4.simonsays.api.types.*
+import ch.zhaw.pm4.simonsays.api.types.OrderDTO
+import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
+import ch.zhaw.pm4.simonsays.api.types.StationCreateUpdateDTO
+import ch.zhaw.pm4.simonsays.api.types.StationDTO
 import ch.zhaw.pm4.simonsays.entity.*
 import ch.zhaw.pm4.simonsays.exception.AssemblyStationAlreadyDefinedException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
-import ch.zhaw.pm4.simonsays.exception.ValidationException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
-import ch.zhaw.pm4.simonsays.repository.OrderIngredientRepository
 import ch.zhaw.pm4.simonsays.repository.OrderRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
 import org.springframework.stereotype.Service
@@ -19,10 +20,11 @@ class StationService(
         private val stationMapper: StationMapper,
         private val eventService: EventService,
         private val ingredientRepository: IngredientRepository,
-        private val orderIngredientRepository: OrderIngredientRepository,
         private val orderRepository: OrderRepository,
-        private val orderService: OrderService,
-        private val orderMapper: OrderMapper
+        private val orderMapper: OrderMapper,
+        private val orderIngredientService: OrderIngredientService,
+        private val orderMenuItemService: OrderMenuItemService,
+        private val orderMenuService: OrderMenuService,
 ) {
 
     fun listStations(eventId: Long): MutableList<StationDTO> {
@@ -64,7 +66,7 @@ class StationService(
     fun getStationView(stationId: Long, eventId: Long): List<OrderIngredientDTO> {
             val stationIngredients: List<Ingredient> = ingredientRepository.findAllByStationsIdAndEventId(stationId, eventId)
             val stationIngredientIds: List<Long> = stationIngredients.map { it.id!! }
-            val orderIngredients: List<OrderIngredient> = orderService.getOrderIngredientByIngredientIds(stationIngredientIds)
+            val orderIngredients: List<OrderIngredient> = orderIngredientService.getOrderIngredientByIngredientIds(stationIngredientIds)
             val orderIngredientsDTOs: List<OrderIngredientDTO> = orderIngredients.map { orderMapper.mapOrderIngredientToOrderIngredientDTO(it) }
             return orderIngredientsDTOs
     }
@@ -74,8 +76,8 @@ class StationService(
         val orders: List<FoodOrder> = orderRepository.findAllByEventIdAndStateEquals(eventId, State.IN_PROGRESS)
         val processedOrders: MutableList<FoodOrder> = mutableListOf()
         orders.forEach { foodOrder ->
-            foodOrder.menus = orderService.getOrderMenus(eventId, foodOrder.id!!)
-            foodOrder.menuItems = orderService.getOrderMenuItems(eventId, foodOrder.id)
+            foodOrder.menus = orderMenuService.getOrderMenus(eventId, foodOrder.id!!)
+            foodOrder.menuItems = orderMenuItemService.getOrderMenuItems(eventId, foodOrder.id)
 
             if(foodOrder.menus!!.isNotEmpty() || foodOrder.menuItems!!.isNotEmpty()) {
                 processedOrders.add(foodOrder)
@@ -83,20 +85,6 @@ class StationService(
 
         }
         return processedOrders.map { orderMapper.mapOrderToOrderDTO(it) }
-    }
-
-    fun processIngredient(eventId: Long, stationId: Long, orderIngredientUpdate: OrderIngredientUpdateDTO): OrderIngredientDTO {
-        val stationIngredients: List<Ingredient> = ingredientRepository.findAllByStationsIdAndEventId(stationId, eventId)
-        val stationIngredientIds: List<Long> = stationIngredients.map { it.id!! }
-        val orderIngredient: OrderIngredient = orderIngredientRepository.findByIdAndEventId(orderIngredientUpdate.id, eventId).orElseThrow() {
-            ResourceNotFoundException("No order ingredient found with the ID: ${orderIngredientUpdate.id}")
-        }
-        if(!stationIngredientIds.contains(orderIngredient.ingredient.id)) {
-            throw ValidationException(
-                    "This station is not allowed to update the state of the ingredient with the id: ${orderIngredient.id} (${orderIngredient.ingredient.name})"
-            )
-        }
-        return orderService.updateOrderIngredientState(eventId, orderIngredient.id!!)
     }
 
     private fun makeStationReadyForUpdate(station: StationCreateUpdateDTO, eventId: Long, ingredients: List<Ingredient>): Station {

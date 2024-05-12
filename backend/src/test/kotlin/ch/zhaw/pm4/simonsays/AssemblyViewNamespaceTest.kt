@@ -3,11 +3,11 @@ package ch.zhaw.pm4.simonsays
 import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace
 import ch.zhaw.pm4.simonsays.api.controller.printer.PrinterServersNamespace
-import ch.zhaw.pm4.simonsays.api.mapper.OrderMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.OrderDTO
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
-import ch.zhaw.pm4.simonsays.repository.*
-import ch.zhaw.pm4.simonsays.service.EventService
+import ch.zhaw.pm4.simonsays.repository.EventRepository
+import ch.zhaw.pm4.simonsays.repository.StationRepository
+import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.testutils.mockSocket
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -33,32 +33,17 @@ class AssemblyViewNamespaceTest {
     protected lateinit var stationRepository: StationRepository
 
     @MockkBean(relaxed = true)
-    protected lateinit var orderRepository: OrderRepository
-
-    @MockkBean(relaxed = true)
-    protected lateinit var orderMenuRepository: OrderMenuRepository
-
-    @MockkBean(relaxed = true)
-    protected lateinit var orderMenuitemRepository: OrderMenuItemRepository
-
-    @MockkBean(relaxed = true)
-    protected lateinit var eventService: EventService
+    protected lateinit var stationService: StationService
 
     @BeforeEach
     fun setup() {
-        stationRepository = mockk(relaxed = true)
-        orderRepository = mockk(relaxed = true)
-        orderMenuRepository = mockk(relaxed = true)
-        orderMenuitemRepository = mockk(relaxed = true)
-        eventService = mockk(relaxed = true)
         eventRepository = mockk(relaxed = true)
+        stationRepository = mockk(relaxed = true)
+        stationService = mockk(relaxed = true)
         assemblyViewNamespace = AssemblyViewNamespace(
                 eventRepository,
                 stationRepository,
-                orderRepository,
-                orderMenuRepository,
-                orderMenuitemRepository,
-                OrderMapperImpl()
+                stationService
         )
     }
 
