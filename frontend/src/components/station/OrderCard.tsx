@@ -10,9 +10,10 @@ type OrderProps = {
     onClickMenuItem: (id:OrderMenuItemDTO) => void
 }
 export const OrderCard: React.FC<OrderProps> = ({onClick, order, onClickMenuItem, onClickMenu}) => {
+
     return <>
         <a onClick={onClick}
-           className="p-2 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+           className="p-2 bg-white border border-gray-200 rounded-lg shadow">
             <div className="flex flex-wrap gap-4 sm:justify-between lg:flex-nowrap">
                 <h1>Order <b>#{order.id}</b></h1><p className="text-xs"><Badge color={order.state==State.Done?"green":"yellow"}>{order.state}</Badge></p>
             </div>

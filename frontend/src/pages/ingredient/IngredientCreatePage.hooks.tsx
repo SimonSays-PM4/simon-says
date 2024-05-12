@@ -17,6 +17,8 @@ type IngredientCreateReturnProps = {
     ingredientActions: IngredientActions;
     isLoading: boolean;
     isSaving: boolean;
+    mustBeProduced: boolean;
+    setMustBeProduced: (lol:boolean)=>void
 };
 
 export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
@@ -25,11 +27,12 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
     const { id } = useParams();
     const ingredientId = id ? Number(id) : 0;
 
-    const [ingredient, setIngredient] = useState<IngredientCreateUpdateDTO>({ id: 0, name: "" });
+    const [ingredient, setIngredient] = useState<IngredientCreateUpdateDTO>({ id: 0, name: "", mustBeProduced:false });
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [mustBeProduced, setMustBeProduced] = useState<boolean>(false);
 
     const { loginInfo } = useContext(AppContext);
     const ingredientService = getIngredientService(loginInfo.userName, loginInfo.password);
@@ -43,6 +46,7 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
                 .then((response) => {
                     const receivedIngredient = response.data as IngredientCreateUpdateDTO;
                     setIngredient(receivedIngredient);
+                    setMustBeProduced(receivedIngredient.mustBeProduced);
                 })
                 .catch(() => {
                     setErrorMessage("Beim Laden der Zutate ist ein Fehler aufgetreten.");
@@ -56,6 +60,7 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
     const onFormInvalid = (data?: FieldValues) => {
         const ingredientToSave = data as IngredientCreateUpdateDTO;
         ingredientToSave.id = ingredientId > 0 ? ingredientId : 0;
+        ingredientToSave.mustBeProduced = mustBeProduced;
         setIngredient(ingredientToSave);
     };
 
@@ -65,6 +70,7 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
 
             const ingredientToSave = data as IngredientCreateUpdateDTO;
             ingredientToSave.id = ingredientId > 0 ? ingredientId : undefined;
+            ingredientToSave.mustBeProduced = mustBeProduced;
             setIngredient(ingredientToSave);
 
             ingredientService
@@ -83,7 +89,7 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
                     setIsSaving(false);
                 });
         },
-        [ingredient]
+        [ingredient,mustBeProduced]
     );
 
     const deleteIngredient = useCallback(() => {
@@ -109,5 +115,5 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
         onFormInvalid
     };
 
-    return { ingredient, errorMessage, ingredientActions, isLoading, isSaving };
+    return { ingredient, errorMessage, ingredientActions, isLoading, isSaving,mustBeProduced,setMustBeProduced };
 };

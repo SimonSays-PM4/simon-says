@@ -3,8 +3,9 @@ import {getOrderService, getStationService} from "../../../api.ts";
 import {AppContext} from "../../../providers/AppContext.tsx";
 import {EventContext} from "../../../providers/EventContext.tsx";
 import {useParams} from "react-router-dom";
-import {OrderDTO, OrderIngredientDTO, OrderMenuItemDTO, StationDTO} from "../../../gen/api";
+import {OrderDTO, OrderIngredientDTO, OrderMenuItemDTO, State, StationDTO} from "../../../gen/api";
 import {NotificationType} from "../../../enums/NotificationType.ts";
+
 type IngredientHandling = {
     processIngredient: (id:number) => void,
     ingredients:OrderIngredientDTO[],
@@ -15,12 +16,14 @@ type AssemblyStationHandling = {
     processMenuItem: (orderMenuItemDTO:OrderMenuItemDTO)=>void,
     processMenu: (id:number) => void
 }
+
 type StationAction = {
     ingredientHandling:IngredientHandling,
     assemblyHandling:AssemblyStationHandling,
     isLoading:boolean,
     station:StationDTO,
-    orders: OrderDTO[]
+    orders: OrderDTO[],
+    removeFromDone:(ing:number) =>void
 }
 
 export const useStationView = ():StationAction  => {
@@ -32,10 +35,12 @@ export const useStationView = ():StationAction  => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [ingredients, setIngredients] = useState<OrderIngredientDTO[]>([])
+    const [doneIngredients, setDoneIngredients] = useState<Array<OrderIngredientDTO>>([]);
     const [orders, setOrders] = useState<OrderDTO[]>([])
 
     const stationService = getStationService(loginInfo.userName, loginInfo.password);
     const orderService = getOrderService(loginInfo.userName, loginInfo.password);
+    const [expiringIngredients,setExpiringIngredients] = useState<{time:number, id:number}[]>([]);
 
     const reloadStationView = useCallback(()=>{
         if (eventId>0 && stationId) {
@@ -44,17 +49,23 @@ export const useStationView = ():StationAction  => {
                 setStation(response.data);
                 stationService.getStationView(eventId,Number(stationId)).then((response)=> {
                     setIngredients(response.data);
+                    console.log("helol")
+
                 })
             }).catch(() => {
                 addNotification(NotificationType.ERR, "Failed to load station");
             })
         }
-    }, [stationId,eventId])
+    }, [stationId,eventId,expiringIngredients,doneIngredients])
+
+    const removeFromDone = useCallback((ing:number)=> {
+        setDoneIngredients([...doneIngredients.filter(doneIng=>doneIng.id != ing)])
+    },[doneIngredients])
 
     const reloadAssemblyStation = useCallback(()=>{
         if (eventId>0 && stationId) {
             setIsLoading(true);
-            orderService.getOrders(eventId).then((response) => {
+            stationService.getAssemblyStationView(eventId).then((response) => {
                 setOrders(response.data);
             }).catch(() => {
                 addNotification(NotificationType.ERR, "Failed to load station");
@@ -86,15 +97,22 @@ export const useStationView = ():StationAction  => {
     }, [stationId,eventId])
 
     const processIngredient = useCallback((id:number)=> {
+        const ings = ingredients.filter((ingi)=>ingi.id==id);
         orderService.updateOrderIngredientState(eventId,id).then(()=> {
-            console.log("removed")
+            const item1 = ings.at(0);
+
+            if (item1) {
+                item1.state = State.Done;
+                setDoneIngredients([...doneIngredients,item1]);
+                setExpiringIngredients([...expiringIngredients, {time:Date.now(),id:item1.id}]);
+                console.log(expiringIngredients)
+            }
             reloadStationView();
         })
-    },[])
+    },[ingredients,doneIngredients,expiringIngredients])
 
     const processMenu = useCallback((id:number)=> {
         orderService.updateOrderMenuState(eventId,id).then(()=> {
-            console.log("removed")
             reloadStationView();
         })
     },[eventId])
@@ -104,7 +122,6 @@ export const useStationView = ():StationAction  => {
             processIngredient(ing.id);
         })
         orderService.updateOrderMenuItemState(eventId,orderMenuItemDTO.id).then(()=> {
-            console.log("removed")
             reloadStationView();
         })
     },[eventId])
@@ -112,7 +129,7 @@ export const useStationView = ():StationAction  => {
     const ingredientHandling:IngredientHandling = {
         processIngredient,
         ingredients,
-        doneIngredients:[]
+        doneIngredients
     }
 
     const assemblyHandling:AssemblyStationHandling = {
@@ -120,5 +137,5 @@ export const useStationView = ():StationAction  => {
         processMenuItem
     }
 
-    return {isLoading,station, ingredientHandling, orders, assemblyHandling}
+    return {isLoading,station, ingredientHandling, orders, assemblyHandling,removeFromDone}
 }

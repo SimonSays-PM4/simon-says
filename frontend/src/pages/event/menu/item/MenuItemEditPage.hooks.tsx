@@ -1,12 +1,12 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { getIngredientService, getMenuItemService } from "../../../api.ts";
+import { getIngredientService, getMenuItemService } from "../../../../api.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import { IngredientDTO, MenuItemCreateUpdateDTO } from "../../../gen/api";
+import { IngredientDTO, MenuItemCreateUpdateDTO } from "../../../../gen/api";
 import { Control, FieldErrors, FieldValues, UseFormGetValues, UseFormHandleSubmit, UseFormRegister, useForm } from "react-hook-form";
-import { EventContext } from "../../../providers/EventContext.tsx";
-import { AppContext } from "../../../providers/AppContext.tsx";
-import { NotificationType } from "../../../enums/NotificationType.ts";
-import { ValueLabel } from "../../../models/ValueLabel.ts";
+import { EventContext } from "../../../../providers/EventContext.tsx";
+import { AppContext } from "../../../../providers/AppContext.tsx";
+import { NotificationType } from "../../../../enums/NotificationType.ts";
+import { ValueLabel } from "../../../../models/ValueLabel.ts";
 
 type MenuItemEditReturnProps = {
     menuItem: MenuItemCreateUpdateDTO,

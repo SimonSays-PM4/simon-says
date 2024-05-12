@@ -1,18 +1,18 @@
 import React from "react";
-import { MenuItemCreateUpdateDTO } from "../../../gen/api";
-import { FormInput } from "../../../components/form/FormInput.tsx";
-import { useMenuItemEditPage } from "./MenuItemEditPage.hooks.tsx";
-import { Controller } from "react-hook-form";
-import { Button } from "../../../components/Button.tsx";
-import { Popup } from "../../../components/Popup.tsx";
+import {Loader} from "../../../../components/Loader.tsx";
+import {FormInput} from "../../../../components/form/FormInput.tsx";
+import {MenuItemCreateUpdateDTO} from "../../../../gen/api";
+import {Controller} from "react-hook-form";
 import Select from "react-select";
-import { ButtonType } from "../../../enums/ButtonType.ts";
-import { Loader } from "../../../components/Loader.tsx";
+import {Button} from "../../../../components/Button.tsx";
+import {ButtonType} from "../../../../enums/ButtonType.ts";
+import {Popup} from "../../../../components/Popup.tsx";
+import {useMenuItemEditPage} from "./MenuItemEditPage.hooks.tsx";
+
 
 export const MenuItemEditPage: React.FC = () => {
   const { menuItem, menuItemActions, setShowDeleteModal, showDeleteModal, navigate, ingredientOptions, selectedIngredients, isLoading, formControl, formGetValues, formErrors, formRegister, handleSubmit } = useMenuItemEditPage();
 
-  const { menuItem, menuItemActions, setShowDeleteModal, showDeleteModal, navigate, ingredientOptions, selectedIngredients } = useMenuItemEditPage();
   const fieldRequiredMessage = "Dieses Feld ist erforderlich.";
   const fieldLengthMessage = "Die Eingabe ist muss zwischen 5 und 64 Zeichen sein.";
   const fieldValueMessage = "Die Eingabe ist muss über 1.00 sein.";

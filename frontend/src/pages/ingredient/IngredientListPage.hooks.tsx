@@ -19,7 +19,7 @@ type IngredientListPageReturnProps = {
 
 export const useIngredientListPage = (): IngredientListPageReturnProps => {
     const { eventId } = useContext(EventContext);
-    const [ingredientToDelete, setIngredientToDelete] = useState<IngredientDTO>({ id: 0, name: "" });
+    const [ingredientToDelete, setIngredientToDelete] = useState<IngredientDTO>({ id: 0, name: "", mustBeProduced:false });
     const [isLoading, setIsLoading] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [data, setData] = useState<IngredientDTO[]>([]);
