@@ -33,7 +33,6 @@ runs:
           ./gradlew build
         fi
       shell: bash
-    - name:
     - name: upload build artifacts
       uses: actions/upload-artifact@v4
       with:
