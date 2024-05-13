@@ -11,7 +11,7 @@ class OrderMenuItemService(
 ) {
 
     fun getOrderMenuItems(eventId: Long, orderId: Long): MutableList<OrderMenuItem> {
-        val menuItems: MutableList<OrderMenuItem> = orderMenuItemRepository.findAllByStateEqualsAndOrderIdEqualsAndOrderMenuEquals(State.IN_PROGRESS, orderId, null)
+        val menuItems: MutableList<OrderMenuItem> = orderMenuItemRepository.findAllByOrderIdEqualsAndOrderMenuEquals(orderId, null)
         val processedMenuItems: MutableList<OrderMenuItem> = mutableListOf()
         menuItems.forEach { orderMenuItem ->
             var allIngredientsComplete = true
