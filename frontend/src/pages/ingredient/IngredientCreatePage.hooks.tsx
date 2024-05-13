@@ -65,6 +65,7 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
 
             const ingredientToSave = data as IngredientCreateUpdateDTO;
             ingredientToSave.id = ingredientId > 0 ? ingredientId : undefined;
+            ingredientToSave.mustBeProduced = ingredientToSave.mustBeProduced ?? false;
             setIngredient(ingredientToSave);
 
             ingredientService
