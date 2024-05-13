@@ -30,7 +30,7 @@
         "react-toastify": "^10.0.5",
         "tailwindcss": "^3.4.1",
         "tw-colors": "^3.3.1",
-        "vite-plugin-istanbul": "^5.0.0"
+        "vite-plugin-istanbul": "^6.0.2"
     },
     "devDependencies": {
         "@cypress/code-coverage": "^3.12.38",
