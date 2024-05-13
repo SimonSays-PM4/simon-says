@@ -8,7 +8,6 @@ import { ValueLabel } from "../../../models/ValueLabel";
 import { NotificationType } from "../../../enums/NotificationType";
 import { MenuCreateUpdateDTO } from "../../../gen/api";
 import { MenuItemDTO } from "../../../gen/api";
-import { nameof } from "ts-simple-nameof";
 
 type MenuActions = {
     deleteMenu: () => void;

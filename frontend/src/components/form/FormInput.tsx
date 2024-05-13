@@ -53,7 +53,7 @@ export const FormInput: React.FC<IFormInputProps> = ({
                         className={
                             "form-input rounded-lg border border-default-200 px-4 py-2.5"
                         }
-                        {...register(id, { required: isRequired, disabled: disabled, value: defaultValue, minLength: minLength, maxLength: maxLength, min:min, max:max })}
+                        {...register(id, { required: isRequired, disabled: disabled, value: defaultValue, minLength: minLength, maxLength: maxLength, min: min, max: max })}
                         onChange={onChange}
                         type={type}
                         disabled={disabled}

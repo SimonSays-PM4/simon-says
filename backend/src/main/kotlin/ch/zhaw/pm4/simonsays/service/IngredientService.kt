@@ -48,7 +48,7 @@ class IngredientService(
             ResourceNotFoundException("Ingredient not found with ID: ${ingredient.id}")
         }
         ingredientToSave.name = ingredient.name!!
-        ingredientToSave.mustBeProduced = ingredient.mustBeProduced
+        ingredientToSave.mustBeProduced = ingredient.mustBeProduced!!
         return ingredientToSave
     }
 

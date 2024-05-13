@@ -20,5 +20,5 @@ data class IngredientCreateUpdateDTO (
 
         @field:Schema(description = "Indicates whether an ingredient must be produced on-site")
         @field:NotNull(message = "A production state must be provided")
-        val mustBeProduced: Boolean
+        val mustBeProduced: Boolean?
 )

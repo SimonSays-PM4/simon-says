@@ -1,6 +1,5 @@
 package ch.zhaw.pm4.simonsays
 
-import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.mapper.EventMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.EventCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
@@ -25,7 +24,6 @@ class EventTest {
 
     @BeforeEach
     fun setup() {
-        // mockkStatic("kotlinx.coroutines.reactor.MonoKt")
         eventRepository = mockk(relaxed = true)
         eventService = EventService(eventRepository, EventMapperImpl())
     }

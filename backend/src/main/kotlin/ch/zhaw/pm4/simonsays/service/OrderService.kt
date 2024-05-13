@@ -1,11 +1,16 @@
 package ch.zhaw.pm4.simonsays.service
 
+import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
+import ch.zhaw.pm4.simonsays.api.controller.StationViewNamespace
 import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.types.*
 import ch.zhaw.pm4.simonsays.entity.*
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.exception.ValidationException
-import ch.zhaw.pm4.simonsays.repository.*
+import ch.zhaw.pm4.simonsays.repository.IngredientRepository
+import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
+import ch.zhaw.pm4.simonsays.repository.MenuRepository
+import ch.zhaw.pm4.simonsays.repository.OrderRepository
 import ch.zhaw.pm4.simonsays.service.printer.PrinterService
 import org.springframework.stereotype.Service
 
@@ -13,14 +18,13 @@ import org.springframework.stereotype.Service
 class OrderService(
     private val orderMapper: OrderMapper,
     private val orderRepository: OrderRepository,
-    private val orderIngredientRepository: OrderIngredientRepository,
-    private val orderMenuRepository: OrderMenuRepository,
-    private val orderMenuItemRepository: OrderMenuItemRepository,
     private val eventService: EventService,
     private val ingredientRepository: IngredientRepository,
     private val menuItemRepository: MenuItemRepository,
     private val menuRepository: MenuRepository,
-    private val printerService: PrinterService
+    private val printerService: PrinterService,
+    private val stationViewNamespace: StationViewNamespace,
+    private val assemblyViewNamespace: AssemblyViewNamespace
 ) {
     fun createOrder(order: OrderCreateDTO, eventId: Long): OrderDTO {
         val event = eventService.getEvent(eventId)
@@ -29,6 +33,25 @@ class OrderService(
         validateOrderHasItems(order)
 
         val savedOrder = orderRepository.save(prepareOrderForSave(order, event))
+        assemblyViewNamespace.onChange(orderMapper.mapOrderToOrderDTO(savedOrder))
+        if(savedOrder.menus != null && savedOrder.menus!!.isNotEmpty()) {
+            savedOrder.menus!!.forEach { menu ->
+                menu.orderMenuItems.forEach { menuItem ->
+                    menuItem.orderIngredients.forEach { orderIngredient ->
+                        stationViewNamespace.onChange(orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient))
+                    }
+                }
+            }
+        }
+
+        if(savedOrder.menuItems != null && savedOrder.menuItems!!.isNotEmpty()) {
+            savedOrder.menuItems!!.forEach { menuItem ->
+                menuItem.orderIngredients.forEach { orderIngredient ->
+                    stationViewNamespace.onChange(orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient))
+                }
+            }
+        }
+
         printerService.printFoodOrder(savedOrder)
         return orderMapper.mapOrderToOrderDTO(savedOrder)
     }
@@ -44,78 +67,6 @@ class OrderService(
             ResourceNotFoundException("Order not found with ID: $orderId")
         }
         orderRepository.delete(order)
-    }
-
-    fun getOrderIngredientByIngredientIds(ingredientIds: List<Long>): List<OrderIngredient> {
-        return orderIngredientRepository.findAllByIngredientIdInAndStateEquals(ingredientIds, State.IN_PROGRESS)
-    }
-
-    fun getOrderMenuItems(eventId: Long, orderId: Long): MutableList<OrderMenuItem> {
-        val menuItems: MutableList<OrderMenuItem> = orderMenuItemRepository.findAllByStateEqualsAndOrderIdEqualsAndOrderMenuEquals(State.IN_PROGRESS, orderId, null)
-        val processedMenuItems: MutableList<OrderMenuItem> = mutableListOf()
-        menuItems.forEach { orderMenuItem ->
-            var allIngredientsComplete = true
-            orderMenuItem.orderIngredients.forEach { orderIngredient ->
-                if(orderIngredient.state != State.DONE) {
-                    allIngredientsComplete = false
-                }
-            }
-            if(allIngredientsComplete) {
-                processedMenuItems.add(orderMenuItem)
-            }
-        }
-        return processedMenuItems
-    }
-
-    fun getOrderMenus(eventId: Long, orderId: Long): MutableList<OrderMenu> {
-        val menus = orderMenuRepository.findAllByStateEqualsAndOrderIdEquals(State.IN_PROGRESS, orderId)
-        val processedMenus: MutableList<OrderMenu> = mutableListOf()
-        menus.forEach { orderMenu ->
-            var menuReady = true
-            orderMenu.orderMenuItems.forEach {orderMenuItem ->
-                orderMenuItem.orderIngredients.forEach { orderIngredient ->
-                    if(orderIngredient.state != State.DONE) {
-                        menuReady = false
-                    }
-                }
-            }
-
-            if(menuReady) {
-                processedMenus.add(orderMenu)
-            }
-
-        }
-
-        return processedMenus
-    }
-
-    fun updateOrderIngredientState(eventId: Long, orderIngredientId: Long): OrderIngredientDTO {
-        val orderIngredient = orderIngredientRepository.findByIdAndEventId(orderIngredientId, eventId).orElseThrow {
-            ResourceNotFoundException("OrderIngredient not found with ID: $orderIngredientId")
-        }
-        orderIngredient.state = State.DONE
-        val savedOrderIngredient = orderIngredientRepository.save(orderIngredient)
-        return orderMapper.mapOrderIngredientToOrderIngredientDTO(savedOrderIngredient)
-    }
-
-    fun updateOrderMenuItemState(eventId: Long, orderMenuItemId: Long): OrderMenuItemDTO {
-        val orderMenuItem = orderMenuItemRepository.findByIdAndEventId(orderMenuItemId, eventId).orElseThrow {
-            ResourceNotFoundException("OrderMenuItem not found with ID: $orderMenuItemId")
-        }
-        orderMenuItem.state = State.DONE
-        val savedOrderMenuItem = orderMenuItemRepository.save(orderMenuItem)
-        checkAndUpdateOrderStateIfNeeded(savedOrderMenuItem.order!!.id!!)
-        return orderMapper.mapOrderMenuItemToOrderMenuItemDTO(savedOrderMenuItem)
-    }
-
-    fun updateOrderMenuState(eventId: Long, orderMenuId: Long): OrderMenuDTO {
-        val orderMenu = orderMenuRepository.findByIdAndEventId(orderMenuId, eventId).orElseThrow {
-            ResourceNotFoundException("OrderMenu not found with ID: $orderMenuId")
-        }
-        orderMenu.state = State.DONE
-        val savedOrderMenu = orderMenuRepository.save(orderMenu)
-        checkAndUpdateOrderStateIfNeeded(savedOrderMenu.order!!.id!!)
-        return orderMapper.mapOrderMenuToOrderMenuDTO(savedOrderMenu)
     }
 
     private fun prepareMenuItemForSave(menuItem: MenuItemDTO, menuItems: List<MenuItem>, ingredients: List<Ingredient>, event: EventDTO): OrderMenuItem {
@@ -138,18 +89,6 @@ class OrderService(
         return menuItemToSave
     }
 
-    private fun checkAndUpdateOrderStateIfNeeded(orderId: Long) {
-        val order = orderRepository.findById(orderId).orElseThrow {
-            ResourceNotFoundException("Order not found with ID: $orderId")
-        }
-        val hasOpenItem = (order.menuItems?.any { menuItem -> menuItem.state != State.DONE } ?: false)
-                || (order.menus?.any { menu -> menu.state != State.DONE } ?: false)
-
-        if (!hasOpenItem) {
-            order.state = State.DONE
-            orderRepository.save(order)
-        }
-    }
     private fun validateTableNumber(order: OrderCreateDTO, event: EventDTO) {
         if (!order.isTakeAway!! && (order.tableNumber == null || order.tableNumber!! < 1 || order.tableNumber!! > event.numberOfTables)) {
             throw ValidationException("Table number must be between 1 and ${event.numberOfTables}")
