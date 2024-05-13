@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "frontend"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     assignees:
       - "leoantferrari"
     labels:
@@ -13,7 +13,7 @@ updates:
   - package-ecosystem: "gradle"
     directory: "backend"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     assignees:
       - "larawaespe"
     labels:
@@ -23,7 +23,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "printer/printer-server"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     assignees:
       - "mcluky"
     labels:
@@ -33,7 +33,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "printer/printer-api-lib"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     assignees:
       - "mcluky"
     labels:
