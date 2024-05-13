@@ -25,7 +25,7 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
     const { id } = useParams();
     const ingredientId = id ? Number(id) : 0;
 
-    const [ingredient, setIngredient] = useState<IngredientCreateUpdateDTO>({ id: 0, name: "" });
+    const [ingredient, setIngredient] = useState<IngredientCreateUpdateDTO>({ id: 0, name: "", mustBeProduced: false });
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -65,6 +65,7 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
 
             const ingredientToSave = data as IngredientCreateUpdateDTO;
             ingredientToSave.id = ingredientId > 0 ? ingredientId : undefined;
+            ingredientToSave.mustBeProduced = ingredientToSave.mustBeProduced ?? false;
             setIngredient(ingredientToSave);
 
             ingredientService
