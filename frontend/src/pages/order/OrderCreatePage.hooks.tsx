@@ -3,7 +3,7 @@ import { EventContext } from "../../providers/EventContext";
 import { AppContext } from "../../providers/AppContext";
 import { getMenuItemService, getMenuService, getOrderService } from "../../api";
 import { NotificationType } from "../../enums/NotificationType";
-import { OrderCreateDTO, OrderMenuDTO, OrderMenuItemDTO } from "../../gen/api";
+import { MenuDTO, MenuItemDTO, OrderCreateDTO } from "../../gen/api";
 import { FieldValues } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { OrderMenuModel } from "../../models/OrderMenuModel";
@@ -15,10 +15,10 @@ type OrderActions = {
 
 type OrderCreatePageReturnProps = {
     orderActions: OrderActions;
-    menuList: OrderMenuDTO[];
+    menuList: MenuDTO[];
     selectedMenus: OrderMenuModel[];
     setSelectedMenus: React.Dispatch<React.SetStateAction<OrderMenuModel[]>>;
-    menuItemList: OrderMenuItemDTO[];
+    menuItemList: MenuItemDTO[];
     selectedMenuItems: OrderMenuItemModel[];
     setSelectedMenuItems: React.Dispatch<React.SetStateAction<OrderMenuItemModel[]>>;
     isTakeAway: boolean;
@@ -36,9 +36,9 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
-    const [menuList, setMenuList] = useState<OrderMenuDTO[]>([]);
+    const [menuList, setMenuList] = useState<MenuDTO[]>([]);
     const [selectedMenus, setSelectedMenus] = useState<OrderMenuModel[]>([]);
-    const [menuItemList, setMenuItemList] = useState<OrderMenuItemDTO[]>([]);
+    const [menuItemList, setMenuItemList] = useState<MenuItemDTO[]>([]);
     const [selectedMenuItems, setSelectedMenuItems] = useState<OrderMenuItemModel[]>([]);
     const [isTakeAway, setIsTakeAway] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
@@ -55,10 +55,10 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
         try {
             setIsLoading(true);
             const response = await menuService.getMenus(eventId);
-            setMenuList(response.data as OrderMenuDTO[]);
+            setMenuList(response.data);
 
             const responseMenuItem = await menuItemService.getMenuItems(eventId);
-            setMenuItemList(responseMenuItem.data as OrderMenuItemDTO[]);
+            setMenuItemList(responseMenuItem.data);
         }
         catch (_) {
             appContext.addNotification(NotificationType.ERR, `Beim Laden der Menus ist ein Fehler aufgetreten.`);

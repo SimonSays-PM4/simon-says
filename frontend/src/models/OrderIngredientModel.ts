@@ -1,15 +1,15 @@
-import { OrderIngredientDTO, State } from "../gen/api";
+import { IngredientDTO } from "../gen/api";
 
-export class OrderIngredientModel implements OrderIngredientDTO {
+export class OrderIngredientModel implements IngredientDTO {
     id: number;
     name: string;
-    state: State;
     index: number;
+    mustBeProduced: boolean;
 
-    constructor(index: number, orderIngredient: OrderIngredientDTO) {
+    constructor(index: number, orderIngredient: IngredientDTO) {
         this.index = index;
         this.id = orderIngredient.id;
         this.name = orderIngredient.name;
-        this.state = orderIngredient.state;
+        this.mustBeProduced = orderIngredient.mustBeProduced;
     }
 }
