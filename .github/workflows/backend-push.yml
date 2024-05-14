@@ -3,7 +3,7 @@ name: backend running on each commit
 on:
   push:
     branches-ignore:
-      - main
+      - KAN-153
   pull_request:
 
 env:
