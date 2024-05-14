@@ -26,14 +26,15 @@ jobs:
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: gradle-build
         uses: ./.github/actions/gradle-build
         with:
           working-directory: ${{ env.BACKEND_DIRECTORY }}
       - name: sonarcloud scan backend
-        uses: SonarSource/sonarcloud-github-action@v2.1.1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectBaseDir: ${{ env.BACKEND_DIRECTORY }}
+        run: ./gradlew test jacocoTestReport sonar
+        shell: bash
+        working-directory: ${{ env.BACKEND_DIRECTORY }}
