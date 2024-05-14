@@ -26,7 +26,7 @@ env:
 
 
 jobs:
-  gradle-build:
+  backend-test-and-build:
     runs-on: ubuntu-22.04
     steps:
       - name: checkout sources
@@ -37,7 +37,15 @@ jobs:
           working-directory: ${{ env.BACKEND_DIRECTORY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           sonar-token: ${{ secrets.SONAR_TOKEN }}
-  npm-build:
+      - name: image-build
+        uses: ./.github/actions/image-build
+        with:
+          working-directory: ${{ env.BACKEND_DIRECTORY }}
+          registry: ${{ env.REGISTRY }}
+          image-name: ${{ env.IMAGE_NAME }}
+          tags: latest
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+  frontend-test-and-build:
     runs-on: ubuntu-22.04
     steps:
       - name: checkout sources
@@ -47,26 +55,6 @@ jobs:
         with:
           working-directory: ${{ env.FRONTEND_DIRECTORY }}
           node-version: ${{ env.NODE_VERSION }}
-  backend-image-build:
-    runs-on: ubuntu-22.04
-    needs: [gradle-build]
-    steps:
-      - name: checkout sources
-        uses: actions/checkout@v4
-      - name: image-build
-        uses: ./.github/actions/image-build
-        with:
-          working-directory: ${{ env.BACKEND_DIRECTORY }}
-          registry: ${{ env.REGISTRY }}
-          image-name: ${{ env.IMAGE_NAME }}
-          tags: latest
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-  frontend-image-build:
-    runs-on: ubuntu-22.04
-    needs: [npm-build]
-    steps:
-      - name: checkout sources
-        uses: actions/checkout@v4
       - name: image-build
         uses: ./.github/actions/image-build
         with:
@@ -77,7 +65,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
   deploy-helm-ci:
     runs-on: ubuntu-22.04
-    needs: [backend-image-build, frontend-image-build]
+    needs: [backend-test-and-build, frontend-test-and-build]
     environment: staging
     steps:
       - name: checkout sources
