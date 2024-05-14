@@ -76,18 +76,6 @@ class StationViewNamespace(
         subscribeToAssemblyStationEvents.forEach { it.sendPojo(SocketIoNamespace.APPLICATION_ERROR_EVENT, error) }
     }
 
-    private fun getEventIdFromNamespace(namespace: String): Long {
-        val matchResult =
-                namespacePattern.matchEntire(namespace) ?: throw IllegalArgumentException("Invalid namespace: $namespace")
-        return (matchResult.groups[1]?.value)!!.toLong()
-    }
-
-    private fun getStationIdFromNamespace(namespace: String): Long {
-        val matchResult =
-                namespacePattern.matchEntire(namespace) ?: throw IllegalArgumentException("Invalid namespace: $namespace")
-        return (matchResult.groups[2]?.value)!!.toLong()
-    }
-
     fun doesStationExist(eventId: Long, stationId: Long): Boolean {
         stationRepository.findByIdAndEventId(stationId, eventId)
                 .orElseThrow { ResourceNotFoundException("Station not found with ID: $stationId") }
@@ -98,6 +86,18 @@ class StationViewNamespace(
         eventRepository.findById(eventId)
                 .orElseThrow { ResourceNotFoundException("Event not found with ID: $eventId") }
         return true
+    }
+
+    private fun getEventIdFromNamespace(namespace: String): Long {
+        val matchResult =
+                namespacePattern.matchEntire(namespace) ?: throw IllegalArgumentException("Invalid namespace: $namespace")
+        return (matchResult.groups[1]?.value)!!.toLong()
+    }
+
+    private fun getStationIdFromNamespace(namespace: String): Long {
+        val matchResult =
+                namespacePattern.matchEntire(namespace) ?: throw IllegalArgumentException("Invalid namespace: $namespace")
+        return (matchResult.groups[2]?.value)!!.toLong()
     }
 
 

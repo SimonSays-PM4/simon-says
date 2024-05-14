@@ -87,19 +87,6 @@ class StationService(
         return processedOrders.map { orderMapper.mapOrderToOrderDTO(it) }
     }
 
-    private fun makeStationReadyForUpdate(station: StationCreateUpdateDTO, eventId: Long, ingredients: List<Ingredient>): Station {
-        val stationToSave = stationRepository.findById(station.id!!).orElseThrow {
-            ResourceNotFoundException("Station not found with ID: ${station.id}")
-        }
-        stationToSave.name = station.name!!
-        stationToSave.assemblyStation = station.assemblyStation!!
-        stationToSave.event = eventService.getEventEntity(eventId)
-        if(!station.assemblyStation) {
-            stationToSave.ingredients = ingredients
-        }
-        return stationToSave
-    }
-
     fun deleteStation(stationId: Long, eventId: Long) {
         val menuItem = stationRepository.findByIdAndEventId(stationId, eventId).orElseThrow {
             ResourceNotFoundException("Station not found with ID: $stationId")
@@ -112,6 +99,19 @@ class StationService(
             ResourceNotFoundException("The event with id: $eventId does not yet have an assembly station")
         }
         return true
+    }
+
+    private fun makeStationReadyForUpdate(station: StationCreateUpdateDTO, eventId: Long, ingredients: List<Ingredient>): Station {
+        val stationToSave = stationRepository.findById(station.id!!).orElseThrow {
+            ResourceNotFoundException("Station not found with ID: ${station.id}")
+        }
+        stationToSave.name = station.name!!
+        stationToSave.assemblyStation = station.assemblyStation!!
+        stationToSave.event = eventService.getEventEntity(eventId)
+        if(!station.assemblyStation) {
+            stationToSave.ingredients = ingredients
+        }
+        return stationToSave
     }
 
 }

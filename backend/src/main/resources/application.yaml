@@ -18,7 +18,6 @@ application:
   frontend-origins:
     - https://simon-says.ch
     - https://simonsays.pm4.init-lab.ch
-  url: "http://localhost:3000"
 
 # The printer-queue-server application configuration
 printer-queue-server:

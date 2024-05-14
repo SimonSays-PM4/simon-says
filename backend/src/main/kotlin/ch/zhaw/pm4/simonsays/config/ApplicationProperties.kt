@@ -7,6 +7,5 @@ import org.springframework.stereotype.Component
 @ConfigurationProperties(prefix = "application")
 class ApplicationProperties {
     lateinit var frontendOrigins: Array<String>
-    var url: String = ""
     var adminToken: String = ""
 }

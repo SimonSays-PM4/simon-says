@@ -78,12 +78,6 @@ class AssemblyViewNamespace(
         subscribeToAssemblyStationEvents.forEach { it.sendPojo(SocketIoNamespace.APPLICATION_ERROR_EVENT, error) }
     }
 
-    private fun getEventIdFromNamespace(namespace: String): Long {
-        val matchResult =
-                namespacePattern.matchEntire(namespace) ?: throw IllegalArgumentException("Invalid namespace: $namespace")
-        return (matchResult.groups[1]?.value)!!.toLong()
-    }
-
     fun doesEventHaveAssemblyStation(eventId: Long): Boolean {
         stationRepository.findByEventIdAndAssemblyStation(eventId, true).orElseThrow {
             ResourceNotFoundException("The event with id: $eventId does not yet have an assembly station")
@@ -95,5 +89,11 @@ class AssemblyViewNamespace(
         eventRepository.findById(eventId)
                 .orElseThrow { ResourceNotFoundException("Event not found with ID: $eventId") }
         return true
+    }
+
+    private fun getEventIdFromNamespace(namespace: String): Long {
+        val matchResult =
+                namespacePattern.matchEntire(namespace) ?: throw IllegalArgumentException("Invalid namespace: $namespace")
+        return (matchResult.groups[1]?.value)!!.toLong()
     }
 }
