@@ -162,4 +162,25 @@ class IngredientIntegrationTest : IntegrationTest() {
             }
     }
 
+    @Test
+    @Transactional
+    fun `should update ingredient`() {
+        val ingredient = ingredientFactory.createIngredient(name = getTestIngredientDTO().name, event = globalEvent)
+        val ingredientDTO = createUpdateTestIngredientDTO(id = ingredient.id, mustBeProduced = false)
+        mockMvc.put(getIngredientsUrl(globalEvent.id!!)) {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(ingredientDTO)
+        }
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+                content {
+                    contentType(MediaType.APPLICATION_JSON)
+                    jsonPath("$.name", CoreMatchers.equalTo(getTestIngredientDTO().name))
+                    jsonPath("$.mustBeProduced", CoreMatchers.equalTo(false))
+                }
+            }
+    }
+
 }

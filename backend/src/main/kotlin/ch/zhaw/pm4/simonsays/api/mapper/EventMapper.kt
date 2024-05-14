@@ -15,7 +15,12 @@ interface EventMapper {
         Mapping(target = "id", ignore = true),
         Mapping(target= "ingredients", ignore = true),
         Mapping(target= "menuItems", ignore = true),
-        Mapping(target= "stations", ignore = true)
+        Mapping(target= "stations", ignore = true),
+        Mapping(target= "menus", ignore = true),
+        Mapping(target= "order", ignore = true),
+        Mapping(target= "orderIngredient", ignore = true),
+        Mapping(target= "orderMenuItem", ignore = true),
+        Mapping(target= "orderMenu", ignore = true)
     )
     fun mapCreateDTOToEvent(event: EventCreateUpdateDTO): Event
 }

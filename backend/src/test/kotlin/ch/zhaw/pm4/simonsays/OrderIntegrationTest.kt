@@ -39,6 +39,7 @@ class OrderIntegrationTest : IntegrationTest() {
     @Transactional
     @Order(1)
     fun `create order should succeed`() {
+        val testIngredient2 = ingredientFactory.createIngredient("Order Ingredient Test", event = testEvent, mustBeProduced = false)
         val orderCreateDTO = getOrderCreateDTO(
             menus = mutableListOf(
                 getMenuDTO(
@@ -46,7 +47,7 @@ class OrderIntegrationTest : IntegrationTest() {
                     menuItemDTOs = mutableListOf(
                         getMenuItemDTO(
                             id = testMenuItem.id!!,
-                            ingredientDTOs = mutableListOf(getTestIngredientDTO(id = testIngredient.id!!))
+                            ingredientDTOs = mutableListOf(getTestIngredientDTO(id = testIngredient.id!!), getTestIngredientDTO(id = testIngredient2.id!!))
                         )
                     )
                 )

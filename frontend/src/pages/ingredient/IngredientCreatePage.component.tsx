@@ -20,7 +20,8 @@ export const IngredientCreatePageComponent: React.FC = () => {
         register,
         handleSubmit,
         formState: { errors },
-        getValues
+        getValues,
+        setValue
     } = useForm();
 
     const getErrorMessage = (fieldId: string) => {
@@ -48,6 +49,23 @@ export const IngredientCreatePageComponent: React.FC = () => {
                             register={register}
                             isRequired={true}
                             validationError={getErrorMessage(nameof<IngredientCreateUpdateDTO>(e => e.name))} />
+
+                        <div className="sm:grid sm:grid-flow-row sm:grid-cols-1 sm:items-end my-4">
+                            <label htmlFor={nameof<IngredientCreateUpdateDTO>(e => e.mustBeProduced)} className="mb-2 block text-sm font-medium text-default-900">
+                                Muss produziert werden
+                            </label>
+
+                            <div className="mt-1 sm:mt-0 sm:col-span-1 stroke-secondaryfont flex flex-row items-center">
+                                <div className="w-full relative">
+                                    <input
+                                        id={nameof<IngredientCreateUpdateDTO>(e => e.mustBeProduced)}
+                                        className="form-input rounded-lg border border-default-200 px-4 py-2.5 scale-[2] ml-2 mt-3 mb-6"
+                                        onChange={(e) => setValue(nameof<IngredientCreateUpdateDTO>(e => e.mustBeProduced), e.target.checked)}
+                                        type="checkbox"
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
                         {errorMessage ? <p className="py-2 text-primary">{errorMessage}</p> : <></>}
                         <div className="flex min-h-[60px] items-end ml-auto">

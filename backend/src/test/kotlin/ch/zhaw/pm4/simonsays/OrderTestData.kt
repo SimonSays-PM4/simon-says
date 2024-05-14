@@ -72,7 +72,8 @@ fun getOrderDTOCreated1() = getOrderDTO(
                     name = "Test Menu Item Name",
                     price = 1.0,
                     ingredients = mutableListOf(
-                        getOrderIngredientDTO(id = 2)
+                        getOrderIngredientDTO(id = 2),
+                        getOrderIngredientDTO(id = 3, state = State.DONE)
                     )
                 )
             )
@@ -99,7 +100,7 @@ fun getOrderDTOCreated2() =
                         name = "Test Menu Item Name",
                         price = 1.0,
                         ingredients = mutableListOf(
-                            getOrderIngredientDTO(id = 4)
+                            getOrderIngredientDTO(id = 5)
                         )
                     )
                 )
@@ -110,7 +111,7 @@ fun getOrderDTOCreated2() =
                 id = 3,
                 price = 1.0,
                 name = "Test Menu Item Name",
-                ingredients = mutableListOf(getOrderIngredientDTO(id = 3))
+                ingredients = mutableListOf(getOrderIngredientDTO(id = 4))
             )
         ),
         totalPrice = 2.0,

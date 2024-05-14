@@ -10,7 +10,6 @@ import ch.zhaw.pm4.simonsays.repository.MenuRepository
 import ch.zhaw.pm4.simonsays.service.EventService
 import ch.zhaw.pm4.simonsays.service.MenuItemService
 import ch.zhaw.pm4.simonsays.service.MenuService
-import ch.zhaw.pm4.simonsays.service.MenuServiceImpl
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
@@ -52,7 +51,7 @@ class MenuTest {
         eventMapper = mockk(relaxed = true)
 
         // Construct the service with the mocked dependencies
-        menuService = MenuServiceImpl(
+        menuService = MenuService(
             menuRepository,
             MenuMapperImpl(),
             eventService,

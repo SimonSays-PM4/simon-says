@@ -1,15 +1,15 @@
 package ch.zhaw.pm4.simonsays
 
+import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
+import ch.zhaw.pm4.simonsays.api.controller.StationViewNamespace
 import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.mapper.StationMapperImpl
+import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
 import ch.zhaw.pm4.simonsays.api.types.StationDTO
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
-import ch.zhaw.pm4.simonsays.repository.IngredientRepository
-import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
-import ch.zhaw.pm4.simonsays.repository.OrderIngredientRepository
-import ch.zhaw.pm4.simonsays.repository.StationRepository
+import ch.zhaw.pm4.simonsays.repository.*
 import ch.zhaw.pm4.simonsays.service.*
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -23,10 +23,19 @@ class StationTest {
     protected lateinit var menuItemRepository: MenuItemRepository
 
     @MockkBean(relaxed = true)
+    protected lateinit var orderMenuItemRepository: OrderMenuItemRepository
+
+    @MockkBean(relaxed = true)
     protected lateinit var eventService: EventService
 
     @MockkBean(relaxed = true)
-    protected lateinit var orderService: OrderService
+    protected lateinit var orderIngredientService: OrderIngredientService
+
+    @MockkBean(relaxed = true)
+    protected lateinit var orderMenuService: OrderMenuService
+
+    @MockkBean(relaxed = true)
+    protected lateinit var orderMenuItemService: OrderMenuItemService
 
     @MockkBean(relaxed = true)
     protected lateinit var eventMapper: EventMapper
@@ -49,6 +58,18 @@ class StationTest {
     @MockkBean(relaxed = true)
     protected lateinit var orderIngredientRepository: OrderIngredientRepository
 
+    @MockkBean(relaxed = true)
+    protected lateinit var orderRepository: OrderRepository
+
+    @MockkBean(relaxed = true)
+    protected lateinit var orderMenuRepository: OrderMenuRepository
+
+    @MockkBean(relaxed = true)
+    protected lateinit var stationViewNamespace: StationViewNamespace
+
+    @MockkBean(relaxed = true)
+    protected lateinit var assemblyViewNamespace: AssemblyViewNamespace
+
     private lateinit var stationService: StationService
 
     @BeforeEach
@@ -61,19 +82,28 @@ class StationTest {
         ingredientService = mockk(relaxed = true)
         eventMapper = mockk(relaxed = true)
         stationRepository = mockk(relaxed = true)
-        orderService = mockk(relaxed = true)
         orderMapper = mockk(relaxed = true)
         orderIngredientRepository = mockk(relaxed = true)
+        orderRepository = mockk(relaxed = true)
+        orderMenuService = mockk(relaxed = true)
+        orderMenuItemService = mockk(relaxed = true)
+        orderIngredientService = mockk(relaxed = true)
+        orderMenuItemRepository = mockk(relaxed = true)
+        orderMenuRepository = mockk(relaxed = true)
+        stationViewNamespace = mockk(relaxed = true)
+        assemblyViewNamespace = mockk(relaxed = true)
 
         // Construct the service with the mocked dependencies
-        stationService = StationServiceImpl(
+        stationService = StationService(
                 stationRepository,
                 StationMapperImpl(),
                 eventService,
                 ingredientRepository,
-                orderIngredientRepository,
-                orderService,
-                orderMapper
+                orderRepository,
+                orderMapper,
+                orderIngredientService,
+                orderMenuItemService,
+                orderMenuService,
         )
     }
 
@@ -139,16 +169,18 @@ class StationTest {
         )
     }
 
-    /*@Test
+    @Test
     fun `Test retrieve ingredients that need to be produced`() {
+        val orderIngredientDTO: OrderIngredientDTO = getOrderIngredientDTO()
         every { stationRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getStation())
-        every { orderService.getOrderIngredientByIngredientIds(any()) } returns listOf(
+        every { orderIngredientService.getOrderIngredientByIngredientIds(any()) } returns listOf(
             getOrderIngredient()
         )
+        every { orderMapper.mapOrderIngredientToOrderIngredientDTO(any()) } returns orderIngredientDTO
         Assertions.assertEquals(
-                listOf(getOrderIngredientDTO()),
+                listOf(orderIngredientDTO),
                 stationService.getStationView(1, 1)
         )
-    }*/
+    }
 
 }

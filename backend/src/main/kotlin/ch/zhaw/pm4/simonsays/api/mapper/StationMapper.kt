@@ -18,9 +18,14 @@ interface StationMapper {
             Mapping(target = "id", ignore = true),
             Mapping(target = "name", source = "station.name"),
             Mapping(target = "ingredients", source = "ingredients"),
-            Mapping(target= "event.ingredients", ignore = true),
+            Mapping(target= "event.menus", ignore = true),
             Mapping(target= "event.menuItems", ignore = true),
-            Mapping(target= "event.stations", ignore = true)
+            Mapping(target= "event.ingredients", ignore = true),
+            Mapping(target= "event.stations", ignore = true),
+            Mapping(target= "event.order", ignore = true),
+            Mapping(target= "event.orderIngredient", ignore = true),
+            Mapping(target= "event.orderMenuItem", ignore = true),
+            Mapping(target= "event.orderMenu", ignore = true),
     )
     fun mapCreateDTOToStation(station: StationCreateUpdateDTO, event: EventDTO, ingredients: List<Ingredient>): Station
 }
