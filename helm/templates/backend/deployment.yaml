@@ -48,7 +48,9 @@ spec:
           - secretRef:
                 name: {{ .Values.backend.config.adminSecretName }}
         ports:
-          - containerPort: {{ .Values.backend.deployment.port }}
+          - name: http
+            containerPort: {{ .Values.backend.deployment.port }}
+            protocol: TCP
         resources:
             requests:
                 cpu: {{ .Values.backend.deployment.resources.requests.cpu }}
@@ -56,6 +58,27 @@ spec:
             limits:
                 cpu: {{ .Values.backend.deployment.resources.limits.cpu }}
                 memory: {{ .Values.backend.deployment.resources.limits.memory }}
+        startupProbe:
+          httpGet:
+            path: {{ .Values.backend.probes.startup.path }}
+            port: http
+            {{- with .Values.backend.probes.startup.options }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.backend.probes.readiness.path }}
+            port: http
+            {{- with .Values.backend.probes.readiness.options }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.backend.probes.liveness.path }}
+            port: http
+            {{- with .Values.backend.probes.liveness.options }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       {{- if .Values.backend.config }}
       {{- if .Values.backend.config.applicationConfig }}
       volumes:

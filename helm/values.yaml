@@ -31,6 +31,20 @@ backend:
     ingressClassName: "traefik"
     path: /
     pathType: "Prefix"
+  probes:
+    startup:
+      path: /actuator/health/liveness
+      options:
+        failureThreshold: 12
+        periodSeconds: 10
+    liveness:
+      path: /actuator/health/liveness
+      options:
+        timeoutSeconds: 3
+    readiness:
+      path: /actuator/health/readiness
+      options:
+        timeoutSeconds: 3
 frontend:
   deployment:
     name: simonsays-frontend
