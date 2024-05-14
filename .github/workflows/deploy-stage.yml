@@ -4,13 +4,16 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - KAN-153
 env:
   # GENERAL
   BACKEND_DIRECTORY: backend
+  FRONTEND_DIRECTORY: frontend
   # JAVA env
   JAVA_VERSION: 17
   JAVA_DIST: corretto
+  # NPM env
+  NODE_VERSION: 20
   # DOCKER env
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}/backend
@@ -34,7 +37,17 @@ jobs:
           working-directory: ${{ env.BACKEND_DIRECTORY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           sonar-token: ${{ secrets.SONAR_TOKEN }}
-  image-build:
+  npm-build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
+      - name: npm-build
+        uses: ./.github/actions/npm-build
+        with:
+          working-directory: ${{ env.FRONTEND_DIRECTORY }}
+          node-version: ${{ env.NODE_VERSION }}
+  backend-image-build:
     runs-on: ubuntu-22.04
     needs: [gradle-build]
     steps:
@@ -48,9 +61,23 @@ jobs:
           image-name: ${{ env.IMAGE_NAME }}
           tags: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
+  frontend-image-build:
+    runs-on: ubuntu-22.04
+    needs: [npm-build]
+    steps:
+      - name: checkout sources
+        uses: actions/checkout@v4
+      - name: image-build
+        uses: ./.github/actions/image-build
+        with:
+          working-directory: ${{ env.FRONTEND_DIRECTORY }}
+          registry: ${{ env.REGISTRY }}
+          image-name: ${{ env.IMAGE_NAME }}
+          tags: latest
+          github-token: ${{ secrets.GITHUB_TOKEN }}
   deploy-helm-ci:
     runs-on: ubuntu-22.04
-    needs: [image-build]
+    needs: [backend-image-build, frontend-image-build]
     environment: staging
     steps:
       - name: checkout sources
@@ -66,3 +93,4 @@ jobs:
           helm-values-file: values-stage.yaml
           mysql-root-password: ${{ secrets.MYSQL_ROOT_PASSWORD_STAGING }}
           mysql-password: ${{ secrets.MYSQL_PASSWORD_STAGING }}
+
