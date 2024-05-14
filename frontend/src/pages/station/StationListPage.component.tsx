@@ -9,9 +9,10 @@ import {ColumnType} from "../../models/ColumnType.ts";
 import {MdEditSquare} from "react-icons/md";
 import {FaRegTrashAlt} from "react-icons/fa";
 import {PiChargingStationDuotone} from "react-icons/pi";
+import {ButtonType} from "../../enums/ButtonType.ts";
 
 export const StationListPageComponent: React.FC = () => {
-    const {isLoading,stationList,stationActions,showDeletePopup,setShowDeletePopup} = useStationListPage();
+    const {isLoading,stationList,stationActions,showDeletePopup,setShowDeletePopup,eventId} = useStationListPage();
     const navigate = useNavigate();
 
     const onEditClick = (row: StationDTO) => {
@@ -21,6 +22,10 @@ export const StationListPageComponent: React.FC = () => {
     const onDeleteClick = (row: StationDTO) => {
         stationActions.setStationToDelete(row);
         setShowDeletePopup(true);
+    };
+
+    const onViewStation = (row: StationDTO) => {
+        navigate(`../../../`+eventId+`/station/`+row.id)
     };
 
     const columns: Array<ColumnType<StationDTO>> = [
@@ -33,6 +38,14 @@ export const StationListPageComponent: React.FC = () => {
             key: "assemblyStation",
             name: "is Assembly Station",
             type: "boolean"
+        },
+        {
+            key:"id",
+            elementKey:"viewAction",
+            type:"action",
+            name:"View",
+            buttonType:ButtonType.Secondary,
+            action: onViewStation
         },
         {
             key: "id",

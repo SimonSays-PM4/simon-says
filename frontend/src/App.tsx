@@ -20,6 +20,7 @@ import { JoinPage } from "./pages/user/JoinPage.tsx";
 import { StationSelectionPage } from "./pages/user/StationSelectionPage.component.tsx";
 import {StationListPageComponent} from "./pages/station/StationListPage.component.tsx";
 import {StationEditPageComponent} from "./pages/station/StationEditPage.component.tsx";
+import {StationViewComponent} from "./pages/user/StationView.component.tsx";
 
 export default function App() {
     return (
@@ -61,6 +62,7 @@ export default function App() {
                             <Route path="/:eventId/order/create/:orderId" element={<AuthorizedEventRoute activePageType={ActivePageType.Order}><OrderCreatePageComponent /></AuthorizedEventRoute>} />
                         </Route>
                     </Route>
+                    <Route path="/:eventId/station/:stationId" element={<AuthorizedEventRoute activePageType={ActivePageType.Event}><StationViewComponent/></AuthorizedEventRoute>}/>
 
                     <Route path="*" element={<Error404Page />} />
                 </Routes>
