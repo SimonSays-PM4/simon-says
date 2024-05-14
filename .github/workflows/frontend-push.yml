@@ -1,7 +1,9 @@
 name: frontend running on each commit
 
 on:
-  - push
+  push:
+    branches-ignore:
+      - main
 env:
   # GENERAL
   FRONTEND_DIRECTORY: frontend
