@@ -15,6 +15,7 @@ spring:
     defer-datasource-initialization: true
 debug: on
 application:
+  adminToken: "mysecretpassword"
   frontend-origins:
     - https://simon-says.ch
     - https://simonsays.pm4.init-lab.ch

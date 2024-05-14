@@ -14,6 +14,7 @@ spring:
 
 debug: on
 application:
+  adminToken: "mysecretpassword"
   frontend-origins:
     - https://simonsays-stage.pm4.init-lab.ch
     - https://socket-test-client.netlify.app
