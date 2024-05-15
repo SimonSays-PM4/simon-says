@@ -1,7 +1,9 @@
 export const HomePage: React.FC = () => {
     return (
         <div>
-            <h1>Home Page</h1>
+            <div className="text-2xl">Welcome to the <b>Simon Says</b>!</div>
+            <br/>
+            <p>Home Page</p>
         </div>
     );
 }

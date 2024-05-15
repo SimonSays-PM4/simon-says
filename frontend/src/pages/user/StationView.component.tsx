@@ -4,12 +4,17 @@ import {State} from "../../gen/api";
 import {IngredientCard} from "../../components/station/IngredientCard.tsx";
 import {OrderCard} from "../../components/station/OrderCard.tsx";
 import {Badge} from "../../components/display/Badge.tsx";
+import {ButtonType} from "../../enums/ButtonType.ts";
+import {IoIosArrowBack} from "react-icons/io";
+import {Button} from "../../components/Button.tsx";
+import {useNavigate} from "react-router-dom";
 
 export const StationViewComponent: React.FC = () => {
     const {station, orders, ingredientHandling: {ingredients, processIngredient, doneIngredients},assemblyHandling:{processMenu,processMenuItem},removeFromDone} = useStationView()
+    const navigate = useNavigate();
     return <div className="w-full">
         <div className="flex flex-wrap gap-4 sm:justify-between lg:flex-nowrap">
-        <h2 className="text-2xl">Station - <b>{station.name}</b> </h2><div><Badge color="green"><>{station.assemblyStation ? orders?.filter((e)=>e.state!=State.Done).length:ingredients.length}</></Badge></div>
+        <h2 className="text-2xl"><div className="flex flex-wrap gap-4"><Button onClick={()=>navigate("./../../")} buttonType={ButtonType.Primary}><IoIosArrowBack/></Button>Station  -<b>{station.name}</b></div></h2><div><Badge color="green"><>{station.assemblyStation ? orders?.filter((e)=>e.state!=State.Done).length:ingredients.length}</></Badge></div>
         </div>
         <br/>
 
