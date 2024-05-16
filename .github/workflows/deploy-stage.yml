@@ -1,4 +1,4 @@
-name: backend staging deployment
+name: staging deployment
 
 on:
   workflow_dispatch:
@@ -9,6 +9,8 @@ env:
   # GENERAL
   BACKEND_DIRECTORY: backend
   FRONTEND_DIRECTORY: frontend
+  FRONTEND_IMAGE_NAME: ${{ github.repository }}/frontend
+  BACKEND_IMAGE_NAME: ${{ github.repository }}/backend
   # JAVA env
   JAVA_VERSION: 17
   JAVA_DIST: corretto
@@ -16,7 +18,6 @@ env:
   NODE_VERSION: 20
   # DOCKER env
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/backend
   # HELM env
   HELM_DIRECTORY: helm
   HELM_RELEASE_NAME: simonsays
@@ -42,7 +43,7 @@ jobs:
         with:
           working-directory: ${{ env.BACKEND_DIRECTORY }}
           registry: ${{ env.REGISTRY }}
-          image-name: ${{ env.IMAGE_NAME }}
+          image-name: ${{ env.BACKEND_IMAGE_NAME }}
           tags: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
   frontend-test-and-build:
@@ -60,7 +61,7 @@ jobs:
         with:
           working-directory: ${{ env.FRONTEND_DIRECTORY }}
           registry: ${{ env.REGISTRY }}
-          image-name: ${{ env.IMAGE_NAME }}
+          image-name: ${{ env.FRONTEND_IMAGE_NAME }}
           tags: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
   deploy-helm-ci:
