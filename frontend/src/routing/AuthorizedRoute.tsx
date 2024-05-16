@@ -40,9 +40,5 @@ export const AuthorizedRoute: React.FC<IAuthorizedRouteProps> = ({ children, act
         }
     }, [loginInfo, setLoginInfo]);
 
-    return <MainLayout activePageType={activePageType}>
-
-
-        {children}
-    </MainLayout>
+    return <MainLayout activePageType={activePageType}>{children}</MainLayout>
 };
