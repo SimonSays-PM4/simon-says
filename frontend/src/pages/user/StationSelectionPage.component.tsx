@@ -13,7 +13,7 @@ export const StationSelectionPage: React.FC = () => {
     
     return (
         <div >
-            <div className="flex flex-wrap justify-center">
+            <div className="flex flex-wrap">
                 <Card
                     onClick={() => {
                         navigate(`/${eventId}/order`);
