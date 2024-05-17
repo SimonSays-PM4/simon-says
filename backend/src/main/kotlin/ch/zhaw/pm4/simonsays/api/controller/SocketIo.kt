@@ -1,7 +1,7 @@
 package ch.zhaw.pm4.simonsays.api.controller
 
 import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
-import ch.zhaw.pm4.simonsays.config.PrinterProperties
+import ch.zhaw.pm4.simonsays.config.ApplicationProperties
 import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
 import io.socket.engineio.server.EngineIoServer
 import io.socket.engineio.server.EngineIoServerOptions
@@ -110,14 +110,14 @@ interface SocketIoNamespace<T> {
 
 @WebServlet("/socket.io/*", asyncSupported = true)
 class SocketIo(
-    printerProperties: PrinterProperties,
+    applicationProperties: ApplicationProperties,
     socketIoNamespaces: List<SocketIoNamespace<out Any>>,
 ) : HttpServlet() {
     /**
      * Define the underlying Engine.IO server.
      */
     private val engineIoServer = EngineIoServer(
-        EngineIoServerOptions.newFromDefault().setAllowedCorsOrigins(printerProperties.frontendOrigins)
+        EngineIoServerOptions.newFromDefault().setAllowedCorsOrigins(applicationProperties.frontendOrigins)
             .setCorsHandlingDisabled(false)
     )
 

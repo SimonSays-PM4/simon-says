@@ -1,7 +1,11 @@
 name: backend running on each commit
 
 on:
-  - push
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+
 env:
   # GENERAL
   BACKEND_DIRECTORY: backend
@@ -25,7 +29,15 @@ jobs:
     steps:
       - name: checkout sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: gradle-build
         uses: ./.github/actions/gradle-build
         with:
           working-directory: ${{ env.BACKEND_DIRECTORY }}
+      - name: sonarcloud scan backend
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew test jacocoTestReport sonar
+        shell: bash
+        working-directory: ${{ env.BACKEND_DIRECTORY }}

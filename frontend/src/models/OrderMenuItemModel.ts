@@ -1,15 +1,14 @@
-import { OrderMenuItemDTO, State } from "../gen/api";
+import { MenuItemDTO } from "../gen/api";
 import { OrderIngredientModel } from "./OrderIngredientModel";
 
-export class OrderMenuItemModel implements OrderMenuItemDTO {
+export class OrderMenuItemModel implements MenuItemDTO {
     id: number;
     name: string;
     ingredients: OrderIngredientModel[];
     price: number;
-    state: State;
     index: number;
 
-    constructor(index: number, orderMenuItem: OrderMenuItemDTO) {
+    constructor(index: number, orderMenuItem: MenuItemDTO) {
         this.index = index;
         this.id = orderMenuItem.id;
         this.name = orderMenuItem.name;
@@ -17,6 +16,5 @@ export class OrderMenuItemModel implements OrderMenuItemDTO {
             (ingredient, index) => new OrderIngredientModel(index, ingredient)
         );
         this.price = orderMenuItem.price;
-        this.state = orderMenuItem.state;
     }
 }

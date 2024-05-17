@@ -7,7 +7,6 @@ import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.service.EventService
-import ch.zhaw.pm4.simonsays.service.EventServiceImpl
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
@@ -19,20 +18,19 @@ import java.util.Optional.empty
 
 class EventTest {
     @MockkBean(relaxed = true)
-    protected lateinit var eventRepo: EventRepository
+    protected lateinit var eventRepository: EventRepository
 
     private lateinit var eventService: EventService
 
     @BeforeEach
     fun setup() {
-        // mockkStatic("kotlinx.coroutines.reactor.MonoKt")
-        eventRepo = mockk(relaxed = true)
-        eventService = EventServiceImpl(eventRepo, EventMapperImpl())
+        eventRepository = mockk(relaxed = true)
+        eventService = EventService(eventRepository, EventMapperImpl())
     }
 
     @Test
     fun `Test event creation`() {
-        every { eventRepo.save(any()) } returns Event(
+        every { eventRepository.save(any()) } returns Event(
                 15,
             "Testevent",
                 "Testeventpassword",
@@ -54,7 +52,7 @@ class EventTest {
 
     @Test
     fun `Test event fetching`() {
-        every { eventRepo.findAll() } returns mutableListOf(
+        every { eventRepository.findAll() } returns mutableListOf(
                 Event(
                     name = "testevent",
                     password = "password",
@@ -73,7 +71,7 @@ class EventTest {
 
     @Test
     fun `Test event get`() {
-        every { eventRepo.findById(1) } returns Optional.of(Event(
+        every { eventRepository.findById(1) } returns Optional.of(Event(
                 name = "testevent",
                 password = "testeventpassword",
                 numberOfTables = 1
@@ -89,7 +87,7 @@ class EventTest {
 
     @Test
     fun `Test event get not found`() {
-        every { eventRepo.findById(any()) } returns empty()
+        every { eventRepository.findById(any()) } returns empty()
         val error = Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
                 { eventService.getEvent(1) }
@@ -97,10 +95,103 @@ class EventTest {
         Assertions.assertEquals("Event not found with ID: 1", error.message)
     }
 
+    @Test
+    fun `Test event entity get`() {
+        val event = Event(
+                name = "testevent",
+                password = "testeventpassword",
+                numberOfTables = 1
+        )
+        every { eventRepository.findById(1) } returns Optional.of(event)
+        Assertions.assertEquals(
+                event, eventService.getEventEntity(1))
+    }
+
+    @Test
+    fun `Test event entity get not found`() {
+        val eventId: Long = 1
+        every { eventRepository.findById(any()) } returns empty()
+        val error = Assertions.assertThrows(
+                ResourceNotFoundException::class.java,
+                { eventService.getEventEntity(eventId) }
+        )
+        Assertions.assertEquals("Event not found with ID: ${eventId}", error.message)
+    }
+
+    @Test
+    fun `Test event update should succeed`() {
+        val eventCreateUpdate = EventCreateUpdateDTO(
+                id = 1,
+                name = "testupdateevent",
+                password = "testupdateeventpassword",
+                numberOfTables = 13
+        )
+        val event = Event(
+                id = 1,
+                name = "basicname",
+                password = "basic password",
+                numberOfTables = 5
+        )
+        val eventDTO = EventDTO(
+                id = 1,
+                name = "testupdateevent",
+                password = "testupdateeventpassword",
+                numberOfTables = 13
+        )
+        every { eventRepository.findById(any()) } returns Optional.of(event)
+        every { eventRepository.save(any()) } returns event
+        Assertions.assertEquals(
+                eventDTO,
+                eventService.createUpdateEvent(eventCreateUpdate)
+        )
+    }
+
+    @Test
+    fun `Test event update should fail when providing invalid id`() {
+        val eventCreateUpdate = EventCreateUpdateDTO(
+                id = 1,
+                name = "testupdateevent",
+                password = "testupdateeventpassword",
+                numberOfTables = 13
+        )
+        every { eventRepository.findById(any()) } returns empty()
+        val error = Assertions.assertThrows(
+                ResourceNotFoundException::class.java,
+                { eventService.getEventEntity(eventCreateUpdate.id!!) }
+        )
+        Assertions.assertEquals("Event not found with ID: ${eventCreateUpdate.id}", error.message)
+    }
+
+    @Test
+    fun `Test create event should succeed`() {
+        val eventCreateUpdate = EventCreateUpdateDTO(
+                id = null,
+                name = "testupdateevent",
+                password = "testupdateeventpassword",
+                numberOfTables = 13
+        )
+        val event = Event(
+                id = 1,
+                name = "testupdateevent",
+                password = "testupdateeventpassword",
+                numberOfTables = 13
+        )
+        val eventDto = EventDTO(
+                id = 1,
+                name = "testupdateevent",
+                password = "testupdateeventpassword",
+                numberOfTables = 13
+        )
+        every { eventRepository.save(any()) } returns event
+        Assertions.assertEquals(
+                eventDto,
+                eventService.createUpdateEvent(eventCreateUpdate)
+        )
+    }
 
     @Test
     fun `Test event deletion`() {
-        every { eventRepo.findById(1) } returns Optional.of(Event(
+        every { eventRepository.findById(1) } returns Optional.of(Event(
                 id = null,
                 name = "testevent",
                 password = "testeventpassword",
@@ -112,7 +203,7 @@ class EventTest {
 
     @Test
     fun `Test event deletion not found`() {
-        every { eventRepo.findById(any()) } returns empty()
+        every { eventRepository.findById(any()) } returns empty()
         val error = Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
                 { eventService.getEvent(1) }

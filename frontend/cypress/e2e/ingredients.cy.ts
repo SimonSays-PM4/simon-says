@@ -37,6 +37,7 @@ describe("Ingredient CRUD", () => {
         cy.url().should("include", "/ingredient/create");
 
         cy.get("#name").type("Test-Ingredient");
+        cy.get("#mustBeProduced").click();
         cy.contains("button", "Erstellen").click();
 
         cy.wait(500);

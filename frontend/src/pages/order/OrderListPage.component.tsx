@@ -63,7 +63,7 @@ export const OrderListPageComponent: React.FC = () => {
             {isLoading ? (
                 <div className="w-[100px] block mx-auto"><Loader /></div>
             ) : (
-                <DataTable<OrderDTO> title="Bestellungen" icon={<PiReceiptDuotone/>} columns={columns} rows={data} onCreateClick={() => navigate(`../create`)}/>
+                <DataTable<OrderDTO> title="Bestellungen" onBackClick={()=>navigate("./..")} icon={<PiReceiptDuotone/>} columns={columns} rows={data} onCreateClick={() => navigate(`../create`)}/>
             )}
 
             <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={orderActions.deleteOrder} modalText={'Bestellung löschen?'} closeText="Abbrechen" acceptText="Löschen" />

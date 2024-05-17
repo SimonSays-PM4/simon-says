@@ -1,7 +1,6 @@
 package ch.zhaw.pm4.simonsays.service.printer
 
 import ch.zhaw.pm4.simonsays.api.mapper.printer.PrintQueueJobMapper
-import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
 import ch.zhaw.pm4.simonsays.entity.printer.JobStatus
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueJobRepository
