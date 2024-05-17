@@ -50,7 +50,7 @@ class StationViewNamespace(
             val stationId = getStationIdFromNamespace(namespace)
 
             subscribeToAssemblyStationEvents.add(socket)
-            val initialData = stationService.getStationView(eventId, stationId)
+            val initialData = stationService.getStationView(stationId, eventId)
             socket.sendPojo(SocketIoNamespace.INITIAL_DATA_EVENT, initialData)
             socket.on(SocketIoNamespace.APPLICATION_ERROR_EVENT) { error -> log.warn("Received application error event: $error from socket ${socket.id} with namespace $namespace") }
         } catch (e: Exception) {

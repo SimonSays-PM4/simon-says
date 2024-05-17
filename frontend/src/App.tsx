@@ -28,7 +28,6 @@ export default function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/socket-test" element={<SocketTestPage />} />
                     <Route path="/:eventId/join" element={<JoinPage />} />
                     <Route path="/:eventId" element={<AuthorizedEventRoute activePageType={ActivePageType.Home}><StationSelectionPage /></AuthorizedEventRoute>} />
                     <Route path="/" element={<AuthorizedRoute activePageType={ActivePageType.Home}><HomePage /></AuthorizedRoute>} />
