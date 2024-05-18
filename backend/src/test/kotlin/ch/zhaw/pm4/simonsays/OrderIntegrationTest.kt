@@ -26,11 +26,13 @@ class OrderIntegrationTest : IntegrationTest() {
     private lateinit var testIngredient: Ingredient
     private lateinit var testMenuItem: MenuItem
     private lateinit var testMenu: Menu
+    private lateinit var testStation: Station
 
     @BeforeEach
     fun setUp() {
         testEvent = eventFactory.createEvent("Test Event Name", "TestEventPassword", 10)
         testIngredient = ingredientFactory.createIngredient("Order Ingredient Test", event = testEvent)
+        testStation = stationFactory.createStation(name = "Test Station", assemblyStation = false, eventId = testEvent.id!!, ingredients = listOf(testIngredient))
         testMenuItem = menuItemFactory.createMenuItem("Test Menu Item Name", eventId = testEvent.id!!)
         testMenu = menuFactory.createMenu("Test Menu Name", eventId = testEvent.id!!)
     }

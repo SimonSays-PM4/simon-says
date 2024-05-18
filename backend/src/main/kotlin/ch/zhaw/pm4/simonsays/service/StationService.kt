@@ -101,6 +101,10 @@ class StationService(
         return true
     }
 
+    fun getStationAssociatedWithIngredient(ingredientId: Long): List<Station> {
+        return stationRepository.findAllByIngredientsId(ingredientId)
+    }
+
     private fun makeStationReadyForUpdate(station: StationCreateUpdateDTO, eventId: Long, ingredients: List<Ingredient>): Station {
         val stationToSave = stationRepository.findById(station.id!!).orElseThrow {
             ResourceNotFoundException("Station not found with ID: ${station.id}")

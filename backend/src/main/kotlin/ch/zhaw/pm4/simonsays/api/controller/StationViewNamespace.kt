@@ -2,6 +2,7 @@ package ch.zhaw.pm4.simonsays.api.controller
 
 import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
 import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
+import ch.zhaw.pm4.simonsays.entity.Station
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
@@ -16,7 +17,7 @@ class StationViewNamespace(
         private val stationRepository: StationRepository,
         private val eventRepository: EventRepository,
         private val stationService: StationService
-): SocketIoNamespace<OrderIngredientDTO> {
+): SocketIoNamespace<Pair<Long, Long>, OrderIngredientDTO> {
     companion object {
         /**
          * Regex pattern to match the namespace. The first group is the printer server id.
@@ -27,9 +28,9 @@ class StationViewNamespace(
     private val log = LoggerFactory.getLogger(javaClass)
 
     /**
-     * A set of all subscribers that are interested in all printer servers.
+     * A map of all subscribers that are interested in a specific station. The key is the station id.
      */
-    internal val subscribeToAssemblyStationEvents = mutableSetOf<SocketIoSocket>()
+    internal val subscribeToSpecificStation = mutableMapOf<Pair<Long, Long>, MutableSet<SocketIoSocket>>()
 
     override fun isPartOfNamespace(requestedNamespace: String): Boolean {
         // check if matches the namespace pattern
@@ -49,7 +50,11 @@ class StationViewNamespace(
             val eventId = getEventIdFromNamespace(namespace)
             val stationId = getStationIdFromNamespace(namespace)
 
-            subscribeToAssemblyStationEvents.add(socket)
+            val key = Pair(eventId, stationId)
+            if (!subscribeToSpecificStation.containsKey(key)) {
+                subscribeToSpecificStation[key] = mutableSetOf()
+            }
+            subscribeToSpecificStation[key]?.add(socket)
             val initialData = stationService.getStationView(eventId, stationId)
             socket.sendPojo(SocketIoNamespace.INITIAL_DATA_EVENT, initialData)
             socket.on(SocketIoNamespace.APPLICATION_ERROR_EVENT) { error -> log.warn("Received application error event: $error from socket ${socket.id} with namespace $namespace") }
@@ -59,21 +64,30 @@ class StationViewNamespace(
     }
 
     override fun onDisconnect(socket: SocketIoSocket) {
-        subscribeToAssemblyStationEvents.remove(socket)
+        val socketSubscription = determineSocketSubscription(socket)
+        socketSubscription?.remove(socket)
     }
 
     override fun onRemove(data: OrderIngredientDTO) {
-        val subscribers = subscribeToAssemblyStationEvents
-        subscribers.forEach { it.sendPojo(SocketIoNamespace.REMOVE_EVENT, data) }
+        val stations: List<Station> = stationService.getStationAssociatedWithIngredient(data.id)
+        stations.forEach { station ->
+            val subscribers: MutableSet<SocketIoSocket>? = subscribeToSpecificStation[Pair(station.event.id, station.id)]
+            subscribers!!.forEach { it.sendPojo(SocketIoNamespace.REMOVE_EVENT, data) }
+        }
     }
 
     override fun onChange(data: OrderIngredientDTO) {
-        val subscribers = subscribeToAssemblyStationEvents
-        subscribers.forEach { it.sendPojo(SocketIoNamespace.CHANGE_EVENT, data) }
+        val stations: List<Station> = stationService.getStationAssociatedWithIngredient(data.id)
+        stations.forEach { station ->
+            val subscribers: MutableSet<SocketIoSocket>? = subscribeToSpecificStation[Pair(station.event.id, station.id)]
+            subscribers!!.forEach { it.sendPojo(SocketIoNamespace.CHANGE_EVENT, data) }
+        }
     }
 
-    override fun onApplicationError(id: String?, error: ApplicationErrorDto) {
-        subscribeToAssemblyStationEvents.forEach { it.sendPojo(SocketIoNamespace.APPLICATION_ERROR_EVENT, error) }
+    override fun onApplicationError(id: Pair<Long, Long>?, error: ApplicationErrorDto) {
+        if(id != null) {
+            subscribeToSpecificStation[id]?.forEach { it.sendPojo(SocketIoNamespace.APPLICATION_ERROR_EVENT, error) }
+        }
     }
 
     fun doesStationExist(eventId: Long, stationId: Long): Boolean {
@@ -100,5 +114,11 @@ class StationViewNamespace(
         return (matchResult.groups[2]?.value)!!.toLong()
     }
 
+    private fun determineSocketSubscription(socket: SocketIoSocket): MutableSet<SocketIoSocket>? {
+        val namespace = socket.namespace.name
+        val eventId = getEventIdFromNamespace(namespace)
+        val stationId = getStationIdFromNamespace(namespace)
+        return subscribeToSpecificStation[Pair(eventId, stationId)]
+    }
 
 }
