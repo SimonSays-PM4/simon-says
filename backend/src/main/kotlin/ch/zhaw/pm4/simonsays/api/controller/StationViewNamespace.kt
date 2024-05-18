@@ -6,6 +6,8 @@ import ch.zhaw.pm4.simonsays.entity.Station
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
+import ch.zhaw.pm4.simonsays.service.IngredientService
+import ch.zhaw.pm4.simonsays.service.OrderIngredientService
 import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
 import io.socket.socketio.server.SocketIoSocket
@@ -16,7 +18,8 @@ import org.springframework.stereotype.Component
 class StationViewNamespace(
         private val stationRepository: StationRepository,
         private val eventRepository: EventRepository,
-        private val stationService: StationService
+        private val stationService: StationService,
+        private val ingredientService: IngredientService
 ): SocketIoNamespace<Pair<Long, Long>, OrderIngredientDTO> {
     companion object {
         /**
@@ -71,15 +74,24 @@ class StationViewNamespace(
     override fun onRemove(data: OrderIngredientDTO) {
         val stations: List<Station> = stationService.getStationAssociatedWithIngredient(data.id)
         stations.forEach { station ->
-            val subscribers: MutableSet<SocketIoSocket>? = subscribeToSpecificStation[Pair(station.event.id, station.id)]
+            val key = Pair(station.event.id!!, station.id!!)
+            if (!subscribeToSpecificStation.containsKey(key)) {
+                subscribeToSpecificStation[key] = mutableSetOf()
+            }
+            val subscribers: MutableSet<SocketIoSocket>? = subscribeToSpecificStation[key]
             subscribers!!.forEach { it.sendPojo(SocketIoNamespace.REMOVE_EVENT, data) }
         }
     }
 
     override fun onChange(data: OrderIngredientDTO) {
-        val stations: List<Station> = stationService.getStationAssociatedWithIngredient(data.id)
+        val ingredient = ingredientService.getIngredientByOrderIngredientId(data.id)
+        val stations: List<Station> = stationService.getStationAssociatedWithIngredient(ingredient.id!!)
         stations.forEach { station ->
-            val subscribers: MutableSet<SocketIoSocket>? = subscribeToSpecificStation[Pair(station.event.id, station.id)]
+            val key = Pair(station.event.id!!, station.id!!)
+            if (!subscribeToSpecificStation.containsKey(key)) {
+                subscribeToSpecificStation[key] = mutableSetOf()
+            }
+            val subscribers: MutableSet<SocketIoSocket>? = subscribeToSpecificStation[key]
             subscribers!!.forEach { it.sendPojo(SocketIoNamespace.CHANGE_EVENT, data) }
         }
     }

@@ -7,6 +7,7 @@ import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
+import ch.zhaw.pm4.simonsays.service.IngredientService
 import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.testutils.mockSocket
 import com.ninjasquad.springmockk.MockkBean
@@ -35,15 +36,20 @@ class StationViewNamespaceTest {
     @MockkBean(relaxed = true)
     protected lateinit var stationService: StationService
 
+    @MockkBean(relaxed = true)
+    protected lateinit var ingredientService: IngredientService
+
     @BeforeEach
     fun setup() {
         stationRepository = mockk(relaxed = true)
         eventRepository = mockk(relaxed = true)
         stationService = mockk(relaxed = true)
+        ingredientService = mockk(relaxed = true)
         stationViewNamespace = StationViewNamespace(
                 stationRepository,
                 eventRepository,
-                stationService
+                stationService,
+                ingredientService
         )
     }
 

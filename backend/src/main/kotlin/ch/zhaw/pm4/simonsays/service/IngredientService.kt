@@ -43,6 +43,10 @@ class IngredientService(
         return ingredientMapper.mapToIngredientDTO(ingredientRepository.save(ingredientToSave))
     }
 
+    fun getIngredientByOrderIngredientId(orderIngredientId: Long): Ingredient {
+        return ingredientRepository.findByOrderIngredientsId(orderIngredientId)
+    }
+
     private fun makeIngredientReadyForUpdate(ingredient: IngredientCreateUpdateDTO, eventId: Long): Ingredient {
         val ingredientToSave = ingredientRepository.findByIdAndEventId(ingredient.id!!, eventId).orElseThrow {
             ResourceNotFoundException("Ingredient not found with ID: ${ingredient.id}")
