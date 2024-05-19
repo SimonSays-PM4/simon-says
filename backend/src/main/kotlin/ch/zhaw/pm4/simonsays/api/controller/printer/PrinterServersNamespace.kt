@@ -24,7 +24,7 @@ import java.util.UUID
 class PrinterServersNamespace(
     private val printerServerService: PrinterServerService,
     private val objectMapper: ObjectMapper,
-) : SocketIoNamespace<PrinterServerDto> {
+) : SocketIoNamespace<String, PrinterServerDto> {
     companion object {
         /**
          * Regex pattern to match the namespace. The first group is the printer server id.
