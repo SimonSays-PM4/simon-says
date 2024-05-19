@@ -43,7 +43,6 @@ export const StationViewComponent: React.FC = () => {
                             {...orders.filter((e) => e.state != State.Done).map((row) => {
                                 return <OrderCard onClickMenu={processMenu} onClickMenuItem={processMenuItem} order={row} onClick={() => console.log("hello")} />
                             })}
-
                         </div>}
                 </>
             )}

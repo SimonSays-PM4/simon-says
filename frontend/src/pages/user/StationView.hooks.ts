@@ -30,6 +30,7 @@ type StationAction = {
 };
 
 export const useStationView = (): StationAction => {
+    const url = process.env.VITE_API_URL || import.meta.env.VITE_API_URL;
     const { loginInfo, addNotification } = useContext(AppContext);
     const { eventId } = useContext(EventContext);
     const { stationId } = useParams();
@@ -40,19 +41,28 @@ export const useStationView = (): StationAction => {
     const [ingredients, setIngredients] = useState<OrderIngredientDTO[]>([]);
     const [doneIngredients, setDoneIngredients] = useState<Array<OrderIngredientDTO>>([]);
     const [orders, setOrders] = useState<OrderDTO[]>([]);
-
-    const stationService = getStationService(loginInfo.userName, loginInfo.password);
-    const orderService = getOrderService(loginInfo.userName, loginInfo.password);
     const [expiringIngredients, setExpiringIngredients] = useState<{ time: number; id: number }[]>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [socketId, setSocketId] = useState<string | undefined>(undefined);
 
+    const stationService = getStationService(loginInfo.userName, loginInfo.password);
+    const orderService = getOrderService(loginInfo.userName, loginInfo.password);
+
+    const isOrderArray = (data: OrderIngredientDTO[] | OrderDTO[]): data is OrderDTO[] => {
+        return "totalPrice" in data[0];
+    };
+
+    const isOrder = (data: OrderIngredientDTO | OrderDTO): data is OrderDTO => {
+        return "totalPrice" in data;
+    };
+
     useEffect(() => {
-        console.log(socketId);
         if (!socketId && station.id > 0) {
-            const url = process.env.VITE_API_URL || import.meta.env.VITE_API_URL;
-            console.log("url", url + `/socket-api/v1/event/${eventId}/station/view/${stationId}`);
-            const socket = io(url + `/socket-api/v1/event/${eventId}/station/view/${stationId}`);
+            const socketUrl = station.assemblyStation
+                ? url + `/socket-api/v1/event/${eventId}/station/assembly`
+                : url + `/socket-api/v1/event/${eventId}/station/view/${stationId}`;
+
+            const socket = io(socketUrl);
 
             socket.connect();
             socket.on("connect", () => {
@@ -63,27 +73,72 @@ export const useStationView = (): StationAction => {
 
             socket.on("disconnect", () => {
                 setIsConnected(false);
+                setSocketId(undefined);
             });
 
-            socket.on("initial-data", (data: OrderIngredientDTO[]) => {
+            socket.on("initial-data", (data: OrderIngredientDTO[] | OrderDTO[]) => {
                 console.log("initial-data", data);
-                setIngredients(data.filter((ing) => ing.state !== State.Done));
-            });
-
-            socket.on("change", (data: OrderIngredientDTO) => {
-                console.log("change", data);
-                if (data.state !== State.Done) {
-                    console.log(ingredients);
-                    setIngredients(() => [...ingredients, data]);
+                if (data.length > 0 && isOrderArray(data)) {
+                    const orderDtos = data as OrderDTO[];
+                    setOrders(orderDtos.filter((order) => order.state !== State.Done));
+                } else {
+                    const orderIngredientDtos = data as OrderIngredientDTO[];
+                    setIngredients(orderIngredientDtos.filter((ing) => ing.state !== State.Done));
                 }
             });
 
-            socket.on("remove", (id) => {
-                console.log("remove", id);
+            socket.on("change", (data: OrderIngredientDTO | OrderDTO) => {
+                if (isOrder(data)) {
+                    const orderDto = data as OrderDTO;
+                    console.log("change", orderDto);
+                    if (orderDto.state === State.Done) {
+                        setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderDto.id));
+                    } else {
+                        setOrders((prevOrders) => {
+                            const existing = prevOrders.find((order) => order.id === orderDto.id);
+                            if (existing) {
+                                return prevOrders.map((order) => (order.id === orderDto.id ? orderDto : order));
+                            } else {
+                                return [...prevOrders, orderDto];
+                            }
+                        });
+                    }
+                } else {
+                    const ingredientDto = data as OrderIngredientDTO;
+                    console.log("change", ingredientDto);
+                    if (ingredientDto.state === State.Done) {
+                        setIngredients((prevIngredients) =>
+                            prevIngredients.filter((ing) => ing.id !== ingredientDto.id)
+                        );
+                    } else {
+                        setIngredients((prevIngredients) => {
+                            const existing = prevIngredients.find((ing) => ing.id === ingredientDto.id);
+                            if (existing) {
+                                return prevIngredients.map((ing) =>
+                                    ing.id === ingredientDto.id ? ingredientDto : ing
+                                );
+                            } else {
+                                return [...prevIngredients, ingredientDto];
+                            }
+                        });
+                    }
+                }
+            });
+
+            socket.on("remove", (data: OrderIngredientDTO | OrderDTO) => {
+                console.log("remove", data);
+                if (isOrder(data)) {
+                    const orderDto = data as OrderDTO;
+                    setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderDto.id));
+                } else {
+                    const ingredientDto = data as OrderIngredientDTO;
+                    setIngredients((prevIngredients) => prevIngredients.filter((ing) => ing.id !== ingredientDto.id));
+                }
             });
 
             socket.on("application-error", (message) => {
                 console.log("application-error", message);
+                addNotification(NotificationType.ERR, message);
             });
 
             return () => {
@@ -124,17 +179,13 @@ export const useStationView = (): StationAction => {
 
     const processIngredient = useCallback(
         (id: number) => {
-            const ings = ingredients.filter((ingi) => ingi.id == id);
+            const ingredient = ingredients.find((ingi) => ingi.id == id);
             orderService.updateOrderIngredientState(eventId, id).then(() => {
-                const item1 = ings.at(0);
-
-                if (item1) {
-                    item1.state = State.Done;
-                    setDoneIngredients([...doneIngredients, item1]);
-                    setExpiringIngredients([...expiringIngredients, { time: Date.now(), id: item1.id }]);
-                    setIngredients([...ingredients.filter((ing) => ing.id != id)]);
-
-                    console.log(expiringIngredients);
+                if (ingredient) {
+                    ingredient.state = State.Done;
+                    setDoneIngredients(() => [...doneIngredients, ingredient]);
+                    setExpiringIngredients(() => [...expiringIngredients, { time: Date.now(), id: ingredient.id }]);
+                    setIngredients((prevIngredients) => [...prevIngredients.filter((ing) => ing.id != id)]);
                 }
             });
         },
