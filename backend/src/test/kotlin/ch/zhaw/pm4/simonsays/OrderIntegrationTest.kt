@@ -302,7 +302,7 @@ class OrderIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `update order menu item state should fail invalid event id`() {
+    fun `Update order Menu Item State should succeed when correct values provided`() {
         val order = orderFactory.createOrder(eventId = testEvent.id!!)
         val menuItemOrder =
             orderMenuItemFactory.createOrderMenuItem(

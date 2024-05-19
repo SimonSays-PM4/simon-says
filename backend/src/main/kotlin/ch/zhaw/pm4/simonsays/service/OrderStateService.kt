@@ -47,8 +47,13 @@ class OrderStateService(
         }
         orderMenuItem.state = State.DONE
         val savedOrderMenuItem = orderMenuItemRepository.save(orderMenuItem)
-        assemblyViewNamespace.onChange(orderMapper.mapOrderToOrderDTO(savedOrderMenuItem.order!!))
-        checkAndUpdateOrderStateIfNeeded(savedOrderMenuItem.order!!.id!!)
+        if(savedOrderMenuItem.order == null) {
+            assemblyViewNamespace.onChange(orderMapper.mapOrderToOrderDTO(savedOrderMenuItem.orderMenu!!.order!!))
+            checkAndUpdateOrderStateIfNeeded(savedOrderMenuItem.orderMenu!!.order!!.id!!)
+        } else {
+            assemblyViewNamespace.onChange(orderMapper.mapOrderToOrderDTO(savedOrderMenuItem.order!!))
+            checkAndUpdateOrderStateIfNeeded(savedOrderMenuItem.order!!.id!!)
+        }
         return orderMapper.mapOrderMenuItemToOrderMenuItemDTO(savedOrderMenuItem)
     }
 
