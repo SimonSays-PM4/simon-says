@@ -28,6 +28,6 @@ jobs:
           working-directory: ${{ env.PRINTER_DIRECTORY }}
           registry: ${{ env.REGISTRY }}
           image-name: ${{ env.IMAGE_NAME }}
-          tags: latest
+          tags: ${{ github.ref_name }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           platforms: linux/arm64
