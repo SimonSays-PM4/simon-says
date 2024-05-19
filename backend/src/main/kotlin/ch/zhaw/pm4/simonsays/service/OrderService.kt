@@ -38,7 +38,9 @@ class OrderService(
             savedOrder.menus!!.forEach { menu ->
                 menu.orderMenuItems.forEach { menuItem ->
                     menuItem.orderIngredients.forEach { orderIngredient ->
-                        stationViewNamespace.onChange(orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient))
+                        if(orderIngredient.ingredient.mustBeProduced) {
+                            stationViewNamespace.onChange(orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient))
+                        }
                     }
                 }
             }
@@ -47,7 +49,9 @@ class OrderService(
         if(savedOrder.menuItems != null && savedOrder.menuItems!!.isNotEmpty()) {
             savedOrder.menuItems!!.forEach { menuItem ->
                 menuItem.orderIngredients.forEach { orderIngredient ->
-                    stationViewNamespace.onChange(orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient))
+                    if(orderIngredient.ingredient.mustBeProduced) {
+                        stationViewNamespace.onChange(orderMapper.mapOrderIngredientToOrderIngredientDTO(orderIngredient))
+                    }
                 }
             }
         }

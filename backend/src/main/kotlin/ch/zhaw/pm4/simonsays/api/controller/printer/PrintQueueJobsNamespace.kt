@@ -29,7 +29,7 @@ class PrintQueueJobsNamespace(
     private val printQueueService: PrintQueueService,
     private val printQueueJobService: PrintQueueJobService,
     private val objectMapper: ObjectMapper,
-) : SocketIoNamespace<PrintQueueJobDto> {
+) : SocketIoNamespace<String, PrintQueueJobDto> {
     companion object {
         /**
          * Regex pattern to match the namespace. The first group is the printer server id, the second group is the print queue id and the third group is the job id.

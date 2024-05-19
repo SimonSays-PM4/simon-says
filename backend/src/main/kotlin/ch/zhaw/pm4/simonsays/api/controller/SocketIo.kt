@@ -29,7 +29,7 @@ import jakarta.servlet.http.HttpServletResponse
  *
  * which would make "socket-api/v1/printer-server/{id}/print-queues" the namespace.
  */
-interface SocketIoNamespace<T> {
+interface SocketIoNamespace<K, T> {
     companion object {
         /** The change event name. */
         const val CHANGE_EVENT = "change"
@@ -82,12 +82,12 @@ interface SocketIoNamespace<T> {
      * @param id The unique identifier to send to (printer server id, job id, ...). When null, the error will be sent to all connected clients. Otherwise, only subscribers of the given id will receive the error.
      * @param error The error that occurred.
      */
-    fun onApplicationError(id: String?, error: ApplicationErrorDto)
+    fun onApplicationError(id: K?, error: ApplicationErrorDto)
 
     /**
      * Shorthand method for onApplicationError(id, ApplicationErrorDto(code, message)).
      */
-    fun onApplicationError(id: String?, code: String, message: String) {
+    fun onApplicationError(id: K?, code: String, message: String) {
         val error = ApplicationErrorDto(code, message)
         onApplicationError(id, error)
     }
@@ -111,7 +111,7 @@ interface SocketIoNamespace<T> {
 @WebServlet("/socket.io/*", asyncSupported = true)
 class SocketIo(
     applicationProperties: ApplicationProperties,
-    socketIoNamespaces: List<SocketIoNamespace<out Any>>,
+    socketIoNamespaces: List<SocketIoNamespace<out Any, out Any>>,
 ) : HttpServlet() {
     /**
      * Define the underlying Engine.IO server.
