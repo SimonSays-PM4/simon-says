@@ -7,7 +7,6 @@ import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
 import ch.zhaw.pm4.simonsays.service.IngredientService
-import ch.zhaw.pm4.simonsays.service.OrderIngredientService
 import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
 import io.socket.socketio.server.SocketIoSocket
@@ -58,7 +57,7 @@ class StationViewNamespace(
                 subscribeToSpecificStation[key] = mutableSetOf()
             }
             subscribeToSpecificStation[key]?.add(socket)
-            val initialData = stationService.getStationView(eventId, stationId)
+            val initialData = stationService.getStationView(stationId, eventId)
             socket.sendPojo(SocketIoNamespace.INITIAL_DATA_EVENT, initialData)
             socket.on(SocketIoNamespace.APPLICATION_ERROR_EVENT) { error -> log.warn("Received application error event: $error from socket ${socket.id} with namespace $namespace") }
         } catch (e: Exception) {
