@@ -7,6 +7,7 @@ import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.StationRepository
+import ch.zhaw.pm4.simonsays.service.IngredientService
 import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.testutils.mockSocket
 import com.ninjasquad.springmockk.MockkBean
@@ -35,15 +36,20 @@ class StationViewNamespaceTest {
     @MockkBean(relaxed = true)
     protected lateinit var stationService: StationService
 
+    @MockkBean(relaxed = true)
+    protected lateinit var ingredientService: IngredientService
+
     @BeforeEach
     fun setup() {
         stationRepository = mockk(relaxed = true)
         eventRepository = mockk(relaxed = true)
         stationService = mockk(relaxed = true)
+        ingredientService = mockk(relaxed = true)
         stationViewNamespace = StationViewNamespace(
                 stationRepository,
                 eventRepository,
-                stationService
+                stationService,
+                ingredientService
         )
     }
 
@@ -113,18 +119,18 @@ class StationViewNamespaceTest {
 
         stationViewNamespace.onConnection(mockSocket)
 
-        Assertions.assertTrue(stationViewNamespace.subscribeToAssemblyStationEvents.contains(mockSocket))
+        Assertions.assertTrue(stationViewNamespace.subscribeToSpecificStation[Pair(eventId, stationId)]!!.contains(mockSocket))
     }
 
     @Test
-    fun `onDisconnection should remove socket from subscribersToAllPrinterServers if print server id is not provided`() {
+    fun `onDisconnection should remove socket from subscribeToSpecificStation`() {
         val eventId: Long = 123456
         val stationId: Long = 654321
         val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/view/${stationId}")
         stationViewNamespace.onConnection(mockSocket) // First, connect the socket
         stationViewNamespace.onDisconnect(mockSocket) // Then, disconnect it
 
-        Assertions.assertTrue(stationViewNamespace.subscribeToAssemblyStationEvents.isEmpty())
+        Assertions.assertTrue(stationViewNamespace.subscribeToSpecificStation[Pair(eventId, stationId)]!!.isEmpty())
     }
 
     @Test
@@ -133,6 +139,8 @@ class StationViewNamespaceTest {
         val stationId: Long = 654321
         val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/view/${stationId}")
         val mockOrderIngredientDTO = mockk<OrderIngredientDTO>(relaxed = true)
+
+        every { stationService.getStationAssociatedWithIngredient(any()) } returns ( listOf(getStation(id = stationId, event = getEvent(id = eventId))) )
 
         stationViewNamespace.onConnection(mockSocket) // First, connect the socket
         stationViewNamespace.onRemove(mockOrderIngredientDTO) // Then, remove it
@@ -147,10 +155,34 @@ class StationViewNamespaceTest {
         val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/view/${stationId}")
         val mockOrderIngredientDTO = mockk<OrderIngredientDTO>(relaxed = true)
 
+        every { stationService.getStationAssociatedWithIngredient(any()) } returns ( listOf(getStation(id = stationId, event = getEvent(id = eventId))) )
+
         stationViewNamespace.onConnection(mockSocket) // First, connect the socket
         stationViewNamespace.onChange(mockOrderIngredientDTO) // Then, change it
 
         verify { mockSocket.send(SocketIoNamespace.CHANGE_EVENT, any()) }
+    }
+
+    @Test
+    fun `onChange should only notify all sockets in correct namespace`() {
+        val eventId: Long = 123456
+        val stationId: Long = 654321
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/view/${stationId}")
+        val mockSocket2 = mockSocket("/socket-api/v1/event/${eventId}/station/view/${stationId}")
+        val mockSocket3 = mockSocket("/socket-api/v1/event/${eventId}/station/view/${stationId + 1}")
+        val mockOrderIngredientDTO = mockk<OrderIngredientDTO>(relaxed = true)
+
+        every { stationService.getStationAssociatedWithIngredient(any()) } returns ( listOf(getStation(id = stationId, event = getEvent(id = eventId))) )
+
+        stationViewNamespace.onConnection(mockSocket)
+        stationViewNamespace.onConnection(mockSocket2)
+        stationViewNamespace.onConnection(mockSocket3)
+        stationViewNamespace.onChange(mockOrderIngredientDTO)
+
+        verify(exactly = 2) { mockSocket.send(any(), any()) }
+        verify(exactly = 2) { mockSocket2.send(any(), any()) }
+        verify(exactly = 1) { mockSocket3.send(any(), any()) }
+
     }
 
 }

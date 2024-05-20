@@ -17,7 +17,7 @@ class AssemblyViewNamespace(
     private val eventRepository: EventRepository,
     private val stationRepository: StationRepository,
     private val stationService: StationService
-): SocketIoNamespace<OrderDTO> {
+): SocketIoNamespace<String, OrderDTO> {
     companion object {
         /**
          * Regex pattern to match the namespace. The first group is the printer server id.
