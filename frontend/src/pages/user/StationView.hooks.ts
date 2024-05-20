@@ -25,7 +25,6 @@ type StationAction = {
     station: StationDTO;
     orders: OrderDTO[];
     isConnected: boolean;
-    socketId: string | undefined;
     removeFromDone: (ing: number) => void;
 };
 
@@ -68,7 +67,6 @@ export const useStationView = (): StationAction => {
             socket.on("connect", () => {
                 setIsConnected(true);
                 setSocketId(socket.id ?? "-");
-                console.log(socket.id);
             });
 
             socket.on("disconnect", () => {
@@ -77,7 +75,6 @@ export const useStationView = (): StationAction => {
             });
 
             socket.on("initial-data", (data: OrderIngredientDTO[] | OrderDTO[]) => {
-                console.log("initial-data", data);
                 if (data.length > 0 && isOrderArray(data)) {
                     const orderDtos = data as OrderDTO[];
                     setOrders(orderDtos.filter((order) => order.state !== State.Done));
@@ -90,7 +87,6 @@ export const useStationView = (): StationAction => {
             socket.on("change", (data: OrderIngredientDTO | OrderDTO) => {
                 if (isOrder(data)) {
                     const orderDto = data as OrderDTO;
-                    console.log("change", orderDto);
                     if (orderDto.state === State.Done) {
                         setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderDto.id));
                     } else {
@@ -105,7 +101,6 @@ export const useStationView = (): StationAction => {
                     }
                 } else {
                     const ingredientDto = data as OrderIngredientDTO;
-                    console.log("change", ingredientDto);
                     if (ingredientDto.state === State.Done) {
                         setIngredients((prevIngredients) =>
                             prevIngredients.filter((ing) => ing.id !== ingredientDto.id)
@@ -126,7 +121,6 @@ export const useStationView = (): StationAction => {
             });
 
             socket.on("remove", (data: OrderIngredientDTO | OrderDTO) => {
-                console.log("remove", data);
                 if (isOrder(data)) {
                     const orderDto = data as OrderDTO;
                     setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderDto.id));
@@ -220,5 +214,5 @@ export const useStationView = (): StationAction => {
         processMenuItem
     };
 
-    return { isLoading, station, ingredientHandling, orders, assemblyHandling, removeFromDone, isConnected, socketId };
+    return { isLoading, station, ingredientHandling, orders, assemblyHandling, removeFromDone, isConnected };
 };
