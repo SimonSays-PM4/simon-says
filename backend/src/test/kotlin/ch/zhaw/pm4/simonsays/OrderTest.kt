@@ -1,14 +1,13 @@
 package ch.zhaw.pm4.simonsays
 
-//import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
 import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
 import ch.zhaw.pm4.simonsays.api.controller.StationViewNamespace
 import ch.zhaw.pm4.simonsays.api.mapper.OrderMapperImpl
-import ch.zhaw.pm4.simonsays.entity.State
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.exception.ValidationException
 import ch.zhaw.pm4.simonsays.repository.*
-import ch.zhaw.pm4.simonsays.service.*
+import ch.zhaw.pm4.simonsays.service.EventService
+import ch.zhaw.pm4.simonsays.service.OrderService
 import ch.zhaw.pm4.simonsays.service.printer.PrinterService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -150,7 +149,7 @@ class OrderTest {
 
         every { orderRepository.save(any()) } returns getOrder(menus = mutableListOf(getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(getOrderMenuItem(order = getOrder())))))
 
-        val orderCreateDTO = getOrderCreateDTO(menus = listOf(getMenuDTO(menuItemDTOs = listOf(getMenuItemDTO(ingredientDTOs = listOf(getTestIngredientDTO()))))))
+        val orderCreateDTO = getOrderCreateDTO(menus = listOf(getMenuDTO(menuItemDTOs = listOf(getMenuItemDTO(ingredientDTOs = listOf(getTestIngredientDTO(id = 1)))))))
         Assertions.assertEquals(getOrderDTO(menus = listOf(getOrderMenuDTO(menuItems = listOf(getOrderMenuItemDTO())))), orderService.createOrder(orderCreateDTO, 1))
     }
 

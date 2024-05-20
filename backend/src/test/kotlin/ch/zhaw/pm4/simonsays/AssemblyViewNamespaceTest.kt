@@ -88,8 +88,8 @@ class AssemblyViewNamespaceTest {
         val eventId: Long = 123456
         val namespace = "/socket-api/v1/event/${eventId}/station/assembly"
         every {
-            stationRepository.findByEventIdAndAssemblyStation(any(), any())
-        } returns Optional.empty()
+            stationService.doesEventHaveAssemblyStation(any())
+        } throws ResourceNotFoundException("The event with id: $eventId does not yet have an assembly station")
         assertThrows<ResourceNotFoundException> {
             assemblyViewNamespace.isPartOfNamespace(namespace)
         }
@@ -138,6 +138,4 @@ class AssemblyViewNamespaceTest {
 
         verify { mockSocket.send(SocketIoNamespace.CHANGE_EVENT, any()) }
     }
-
-
 }

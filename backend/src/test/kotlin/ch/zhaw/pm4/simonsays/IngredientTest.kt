@@ -82,6 +82,16 @@ class IngredientTest {
     }
 
     @Test
+    fun `Test ingredient deletion fails`() {
+        every { ingredientRepository.findByIdAndEventId(any(), any()) } returns empty()
+        val error = Assertions.assertThrows(
+                ResourceNotFoundException::class.java
+        ) { ingredientService.deleteIngredient(1, 1) }
+        Assertions.assertEquals("Ingredient not found with ID: 1", error.message)
+
+    }
+
+    @Test
     fun `Test ingredient deletion not found`() {
         every { eventService.getEvent(any()) } returns getTestEventDTO()
         every { ingredientRepository.findByIdAndEventId(any(), any()) } returns empty()

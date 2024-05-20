@@ -14,7 +14,7 @@ fun getOrderMenuItem(
         ),
         price: Double = 15.20,
         orderMenu: OrderMenu? = null,
-        order: FoodOrder,
+        order: FoodOrder?,
         state: State = State.IN_PROGRESS
 ): OrderMenuItem {
     return OrderMenuItem(

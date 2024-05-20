@@ -57,9 +57,7 @@ class EventService(
     }
 
     fun deleteEvent(eventId: Long) {
-        val event = eventRepository.findById(eventId).orElseThrow {
-            ResourceNotFoundException("Event not found with ID: $eventId")
-        }
+        val event = getEventEntity(eventId)
         eventRepository.delete(event)
     }
 

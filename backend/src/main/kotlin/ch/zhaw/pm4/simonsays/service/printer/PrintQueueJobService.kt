@@ -8,6 +8,9 @@ import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
+private const val printQueueNotFoundError = "Print queue not found"
+private const val printQueueJobNotFoundError = "Print queue job not found"
+
 @Service
 class PrintQueueJobService(
     private val printQueueJobRepository: PrintQueueJobRepository,
@@ -23,7 +26,7 @@ class PrintQueueJobService(
     fun savePrintQueueJob(printerQueueId: String, printQueueJobDto: PrintQueueJobDto): PrintQueueJobDto {
         // Get print queue
         val printQueue = printQueueRepository.findById(printerQueueId)
-            .orElseThrow { IllegalArgumentException("Print queue not found") }
+            .orElseThrow { IllegalArgumentException(printQueueNotFoundError) }
 
         // Update existing print queue job
         val printQueueJob = printQueueJobMapper.mapToPrintQueueJob(printQueueJobDto, printQueue)
@@ -44,7 +47,7 @@ class PrintQueueJobService(
 
     fun getNextPendingPrintQueueJob(printQueueId: String): PrintQueueJobDto? {
         val printQueue = printQueueRepository.findById(printQueueId)
-            .orElseThrow { IllegalArgumentException("Print queue not found") }
+            .orElseThrow { IllegalArgumentException(printQueueNotFoundError) }
         val printQueueJob = printQueueJobRepository.findFirstByPrintQueueAndStatusOrderByCreationDateTimeAsc(
             printQueue, JobStatus.PENDING
         )
@@ -53,14 +56,14 @@ class PrintQueueJobService(
 
     fun getAllPrintQueueJobsForPrintQueue(printQueueId: String): List<PrintQueueJobDto> {
         val printQueue = printQueueRepository.findById(printQueueId)
-            .orElseThrow { IllegalArgumentException("Print queue not found") }
+            .orElseThrow { IllegalArgumentException(printQueueNotFoundError) }
         val printQueueJobs = printQueueJobRepository.findAllByPrintQueue(printQueue)
         return printQueueJobs.map { printQueueJobMapper.mapToPrintQueueJobDto(it) }
     }
 
     fun getPrintQueueIdForJob(jobId: String): String {
         val printQueueJob = printQueueJobRepository.findById(jobId)
-            .orElseThrow { IllegalArgumentException("Print queue job not found") }
+            .orElseThrow { IllegalArgumentException(printQueueJobNotFoundError) }
         return printQueueJob.printQueue.id
     }
 }

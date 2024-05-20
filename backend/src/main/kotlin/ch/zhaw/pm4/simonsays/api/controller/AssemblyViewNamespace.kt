@@ -40,8 +40,7 @@ class AssemblyViewNamespace(
         val eventId = getEventIdFromNamespace(requestedNamespace)
 
         doesEventExist(eventId)
-        return doesEventHaveAssemblyStation(eventId)
-
+        return stationService.doesEventHaveAssemblyStation(eventId)
     }
 
     @Transactional
@@ -76,13 +75,6 @@ class AssemblyViewNamespace(
 
     override fun onApplicationError(id: String?, error: ApplicationErrorDto) {
         subscribeToAssemblyStationEvents.forEach { it.sendPojo(SocketIoNamespace.APPLICATION_ERROR_EVENT, error) }
-    }
-
-    fun doesEventHaveAssemblyStation(eventId: Long): Boolean {
-        stationRepository.findByEventIdAndAssemblyStation(eventId, true).orElseThrow {
-            ResourceNotFoundException("The event with id: $eventId does not yet have an assembly station")
-        }
-        return true
     }
 
     fun doesEventExist(eventId: Long): Boolean {
