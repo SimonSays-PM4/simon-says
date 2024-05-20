@@ -46,19 +46,17 @@ class EventService(
         return eventMapper.mapToEventDTO(savedEvent)
     }
 
+    fun deleteEvent(eventId: Long) {
+        val event = getEventEntity(eventId)
+        eventRepository.delete(event)
+    }
+
     private fun makeEventReadyForUpdate(event: EventCreateUpdateDTO): Event {
-        val eventToSave = eventRepository.findById(event.id!!).orElseThrow {
-            ResourceNotFoundException("Event not found with ID: ${event.id}")
-        }
+        val eventToSave = getEventEntity(event.id!!)
         eventToSave.name = event.name!!
         eventToSave.password = event.password!!
         eventToSave.numberOfTables = event.numberOfTables!!
         return eventToSave
-    }
-
-    fun deleteEvent(eventId: Long) {
-        val event = getEventEntity(eventId)
-        eventRepository.delete(event)
     }
 
 }

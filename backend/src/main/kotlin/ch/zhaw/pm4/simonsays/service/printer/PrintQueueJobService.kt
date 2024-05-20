@@ -5,7 +5,6 @@ import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
 import ch.zhaw.pm4.simonsays.entity.printer.JobStatus
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueJobRepository
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueRepository
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 private const val printQueueNotFoundError = "Print queue not found"
@@ -17,8 +16,6 @@ class PrintQueueJobService(
     private val printQueueRepository: PrintQueueRepository,
     private val printQueueJobMapper: PrintQueueJobMapper,
 ) {
-    private val log = LoggerFactory.getLogger(javaClass)
-
     fun doesPrintQueueJobExist(id: String): Boolean {
         return printQueueJobRepository.existsById(id)
     }
