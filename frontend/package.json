@@ -33,7 +33,7 @@
         "vite-plugin-istanbul": "^5.0.0"
     },
     "devDependencies": {
-        "@cypress/code-coverage": "^3.12.38",
+        "@cypress/code-coverage": "^3.12.39",
         "@openapitools/openapi-generator-cli": "^2.13.1",
         "@testing-library/react": "^14.2.1",
         "@types/crypto-js": "^4.2.2",
