@@ -41,7 +41,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
     testImplementation("org.testcontainers:junit-jupiter:1.19.7")
-    testImplementation("org.testcontainers:mysql:1.19.7")
+    testImplementation("org.testcontainers:mysql:1.19.8")
     runtimeOnly ("com.mysql:mysql-connector-j")
     kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
