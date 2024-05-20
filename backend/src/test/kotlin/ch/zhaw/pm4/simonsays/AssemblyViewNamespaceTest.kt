@@ -3,9 +3,9 @@ package ch.zhaw.pm4.simonsays
 import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace
 import ch.zhaw.pm4.simonsays.api.controller.printer.PrinterServersNamespace
-import ch.zhaw.pm4.simonsays.api.types.OrderDTO
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
+import ch.zhaw.pm4.simonsays.repository.OrderRepository
 import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.testutils.mockSocket
 import com.ninjasquad.springmockk.MockkBean
@@ -28,16 +28,22 @@ class AssemblyViewNamespaceTest {
     @MockkBean(relaxed = true)
     protected lateinit var eventRepository: EventRepository
 
+
     @MockkBean(relaxed = true)
     protected lateinit var stationService: StationService
+
+    @MockkBean(relaxed = true)
+    protected lateinit var orderRepository: OrderRepository
 
     @BeforeEach
     fun setup() {
         eventRepository = mockk(relaxed = true)
         stationService = mockk(relaxed = true)
+        orderRepository = mockk(relaxed = true)
         assemblyViewNamespace = AssemblyViewNamespace(
                 eventRepository,
-                stationService
+                stationService,
+                orderRepository
         )
     }
 
@@ -96,24 +102,75 @@ class AssemblyViewNamespaceTest {
 
         assemblyViewNamespace.onConnection(mockSocket)
 
-        Assertions.assertTrue(assemblyViewNamespace.subscribeToAssemblyStationEvents.contains(mockSocket))
+        Assertions.assertTrue(assemblyViewNamespace.subscribeToAssemblyStationEvents[eventId]!!.contains(mockSocket))
     }
 
     @Test
-    fun `onDisconnection should remove socket from subscribersToAllPrinterServers if print server id is not provided`() {
+    fun `onConnection should handle error and send application error`() {
+        val eventId: Long = 1
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
+
+        every {
+            stationService.getAssemblyStationView(any())
+        } throws Exception("Error")
+
+        assemblyViewNamespace.onConnection(mockSocket)
+
+        verify { mockSocket.send(eq("application-error"), any()) }
+    }
+
+    @Test
+    fun `onApplicationError by id should send errors to subscribed sockets`() {
+        val eventId: Long = 1
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
+
+        assemblyViewNamespace.onConnection(mockSocket)
+        assemblyViewNamespace.onApplicationError(eventId, "some-error", "some more explicit error message")
+
+        verify { mockSocket.send(eq("application-error"), any()) }
+    }
+
+    @Test
+    fun `onApplicationError by id should not send errors to other event sockets`() {
+        val eventId: Long = 1
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
+
+        assemblyViewNamespace.onConnection(mockSocket)
+        assemblyViewNamespace.onApplicationError(2, "some-error", "some more explicit error message")
+
+        verify(exactly = 0) { mockSocket.send(eq("application-error"), any()) }
+    }
+
+    @Test
+    fun `onApplicationError by id without id should send error to all sockets`() {
+        val eventId: Long = 1
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
+
+        assemblyViewNamespace.onConnection(mockSocket)
+        assemblyViewNamespace.onApplicationError(null, "some-error", "some more explicit error message")
+
+        verify { mockSocket.send(eq("application-error"), any()) }
+    }
+
+    @Test
+    fun `onDisconnection should remove socket from subscribeToAssemblyStationEvents if print server id is not provided`() {
         val eventId: Long = 1
         val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
         assemblyViewNamespace.onConnection(mockSocket) // First, connect the socket
         assemblyViewNamespace.onDisconnect(mockSocket) // Then, disconnect it
 
-        Assertions.assertTrue(assemblyViewNamespace.subscribeToAssemblyStationEvents.isEmpty())
+        Assertions.assertTrue(assemblyViewNamespace.subscribeToAssemblyStationEvents[eventId]!!.isEmpty())
     }
 
     @Test
     fun `onRemove should send remove event to all subscribers`() {
         val eventId: Long = 1
         val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
-        val mockOrder = mockk<OrderDTO>(relaxed = true)
+        val mockOrder = getOrderDTO(1)
+
+        every {
+            orderRepository.findById(any())
+        } returns Optional.of(getOrder())
 
         assemblyViewNamespace.onConnection(mockSocket) // First, connect the socket
         assemblyViewNamespace.onRemove(mockOrder) // Then, remove it
@@ -125,11 +182,48 @@ class AssemblyViewNamespaceTest {
     fun `onChange should send change event to all subscribers`() {
         val eventId: Long = 1
         val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
-        val mockOrder = mockk<OrderDTO>(relaxed = true)
+        val mockOrder = getOrderDTO(1)
+
+        every {
+            orderRepository.findById(any())
+        } returns Optional.of(getOrder())
 
         assemblyViewNamespace.onConnection(mockSocket) // First, connect the socket
         assemblyViewNamespace.onChange(mockOrder) // Then, remove it
 
         verify { mockSocket.send(SocketIoNamespace.CHANGE_EVENT, any()) }
+    }
+
+    @Test
+    fun `onChange should only notify all sockets in correct namespace`() {
+        val eventId: Long = 1
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
+        val mockSocket2 = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
+        val mockSocket3 = mockSocket("/socket-api/v1/event/${eventId + 1}/station/assembly")
+        val mockOrderDTO = getOrderDTO()
+
+        every {
+            orderRepository.findById(any())
+        } returns Optional.of(getOrder())
+
+        assemblyViewNamespace.onConnection(mockSocket)
+        assemblyViewNamespace.onConnection(mockSocket2)
+        assemblyViewNamespace.onConnection(mockSocket3)
+        assemblyViewNamespace.onChange(mockOrderDTO)
+
+        verify(exactly = 2) { mockSocket.send(any(), any()) }
+        verify(exactly = 2) { mockSocket2.send(any(), any()) }
+        verify(exactly = 1) { mockSocket3.send(any(), any()) }
+
+    }
+
+    @Test
+    fun `test onChange with invalid order id throws exception`() {
+        every {
+            orderRepository.findById(any())
+        } returns Optional.empty()
+        assertThrows<ResourceNotFoundException> {
+            assemblyViewNamespace.onChange(getOrderDTO())
+        }
     }
 }

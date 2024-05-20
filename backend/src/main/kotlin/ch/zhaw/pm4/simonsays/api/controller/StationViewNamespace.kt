@@ -95,8 +95,11 @@ class StationViewNamespace(
     }
 
     override fun onApplicationError(id: Pair<Long, Long>?, error: ApplicationErrorDto) {
-        if(id != null) {
-            subscribeToSpecificStation[id]?.forEach { it.sendPojo(SocketIoNamespace.APPLICATION_ERROR_EVENT, error) }
+        if(id == null){
+            // send to all
+            subscribeToSpecificStation.forEach { it.value.forEach{ onApplicationError(it, error) } }
+        } else {
+            subscribeToSpecificStation[id]?.forEach { onApplicationError(it, error)  }
         }
     }
 

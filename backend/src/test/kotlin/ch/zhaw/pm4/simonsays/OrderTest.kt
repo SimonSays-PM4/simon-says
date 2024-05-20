@@ -98,6 +98,21 @@ class OrderTest {
     }
 
     @Test
+    fun `test get single order`() {
+        every { orderRepository.findById(any()) } returns Optional.of(getOrder())
+        Assertions.assertEquals(getOrder(), orderService.getOrder(1))
+    }
+
+    @Test
+    fun `test get single order fails with invalid id`() {
+        every { orderRepository.findById(any()) } returns Optional.empty()
+        val error = Assertions.assertThrows(ResourceNotFoundException::class.java) {
+            orderService.getOrder(1)
+        }
+        Assertions.assertEquals("Order not found with ID: 1", error.message)
+    }
+
+    @Test
     fun `test delete order`() {
         every { orderRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrder())
         Assertions.assertEquals(Unit, orderService.deleteOrder(1, 1))
