@@ -35,7 +35,7 @@ backend:
     startup:
       path: /actuator/health/liveness
       options:
-        failureThreshold: 12
+        failureThreshold: 18
         periodSeconds: 10
     liveness:
       path: /actuator/health/liveness
