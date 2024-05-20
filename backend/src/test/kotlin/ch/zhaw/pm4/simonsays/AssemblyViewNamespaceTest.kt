@@ -6,7 +6,6 @@ import ch.zhaw.pm4.simonsays.api.controller.printer.PrinterServersNamespace
 import ch.zhaw.pm4.simonsays.api.types.OrderDTO
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
-import ch.zhaw.pm4.simonsays.repository.StationRepository
 import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.testutils.mockSocket
 import com.ninjasquad.springmockk.MockkBean
@@ -30,19 +29,14 @@ class AssemblyViewNamespaceTest {
     protected lateinit var eventRepository: EventRepository
 
     @MockkBean(relaxed = true)
-    protected lateinit var stationRepository: StationRepository
-
-    @MockkBean(relaxed = true)
     protected lateinit var stationService: StationService
 
     @BeforeEach
     fun setup() {
         eventRepository = mockk(relaxed = true)
-        stationRepository = mockk(relaxed = true)
         stationService = mockk(relaxed = true)
         assemblyViewNamespace = AssemblyViewNamespace(
                 eventRepository,
-                stationRepository,
                 stationService
         )
     }

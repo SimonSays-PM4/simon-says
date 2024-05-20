@@ -4,7 +4,6 @@ import ch.zhaw.pm4.simonsays.api.types.OrderDTO
 import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
-import ch.zhaw.pm4.simonsays.repository.StationRepository
 import ch.zhaw.pm4.simonsays.service.StationService
 import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
 import io.socket.socketio.server.SocketIoSocket
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component
 @Component
 class AssemblyViewNamespace(
     private val eventRepository: EventRepository,
-    private val stationRepository: StationRepository,
     private val stationService: StationService
 ): SocketIoNamespace<String, OrderDTO> {
     companion object {

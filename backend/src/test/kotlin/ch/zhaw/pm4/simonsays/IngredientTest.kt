@@ -149,4 +149,10 @@ class IngredientTest {
         ) { ingredientService.createUpdateIngredient(ingredientCreateUpdateDTO, 404) }
         Assertions.assertEquals("Event not found with ID: 404", error.message)
     }
+
+    @Test
+    fun `get ingredient by OrderIngredient ids`(){
+        every { ingredientRepository.findByOrderIngredientsId(any()) } returns getTestIngredient1()
+        Assertions.assertEquals(getTestIngredient1(), getTestIngredient1())
+    }
 }
