@@ -50,7 +50,6 @@ class AssemblyViewNamespace(
             val namespace = socket.namespace.name
             val eventId = getEventIdFromNamespace(namespace)
 
-            // ich glaub es git eleganteri version zum d löse so mit functional programming falls lust hesch
             if (!subscribeToAssemblyStationEvents.containsKey(eventId)) {
                 subscribeToAssemblyStationEvents[eventId] = mutableSetOf()
                 subscribeToAssemblyStationEvents[eventId]?.add(socket)
@@ -74,13 +73,13 @@ class AssemblyViewNamespace(
 
     override fun onRemove(data: OrderDTO) {
         val order: FoodOrder = getOrder(data.id)
-        val subscribers = subscribeToAssemblyStationEvents[order.event.id] // <- da schicksch eifach ah ali lol
+        val subscribers = subscribeToAssemblyStationEvents[order.event.id]
         subscribers?.forEach { it.sendPojo(SocketIoNamespace.REMOVE_EVENT, data) }
     }
 
     override fun onChange(data: OrderDTO) {
         val order: FoodOrder = getOrder(data.id)
-        val subscribers = subscribeToAssemblyStationEvents[order.event.id] // <- da schicksch eifach ah ali lol
+        val subscribers = subscribeToAssemblyStationEvents[order.event.id]
         subscribers?.forEach { it.sendPojo(SocketIoNamespace.CHANGE_EVENT, data) }
     }
 
