@@ -17,6 +17,7 @@ type StationReturnProps = {
     isLoading:boolean,
     showDeletePopup:boolean
     setShowDeletePopup:(set:boolean)=>void
+    eventId:number
 }
 
 export const useStationListPage = (): StationReturnProps => {
@@ -61,5 +62,5 @@ export const useStationListPage = (): StationReturnProps => {
         }
     }, [stationToDelete.id]);
 
-    return {stationList, stationActions:{stationToDelete, setStationToDelete,deleteStation },isLoading,showDeletePopup,setShowDeletePopup}
+    return {stationList, stationActions:{stationToDelete, setStationToDelete,deleteStation },isLoading,showDeletePopup,setShowDeletePopup, eventId}
 }

@@ -19,7 +19,17 @@ interface IngredientMapper {
     @Mappings(
             Mapping(target = "id", ignore = true),
             Mapping(target = "name", source = "ingredientDTO.name"),
-            Mapping(target= "event.ingredients", ignore = true)
+            Mapping(target= "event.ingredients", ignore = true),
+            Mapping(target= "event.menus", ignore = true),
+            Mapping(target= "event.menuItems", ignore = true),
+            Mapping(target= "event.stations", ignore = true),
+            Mapping(target= "event.order", ignore = true),
+            Mapping(target= "event.orderIngredient", ignore = true),
+            Mapping(target= "event.orderMenuItem", ignore = true),
+            Mapping(target= "event.orderMenu", ignore = true),
+            Mapping(target= "menuItems", ignore = true),
+            Mapping(target= "stations", ignore = true),
+            Mapping(target= "orderIngredients", ignore = true),
     )
     fun mapDTOtoIngredient(ingredientDTO: IngredientDTO, event: EventDTO): Ingredient
 
@@ -27,8 +37,16 @@ interface IngredientMapper {
         Mapping(target = "id", ignore = true),
         Mapping(target = "name", source = "ingredient.name"),
         Mapping(target = "event.ingredients", ignore = true),
+        Mapping(target= "event.menus", ignore = true),
         Mapping(target= "event.menuItems", ignore = true),
-        Mapping(target= "event.stations", ignore = true)
+        Mapping(target= "event.stations", ignore = true),
+        Mapping(target= "event.order", ignore = true),
+        Mapping(target= "event.orderIngredient", ignore = true),
+        Mapping(target= "event.orderMenuItem", ignore = true),
+        Mapping(target= "event.orderMenu", ignore = true),
+        Mapping(target= "menuItems", ignore = true),
+        Mapping(target= "stations", ignore = true),
+        Mapping(target= "orderIngredients", ignore = true),
     )
     fun mapCreateDTOToIngredient(ingredient: IngredientCreateUpdateDTO, event: EventDTO): Ingredient
 }

@@ -10,6 +10,7 @@ plugins {
     kotlin("plugin.noarg") version "1.7.10"
     kotlin("kapt") version "1.9.10"
     jacoco
+    id("org.sonarqube") version "5.0.0.4638"
     id("io.gitlab.arturbosch.detekt") version "1.23.5"
 }
 
@@ -27,24 +28,23 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0")
-    //implementation("org.springframework.boot:spring-boot-starter-security")
-    //implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
     implementation("io.socket:socket.io-server:4.1.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-json-org:2.17.0")
-    kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
+    implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
-    implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.1")
-    runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.testcontainers:junit-jupiter:1.19.7")
     testImplementation("org.testcontainers:mysql:1.19.7")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+    runtimeOnly ("com.mysql:mysql-connector-j")
+    kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 tasks.withType<KotlinCompile> {
@@ -73,6 +73,20 @@ tasks.jacocoTestReport {
 
 jacoco {
     toolVersion = "0.8.11"
+}
+
+sonar{
+    properties {
+        property("sonar.organization","simonsays-pm4")
+        property("sonar.projectKey","simonsays-backend")
+        property("sonar.sources.",".")
+        property("sonar.coverage.jacoco.xmlReportPaths","build/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.java.coveragePlugin","jacoco")
+        property("sonar.junit.reportPaths","build/test-results/test")
+        property("sonar.exclusions","**/test/**,**/build/**")
+        property("sonar.host.url","https://sonarcloud.io")
+    }
+
 }
 
 noArg {

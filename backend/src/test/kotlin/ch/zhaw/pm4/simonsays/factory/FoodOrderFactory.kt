@@ -14,8 +14,8 @@ class FoodOrderFactory(
     fun createOrder(
         eventId: Long = 1,
         state: State = State.IN_PROGRESS,
-        tableNumber: Long? = null,
-        totalPrice: Double = 0.0,
+        tableNumber: Long? = 1,
+        totalPrice: Double = 15.20,
         isTakeAway: Boolean = false,
     ): FoodOrder {
         val event = eventRepository.findById(eventId).orElse(null)

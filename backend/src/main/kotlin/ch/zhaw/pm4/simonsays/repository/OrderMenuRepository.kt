@@ -8,4 +8,5 @@ import java.util.*
 @Repository
 interface OrderMenuRepository: JpaRepository<OrderMenu, Long> {
     fun findByIdAndEventId(id: Long, eventId: Long): Optional<OrderMenu>
+    fun findAllByOrderIdEquals(orderId: Long): MutableList<OrderMenu>
 }

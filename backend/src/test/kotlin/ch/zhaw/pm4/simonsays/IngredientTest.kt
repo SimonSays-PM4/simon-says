@@ -7,7 +7,6 @@ import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.service.EventService
 import ch.zhaw.pm4.simonsays.service.IngredientService
-import ch.zhaw.pm4.simonsays.service.IngredientServiceImpl
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
@@ -30,7 +29,7 @@ class IngredientTest {
     fun setup() {
         ingredientRepository = mockk(relaxed = true)
         eventService = mockk(relaxed = true)
-        ingredientService = IngredientServiceImpl(ingredientRepository, IngredientMapperImpl(), eventService)
+        ingredientService = IngredientService(ingredientRepository, IngredientMapperImpl(), eventService)
     }
 
     @Test
@@ -47,12 +46,12 @@ class IngredientTest {
     fun `Test ingredient list`() {
         every { ingredientRepository.findAllByEventId(any()) } returns
                 listOf(
-                        Ingredient(1, "Testingredient", getEvent(), listOf(), listOf()),
-                        Ingredient(2, "Testingredient2", getEvent(), listOf(), listOf())
+                        Ingredient(1, "Testingredient", true, getEvent(), listOf(), listOf()),
+                        Ingredient(2, "Testingredient2", true, getEvent(), listOf(), listOf())
                 )
 
         Assertions.assertEquals(
-            listOf(IngredientDTO(1, "Testingredient"), IngredientDTO(2, "Testingredient2")),
+            listOf(IngredientDTO(1, "Testingredient", true), IngredientDTO(2, "Testingredient2", true)),
             ingredientService.listIngredients(1)
         )
     }
@@ -93,14 +92,27 @@ class IngredientTest {
     }
 
     @Test
-    fun `Test ingredient update`() {
+    fun `Test ingredient update name`() {
         every { eventService.getEvent(any()) } returns getTestEventDTO()
         every { ingredientRepository.save(any()) } returns getTestIngredient1("TestingredientUpdated")
         every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getTestIngredient1())
         val ingredientCreateUpdateDTO = createUpdateTestIngredientDTO(1, "TestingredientUpdated")
         Assertions.assertEquals(
             IngredientDTO(
-                1, "TestingredientUpdated"
+                1, "TestingredientUpdated", true
+            ), ingredientService.createUpdateIngredient(ingredientCreateUpdateDTO, 1)
+        )
+    }
+
+    @Test
+    fun `Test ingredient update mustBeProduced`() {
+        every { eventService.getEvent(any()) } returns getTestEventDTO()
+        every { ingredientRepository.save(any()) } returns getTestIngredient1( mustBeProduced = false)
+        every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getTestIngredient1())
+        val ingredientCreateUpdateDTO = createUpdateTestIngredientDTO(1, "TestingredientUpdated")
+        Assertions.assertEquals(
+            IngredientDTO(
+                1, "TestIngredient", false
             ), ingredientService.createUpdateIngredient(ingredientCreateUpdateDTO, 1)
         )
     }

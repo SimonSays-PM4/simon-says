@@ -38,6 +38,7 @@ describe("Order CRUD", () => {
         cy.url().should("include", "/ingredient/create");
 
         cy.get("#name").type("Order-Test-Ingredient");
+        cy.get("#mustBeProduced").click();
         cy.contains("button", "Erstellen").click();
 
         cy.wait(500);
@@ -56,6 +57,7 @@ describe("Order CRUD", () => {
         cy.url().should("include", "/ingredient/create");
 
         cy.get("#name").type("Order-Test-Ingredient-2");
+        cy.get("#mustBeProduced").click();
         cy.contains("button", "Erstellen").click();
 
         cy.wait(500);

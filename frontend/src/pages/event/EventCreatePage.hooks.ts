@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FieldValues } from "react-hook-form";
 import { getEventService } from "../../api.ts";
-import { EventCreateUpdateDTO } from "../../gen/api";
+import {EventCreateUpdateDTO} from "../../gen/api";
 import { AppContext } from "../../providers/AppContext.tsx";
 import { NotificationType } from "../../enums/NotificationType.ts";
 import { EventContext } from "../../providers/EventContext.tsx";
@@ -27,7 +27,7 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const appContext = useContext(AppContext);
@@ -35,11 +35,13 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
 
     useEffect(() => {
         if (eventId > 0) {
+            console.log("LOADED")
             setIsLoading(true);
             eventService
                 .getEvent(eventId)
                 .then((response) => {
                     const receivedEvent = response.data as EventCreateUpdateDTO;
+                    console.log(receivedEvent)
                     setEvent(receivedEvent);
                     setIsLoading(false);
                 })

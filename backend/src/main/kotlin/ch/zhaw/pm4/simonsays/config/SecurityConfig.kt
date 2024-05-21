@@ -1,6 +1,5 @@
 package ch.zhaw.pm4.simonsays.config
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -14,7 +13,7 @@ class SecurityConfig (
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/rest-api/**")
-                .allowedOrigins(applicationProperties.url)
+                .allowedOrigins(*applicationProperties.frontendOrigins)
                 .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.PATCH.name(), HttpMethod.OPTIONS.name(), HttpMethod.DELETE.name())
                 .allowedHeaders(HttpHeaders.ACCEPT, HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE, HttpHeaders.ORIGIN)
                 .allowCredentials(true)

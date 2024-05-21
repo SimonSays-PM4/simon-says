@@ -42,6 +42,7 @@ export const EventCreatePageComponent: React.FC = () => {
                     register={register}
                     isRequired={true}
                     minLength={5}
+                    defaultValue={event.name}
                     maxLength={64}
                     validationError={getErrorMessage(nameof<EventCreateUpdateDTO>(e => e.name))} />
                 <FormInput id={nameof<EventCreateUpdateDTO>(e => e.password)}
@@ -49,12 +50,14 @@ export const EventCreatePageComponent: React.FC = () => {
                     type="password"
                     register={register}
                     isRequired={true}
+                    defaultValue={event.password}
                     minLength={8}
                     maxLength={64}
                     validationError={getErrorMessage(nameof<EventCreateUpdateDTO>(e => e.password))} />
                 <FormInput id={nameof<EventCreateUpdateDTO>(e => e.numberOfTables)}
                     label={"Anzahl Tische"}
                     type="number"
+                    defaultValue={String(event.numberOfTables)}
                     register={register}
                     isRequired={true}
                     validationError={getErrorMessage(nameof<EventCreateUpdateDTO>(e => e.numberOfTables))} />

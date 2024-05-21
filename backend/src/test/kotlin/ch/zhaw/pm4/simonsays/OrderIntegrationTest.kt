@@ -26,11 +26,13 @@ class OrderIntegrationTest : IntegrationTest() {
     private lateinit var testIngredient: Ingredient
     private lateinit var testMenuItem: MenuItem
     private lateinit var testMenu: Menu
+    private lateinit var testStation: Station
 
     @BeforeEach
     fun setUp() {
         testEvent = eventFactory.createEvent("Test Event Name", "TestEventPassword", 10)
         testIngredient = ingredientFactory.createIngredient("Order Ingredient Test", event = testEvent)
+        testStation = stationFactory.createStation(name = "Test Station", assemblyStation = false, eventId = testEvent.id!!, ingredients = listOf(testIngredient))
         testMenuItem = menuItemFactory.createMenuItem("Test Menu Item Name", eventId = testEvent.id!!)
         testMenu = menuFactory.createMenu("Test Menu Name", eventId = testEvent.id!!)
     }
@@ -39,6 +41,7 @@ class OrderIntegrationTest : IntegrationTest() {
     @Transactional
     @Order(1)
     fun `create order should succeed`() {
+        val testIngredient2 = ingredientFactory.createIngredient("Order Ingredient Test", event = testEvent, mustBeProduced = false)
         val orderCreateDTO = getOrderCreateDTO(
             menus = mutableListOf(
                 getMenuDTO(
@@ -46,7 +49,7 @@ class OrderIntegrationTest : IntegrationTest() {
                     menuItemDTOs = mutableListOf(
                         getMenuItemDTO(
                             id = testMenuItem.id!!,
-                            ingredientDTOs = mutableListOf(getTestIngredientDTO(id = testIngredient.id!!))
+                            ingredientDTOs = mutableListOf(getTestIngredientDTO(id = testIngredient.id!!), getTestIngredientDTO(id = testIngredient2.id!!))
                         )
                     )
                 )
@@ -299,7 +302,7 @@ class OrderIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `update order menu item state should fail invalid event id`() {
+    fun `Update order Menu Item State should succeed when correct values provided`() {
         val order = orderFactory.createOrder(eventId = testEvent.id!!)
         val menuItemOrder =
             orderMenuItemFactory.createOrderMenuItem(
