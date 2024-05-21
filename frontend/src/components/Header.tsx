@@ -12,16 +12,9 @@ export const Header: React.FC = () => {
     const navigate = useNavigate();
 
     const invokeLogout = () => {
-        const isAdmin = loginInfo.userName === "admin";
         localStorage.removeItem("encryptedCode");
         setLoginInfo(new LoginInfo(false, "-", ""));
-
-        if (isAdmin) {
-            navigate("/login");
-        }
-        else {
-            navigate(`/${eventId}/join`);
-        }
+        navigate("/login");
     };
 
     return (
