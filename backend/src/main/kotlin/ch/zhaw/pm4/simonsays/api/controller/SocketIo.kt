@@ -100,7 +100,7 @@ interface SocketIoNamespace<K, T> {
     }
 
     /**
-     * Shorhand method for onApplicationError(socket, ApplicationErrorDto(code, message))
+     * Shorthand method for onApplicationError(socket, ApplicationErrorDto(code, message))
      */
     fun onApplicationError(socket: SocketIoSocket, code: String, message: String) {
         val error = ApplicationErrorDto(code, message)

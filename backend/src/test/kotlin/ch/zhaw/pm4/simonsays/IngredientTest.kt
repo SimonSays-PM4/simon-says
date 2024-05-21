@@ -82,6 +82,16 @@ class IngredientTest {
     }
 
     @Test
+    fun `Test ingredient deletion fails`() {
+        every { ingredientRepository.findByIdAndEventId(any(), any()) } returns empty()
+        val error = Assertions.assertThrows(
+                ResourceNotFoundException::class.java
+        ) { ingredientService.deleteIngredient(1, 1) }
+        Assertions.assertEquals("Ingredient not found with ID: 1", error.message)
+
+    }
+
+    @Test
     fun `Test ingredient deletion not found`() {
         every { eventService.getEvent(any()) } returns getTestEventDTO()
         every { ingredientRepository.findByIdAndEventId(any(), any()) } returns empty()
@@ -138,5 +148,11 @@ class IngredientTest {
             ResourceNotFoundException::class.java
         ) { ingredientService.createUpdateIngredient(ingredientCreateUpdateDTO, 404) }
         Assertions.assertEquals("Event not found with ID: 404", error.message)
+    }
+
+    @Test
+    fun `get ingredient by OrderIngredient ids`(){
+        every { ingredientRepository.findByOrderIngredientsId(any()) } returns getTestIngredient1()
+        Assertions.assertEquals(getTestIngredient1(), getTestIngredient1())
     }
 }

@@ -74,11 +74,10 @@ class StationViewNamespace(
         val stations: List<Station> = stationService.getStationAssociatedWithIngredient(data.id)
         stations.forEach { station ->
             val key = Pair(station.event.id!!, station.id!!)
-            if (!subscribeToSpecificStation.containsKey(key)) {
-                subscribeToSpecificStation[key] = mutableSetOf()
+            if (subscribeToSpecificStation.containsKey(key)) {
+                val subscribers: MutableSet<SocketIoSocket>? = subscribeToSpecificStation[key]
+                subscribers!!.forEach { it.sendPojo(SocketIoNamespace.REMOVE_EVENT, data) }
             }
-            val subscribers: MutableSet<SocketIoSocket>? = subscribeToSpecificStation[key]
-            subscribers!!.forEach { it.sendPojo(SocketIoNamespace.REMOVE_EVENT, data) }
         }
     }
 
@@ -96,8 +95,11 @@ class StationViewNamespace(
     }
 
     override fun onApplicationError(id: Pair<Long, Long>?, error: ApplicationErrorDto) {
-        if(id != null) {
-            subscribeToSpecificStation[id]?.forEach { it.sendPojo(SocketIoNamespace.APPLICATION_ERROR_EVENT, error) }
+        if(id == null){
+            // send to all
+            subscribeToSpecificStation.forEach { it.value.forEach{ onApplicationError(it, error) } }
+        } else {
+            subscribeToSpecificStation[id]?.forEach { onApplicationError(it, error)  }
         }
     }
 
