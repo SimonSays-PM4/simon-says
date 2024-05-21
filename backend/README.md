@@ -1,10 +1,22 @@
 # SimonSays Backend
+We use sonar cloud to check the quality of the code.\
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)
 
 ## Swagger
 ### Swagger UI
 http://localhost:8080/swagger-ui/index.html
 
-### Api Docs
+### API Docs
 http://localhost:8080/v3/api-docs
 
 ## Project structure
