@@ -66,6 +66,13 @@ class OrderService(
         }
     }
 
+    fun getOrder(orderId: Long): FoodOrder{
+        val order = orderRepository.findById(orderId).orElseThrow {
+            ResourceNotFoundException("Order not found with ID: $orderId")
+        }
+        return order
+    }
+
     fun deleteOrder(orderId: Long, eventId: Long) {
         val order = orderRepository.findByIdAndEventId(orderId, eventId).orElseThrow {
             ResourceNotFoundException("Order not found with ID: $orderId")
