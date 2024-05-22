@@ -36,3 +36,9 @@ printer-queue-server:
   receipt-qr-code-content: "https://cevi.net"
   receipt-header: "Willkommen beim Cevi Burger Festival!"
   receipt-footer: "https://cevi.net"
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
