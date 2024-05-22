@@ -33,3 +33,4 @@ jobs:
           tags: ${{ github.ref_name }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           platforms: linux/arm64
+        if: github.actor != 'dependabot[bot]'
