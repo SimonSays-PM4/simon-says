@@ -6,9 +6,11 @@ import { FieldValues, useForm } from "react-hook-form";
 import { AppContext } from "../providers/AppContext";
 import { LoginInfo } from "../models/LoginInfo";
 import { encryptData } from "../helpers/CryptoHelper";
+import { getEventService } from "../api";
+import { NotificationType } from "../enums/NotificationType";
 
 export const LoginPage: React.FC = () => {
-    const { setLoginInfo } = useContext(AppContext);
+    const { setLoginInfo, addNotification } = useContext(AppContext);
     const navigate = useNavigate();
     const adminUser = "admin";
 
@@ -24,18 +26,24 @@ export const LoginPage: React.FC = () => {
 
     const onSubmit = (data: FieldValues) => {
         const enteredCode = data["code"];
-        const encryptedPw = encryptData(adminUser + ":" + enteredCode);
-        localStorage.setItem("encryptedCode", encryptedPw);
-        setLoginInfo(new LoginInfo(true, adminUser, data["code"]));
+        const eventService = getEventService(adminUser, enteredCode);
 
-        const searchParams = new URLSearchParams(location.search);
-        const returnUrl = searchParams.get('returnUrl');
-        if (returnUrl && isLocalUrl(returnUrl)) {
-            navigate(returnUrl);
-        }
-        else {
-            navigate("/");
-        }
+        eventService.getEvents().then(() => {
+            const encryptedPw = encryptData(adminUser + ":" + enteredCode);
+            localStorage.setItem("encryptedCode", encryptedPw);
+            setLoginInfo(new LoginInfo(true, adminUser, data["code"]));
+
+            const searchParams = new URLSearchParams(location.search);
+            const returnUrl = searchParams.get('returnUrl');
+            if (returnUrl && isLocalUrl(returnUrl)) {
+                navigate(returnUrl);
+            }
+            else {
+                navigate("/");
+            }
+        }).catch(() => {
+            addNotification(NotificationType.ERR, "Invalider Code");
+        });
     }
 
     return (
