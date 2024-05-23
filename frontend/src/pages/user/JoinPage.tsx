@@ -27,7 +27,7 @@ export const JoinPage: React.FC = () => {
             setLoginInfo(new LoginInfo(true, data["userName"], data["password"]));
             navigate(`/${eventId}`);
         }).catch(() => {
-            addNotification(NotificationType.ERR, "Invalid username or password");
+            addNotification(NotificationType.ERR, "Invalider Benutzernamen oder Passwort");
         });
     }
 
@@ -43,8 +43,8 @@ export const JoinPage: React.FC = () => {
                     </h1>
                     <div className="grid h-fit mt-6">
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <FormInput id="userName" label={"Username"} register={register} type="text" />
-                            <FormInput id="password" label={"Password"} register={register} type="text" />
+                            <FormInput id="userName" label={"Benutzername"} register={register} type="text" />
+                            <FormInput id="password" label={"Passwort"} register={register} type="text" />
                             <Button
                                 buttonText="Join"
                                 type="submit"

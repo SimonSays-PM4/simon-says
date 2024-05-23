@@ -54,7 +54,7 @@ export const StationEditPageComponent: React.FC = () => {
 
 
                         <label className="mb-2 block text-sm font-medium text-default-900">
-                            Ingredients *
+                            Zutaten *
                         </label>
 
                         <Controller

@@ -51,7 +51,7 @@ export const StationViewComponent: React.FC = () => {
                         </>
                         : <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                             {...orders.filter((e) => e.state != State.Done).map((row) => {
-                                return <OrderCard onClickMenu={processMenu} onClickMenuItem={processMenuItem} order={row} onClick={() => console.log("hello")} />
+                                return <OrderCard onClickMenu={processMenu} onClickMenuItem={processMenuItem} order={row} onClick={() => console.log("blocked")} />
                             })}
                         </div>}
                 </>
