@@ -8,6 +8,6 @@ class OrderIngredientUpdateDTO (
         val id: Long,
         @field:Schema(description = "Name for the ingredient")
         val name: String,
-        @field:Schema(description = "the state of the order", enumAsRef = true)
+        @field:Schema(description = "the state of the order ingredient", enumAsRef = true)
         var state: State,
 )

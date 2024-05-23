@@ -53,6 +53,12 @@ class StationViewNamespaceTest {
         )
     }
 
+    @Test
+    fun `test namespace matches for correct input`() {
+        val nameSpace = "/socket-api/v1/event/2/station/view/4"
+        Assertions.assertTrue(stationViewNamespace.isPartOfNamespace(nameSpace))
+    }
+
     @ParameterizedTest
     @CsvSource(
             "/socket-api/v1/event/2/station/view/4, 2, 4",
@@ -123,6 +129,20 @@ class StationViewNamespaceTest {
     }
 
     @Test
+    fun `onConnection should handle error and call onApplicationError`() {
+        val eventId: Long = 1
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/assembly")
+
+        every {
+            stationService.getAssemblyStationView(any())
+        } throws Exception("Error")
+
+        stationViewNamespace.onConnection(mockSocket)
+
+        verify { mockSocket.send(eq("application-error"), any()) }
+    }
+
+    @Test
     fun `onDisconnection should remove socket from subscribeToSpecificStation`() {
         val eventId: Long = 123456
         val stationId: Long = 654321
@@ -183,6 +203,44 @@ class StationViewNamespaceTest {
         verify(exactly = 2) { mockSocket2.send(any(), any()) }
         verify(exactly = 1) { mockSocket3.send(any(), any()) }
 
+    }
+
+    @Test
+    fun `onApplicationError by id should send errors to subscribed sockets`() {
+        val eventId: Long = 1
+        val stationId: Long = 1
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/view/${stationId}")
+
+        stationViewNamespace.onConnection(mockSocket)
+        stationViewNamespace.onApplicationError(Pair(eventId, stationId), "some-error", "some more explicit error message")
+
+        verify { mockSocket.send(eq("application-error"), any()) }
+    }
+
+    @Test
+    fun `onApplicationError by id should not send errors to other event sockets`() {
+        val eventId: Long = 1
+        val stationId: Long = 1
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/view/${stationId}")
+
+        every { stationService.getStationView(any(), any()) } returns ( listOf(getOrderIngredientDTO()) )
+
+        stationViewNamespace.onConnection(mockSocket)
+        stationViewNamespace.onApplicationError(Pair(2, stationId), "some-error", "some more explicit error message")
+
+        verify(exactly = 0) { mockSocket.send(eq("application-error"), any()) }
+    }
+
+    @Test
+    fun `onApplicationError by id without id should send error to all sockets`() {
+        val eventId: Long = 1
+        val stationId: Long = 1
+        val mockSocket = mockSocket("/socket-api/v1/event/${eventId}/station/view/${stationId}")
+
+        stationViewNamespace.onConnection(mockSocket)
+        stationViewNamespace.onApplicationError(null, "some-error", "some more explicit error message")
+
+        verify { mockSocket.send(eq("application-error"), any()) }
     }
 
 }

@@ -147,7 +147,7 @@ class EventTest {
     }
 
     @Test
-    fun `Test event update should fail when providing invalid id`() {
+    fun `Test event update should fail when providing invalid id (entity)`() {
         val eventCreateUpdate = EventCreateUpdateDTO(
                 id = 1,
                 name = "testupdateevent",
@@ -158,6 +158,22 @@ class EventTest {
         val error = Assertions.assertThrows(
                 ResourceNotFoundException::class.java,
                 { eventService.getEventEntity(eventCreateUpdate.id!!) }
+        )
+        Assertions.assertEquals("Event not found with ID: ${eventCreateUpdate.id}", error.message)
+    }
+
+    @Test
+    fun `Test event update should fail when providing invalid id (dto)`() {
+        val eventCreateUpdate = EventCreateUpdateDTO(
+                id = 1,
+                name = "testupdateevent",
+                password = "testupdateeventpassword",
+                numberOfTables = 13
+        )
+        every { eventRepository.findById(any()) } returns empty()
+        val error = Assertions.assertThrows(
+                ResourceNotFoundException::class.java,
+                { eventService.getEvent(eventCreateUpdate.id!!) }
         )
         Assertions.assertEquals("Event not found with ID: ${eventCreateUpdate.id}", error.message)
     }

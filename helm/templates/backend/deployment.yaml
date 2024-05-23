@@ -21,41 +21,64 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.backend.deployment.image.pullSecret }}
       containers:
-      - name: {{ .Values.backend.deployment.name }}
-        image: "{{ .Values.backend.deployment.image.repository }}:{{ .Values.backend.deployment.image.tag | default .Chart.Version }}"
-        imagePullPolicy: {{ .Values.backend.deployment.image.pullPolicy }}
+        - name: {{ .Values.backend.deployment.name }}
+          image: "{{ .Values.backend.deployment.image.repository }}:{{ .Values.backend.deployment.image.tag | default .Chart.Version }}"
+          imagePullPolicy: {{ .Values.backend.deployment.image.pullPolicy }}
         {{- if and .Values.backend.config }}
         {{- if or .Values.backend.config.applicationConfig .Values.backend.config.activeProfiles }}
-        env:
+          env:
           {{- if .Values.backend.config.applicationConfig }}
-          - name: SPRING_CONFIG_LOCATION
-            value: 'classpath:/,file:/config/'
+            - name: SPRING_CONFIG_LOCATION
+              value: 'classpath:/,file:/config/'
           {{- end }}
         {{- if .Values.backend.config.activeProfiles }}
-          - name: SPRING_PROFILES_ACTIVE
-            value: {{ .Values.backend.config.activeProfiles }}
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.backend.config.activeProfiles }}
         {{- end }}
         {{- if .Values.backend.config.applicationConfig }}
-        volumeMounts:
-          - mountPath: /config/application-environment-config.yaml
-            name: application-environment-volume
-            readOnly: true
-            subPath: application-environment-config.yaml
+          volumeMounts:
+            - mountPath: /config/application-environment-config.yaml
+              name: application-environment-volume
+              readOnly: true
+              subPath: application-environment-config.yaml
         {{- end }}
         {{- end }}
         {{- end }}
-        envFrom:
-          - secretRef:
+          envFrom:
+            - secretRef:
                 name: {{ .Values.backend.config.adminSecretName }}
-        ports:
-          - containerPort: {{ .Values.backend.deployment.port }}
-        resources:
+          ports:
+            - name: http
+              containerPort: {{ .Values.backend.deployment.port }}
+              protocol: TCP
+          resources:
             requests:
-                cpu: {{ .Values.backend.deployment.resources.requests.cpu }}
-                memory: {{ .Values.backend.deployment.resources.requests.memory }}
+              cpu: {{ .Values.backend.deployment.resources.requests.cpu }}
+              memory: {{ .Values.backend.deployment.resources.requests.memory }}
             limits:
-                cpu: {{ .Values.backend.deployment.resources.limits.cpu }}
-                memory: {{ .Values.backend.deployment.resources.limits.memory }}
+              cpu: {{ .Values.backend.deployment.resources.limits.cpu }}
+              memory: {{ .Values.backend.deployment.resources.limits.memory }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.backend.probes.startup.path }}
+              port: http
+          {{- with .Values.backend.probes.startup.options }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.backend.probes.readiness.path }}
+              port: http
+          {{- with .Values.backend.probes.readiness.options }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.backend.probes.liveness.path }}
+              port: http
+          {{- with .Values.backend.probes.liveness.options }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
       {{- if .Values.backend.config }}
       {{- if .Values.backend.config.applicationConfig }}
       volumes:

@@ -109,4 +109,84 @@ class OrderStateServiceTest {
                 "No order ingredient found with the ID: ${orderIngredientUpdateDTO.id}"
         )
     }
+
+    @Test
+    fun `test update order menu state`() {
+        every { orderMenuRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(
+                getOrderMenuItem(order = getOrder()))
+        ))
+        every { orderMenuRepository.save(any()) } returns getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(
+                getOrderMenuItem(order = getOrder())), state = State.DONE)
+        every { orderRepository.findById(any()) } returns Optional.of(getOrder())
+        every { orderRepository.save(any()) } returns getOrder()
+        Assertions.assertEquals(getOrderMenuDTO(state = State.DONE), orderStateService.updateOrderMenuState(1, 1))
+    }
+
+    @Test
+    fun `test update order menu state not found`() {
+        every { orderMenuRepository.findByIdAndEventId(any(), any()) } returns Optional.empty()
+        val error = Assertions.assertThrows(ResourceNotFoundException::class.java) {
+            orderStateService.updateOrderMenuState(1, 1)
+        }
+        Assertions.assertEquals("OrderMenu not found with ID: 1", error.message)
+    }
+
+    @Test
+    fun `test update order menu item state`() {
+        every { orderMenuItemRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrderMenuItem(order = getOrder()))
+        every { orderMenuItemRepository.save(any()) } returns getOrderMenuItem(order = getOrder(), state = State.DONE)
+        every { orderRepository.findById(any()) } returns Optional.of(getOrder())
+        every { orderRepository.save(any()) } returns getOrder()
+        Assertions.assertEquals(getOrderMenuItemDTO(state = State.DONE), orderStateService.updateOrderMenuItemState(1, 1))
+    }
+
+    @Test
+    fun `test update order menu item state not found`() {
+        every { orderMenuItemRepository.findByIdAndEventId(any(), any()) } returns Optional.empty()
+        val error = Assertions.assertThrows(ResourceNotFoundException::class.java) {
+            orderStateService.updateOrderMenuItemState(1, 1)
+        }
+        Assertions.assertEquals("OrderMenuItem not found with ID: 1", error.message)
+    }
+
+    @Test
+    fun `test update order ingredient state`() {
+        every { orderIngredientRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrderIngredient())
+        every { orderIngredientRepository.save(any()) } returns getOrderIngredient(state = State.DONE)
+        every { orderRepository.findById(any()) } returns Optional.of(getOrder())
+        every { orderRepository.save(any()) } returns getOrder()
+        Assertions.assertEquals(getOrderIngredientDTO(state = State.DONE), orderStateService.updateOrderIngredientState(1, 1))
+    }
+
+    @Test
+    fun `test update order ingredient state not found`() {
+        every { orderIngredientRepository.findByIdAndEventId(any(), any()) } returns Optional.empty()
+        val error = Assertions.assertThrows(ResourceNotFoundException::class.java) {
+            orderStateService.updateOrderIngredientState(1, 1)
+        }
+        Assertions.assertEquals("OrderIngredient not found with ID: 1", error.message)
+    }
+
+    @Test
+    fun `test update order menu state order not found`() {
+        every { orderMenuRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(
+                getOrderMenuItem(order = getOrder()))
+        ))
+        every { orderMenuRepository.save(any()) } returns getOrderMenu(order = getOrder(), orderMenuItems = mutableListOf(
+                getOrderMenuItem(order = getOrder())), state = State.DONE)
+        every { orderRepository.findById(any()) } returns Optional.empty()
+        val error = Assertions.assertThrows(ResourceNotFoundException::class.java) {
+            orderStateService.updateOrderMenuState(1, 1)
+        }
+        Assertions.assertEquals("Order not found with ID: 1", error.message)
+    }
+
+    @Test
+    fun `check if order update is required when menu item is checked`() {
+        every { orderMenuItemRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getOrderMenuItem(order = null))
+        every { orderMenuItemRepository.save(any()) } returns getOrderMenuItem(order = null, orderMenu = getOrderMenu(), state = State.DONE)
+        every { orderRepository.findById(any()) } returns Optional.of(getOrder())
+        every { orderRepository.save(any()) } returns getOrder()
+        Assertions.assertEquals(getOrderMenuItemDTO(state = State.DONE), orderStateService.updateOrderMenuItemState(1, 1))
+    }
 }

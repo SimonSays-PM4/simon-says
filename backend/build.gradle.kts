@@ -21,29 +21,40 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
+val versions = mapOf(
+        "springDocOpenApi" to "2.4.0",
+        "mapStruct" to "1.6.0.Beta1",
+        "socketIoServer" to "4.1.2",
+        "jacksonDatatypeJsonOrg" to "2.17.0",
+        "springCloudContractWiremock" to "4.1.1",
+        "springMockk" to "4.0.2",
+        "testcontainers" to "1.19.7",
+        "mysqlConnector" to "8.0.32"
+)
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions["springDocOpenApi"]}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
-    implementation("io.socket:socket.io-server:4.1.2")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-json-org:2.17.0")
-    implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.1")
+    implementation("org.mapstruct:mapstruct:${versions["mapStruct"]}")
+    implementation("io.socket:socket.io-server:${versions["socketIoServer"]}")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-json-org:${versions["jacksonDatatypeJsonOrg"]}")
+    implementation("org.springframework.cloud:spring-cloud-contract-wiremock:${versions["springCloudContractWiremock"]}")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.1")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("com.ninja-squad:springmockk:4.0.2")
-    testImplementation("org.testcontainers:junit-jupiter:1.19.7")
-    testImplementation("org.testcontainers:mysql:1.19.7")
-    runtimeOnly ("com.mysql:mysql-connector-j")
-    kapt("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
+    testImplementation("com.ninja-squad:springmockk:${versions["springMockk"]}")
+    testImplementation("org.testcontainers:junit-jupiter:${versions["testcontainers"]}")
+    testImplementation("org.testcontainers:mysql:${versions["testcontainers"]}")
+    runtimeOnly("com.mysql:mysql-connector-j:${versions["mysqlConnector"]}")
+    kapt("org.mapstruct:mapstruct-processor:${versions["mapStruct"]}")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
@@ -59,7 +70,7 @@ tasks.withType<Test> {
 }
 
 tasks.test {
-    // // report is always generated after tests run
+    // report is always generated after tests run
     finalizedBy(tasks.jacocoTestReport)
 }
 
@@ -94,14 +105,11 @@ noArg {
     annotation("ch.zhaw.pm4.simonsays.entity.NoArgAnnotation")
 }
 
-
-
 detekt {
     buildUponDefaultConfig = true // preconfigure defaults
     allRules = false // activate all available (even unstable) rules.
     config = files("config/detekt/detekt.yml")
 }
-
 
 tasks.withType<Detekt>().configureEach {
     reports {

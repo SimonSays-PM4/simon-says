@@ -1,8 +1,8 @@
-name: printer running on each commit
+name: printer running on main
 
 on:
   push:
-    branches-ignore:
+    branches:
       - main
 env:
   # GENERAL
@@ -30,7 +30,6 @@ jobs:
           working-directory: ${{ env.PRINTER_DIRECTORY }}
           registry: ${{ env.REGISTRY }}
           image-name: ${{ env.IMAGE_NAME }}
-          tags: ${{ github.ref_name }}
+          tags: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
           platforms: linux/arm64
-        if: github.actor != 'dependabot[bot]'
