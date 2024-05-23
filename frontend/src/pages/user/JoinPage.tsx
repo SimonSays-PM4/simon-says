@@ -44,7 +44,7 @@ export const JoinPage: React.FC = () => {
                     <div className="grid h-fit mt-6">
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <FormInput id="userName" label={"Benutzername"} register={register} type="text" />
-                            <FormInput id="password" label={"Passwort"} register={register} type="text" />
+                            <FormInput id="password" label={"Passwort"} register={register} type="password" />
                             <Button
                                 buttonText="Join"
                                 type="submit"

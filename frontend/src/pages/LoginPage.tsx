@@ -55,7 +55,7 @@ export const LoginPage: React.FC = () => {
                     </h1>
                     <div className="grid h-fit mt-6">
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <FormInput id="code" label="Code" register={register} type="text" />
+                            <FormInput id="code" label="Code" register={register} type="password" />
                             <Button
                                 buttonText="Login"
                                 type="submit"
