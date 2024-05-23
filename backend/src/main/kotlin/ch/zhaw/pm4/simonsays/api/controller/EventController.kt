@@ -24,12 +24,14 @@ class EventController(private val eventService: EventService) {
     @Operation(summary = "Read all events", security = [SecurityRequirement(name = "basicAuth")])
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
+    @AdminEndpoint
     fun getEvents(): List<EventDTO> {
         return  eventService.getEvents()
     }
     @Operation(summary = "Retrieve a single event", security = [SecurityRequirement(name = "basicAuth")])
     @GetMapping("{eventId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
+    @AdminEndpoint
     fun getEvent(@PathVariable("eventId") eventId: Long ): EventDTO {
         return eventService.getEvent(eventId)
     }

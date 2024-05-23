@@ -3,7 +3,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import React, { useContext } from "react";
 import { Button } from "../../components/Button";
 import { FormInput } from "../../components/form/FormInput";
-import { getEventService } from "../../api.ts";
+import { getOrderService } from "../../api.ts";
 import { AppContext } from "../../providers/AppContext.tsx";
 import { LoginInfo } from "../../models/LoginInfo.ts";
 import { NotificationType } from "../../enums/NotificationType.ts";
@@ -20,8 +20,8 @@ export const JoinPage: React.FC = () => {
     } = useForm();
 
     const onSubmit = async (data: FieldValues) => {
-        const eventService = getEventService(data["userName"], data["password"]);
-        eventService.getEvent(Number(eventId)).then(() => {
+        const orderService = getOrderService(data["userName"], data["password"]);
+        orderService.getOrders(Number(eventId)).then(() => {
             const encryptedPw = encryptData(data["userName"] + ":" + data["password"]);
             localStorage.setItem("encryptedCode", encryptedPw);
             setLoginInfo(new LoginInfo(true, data["userName"], data["password"]));
