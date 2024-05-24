@@ -2,7 +2,9 @@ package ch.zhaw.pm4.simonsays.api.controller
 
 import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
 import ch.zhaw.pm4.simonsays.config.ApplicationProperties
-import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
+import ch.zhaw.pm4.simonsays.config.auth.Access
+import ch.zhaw.pm4.simonsays.config.auth.AuthService
+import ch.zhaw.pm4.simonsays.utils.sendPojo
 import io.socket.engineio.server.EngineIoServer
 import io.socket.engineio.server.EngineIoServerOptions
 import io.socket.socketio.server.SocketIoServer
@@ -11,7 +13,8 @@ import jakarta.servlet.annotation.WebServlet
 import jakarta.servlet.http.HttpServlet
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 
 /**
  * A namespace in socket.io is a way to separate the events that are handled by the server.
@@ -110,16 +113,17 @@ interface SocketIoNamespace<K, T> {
 
 @WebServlet("/socket.io/*", asyncSupported = true)
 class SocketIo(
-    applicationProperties: ApplicationProperties,
+    private val applicationProperties: ApplicationProperties,
+    private val authService: AuthService,
     socketIoNamespaces: List<SocketIoNamespace<out Any, out Any>>,
 ) : HttpServlet() {
     /**
      * Define the underlying Engine.IO server.
      */
-    private val engineIoServer = EngineIoServer(
-        EngineIoServerOptions.newFromDefault().setAllowedCorsOrigins(applicationProperties.frontendOrigins)
-            .setCorsHandlingDisabled(false)
-    )
+    private val engineIoServer = EngineIoServer(EngineIoServerOptions.newFromDefault().apply {
+        setAllowedCorsOrigins(applicationProperties.frontendOrigins)
+        setCorsHandlingDisabled(true)
+    })
 
     /**
      * Define the Socket.IO server.
@@ -130,6 +134,18 @@ class SocketIo(
      * Handle the incoming request and pass it to the Engine.IO server to handle it.
      */
     override fun service(req: HttpServletRequest, resp: HttpServletResponse) {
+        // configure cors
+        if(applicationProperties.frontendOrigins.contains(req.getHeader("Origin"))){
+            resp.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, req.getHeader("Origin"))
+        }
+        resp.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
+        resp.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,HEAD,PUT,PATCH,POST,DELETE")
+        resp.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "origin,content-type,accept,Authorization")
+        // We need to allow OPTIONS calls for authorization
+        if (req.method == HttpMethod.OPTIONS.name()) {
+            resp.status = 200
+            return
+        }
         engineIoServer.handleRequest(req, resp)
     }
 
@@ -144,14 +160,31 @@ class SocketIo(
                 val namespaceName = socket.namespace.name
                 val serverSocketId = socket.id
                 val clientSocketId = socket.client.id
+                val authorizationHeader = socket.initialHeaders["authorization"]?.get(0)
+                val access = authService.checkRequestAccess(
+                    uri = namespaceName, authorizationHeaderValue = authorizationHeader
+                )
+                if (!access.allowed) {
+                    disconnectBecauseOfIllegalAccess(socket, access)
+                    return@on
+                }
+
                 log("client socket '$clientSocketId' connected to server socket '$serverSocketId' with namespace '$namespaceName' from origin '$origin'")
                 namespace.onConnection(socket)
                 socket.on("disconnect") {
                     log("client socket '$clientSocketId' disconnected from server socket '$serverSocketId' with namespace '$namespaceName'")
                     namespace.onDisconnect(socket)
                 }
-
             }
         }
+    }
+
+    private fun disconnectBecauseOfIllegalAccess(socket: SocketIoSocket, access: Access) {
+        val disconnectMessage = "Client disconnected because of illegal access: ${access.name} (${access.message})"
+        log(disconnectMessage)
+        socket.sendPojo(
+            SocketIoNamespace.APPLICATION_ERROR_EVENT, ApplicationErrorDto(access.name, disconnectMessage)
+        )
+        socket.disconnect(true)
     }
 }

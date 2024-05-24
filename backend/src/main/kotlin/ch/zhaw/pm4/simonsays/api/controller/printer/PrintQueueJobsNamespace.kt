@@ -11,7 +11,7 @@ import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueJobService
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueService
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
-import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
+import ch.zhaw.pm4.simonsays.utils.sendPojo
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.socket.socketio.server.SocketIoSocket
 import org.json.JSONObject

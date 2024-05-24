@@ -7,7 +7,7 @@ import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.OrderRepository
 import ch.zhaw.pm4.simonsays.service.StationService
-import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
+import ch.zhaw.pm4.simonsays.utils.sendPojo
 import io.socket.socketio.server.SocketIoSocket
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory

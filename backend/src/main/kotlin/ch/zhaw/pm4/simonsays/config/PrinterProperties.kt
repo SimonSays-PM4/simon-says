@@ -29,4 +29,14 @@ class PrinterProperties {
     var receiptFooter: String? = null
 
     var receiptMaxCharactersPerLine: Int = 49 // default value if not set
+
+    /**
+     * The printer access token. We offer a second token to allow for seamless rotation of tokens.
+     */
+    var printerAccessTokenA: String? = null
+
+    /**
+     * The printer access token. We offer a second token to allow for seamless rotation of tokens.
+     */
+    var printerAccessTokenB: String? = null
 }

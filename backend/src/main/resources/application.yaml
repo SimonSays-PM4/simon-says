@@ -36,6 +36,9 @@ printer-queue-server:
   receipt-qr-code-content: "https://cevi.net"
   receipt-header: "Willkommen beim Cevi Burger Festival!"
   receipt-footer: "https://cevi.net"
+  printer-access-token-a: "4a49acb9-2912-420b-bc99-6cfa31e51525"
+  # We offer a second printer access token to allow for seamless token rotation
+  printer-access-token-b: ""
 
 management:
   endpoint:
