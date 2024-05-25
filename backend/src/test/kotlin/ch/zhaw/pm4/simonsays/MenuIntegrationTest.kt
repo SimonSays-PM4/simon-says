@@ -4,7 +4,6 @@ import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapper
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.MenuItem
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
-import ch.zhaw.pm4.simonsays.factory.MenuItemFactory
 import jakarta.transaction.Transactional
 import org.hamcrest.CoreMatchers
 import org.hamcrest.collection.IsCollectionWithSize
@@ -135,7 +134,7 @@ class MenuIntegrationTest : IntegrationTest() {
     @Test
     @Transactional
     fun `Test retrieve menu`() {
-        val menu = menuFactory.createMenu("Menu Test", testEvent.id!!, listOf(testMenuItem))
+        val menu = menuFactory.createMenu("Menu Test", testEvent.id!!, listOf(testMenuItem), price = 1.0)
         val expectedJson =
             getMenuDTO(id = menu.id!!, menuItemDTOs = listOf(menuItemMapper.mapToMenuItemDTO(testMenuItem)))
         mockMvc.get("${getMenuUrl(testEvent.id!!)}/${menu.id}"){
@@ -202,7 +201,7 @@ class MenuIntegrationTest : IntegrationTest() {
     @Transactional
     fun `Test menu update adding a menu item`() {
         val menu =
-            menuFactory.createMenu(name = "testmenuitem", eventId = testEvent.id!!, menuItems = listOf(testMenuItem))
+            menuFactory.createMenu(name = "testmenuitem", eventId = testEvent.id!!, menuItems = listOf(testMenuItem), price = 2.0)
         val secondMenuItem = menuItemFactory.createMenuItem(eventId = testEvent.id!!)
         val updateMenu = getCreateUpdateMenuDTO(
             menu.id,
@@ -219,7 +218,7 @@ class MenuIntegrationTest : IntegrationTest() {
                 menuItemMapper.mapToMenuItemDTO(testMenuItem),
                 menuItemMapper.mapToMenuItemDTO(secondMenuItem)
             ),
-            price = 2
+            price = 2.0
         )
 
         mockMvc.put(getMenuUrl(testEvent.id!!)) {

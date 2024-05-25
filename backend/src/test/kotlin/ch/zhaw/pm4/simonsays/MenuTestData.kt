@@ -17,6 +17,7 @@ fun getCreateUpdateMenuDTO(
         id,
         name,
         menuItemDTOs,
+        null
     )
 }
 fun getMenu(
@@ -24,12 +25,14 @@ fun getMenu(
     name: String = "Menu Test",
     event: Event = getEvent(),
     menuItems: List<MenuItem> = listOf(getMenuItem()),
+    price: Double = 0.0
 ): Menu {
     return Menu(
         id,
         name,
         event,
-        menuItems
+        menuItems,
+        price = price
     )
 }
 
@@ -37,7 +40,7 @@ fun getMenuDTO(
     id: Long = 1,
     name: String = "Menu Test",
     menuItemDTOs: List<MenuItemDTO> = listOf(getMenuItemDTO()),
-    price: Long = 1
+    price: Double = 1.0
 ): MenuDTO {
     return MenuDTO(
         id,

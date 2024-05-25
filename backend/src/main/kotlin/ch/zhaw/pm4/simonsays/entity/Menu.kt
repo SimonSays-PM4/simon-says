@@ -5,22 +5,24 @@ import jakarta.persistence.*
 @Entity
 @NoArgAnnotation
 class Menu (
-    @Id
+        @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(nullable = false)
+        @Column(nullable = false)
     var name: String,
 
-    @ManyToOne(optional = false)
+        @ManyToOne(optional = false)
     @JoinColumn(name = "event_id", nullable = false)
     var event: Event,
 
-    @ManyToMany(fetch = FetchType.EAGER)
+        @ManyToMany(fetch = FetchType.EAGER)
     var menuItems: List<MenuItem>,
 
-    @OneToMany(mappedBy = "menu")
-    val orderMenu: Set<OrderMenu>? = HashSet()
+        @OneToMany(mappedBy = "menu")
+    val orderMenu: Set<OrderMenu>? = HashSet(),
+
+        var price: Double?
 
 ){
     override fun hashCode(): Int = id?.hashCode() ?: 0
@@ -32,6 +34,7 @@ class Menu (
         if (id != other.id) return false
         if (name != other.name) return false
         if (event.id != other.event.id) return false
+        if (price != other.price) return false
 
         return true
     }
