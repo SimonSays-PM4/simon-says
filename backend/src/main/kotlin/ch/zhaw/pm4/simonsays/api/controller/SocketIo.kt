@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet
 import jakarta.servlet.http.HttpServlet
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 
@@ -116,26 +117,32 @@ class SocketIo(
     private val applicationProperties: ApplicationProperties,
     private val authService: AuthService,
     socketIoNamespaces: List<SocketIoNamespace<out Any, out Any>>,
-) : HttpServlet() {
-    /**
-     * Define the underlying Engine.IO server.
-     */
-    private val engineIoServer = EngineIoServer(EngineIoServerOptions.newFromDefault().apply {
-        setAllowedCorsOrigins(applicationProperties.frontendOrigins)
+    private val engineIoServer: EngineIoServer = EngineIoServer(EngineIoServerOptions.newFromDefault().apply {
         setCorsHandlingDisabled(true)
-    })
+    }),
+    socketIoServer: SocketIoServer = SocketIoServer(engineIoServer),
+) : HttpServlet() {
 
-    /**
-     * Define the Socket.IO server.
-     */
-    private val socketIoServer = SocketIoServer(engineIoServer)
+    private val log = LoggerFactory.getLogger(javaClass)
+
+    init {
+        // Register all namespaces.
+        for (namespace in socketIoNamespaces) {
+            socketIoServer.namespace {
+                namespace.isPartOfNamespace(it)
+            }.on("connection") { args ->
+                val socket = args[0] as SocketIoSocket
+                onSocketConnection(socket, namespace)
+            }
+        }
+    }
 
     /**
      * Handle the incoming request and pass it to the Engine.IO server to handle it.
      */
     override fun service(req: HttpServletRequest, resp: HttpServletResponse) {
         // configure cors
-        if(applicationProperties.frontendOrigins.contains(req.getHeader("Origin"))){
+        if (applicationProperties.frontendOrigins.contains(req.getHeader("Origin"))) {
             resp.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, req.getHeader("Origin"))
         }
         resp.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
@@ -149,39 +156,37 @@ class SocketIo(
         engineIoServer.handleRequest(req, resp)
     }
 
-    init {
-        // Register all namespaces.
-        for (namespace in socketIoNamespaces) {
-            socketIoServer.namespace {
-                namespace.isPartOfNamespace(it)
-            }.on("connection") { args ->
-                val socket = args[0] as SocketIoSocket
-                val origin = socket.client.initialHeaders["origin"]?.get(0) ?: "unknown"
-                val namespaceName = socket.namespace.name
-                val serverSocketId = socket.id
-                val clientSocketId = socket.client.id
-                val authorizationHeader = socket.initialHeaders["authorization"]?.get(0)
-                val access = authService.checkRequestAccess(
-                    uri = namespaceName, authorizationHeaderValue = authorizationHeader
-                )
-                if (!access.allowed) {
-                    disconnectBecauseOfIllegalAccess(socket, access)
-                    return@on
-                }
+    /**
+     * Invoked when a new socket connection is established.
+     */
+    fun onSocketConnection(
+        socket: SocketIoSocket,
+        namespace: SocketIoNamespace<out Any, out Any>
+    ) {
+        val origin = socket.client.initialHeaders["origin"]?.get(0) ?: "unknown"
+        val namespaceName = socket.namespace.name
+        val serverSocketId = socket.id
+        val clientSocketId = socket.client.id
+        val authorizationHeader = socket.initialHeaders["authorization"]?.get(0)
+        val access = authService.checkRequestAccess(
+            uri = namespaceName, authorizationHeaderValue = authorizationHeader
+        )
+        if (!access.allowed) {
+            disconnectBecauseOfIllegalAccess(socket, access)
+            return
+        }
 
-                log("client socket '$clientSocketId' connected to server socket '$serverSocketId' with namespace '$namespaceName' from origin '$origin'")
-                namespace.onConnection(socket)
-                socket.on("disconnect") {
-                    log("client socket '$clientSocketId' disconnected from server socket '$serverSocketId' with namespace '$namespaceName'")
-                    namespace.onDisconnect(socket)
-                }
-            }
+        log.info("client socket '$clientSocketId' connected to server socket '$serverSocketId' with namespace '$namespaceName' from origin '$origin'")
+        namespace.onConnection(socket)
+        socket.on("disconnect") {
+            log.info("client socket '$clientSocketId' disconnected from server socket '$serverSocketId' with namespace '$namespaceName'")
+            namespace.onDisconnect(socket)
         }
     }
 
-    private fun disconnectBecauseOfIllegalAccess(socket: SocketIoSocket, access: Access) {
+    fun disconnectBecauseOfIllegalAccess(socket: SocketIoSocket, access: Access) {
         val disconnectMessage = "Client disconnected because of illegal access: ${access.name} (${access.message})"
-        log(disconnectMessage)
+        log.warn(disconnectMessage)
         socket.sendPojo(
             SocketIoNamespace.APPLICATION_ERROR_EVENT, ApplicationErrorDto(access.name, disconnectMessage)
         )

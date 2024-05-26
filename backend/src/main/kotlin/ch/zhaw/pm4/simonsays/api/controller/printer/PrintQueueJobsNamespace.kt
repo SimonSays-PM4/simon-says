@@ -158,6 +158,15 @@ class PrintQueueJobsNamespace(
             )
         }
 
+        savePrintQueueJob(socket, printQueueId, jobId, jobJson)
+    }
+
+    fun savePrintQueueJob(
+        socket: SocketIoSocket,
+        printQueueId: PrintQueueId,
+        jobId: PrintQueueJobId?,
+        jobJson: JSONObject
+    ) {
         // set the last update date
         val currentTimeMillis = System.currentTimeMillis()
         jobJson.put("lastUpdateDateTime", currentTimeMillis)
