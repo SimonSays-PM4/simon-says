@@ -2,7 +2,6 @@ package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.controller.AssemblyViewNamespace
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace
-import ch.zhaw.pm4.simonsays.api.controller.printer.PrinterServersNamespace
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.repository.OrderRepository
@@ -67,7 +66,7 @@ class AssemblyViewNamespaceTest {
             ]
     )
     fun `test namespace pattern matching with invalid inputs`(input: String) {
-        val matchResult = PrinterServersNamespace.namespacePattern.matchEntire(input)
+        val matchResult = AssemblyViewNamespace.namespacePattern.matchEntire(input)
         Assertions.assertNull(matchResult, "Expected no match for input: $input")
     }
 

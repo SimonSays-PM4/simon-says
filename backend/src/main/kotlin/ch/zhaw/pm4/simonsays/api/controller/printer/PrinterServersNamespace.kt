@@ -212,8 +212,8 @@ class PrinterServersNamespace(
     }
 
     override fun onApplicationError(id: String?, error: ApplicationErrorDto) {
+        subscribersToAllPrinterServers.forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }
         if (id == null) {
-            subscribersToAllPrinterServers.forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }
             subscribersToSpecificPrinterServer.values.flatten().forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }
         } else {
             subscribersToSpecificPrinterServer[id]?.forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }

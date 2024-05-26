@@ -303,7 +303,7 @@ class PrintQueueJobsNamespace(
         } else {
             val onErrorJobSubscribers = subscribersToSpecificPrintQueueJobs[id] ?: emptySet()
             // check all next pending jobs if they have the same job id and add the subscribers to the list
-            onErrorJobSubscribers + getAffectedNextPrintJobSubscribers(id)
+            subscribersToAllPrintQueueJobs.values.flatten() + onErrorJobSubscribers + getAffectedNextPrintJobSubscribers(id)
         }
         subscribers.forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }
     }
