@@ -63,7 +63,7 @@ export const useStationView = (): StationAction => {
 
             const socket = io(socketUrl, {
                 extraHeaders: {
-                    "Authorization": `Basic ${btoa(`${loginInfo.userName}:${loginInfo.password}`)}`
+                    "Authorization": 'Basic ' + btoa(`${loginInfo.userName}:${loginInfo.password}`)
                 }
             });
 
