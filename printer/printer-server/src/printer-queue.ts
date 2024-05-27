@@ -21,7 +21,8 @@ export class PrinterQueue {
             (printQueueJob) => this.onPrintQueueJobInitialData(printQueueJob),
             (printQueueJob) => this.onPrintQueueJobChange(printQueueJob),
             (printQueueJob) => this.onPrintQueueJobRemove(printQueueJob),
-            (error) => this.onApplicationError(error)
+            (error) => this.onApplicationError(error),
+            process.env.PRINTER_AUTH_TOKEN!
         );
     }
 
