@@ -63,15 +63,18 @@ class PrinterService(
     }
 
     private fun printNormalReceiptWithCustomTitle(foodOrder: FoodOrder, title: String): PrintQueueJobDto {
+        val receiptDecoration = ReceiptDecoration(
+            header = printerProperties.receiptHeader,
+            qrCode = printerProperties.receiptQrCodeContent,
+            footer = printerProperties.receiptFooter,
+            base64PngLogoImage = printerProperties.receiptBase64PngLogo,
+        )
         return print(
             orderId = foodOrder.id!!,
             isTakeaway = foodOrder.isTakeAway,
             title = title,
             body = getBodyForFoodOrder(foodOrder),
-            base64PngLogoImage = printerProperties.receiptBase64PngLogo,
-            header = printerProperties.receiptHeader,
-            qrCode = printerProperties.receiptQrCodeContent,
-            footer = printerProperties.receiptFooter,
+            receiptDecoration = receiptDecoration,
         )
     }
 
@@ -88,24 +91,17 @@ class PrinterService(
     }
 
     private fun print(
-        orderId: Long,
-        isTakeaway: Boolean,
-        title: String,
-        body: String,
-        qrCode: String? = null,
-        footer: String? = null,
-        header: String? = null,
-        base64PngLogoImage: String? = null
+        orderId: Long, isTakeaway: Boolean, title: String, body: String, receiptDecoration: ReceiptDecoration? = null
     ): PrintQueueJobDto {
         val currentMs = Instant.now().toEpochMilli()
         val printQueueJobDto = PrintQueueJobDto(
             id = orderId.toString(),
             title = title,
             body = body,
-            base64PngLogoImage = base64PngLogoImage,
-            header = header,
-            qrCode = qrCode,
-            footer = footer,
+            base64PngLogoImage = receiptDecoration?.base64PngLogoImage,
+            header = receiptDecoration?.header,
+            qrCode = receiptDecoration?.qrCode,
+            footer = receiptDecoration?.footer,
             creationDateTime = currentMs,
             lastUpdateDateTime = currentMs,
             status = JobStatusDto.PENDING
@@ -305,7 +301,7 @@ class PrinterService(
         }
 
         // Add frame around the virtual paper
-        var frame = "+-" + "-".repeat(virtualPaperWidth) + "-+"
+        val frame = "+-" + "-".repeat(virtualPaperWidth) + "-+"
         val virtualPaperLines = virtualPaper.split("\n").map {
             "| ${it.padEnd(virtualPaperWidth)} |"
         }
@@ -323,5 +319,13 @@ $virtualPaper
 
     companion object {
         private const val PRICE_COLUMN_WIDTH = 10
+
+        internal data class ReceiptDecoration(
+            val qrCode: String? = null,
+            val footer: String? = null,
+            val header: String? = null,
+            val base64PngLogoImage: String? = null
+        )
+
     }
 }

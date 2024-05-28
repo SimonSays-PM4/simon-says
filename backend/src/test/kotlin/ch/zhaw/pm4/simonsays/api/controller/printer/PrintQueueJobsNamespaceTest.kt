@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.APPLICAT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.CHANGE_EVENT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.INITIAL_DATA_EVENT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.REMOVE_EVENT
+import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
 import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDto
 import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueJobService
@@ -176,6 +177,43 @@ class PrintQueueJobsNamespaceTest {
 
         verify { socket.send(INITIAL_DATA_EVENT, any()) }
         assertTrue(namespace.subscribersToNextPrintQueueJob[printQueueId]?.contains(socket) ?: false)
+    }
+
+    @Test
+    fun `onApplicationError should send error to all relevant subscribers`() {
+        val jobId = "job1"
+        val errorDto = ApplicationErrorDto("ERROR_CODE", "Error message")
+
+        // Setup subscribers for all, next, and specific jobs
+        val allSocket = mockSocket("/socket-api/v1/printer-servers/server1/print-queues/queue1/jobs")
+        val specificSocket = mockSocket("/socket-api/v1/printer-servers/server1/print-queues/queue1/jobs/$jobId")
+
+        namespace.onConnection(allSocket)
+        namespace.onConnection(specificSocket)
+
+        namespace.onApplicationError(jobId, errorDto)
+
+        // Verify that all relevant subscribers receive the error event
+        verify { allSocket.send(APPLICATION_ERROR_EVENT, any()) }
+        verify { specificSocket.send(APPLICATION_ERROR_EVENT, any()) }
+    }
+
+    @Test
+    fun `onDisconnect should unsubscribe from all relevant subscriptions`() {
+        val printerServerId = "server1"
+        val printQueueId = "queue1"
+        val jobId = "job1"
+        val socket = mockSocket("/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/$jobId")
+
+        // Connect to set up the subscriber
+        namespace.onConnection(socket)
+        assertTrue(namespace.subscribersToSpecificPrintQueueJobs[jobId]?.contains(socket) ?: false)
+
+        // Perform disconnection
+        namespace.onDisconnect(socket)
+
+        // Check if the socket has been removed from the subscribers map
+        assertFalse(namespace.subscribersToSpecificPrintQueueJobs[jobId]?.contains(socket) ?: true)
     }
 
     private fun mockSocket(namespaceString: String): SocketIoSocket {

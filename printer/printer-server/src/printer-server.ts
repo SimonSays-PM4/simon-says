@@ -15,7 +15,8 @@ export class PrinterServer {
             (printerServer) => this.onPrinterServerInitialData(printerServer),
             (printerServer) => this.onPrinterServerChange(printerServer),
             (printerServer) => this.onPrinterServerRemove(printerServer),
-            (error) => this.onApplicationError(error)
+            (error) => this.onApplicationError(error),
+            process.env.PRINTER_AUTH_TOKEN!
         );
     }
 
