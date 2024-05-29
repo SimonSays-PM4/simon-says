@@ -3,6 +3,7 @@ package ch.zhaw.pm4.simonsays
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.service.EventService
@@ -75,6 +76,7 @@ class IngredientTest {
 
     @Test
     fun `Test ingredient deletion`() {
+        every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getTestIngredient1())
         every { ingredientRepository.delete(any()) } returns Unit
         Assertions.assertEquals(
             Unit, ingredientService.deleteIngredient(1,1)
@@ -154,5 +156,14 @@ class IngredientTest {
     fun `get ingredient by OrderIngredient ids`(){
         every { ingredientRepository.findByOrderIngredientsId(any()) } returns getTestIngredient1()
         Assertions.assertEquals(getTestIngredient1(), getTestIngredient1())
+    }
+
+    @Test
+    fun `delete ingredient in use exception`() {
+        every { ingredientRepository.findByIdAndEventId(1, any()) } returns Optional.of(getTestIngredient1(menuItems = listOf(getMenuItem())))
+        val error = Assertions.assertThrows(
+            ResourceInUseException::class.java
+        ) { ingredientService.deleteIngredient(1, 1) }
+        Assertions.assertEquals("Ingredient is used in menu items and cannot be deleted", error.message)
     }
 }

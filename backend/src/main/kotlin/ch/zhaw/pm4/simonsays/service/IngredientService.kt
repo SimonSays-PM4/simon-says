@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.types.IngredientCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import org.springframework.stereotype.Service
@@ -26,8 +27,11 @@ class IngredientService(
     }
 
     fun deleteIngredient(id: Long, eventId: Long) {
-        ingredientRepository.findByIdAndEventId(id, eventId).orElseThrow {
+        val ingredient = ingredientRepository.findByIdAndEventId(id, eventId).orElseThrow {
             ResourceNotFoundException("Ingredient not found with ID: $id")
+        }
+        if (ingredient.menuItems != null && ingredient.menuItems!!.isNotEmpty()) {
+            throw ResourceInUseException("Ingredient is used in menu items and cannot be deleted")
         }
         ingredientRepository.deleteById(id)
     }

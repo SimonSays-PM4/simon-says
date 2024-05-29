@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
@@ -116,6 +117,15 @@ class MenuItemTest {
                 ResourceNotFoundException::class.java)
         { menuItemService.getMenuItem(1, getEvent().id!!) }
         Assertions.assertEquals("Menu item not found with ID: 1", error.message)
+    }
+
+    @Test
+    fun `Test delete menuItem still in use exception`() {
+        every { menuItemRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenuItem(menus = listOf(getMenu())))
+        val error = Assertions.assertThrows(
+                ResourceInUseException::class.java)
+        { menuItemService.deleteMenuItem(1, getEvent().id!!) }
+        Assertions.assertEquals("Menu item is used in menus and cannot be deleted", error.message)
     }
 
 }

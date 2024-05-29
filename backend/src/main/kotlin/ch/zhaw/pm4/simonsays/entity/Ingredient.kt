@@ -20,7 +20,7 @@ data class Ingredient(
     val event: Event,
 
     @ManyToMany(mappedBy = "ingredients")
-    val menuItems: List<MenuItem>?,
+    var menuItems: List<MenuItem>?,
 
     @ManyToMany(mappedBy = "ingredients")
     val stations: List<Station>?,

@@ -5,6 +5,7 @@ import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.MenuItem
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
@@ -60,6 +61,9 @@ class MenuItemService(
     fun deleteMenuItem(menuItemId: Long, eventId: Long) {
         val menuItem = menuItemRepository.findByIdAndEventId(menuItemId, eventId).orElseThrow {
             ResourceNotFoundException("Menu item not found with ID: $menuItemId")
+        }
+        if (menuItem.menus != null && menuItem.menus.isNotEmpty()) {
+            throw ResourceInUseException("Menu item is used in menus and cannot be deleted")
         }
         menuItemRepository.delete(menuItem)
     }

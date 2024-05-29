@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.types.EventCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
 import ch.zhaw.pm4.simonsays.entity.Event
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import org.springframework.stereotype.Service
@@ -48,6 +49,9 @@ class EventService(
 
     fun deleteEvent(eventId: Long) {
         val event = getEventEntity(eventId)
+        if ((event.menuItems != null || event.stations != null || event.ingredients != null || event.menus != null) && (event.menuItems!!.isNotEmpty() || event.stations!!.isNotEmpty() || event.ingredients!!.isNotEmpty() || event.menus!!.isNotEmpty())){
+            throw ResourceInUseException("Event is used and cannot be deleted")
+        }
         eventRepository.delete(event)
     }
 

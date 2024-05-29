@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.EventMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.EventCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
 import ch.zhaw.pm4.simonsays.entity.Event
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
 import ch.zhaw.pm4.simonsays.service.EventService
@@ -227,6 +228,13 @@ class EventTest {
         Assertions.assertEquals("Event not found with ID: 1", error.message)
     }
 
-
+    @Test
+    fun `delete Event should fail when event is used`() {
+        every { eventRepository.findById(1) } returns Optional.of( getEvent(ingredients = setOf(getTestIngredient1()) ))
+        val error = Assertions.assertThrows(
+                ResourceInUseException::class.java
+        ) { eventService.deleteEvent(1) }
+        Assertions.assertEquals("Event is used and cannot be deleted", error.message)
+    }
 
 }
