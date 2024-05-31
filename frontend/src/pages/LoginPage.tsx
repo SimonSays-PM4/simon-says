@@ -42,7 +42,7 @@ export const LoginPage: React.FC = () => {
                 navigate("/");
             }
         }).catch(() => {
-            addNotification(NotificationType.ERR, "Invalider Passwort");
+            addNotification(NotificationType.ERR, "Invalides Passwort eingegeben");
         });
     }
 
