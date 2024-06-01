@@ -73,7 +73,7 @@ class PrinterService(
             orderId = foodOrder.id!!,
             isTakeaway = foodOrder.isTakeAway,
             title = title,
-            body = getBodyForFoodOrder(foodOrder),
+            body = getBodyForFoodOrder(foodOrder, showIngredients = false),
             receiptDecoration = receiptDecoration,
         )
     }
@@ -86,7 +86,7 @@ class PrinterService(
             orderId = foodOrder.id!!,
             isTakeaway = foodOrder.isTakeAway,
             title = title,
-            body = getBodyForFoodOrder(foodOrder)
+            body = getBodyForFoodOrder(foodOrder, showIngredients = true)
         )
     }
 
@@ -147,15 +147,20 @@ class PrinterService(
     | Total                  10.20 |
     +------------------------------+
      */
-    private fun getBodyForFoodOrder(foodOrder: FoodOrder): String {
+    private fun getBodyForFoodOrder(foodOrder: FoodOrder, showIngredients: Boolean = false): String {
         var body = ""
 
         // Add list of ordered menus
-        body += foodOrder.menus?.joinToString("\n") { getTextForOrderMenu(it) }
+        body += foodOrder.menus?.joinToString("\n") { getTextForOrderMenu(it, showIngredients) }
         body += "\n"
 
         // Add list of ordered items
-        body += foodOrder.menuItems?.joinToString("\n") { getTextForOrderMenuItem(it) }
+        body += foodOrder.menuItems?.joinToString("\n") {
+            getTextForOrderMenuItem(
+                it,
+                showIngredients = showIngredients
+            )
+        }
         body += "\n"
 
         // Add total
@@ -165,7 +170,7 @@ class PrinterService(
         return body
     }
 
-    private fun getTextForOrderMenu(oderMenu: OrderMenu): String {
+    private fun getTextForOrderMenu(oderMenu: OrderMenu, showIngredients: Boolean = false): String {
         val price = formatPriceWithStartPadding(oderMenu.price)
         val menuNameLines = splitPricedItemTextOntoMultipleLinesIfNecessary(oderMenu.name)
 
@@ -182,7 +187,14 @@ class PrinterService(
         }
 
         menuText += "\n"
-        menuText += oderMenu.orderMenuItems.joinToString("\n") { getTextForOrderMenuItem(it, "  ", showPrice = false) }
+        menuText += oderMenu.orderMenuItems.joinToString("\n") {
+            getTextForOrderMenuItem(
+                it,
+                "  ",
+                showPrice = false,
+                showIngredients = showIngredients
+            )
+        }
         return menuText
     }
 
@@ -190,6 +202,7 @@ class PrinterService(
         orderMenuItem: OrderMenuItem,
         indent: String = "",
         showPrice: Boolean = true,
+        showIngredients: Boolean = false,
     ): String {
         var menuItemText = if (showPrice) {
             // print price always with two decimal places
@@ -212,14 +225,17 @@ class PrinterService(
             return menuItemText
         }
 
-        // add the ingredients
-        menuItemText += "\n"
+        if (showIngredients) {
+            // add the ingredients
+            menuItemText += "\n"
 
-        var ingredientsText = orderMenuItem.orderIngredients.joinToString(", ") { it.name }
-        // put brackets around it
-        ingredientsText = "($ingredientsText)"
-        ingredientsText = splitPricedItemTextOntoMultipleLinesIfNecessary(ingredientsText, indent).joinToString("\n")
-        menuItemText += ingredientsText
+            var ingredientsText = orderMenuItem.orderIngredients.joinToString(", ") { it.name }
+            // put brackets around it
+            ingredientsText = "($ingredientsText)"
+            ingredientsText =
+                splitPricedItemTextOntoMultipleLinesIfNecessary(ingredientsText, indent).joinToString("\n")
+            menuItemText += ingredientsText
+        }
 
         return menuItemText
     }
