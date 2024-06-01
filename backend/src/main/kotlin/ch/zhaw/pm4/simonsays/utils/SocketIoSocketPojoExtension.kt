@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.simonsays.utils.printer
+package ch.zhaw.pm4.simonsays.utils
 
 import io.socket.socketio.server.SocketIoSocket
 import org.json.JSONArray

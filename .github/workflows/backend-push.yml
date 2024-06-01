@@ -1,10 +1,8 @@
 name: backend running on each commit
 
 on:
-  push:
-    branches-ignore:
-      - main
-  pull_request:
+  - push
+  - pull_request
 
 env:
   # GENERAL

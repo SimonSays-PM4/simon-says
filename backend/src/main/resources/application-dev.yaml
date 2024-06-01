@@ -16,6 +16,7 @@ application:
   frontend-origins:
     - http://localhost:3000
     - https://socket-test-client.netlify.app
+    - moz-extension://f14c7256-9a8c-4d44-b671-a44d01e7cae4
 
 # The printer-queue-server application configuration
 printer-queue-server:
@@ -33,3 +34,6 @@ printer-queue-server:
   receipt-qr-code-content: "https://cevi.net"
   receipt-header: "DEV! Willkommen beim Cevi Burger Festival!"
   receipt-footer: "https://cevi.net"
+  printer-access-token-a: "4a49acb9-2912-420b-bc99-6cfa31e51525"
+  # We offer a second printer access token to allow for seamless token rotation
+  printer-access-token-b: ""

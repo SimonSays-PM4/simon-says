@@ -32,10 +32,13 @@ printer-queue-server:
   receipt-printer-mac: "50:57:9c:d2:12:53"
   # The following settings are optional and can be used to customize the receipt that is printed
   receipt-max-characters-per-line: 49
-  receipt-base64-png-logo: "iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAMAAAANIilAAAAAAXNSR0IArs4c6QAAAEtQTFRFR3BMADaQADWPADWP4AAqADWP5AAodyJl5AAoADaRADyZADWPBDaQADaQADaQ4QAp7gAe4wAo4wAo4AAq4AAq3QAr4QApADeR5AAp7JnuvwAAABd0Uk5TALg4Ujma7QP8"
+  receipt-base64-png-logo: "iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAMAAAANIilAAAAAAXNSR0IArs4c6QAAAEtQTFRFR3BMADaQADWPADWP4AAqADWP5AAodyJl5AAoADaRADyZADWPBDaQADaQADaQ4QAp7gAe4wAo4wAo4AAq4AAq3QAr4QApADeR5AAp7JnuvwAAABd0Uk5TALg4Ujma7QP8/Ax2IObRuQ8j2YRZbZy1KtUNAAACzElEQVR42p3W23qsIAwF4AhiRBFP48j7P+mGoHt92nFqzU3nwr8rERXoqphZ/jRK69bEauhmZeii8p1dpawjvktZtT4xcbGA0dZFqGt9NFnlsoIBr2iji0SiQ23JnCWPc0n8wTZt90PanCyQxtd7qgPwiULuv603Ol08lHOEsaZf6TZxV7SOBfZVCHWo6zq8iU9W+wggN6ia1OvST9EJTP/gdcAx1gg99toQ0yBDigxb1aNgxHbJCJRIox3lXhMDlODp2HIry4FemYjLpa/k4k0CzwhmYrNDK0PmBQmIRO0jY9xCpsWQeUEAT1UNCTOLjnYfkmVBTq2eg3uxlDpkY/OQNF4MicLITMoQk9P7kGlCwOsqiaO1BREWJISvEAuVRtZ2LSK80ysqP5ts1oTHCZG3aLUwKb/ahKmsgsh7tH6P1LR2tZLMd7Vc1JdEWmIFKwV9h7oiuTVj56G/9RtqocZK7IapXaEvZajmMdEu0x0zmS+6zrJ/DUTK2NwxcNRtp6GPTuQyyCcVFDhq17qkQ72XMIFzGSWr2C/oATt5vcopg41N/XtJkBplPL4wJ8xkvLwaw1i+lmWel+VVJiawLboVoQds24SVfLJUQywiM6da4wUi9BgcbdL5Q9L5ojBSReE7KwjwRJNlwTp/wc572wXM12mxxNxs7aHAPsd6JVaizfmOfKfW4P4wqb/QtVDE2eKW/V5ykdcEu9+yW6E2phIoprZfoSymcaCovEfay0iRms8UnXdbAgqrLhsRDQu21pNuWm9hsMtvm+bw6utqADhpIienNjBftNr934hwmvjEeXsllNZaKdcw4fgTQo2t9YIzfg7DWC5zP+FkUI9XGCoXjRU+SDhN3CvZDcTlwsj39fk08VRX433M0DhN3C9owfMf8SG7TPhBNg5QD7Ix8qPsOixPcNYY+UE2DvcPsvFsPsiuXw8xJ/3h2fwHHFmaILYVMyAAAAAASUVORK5CYII="
   receipt-qr-code-content: "https://cevi.net"
   receipt-header: "Willkommen beim Cevi Burger Festival!"
   receipt-footer: "https://cevi.net"
+  printer-access-token-a: "4a49acb9-2912-420b-bc99-6cfa31e51525"
+  # We offer a second printer access token to allow for seamless token rotation
+  printer-access-token-b: ""
 
 management:
   endpoint:

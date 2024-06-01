@@ -7,6 +7,7 @@ export class SocketApi<OnConnectType, OnChangeType> {
     readonly onChange: (data: OnChangeType) => void;
     readonly onApplicationError: (error: ApplicationErrorDto) => void;
     readonly socket: Socket;
+    readonly authorizationHeader: string | undefined = undefined;
 
     get isConnected(): boolean {
         return this.socket.connected;
@@ -23,14 +24,21 @@ export class SocketApi<OnConnectType, OnChangeType> {
         onInitialData: (data: OnConnectType) => void,
         onChange: (data: OnChangeType) => void,
         onRemove: (data: OnChangeType) => void,
-        onApplicationError: (error: ApplicationErrorDto) => void
+        onApplicationError: (error: ApplicationErrorDto) => void,
+        authorizationHeader: string
     ) {
         console.debug(`Connecting to socket at ${socketUrl}`);
         this.socketUrl = socketUrl;
         this.onInitialData = onInitialData;
         this.onChange = onChange;
         this.onApplicationError = onApplicationError;
-        this.socket = io(socketUrl, { autoConnect: false });
+        this.authorizationHeader = authorizationHeader;
+        this.socket = io(socketUrl, { 
+            autoConnect: false, 
+            extraHeaders: {
+                "Authorization": this.authorizationHeader
+            }
+        });
         this.socket.on('initial-data', onInitialData);
         this.socket.on('change', onChange);
         this.socket.on('remove', onRemove);
@@ -71,9 +79,10 @@ export class SocketApi<OnConnectType, OnChangeType> {
         onInitialData: (data: PrinterServersDto) => void,
         onChange: (data: PrinterServerDto) => void,
         onRemove: (data: PrinterServerDto) => void,
-        onApplicationError: (error: ApplicationErrorDto) => void
+        onApplicationError: (error: ApplicationErrorDto) => void,
+        authorizationHeader: string
     ): SocketApi<PrinterServersDto, PrinterServerDto> {
-        return new SocketApi<PrinterServersDto, PrinterServerDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers`, onInitialData, onChange, onRemove, onApplicationError);
+        return new SocketApi<PrinterServersDto, PrinterServerDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers`, onInitialData, onChange, onRemove, onApplicationError, authorizationHeader);
     }
 
     // connect to /socket-api/v1/printer-servers/{id}
@@ -83,9 +92,10 @@ export class SocketApi<OnConnectType, OnChangeType> {
         onInitialData: (data: PrinterServerDto) => void,
         onChange: (data: PrinterServerDto) => void,
         onRemove: (data: PrinterServerDto) => void,
-        onApplicationError: (error: ApplicationErrorDto) => void
+        onApplicationError: (error: ApplicationErrorDto) => void,
+        authorizationHeader: string
     ): SocketApi<PrinterServerDto, PrinterServerDto> {
-        return new SocketApi<PrinterServerDto, PrinterServerDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers/${printerServerId}`, onInitialData, onChange, onRemove, onApplicationError);
+        return new SocketApi<PrinterServerDto, PrinterServerDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers/${printerServerId}`, onInitialData, onChange, onRemove, onApplicationError, authorizationHeader);
     }
 
     // connect to /socket-api/v1/printer-servers/{id}/print-queues/{id}/jobs
@@ -96,9 +106,10 @@ export class SocketApi<OnConnectType, OnChangeType> {
         onInitialData: (data: PrintQueueJobsDto) => void,
         onChange: (data: PrintQueueJobDto) => void,
         onRemove: (data: PrintQueueJobDto) => void,
-        onApplicationError: (error: ApplicationErrorDto) => void
+        onApplicationError: (error: ApplicationErrorDto) => void,
+        authorizationHeader: string
     ): SocketApi<PrintQueueJobsDto, PrintQueueJobDto> {
-        return new SocketApi<PrintQueueJobsDto, PrintQueueJobDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers/${printerServerId}/print-queues/${queueId}/jobs`, onInitialData, onChange, onRemove, onApplicationError);
+        return new SocketApi<PrintQueueJobsDto, PrintQueueJobDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers/${printerServerId}/print-queues/${queueId}/jobs`, onInitialData, onChange, onRemove, onApplicationError, authorizationHeader);
     }
 
     // connect to /socket-api/v1/printer-servers/{id}/print-queues/{id}/jobs/{id}
@@ -110,9 +121,10 @@ export class SocketApi<OnConnectType, OnChangeType> {
         onInitialData: (data: PrintQueueJobDto) => void,
         onChange: (data: PrintQueueJobDto) => void,
         onRemove: (data: PrintQueueJobDto) => void,
-        onApplicationError: (error: ApplicationErrorDto) => void
+        onApplicationError: (error: ApplicationErrorDto) => void,
+        authorizationHeader: string
     ): SocketApi<PrintQueueJobDto, PrintQueueJobDto> {
-        return new SocketApi<PrintQueueJobDto, PrintQueueJobDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers/${printerServerId}/print-queues/${queueId}/jobs/${jobId}`, onInitialData, onChange, onRemove, onApplicationError);
+        return new SocketApi<PrintQueueJobDto, PrintQueueJobDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers/${printerServerId}/print-queues/${queueId}/jobs/${jobId}`, onInitialData, onChange, onRemove, onApplicationError, authorizationHeader);
     }
 
     // connect to /socket-api/v1/printer-servers/{id}/print-queues/{id}/jobs/next
@@ -123,9 +135,10 @@ export class SocketApi<OnConnectType, OnChangeType> {
         onInitialData: (data: PrintQueueJobDto) => void,
         onChange: (data: PrintQueueJobDto) => void,
         onRemove: (data: PrintQueueJobDto) => void,
-        onApplicationError: (error: ApplicationErrorDto) => void
+        onApplicationError: (error: ApplicationErrorDto) => void,
+        authorizationHeader: string
     ): SocketApi<PrintQueueJobDto, PrintQueueJobDto> {
-        return new SocketApi<PrintQueueJobDto, PrintQueueJobDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers/${printerServerId}/print-queues/${queueId}/jobs/next`, onInitialData, onChange, onRemove, onApplicationError);
+        return new SocketApi<PrintQueueJobDto, PrintQueueJobDto>(`${printerQueueServerBaseUrl}/socket-api/v1/printer-servers/${printerServerId}/print-queues/${queueId}/jobs/next`, onInitialData, onChange, onRemove, onApplicationError, authorizationHeader);
     }
 
     /**

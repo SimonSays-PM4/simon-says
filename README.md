@@ -89,6 +89,5 @@ You can find the end-user guide [here](https://simonsays-pm4.github.io/simon-say
 If you want to update the documentation, please read more in the [documentation README](documentation/retype/README.md).
 
 ## License
-
-tbd -> KAN-12 ?
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
