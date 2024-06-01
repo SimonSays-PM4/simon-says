@@ -37,8 +37,7 @@ class StationService(
     }
 
     fun getStation(stationId: Long, eventId: Long): StationDTO {
-        val station = stationRepository.findByIdAndEventId(stationId, eventId)
-                .orElseThrow { ResourceNotFoundException("Station not found with ID: $stationId") }
+        val station = getStationEntity(stationId, eventId)
         return stationMapper.mapToStationDTO(station)
     }
 
@@ -89,10 +88,7 @@ class StationService(
     }
 
     fun deleteStation(stationId: Long, eventId: Long) {
-        val station = stationRepository.findByIdAndEventId(stationId, eventId).orElseThrow {
-            ResourceNotFoundException("Station not found with ID: $stationId")
-        }
-
+        val station = getStationEntity(stationId, eventId)
         if(station.ingredients.isNotEmpty()) {
             throw ResourceInUseException("Station is used in ingredients and cannot be deleted")
         }
@@ -121,6 +117,11 @@ class StationService(
             stationToSave.ingredients = ingredients
         }
         return stationToSave
+    }
+
+    private fun getStationEntity(stationId: Long, eventId: Long): Station {
+        return stationRepository.findByIdAndEventId(stationId, eventId)
+                .orElseThrow { ResourceNotFoundException("Station not found with ID: $stationId") }
     }
 
 }

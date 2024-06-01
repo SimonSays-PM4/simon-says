@@ -24,8 +24,7 @@ class MenuService(
         }.toMutableList()
     }
     fun getMenu(menuId: Long, eventId: Long): MenuDTO {
-        val menu = menuRepository.findByIdAndEventId(menuId, eventId)
-            .orElseThrow { ResourceNotFoundException("Menu not found with ID: $menuId") }
+        val menu = getMenuEntity(menuId, eventId)
         return menuMapper.mapToMenuDTO(menu, menu.menuItems.sumOf { it.price })
     }
 
@@ -43,9 +42,7 @@ class MenuService(
     }
 
     fun deleteMenu(menuId: Long, eventId: Long) {
-        val menu = menuRepository.findByIdAndEventId(menuId, eventId).orElseThrow {
-            ResourceNotFoundException("Menu not found with ID: $menuId")
-        }
+        val menu = getMenuEntity(menuId, eventId)
         menuRepository.delete(menu)
     }
 
@@ -57,6 +54,11 @@ class MenuService(
         menuToSave.event = eventService.getEventEntity(eventId)
         menuToSave.menuItems = menuItems
         return menuToSave
+    }
+
+    private fun getMenuEntity(menuId: Long, eventId: Long): Menu {
+        return menuRepository.findByIdAndEventId(menuId, eventId)
+                .orElseThrow { ResourceNotFoundException("Menu not found with ID: $menuId") }
     }
 
 }

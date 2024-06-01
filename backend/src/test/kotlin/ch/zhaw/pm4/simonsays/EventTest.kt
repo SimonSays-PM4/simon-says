@@ -229,8 +229,35 @@ class EventTest {
     }
 
     @Test
-    fun `delete Event should fail when event is used`() {
+    fun `delete Event should fail when event is linked to ingredient`() {
         every { eventRepository.findById(1) } returns Optional.of( getEvent(ingredients = setOf(getTestIngredient1()) ))
+        val error = Assertions.assertThrows(
+                ResourceInUseException::class.java
+        ) { eventService.deleteEvent(1) }
+        Assertions.assertEquals("Event is used and cannot be deleted", error.message)
+    }
+
+    @Test
+    fun `delete Event should fail when event is linked to menu item`() {
+        every { eventRepository.findById(1) } returns Optional.of( getEvent(menuItems = setOf(getMenuItem()) ))
+        val error = Assertions.assertThrows(
+                ResourceInUseException::class.java
+        ) { eventService.deleteEvent(1) }
+        Assertions.assertEquals("Event is used and cannot be deleted", error.message)
+    }
+
+    @Test
+    fun `delete Event should fail when event is linked to menu`() {
+        every { eventRepository.findById(1) } returns Optional.of( getEvent(menus = setOf(getMenu()) ))
+        val error = Assertions.assertThrows(
+                ResourceInUseException::class.java
+        ) { eventService.deleteEvent(1) }
+        Assertions.assertEquals("Event is used and cannot be deleted", error.message)
+    }
+
+    @Test
+    fun `delete Event should fail when event is linked to station`() {
+        every { eventRepository.findById(1) } returns Optional.of( getEvent(stations = setOf(getStation()) ))
         val error = Assertions.assertThrows(
                 ResourceInUseException::class.java
         ) { eventService.deleteEvent(1) }

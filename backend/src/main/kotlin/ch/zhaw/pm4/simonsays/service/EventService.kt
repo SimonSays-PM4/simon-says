@@ -49,7 +49,12 @@ class EventService(
 
     fun deleteEvent(eventId: Long) {
         val event = getEventEntity(eventId)
-        if ((event.menuItems != null || event.stations != null || event.ingredients != null || event.menus != null) && (event.menuItems!!.isNotEmpty() || event.stations!!.isNotEmpty() || event.ingredients!!.isNotEmpty() || event.menus!!.isNotEmpty())){
+        if(
+                !event.menuItems.isNullOrEmpty() ||
+                !event.stations.isNullOrEmpty() ||
+                !event.ingredients.isNullOrEmpty() ||
+                !event.menus.isNullOrEmpty()
+        ) {
             throw ResourceInUseException("Event is used and cannot be deleted")
         }
         eventRepository.delete(event)

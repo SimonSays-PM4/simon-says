@@ -28,8 +28,7 @@ class MenuItemService(
     }
 
     fun getMenuItem(menuItemId: Long, eventId: Long): MenuItemDTO {
-        val menuItem = menuItemRepository.findByIdAndEventId(menuItemId, eventId)
-            .orElseThrow { ResourceNotFoundException("Menu item not found with ID: $menuItemId") }
+        val menuItem = getMenuItemEntity(menuItemId, eventId)
         return menuItemMapper.mapToMenuItemDTO(menuItem)
     }
 
@@ -46,6 +45,13 @@ class MenuItemService(
         return menuItemMapper.mapToMenuItemDTO(savedMenuItem)
     }
 
+    fun deleteMenuItem(menuItemId: Long, eventId: Long) {
+        val menuItem = getMenuItemEntity(menuItemId, eventId)
+        if (!menuItem.menus.isNullOrEmpty()) {
+            throw ResourceInUseException("Menu item is used in menus and cannot be deleted")
+        }
+        menuItemRepository.delete(menuItem)
+    }
 
     private fun makeMenuItemReadyForUpdate(menuItem: MenuItemCreateUpdateDTO, eventId: Long, ingredients: List<Ingredient>): MenuItem {
         val menuItemToSave = menuItemRepository.findById(menuItem.id!!).orElseThrow {
@@ -58,14 +64,9 @@ class MenuItemService(
         return menuItemToSave
     }
 
-    fun deleteMenuItem(menuItemId: Long, eventId: Long) {
-        val menuItem = menuItemRepository.findByIdAndEventId(menuItemId, eventId).orElseThrow {
-            ResourceNotFoundException("Menu item not found with ID: $menuItemId")
-        }
-        if (menuItem.menus != null && menuItem.menus.isNotEmpty()) {
-            throw ResourceInUseException("Menu item is used in menus and cannot be deleted")
-        }
-        menuItemRepository.delete(menuItem)
+    private fun getMenuItemEntity(menuItemId: Long, eventId: Long): MenuItem {
+        return menuItemRepository.findByIdAndEventId(menuItemId, eventId)
+                .orElseThrow { ResourceNotFoundException("Menu item not found with ID: $menuItemId") }
     }
 
 }
