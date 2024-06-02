@@ -178,6 +178,12 @@ export interface MenuCreateUpdateDTO {
      * @memberof MenuCreateUpdateDTO
      */
     'menuItems': Array<MenuItemDTO>;
+    /**
+     * Price of the menu item
+     * @type {number}
+     * @memberof MenuCreateUpdateDTO
+     */
+    'price'?: number;
 }
 /**
  * List of menus
