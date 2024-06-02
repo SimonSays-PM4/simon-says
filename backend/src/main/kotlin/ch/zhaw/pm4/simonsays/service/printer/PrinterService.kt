@@ -71,7 +71,7 @@ class PrinterService(
         )
         return print(
             orderId = foodOrder.id!!,
-            isTakeaway = foodOrder.isTakeAway,
+            isInternal = false, // This is the normal receipt from the takeaway
             title = title,
             body = getBodyForFoodOrder(foodOrder, showIngredients = false),
             receiptDecoration = receiptDecoration,
@@ -84,17 +84,17 @@ class PrinterService(
     fun printInternalTakeAwayReceipt(foodOrder: FoodOrder, title: String): PrintQueueJobDTO {
         return print(
             orderId = foodOrder.id!!,
-            isTakeaway = foodOrder.isTakeAway,
+            isInternal = true, // This is the internal receipt for the kitchen only for takeaways
             title = title,
             body = getBodyForFoodOrder(foodOrder, showIngredients = true)
         )
     }
 
     private fun print(
-        orderId: Long, isTakeaway: Boolean, title: String, body: String, receiptDecoration: ReceiptDecoration? = null
+        orderId: Long, isInternal: Boolean, title: String, body: String, receiptDecoration: ReceiptDecoration? = null
     ): PrintQueueJobDTO {
         val currentMs = Instant.now().toEpochMilli()
-        val printJobId = orderId.toString() + if (isTakeaway) TAKEAWAY_PRINT_JOB_SUFFIX else ""
+        val printJobId = orderId.toString() + if (isInternal) INTERNAL_PRINT_JOB_SUFFIX else ""
         val printQueueJobDto = PrintQueueJobDTO(
             id = printJobId,
             title = title,
@@ -108,7 +108,7 @@ class PrinterService(
             status = JobStatusDTO.PENDING
         )
 
-        val printerQueueId = if (isTakeaway) {
+        val printerQueueId = if (isInternal) {
             printerProperties.takeawayPrinterQueueId
         } else {
             printerProperties.receiptPrinterQueueId
@@ -331,7 +331,7 @@ $virtualPaper
     }
 
     companion object {
-        private const val TAKEAWAY_PRINT_JOB_SUFFIX = "_TAKEAWAY"
+        private const val INTERNAL_PRINT_JOB_SUFFIX = "_INTERNAL"
         private const val PRICE_COLUMN_WIDTH = 10
 
         internal data class ReceiptDecoration(

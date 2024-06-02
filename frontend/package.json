@@ -21,6 +21,7 @@
         "crypto-js": "^4.2.0",
         "openapi-generator": "^0.1.39",
         "postcss": "^8.4.35",
+        "printer-api-lib": "file:../printer/printer-api-lib",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-hook-form": "^7.51.1",

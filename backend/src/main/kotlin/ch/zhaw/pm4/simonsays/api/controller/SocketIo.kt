@@ -118,7 +118,7 @@ class SocketIo(
     private val authService: AuthService,
     socketIoNamespaces: List<SocketIoNamespace<out Any, out Any>>,
     private val engineIoServer: EngineIoServer = EngineIoServer(EngineIoServerOptions.newFromDefault().apply {
-        setCorsHandlingDisabled(true)
+        isCorsHandlingDisabled = true
     }),
     socketIoServer: SocketIoServer = SocketIoServer(engineIoServer),
 ) : HttpServlet() {
