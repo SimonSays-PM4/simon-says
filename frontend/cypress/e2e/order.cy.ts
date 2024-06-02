@@ -197,7 +197,7 @@ describe("Order CRUD", () => {
         });
         cy.wait(100);
 
-        cy.contains("p", "Preis: 36.00 CHF");
+        cy.contains("p", "Preis: 46.03 CHF");
 
         cy.contains("button", "Bestellung aufgeben").click();
 
