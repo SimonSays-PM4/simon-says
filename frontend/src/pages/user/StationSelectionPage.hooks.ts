@@ -28,7 +28,7 @@ export const useStationSelectionPage = (): StationSelectionProps => {
         stationService.getStations(eventId).then((response) => {
             setStationList(response.data);
         }).catch(()=> {
-            appContext.addNotification(NotificationType.ERR, "Failed to load Stations");
+            appContext.addNotification(NotificationType.ERR, "Stationen konnten nicht geladen werden");
         }).finally(()=> {
             setIsLoading(false);
         })

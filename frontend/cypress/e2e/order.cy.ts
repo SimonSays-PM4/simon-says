@@ -5,7 +5,10 @@ describe("Order CRUD", () => {
         cy.get("#code").type("mysecretpassword");
         cy.get("form").contains("Login").click();
 
+
         cy.wait(500);
+
+
 
         cy.get("h2").contains("Events").should("exist");
 
@@ -120,6 +123,7 @@ describe("Order CRUD", () => {
         cy.url().should("include", "/menu/create");
 
         cy.get("#name").type("Order-Test-Menu");
+        cy.get("#price").type("34.03");
         cy.get("#menuItemSelector").type("Order-Test-Menu-Item\n");
         cy.get("#menuItemSelector").type("Order-Test-Menu-Item-II\n");
 
@@ -131,10 +135,14 @@ describe("Order CRUD", () => {
     });
 
     it("should create an order", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Bestellungen").click();
-
+        cy.get("tr").contains("UnitTest-Event").parents("tr").find('#joinAction').click();
+        cy.get("h1").contains("Join Event");
+        cy.get("#userName").type("test");
+        cy.get("#password").type("Test-password");
         cy.wait(500);
-        cy.get("h2").contains("Bestellungen").should("exist");
+        cy.get("form").contains("Join").click();
+        cy.wait(500);
+        cy.contains("h5", "Bestellung").click();
 
         cy.contains("button", "Erstellen").click();
 
@@ -146,6 +154,7 @@ describe("Order CRUD", () => {
         cy.wait(100);
         cy.contains("div", "Order-Test-Menu").click();
         cy.contains("div", "Order-Test-Menu").click();
+
 
         cy.contains("button", "Menu Items").click();
         cy.wait(100);
@@ -188,7 +197,7 @@ describe("Order CRUD", () => {
         });
         cy.wait(100);
 
-        cy.contains("p", "Preis: 36.00 CHF");
+        cy.contains("p", "Preis: 46.03 CHF");
 
         cy.contains("button", "Bestellung aufgeben").click();
 
@@ -198,10 +207,16 @@ describe("Order CRUD", () => {
     });
 
     it("should delete newly created order", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Bestellungen").click();
+        cy.get("tr").contains("UnitTest-Event").parents("tr").find('#joinAction').click();
+        cy.get("h1").contains("Join Event");
+        cy.get("#userName").type("test");
+        cy.get("#password").type("Test-password");
+        cy.wait(500);
+        cy.get("form").contains("Join").click();
+        cy.wait(500);
+        cy.contains("h5", "Bestellung").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Bestellungen").should("exist");
 
         cy.get("table").contains("tr", "8").find("td:last-child").find("button:last-child").click();
 

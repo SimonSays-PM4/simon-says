@@ -35,13 +35,11 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
 
     useEffect(() => {
         if (eventId > 0) {
-            console.log("LOADED")
             setIsLoading(true);
             eventService
                 .getEvent(eventId)
                 .then((response) => {
                     const receivedEvent = response.data as EventCreateUpdateDTO;
-                    console.log(receivedEvent)
                     setEvent(receivedEvent);
                     setIsLoading(false);
                 })

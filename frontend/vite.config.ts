@@ -9,7 +9,6 @@ export default defineConfig(({ mode }) => {
     let api_url = "http://127.0.0.1:8080";
     if (mode != "development") {
         api_url = JSON.stringify(env.VITE_API_URL);
-        console.log(api_url);
     }
 
     return {
