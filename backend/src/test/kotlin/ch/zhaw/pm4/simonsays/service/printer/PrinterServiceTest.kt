@@ -2,7 +2,7 @@ package ch.zhaw.pm4.simonsays.service.printer
 
 import ch.zhaw.pm4.simonsays.api.controller.printer.PrintQueueJobsNamespace
 import ch.zhaw.pm4.simonsays.api.controller.printer.PrinterServersNamespace
-import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
+import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDTO
 import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import ch.zhaw.pm4.simonsays.entity.FoodOrder
 import ch.zhaw.pm4.simonsays.entity.OrderIngredient
@@ -220,7 +220,7 @@ class PrinterServiceTest {
     @Test
     fun `print stores job in database and informs namespace`() {
         val order: FoodOrder = mockk(relaxed = true)
-        val printQueueJobDto: PrintQueueJobDto = mockk(relaxed = true)
+        val printQueueJobDto: PrintQueueJobDTO = mockk(relaxed = true)
         every { printerProperties.dryRun } returns false
         every { order.isTakeAway } returns false
         every { printQueueJobService.savePrintQueueJob(any(), any()) } returns printQueueJobDto

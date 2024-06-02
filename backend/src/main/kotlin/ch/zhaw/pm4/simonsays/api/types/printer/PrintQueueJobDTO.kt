@@ -22,12 +22,12 @@ import io.swagger.v3.oas.annotations.media.Schema
  *      ---------------------------
  */
 @Schema(description = "A job within a print queue.")
-data class PrintQueueJobDto(
+data class PrintQueueJobDTO(
     @Schema(description = "The unique identifier of the print job.")
     val id: String,
 
     @Schema(description = "The current status of the print job.", enumAsRef = true)
-    val status: JobStatusDto,
+    val status: JobStatusDTO,
 
     @Schema(description = "An optional message describing the current status of the print job.", required = false)
     val statusMessage: String? = null,

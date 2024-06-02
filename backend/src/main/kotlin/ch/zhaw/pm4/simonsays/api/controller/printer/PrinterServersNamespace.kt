@@ -5,8 +5,8 @@ import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.APPLICAT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.CHANGE_EVENT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.INITIAL_DATA_EVENT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.REMOVE_EVENT
-import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
-import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDto
+import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDTO
+import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDTO
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
 import ch.zhaw.pm4.simonsays.utils.sendPojo
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -24,7 +24,7 @@ import java.util.UUID
 class PrinterServersNamespace(
     private val printerServerService: PrinterServerService,
     private val objectMapper: ObjectMapper,
-) : SocketIoNamespace<String, PrinterServerDto> {
+) : SocketIoNamespace<String, PrinterServerDTO> {
     companion object {
         /**
          * Regex pattern to match the namespace. The first group is the printer server id.
@@ -121,7 +121,7 @@ class PrinterServersNamespace(
 
         // Attempt to convert json to data class
         val printerServerDto = try {
-            objectMapper.convertValue(printerServerJson, PrinterServerDto::class.java)
+            objectMapper.convertValue(printerServerJson, PrinterServerDTO::class.java)
         } catch (error: Error) {
             return onApplicationError(
                 socket, "INVALID_CHANGE_DATA", "Invalid or malformed data received. Expected PrinterServerDto."
@@ -197,21 +197,21 @@ class PrinterServersNamespace(
         }
     }
 
-    override fun onRemove(data: PrinterServerDto) {
+    override fun onRemove(data: PrinterServerDTO) {
         val printerServerId = data.id
         val subscribersToSpecificPrinterServer = subscribersToSpecificPrinterServer[printerServerId] ?: emptySet()
         val subscribers = subscribersToAllPrinterServers + subscribersToSpecificPrinterServer
         subscribers.forEach { it.sendPojo(REMOVE_EVENT, data) }
     }
 
-    override fun onChange(data: PrinterServerDto) {
+    override fun onChange(data: PrinterServerDTO) {
         val printerServerId = data.id
         val subscribersToSpecificPrinterServer = subscribersToSpecificPrinterServer[printerServerId] ?: emptySet()
         val subscribers = subscribersToAllPrinterServers + subscribersToSpecificPrinterServer
         subscribers.forEach { it.sendPojo(CHANGE_EVENT, data) }
     }
 
-    override fun onApplicationError(id: String?, error: ApplicationErrorDto) {
+    override fun onApplicationError(id: String?, error: ApplicationErrorDTO) {
         subscribersToAllPrinterServers.forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }
         if (id == null) {
             subscribersToSpecificPrinterServer.values.flatten().forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }

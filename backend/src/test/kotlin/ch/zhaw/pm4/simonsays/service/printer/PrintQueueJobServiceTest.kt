@@ -1,7 +1,7 @@
 package ch.zhaw.pm4.simonsays.service.printer
 
 import ch.zhaw.pm4.simonsays.api.mapper.printer.PrintQueueJobMapper
-import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
+import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDTO
 import ch.zhaw.pm4.simonsays.entity.printer.JobStatus
 import ch.zhaw.pm4.simonsays.entity.printer.PrintQueue
 import ch.zhaw.pm4.simonsays.entity.printer.PrintQueueJob
@@ -20,7 +20,7 @@ class PrintQueueJobServiceTest {
     private val printQueueJobRepository: PrintQueueJobRepository = mockk(relaxed = true)
     private val printQueueRepository: PrintQueueRepository = mockk(relaxed = true)
     private val printQueueJobMapper: PrintQueueJobMapper = mockk(relaxed = true)
-    private val printQueueJobDto: PrintQueueJobDto = mockk()
+    private val printQueueJobDto: PrintQueueJobDTO = mockk()
     private val printQueue: PrintQueue = mockk()
     private val printQueueJob: PrintQueueJob = mockk()
 

@@ -1,6 +1,6 @@
 package ch.zhaw.pm4.simonsays.api.controller
 
-import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
+import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDTO
 import ch.zhaw.pm4.simonsays.config.ApplicationProperties
 import ch.zhaw.pm4.simonsays.config.auth.Access
 import ch.zhaw.pm4.simonsays.config.auth.AuthService
@@ -86,20 +86,20 @@ interface SocketIoNamespace<K, T> {
      * @param id The unique identifier to send to (printer server id, job id, ...). When null, the error will be sent to all connected clients. Otherwise, only subscribers of the given id will receive the error.
      * @param error The error that occurred.
      */
-    fun onApplicationError(id: K?, error: ApplicationErrorDto)
+    fun onApplicationError(id: K?, error: ApplicationErrorDTO)
 
     /**
      * Shorthand method for onApplicationError(id, ApplicationErrorDto(code, message)).
      */
     fun onApplicationError(id: K?, code: String, message: String) {
-        val error = ApplicationErrorDto(code, message)
+        val error = ApplicationErrorDTO(code, message)
         onApplicationError(id, error)
     }
 
     /**
      * Send and error to specific socket
      */
-    fun onApplicationError(socket: SocketIoSocket, error: ApplicationErrorDto) {
+    fun onApplicationError(socket: SocketIoSocket, error: ApplicationErrorDTO) {
         socket.sendPojo(APPLICATION_ERROR_EVENT, error)
     }
 
@@ -107,7 +107,7 @@ interface SocketIoNamespace<K, T> {
      * Shorthand method for onApplicationError(socket, ApplicationErrorDto(code, message))
      */
     fun onApplicationError(socket: SocketIoSocket, code: String, message: String) {
-        val error = ApplicationErrorDto(code, message)
+        val error = ApplicationErrorDTO(code, message)
         onApplicationError(socket, error)
     }
 }
@@ -188,7 +188,7 @@ class SocketIo(
         val disconnectMessage = "Client disconnected because of illegal access: ${access.name} (${access.message})"
         log.warn(disconnectMessage)
         socket.sendPojo(
-            SocketIoNamespace.APPLICATION_ERROR_EVENT, ApplicationErrorDto(access.name, disconnectMessage)
+            SocketIoNamespace.APPLICATION_ERROR_EVENT, ApplicationErrorDTO(access.name, disconnectMessage)
         )
         socket.disconnect(true)
     }

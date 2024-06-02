@@ -1,7 +1,7 @@
 package ch.zhaw.pm4.simonsays.service.printer
 
 import ch.zhaw.pm4.simonsays.api.mapper.printer.PrintQueueJobMapper
-import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
+import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDTO
 import ch.zhaw.pm4.simonsays.entity.printer.JobStatus
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueJobRepository
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueRepository
@@ -20,7 +20,7 @@ class PrintQueueJobService(
         return printQueueJobRepository.existsById(id)
     }
 
-    fun savePrintQueueJob(printerQueueId: String, printQueueJobDto: PrintQueueJobDto): PrintQueueJobDto {
+    fun savePrintQueueJob(printerQueueId: String, printQueueJobDto: PrintQueueJobDTO): PrintQueueJobDTO {
         // Get print queue
         val printQueue = printQueueRepository.findById(printerQueueId)
             .orElseThrow { IllegalArgumentException(printQueueNotFoundError) }
@@ -31,7 +31,7 @@ class PrintQueueJobService(
         return printQueueJobMapper.mapToPrintQueueJobDto(updatedPrintQueueJob)
     }
 
-    fun getPrintQueueJobById(jobId: String): PrintQueueJobDto? {
+    fun getPrintQueueJobById(jobId: String): PrintQueueJobDTO? {
         val printQueueJob = printQueueJobRepository.findById(jobId)
         val printQueueJobDto = printQueueJob.map { printQueueJobMapper.mapToPrintQueueJobDto(it) }
         return printQueueJobDto.orElse(null)
@@ -42,7 +42,7 @@ class PrintQueueJobService(
         printQueueJobRepository.flush()
     }
 
-    fun getNextPendingPrintQueueJob(printQueueId: String): PrintQueueJobDto? {
+    fun getNextPendingPrintQueueJob(printQueueId: String): PrintQueueJobDTO? {
         val printQueue = printQueueRepository.findById(printQueueId)
             .orElseThrow { IllegalArgumentException(printQueueNotFoundError) }
         val printQueueJob = printQueueJobRepository.findFirstByPrintQueueAndStatusOrderByCreationDateTimeAsc(
@@ -51,7 +51,7 @@ class PrintQueueJobService(
         return printQueueJob.map { printQueueJobMapper.mapToPrintQueueJobDto(it) }.orElse(null)
     }
 
-    fun getAllPrintQueueJobsForPrintQueue(printQueueId: String): List<PrintQueueJobDto> {
+    fun getAllPrintQueueJobsForPrintQueue(printQueueId: String): List<PrintQueueJobDTO> {
         val printQueue = printQueueRepository.findById(printQueueId)
             .orElseThrow { IllegalArgumentException(printQueueNotFoundError) }
         val printQueueJobs = printQueueJobRepository.findAllByPrintQueue(printQueue)

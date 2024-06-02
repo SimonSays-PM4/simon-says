@@ -4,9 +4,9 @@ import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.APPLICAT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.CHANGE_EVENT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.INITIAL_DATA_EVENT
 import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.REMOVE_EVENT
-import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
-import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDto
-import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
+import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDTO
+import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDTO
+import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDTO
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueJobService
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueService
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
@@ -100,7 +100,7 @@ class PrintQueueJobsNamespaceTest {
         val jobId = "job1"
         val socket =
             mockSocket("/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/$jobId")
-        val jobDto: PrintQueueJobDto = mockk(relaxed = true)
+        val jobDto: PrintQueueJobDTO = mockk(relaxed = true)
 
         every { mockPrintQueueJobService.getPrintQueueJobById(jobId) } returns jobDto
 
@@ -117,12 +117,12 @@ class PrintQueueJobsNamespaceTest {
         val jobId = "job1"
         val socket =
             mockSocket("/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/$jobId")
-        val initialJobDto: PrintQueueJobDto = mockk(relaxed = true)
+        val initialJobDto: PrintQueueJobDTO = mockk(relaxed = true)
         every { initialJobDto.id } returns jobId
         val updatedJobJson = JSONObject("""{"id":"$jobId","status":"PRINTED"}""")
-        val updatedJobDto: PrintQueueJobDto = mockk(relaxed = true)
+        val updatedJobDto: PrintQueueJobDTO = mockk(relaxed = true)
         every { updatedJobDto.id } returns jobId
-        every { updatedJobDto.status } returns JobStatusDto.PRINTED
+        every { updatedJobDto.status } returns JobStatusDTO.PRINTED
 
         every { mockPrintQueueJobService.getPrintQueueJobById(jobId) } returns initialJobDto
         every { mockPrintQueueJobService.doesPrintQueueJobExist(jobId) } returns true
@@ -141,7 +141,7 @@ class PrintQueueJobsNamespaceTest {
         val jobId = "job1"
         val socket =
             mockSocket("/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/$jobId")
-        val jobDto: PrintQueueJobDto = mockk(relaxed = true)
+        val jobDto: PrintQueueJobDTO = mockk(relaxed = true)
         every { jobDto.id } returns jobId
         every { mockPrintQueueJobService.getPrintQueueJobById(jobId) } returns jobDto
 
@@ -167,9 +167,9 @@ class PrintQueueJobsNamespaceTest {
         val printQueueId = "queue1"
         val namespaceString = "/socket-api/v1/printer-servers/$printerServerId/print-queues/$printQueueId/jobs/next"
         val socket = mockSocket(namespaceString)
-        val nextJobDto: PrintQueueJobDto = mockk(relaxed = true)
+        val nextJobDto: PrintQueueJobDTO = mockk(relaxed = true)
         every { nextJobDto.id } returns UUID.randomUUID().toString()
-        every { nextJobDto.status } returns JobStatusDto.PENDING
+        every { nextJobDto.status } returns JobStatusDTO.PENDING
 
         every { mockPrintQueueJobService.getNextPendingPrintQueueJob(printQueueId) } returns nextJobDto
 
@@ -182,7 +182,7 @@ class PrintQueueJobsNamespaceTest {
     @Test
     fun `onApplicationError should send error to all relevant subscribers`() {
         val jobId = "job1"
-        val errorDto = ApplicationErrorDto("ERROR_CODE", "Error message")
+        val errorDto = ApplicationErrorDTO("ERROR_CODE", "Error message")
 
         // Setup subscribers for all, next, and specific jobs
         val allSocket = mockSocket("/socket-api/v1/printer-servers/server1/print-queues/queue1/jobs")
