@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.simonsays
 
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapper
+import ch.zhaw.pm4.simonsays.api.types.MenuCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.MenuItem
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
@@ -276,6 +277,38 @@ class MenuIntegrationTest : IntegrationTest() {
                     json(objectMapper.writeValueAsString(expectedReturn))
                 }
             }
+    }
+
+    @Test
+    @Transactional
+    fun `Test menu update price`() {
+        val menu = menuFactory.createMenu(
+                "testmenuitem",
+                testEvent.id!!,
+                listOf(
+                        testMenuItem,
+                )
+        )
+        val updateMenuDto = MenuCreateUpdateDTO(
+                id = menu.id,
+                name = menu.name,
+                menuItems = menu.menuItems.map { menuItemMapper.mapToMenuItemDTO(it) },
+                price = 15.0
+        )
+
+        mockMvc.put(getMenuUrl(testEvent.id!!)) {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updateMenuDto)
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(updateMenuDto))
+                    }
+                }
     }
 
     @Test
