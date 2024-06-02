@@ -59,6 +59,7 @@ class MenuService(
         menuToSave.name = menu.name!!
         menuToSave.event = eventService.getEventEntity(eventId)
         menuToSave.menuItems = menuItems
+        menuToSave.price = menu.price
         return menuToSave
     }
 
