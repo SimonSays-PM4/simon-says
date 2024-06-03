@@ -12,7 +12,7 @@
         "test": "exit 0",
         "lint": "eslint --max-warnings=0 \"src/**/*.{ts,tsx}\"",
         "api": "openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g typescript-axios -o ./src/gen/api --config api.json",
-        "preinstall": "npm install ../printer/printer-api-lib"
+        "preinstall": "cd ../printer/printer-api-lib && npm install"
     },
     "dependencies": {
         "@headlessui/react": "^1.7.19",

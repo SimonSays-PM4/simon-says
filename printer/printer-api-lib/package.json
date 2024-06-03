@@ -5,8 +5,5 @@
   "private": true,
   "dependencies": {
     "socket.io-client": "^4.7.5"
-  },
-  "devDependencies": {
-    "@types/socket.io-client": "^3.0.0"
   }
 }
