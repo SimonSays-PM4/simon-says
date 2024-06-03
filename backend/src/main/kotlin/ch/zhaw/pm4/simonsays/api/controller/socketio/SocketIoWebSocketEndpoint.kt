@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component
 import java.nio.ByteBuffer
 
 /**
+ * This class is a WebSocket endpoint for the Socket.IO server. It is used to handle WebSocket connections
+ * and forward messages to the Socket.IO server.
+ *
  * This class is adapted from https://socketio.github.io/engine.io-server-java/using.html#websocket-connections
  */
 @Component

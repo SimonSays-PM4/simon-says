@@ -5,6 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
 
+/**
+ * This class is required to inject Spring beans into WebSocket endpoints.
+ *
+ * To use it in a WebSocket endpoint, add the following annotation to the endpoint class:
+ *
+ * "@ServerEndpoint("/socket.io/", **configurator = WebSocketConfigurator::class**)"
+ *
+ */
 @Component
 class WebSocketConfigurator : ServerEndpointConfig.Configurator() {
     @Autowired
