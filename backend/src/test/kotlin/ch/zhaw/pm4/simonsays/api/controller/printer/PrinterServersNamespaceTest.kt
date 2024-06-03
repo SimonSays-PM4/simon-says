@@ -1,8 +1,8 @@
 package ch.zhaw.pm4.simonsays.api.controller.printer
 
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.APPLICATION_ERROR_EVENT
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.CHANGE_EVENT
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.REMOVE_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.APPLICATION_ERROR_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.CHANGE_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.REMOVE_EVENT
 import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDTO
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
 import ch.zhaw.pm4.simonsays.testutils.mockSocket

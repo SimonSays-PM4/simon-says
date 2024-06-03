@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.simonsays.api.controller
 
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace
 import ch.zhaw.pm4.simonsays.api.types.OrderDTO
 import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDTO
 import ch.zhaw.pm4.simonsays.entity.FoodOrder
