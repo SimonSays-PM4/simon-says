@@ -20,7 +20,8 @@ class WebSocketConfiguratorTest {
         applicationContext = mockk(relaxed = true)
 
         // Initialize WebSocketConfigurator
-        webSocketConfigurator = WebSocketConfigurator(applicationContext)
+        webSocketConfigurator = WebSocketConfigurator()
+        webSocketConfigurator.setApplicationContext(applicationContext)
     }
 
     @Test
