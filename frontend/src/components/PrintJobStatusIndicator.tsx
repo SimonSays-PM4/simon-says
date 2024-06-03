@@ -9,7 +9,15 @@ const baseUrl = process.env.VITE_API_URL || import.meta.env.VITE_API_URL;
 const printerServerId = process.env.VITE_PRINTER_SERVER_ID || import.meta.env.VITE_PRINTER_SERVER_ID;
 const receiptPrinterQueueId = process.env.VITE_RECEIPT_PRINTER_QUEUE_ID || import.meta.env.VITE_RECEIPT_PRINTER_QUEUE_ID;
 
-export const PrintJobStatusIndicator: React.FC<{ order: OrderDTO }> = ({ order }) => {
+/**
+ * Represents a component that displays the status of a print job and allows restarting the print job.
+ *
+ * @component
+ * @param props - The component props.
+ * @param props.order - The order object associated with the print job.
+ * @returns The rendered PrintJobStatusIndicator component.
+ */
+export const PrintJobStatusIndicator: React.FC<{ order: OrderDTO }> = ({ order }): JSX.Element => {
     const { loginInfo } = useContext(AppContext);
     const elementRef = useRef<HTMLDivElement>(null);
     const [printJobStatus, setPrintJobStatus] = useState<PrintQueueJobDto | undefined>(undefined);
@@ -57,8 +65,6 @@ export const PrintJobStatusIndicator: React.FC<{ order: OrderDTO }> = ({ order }
             socketApiRef.current?.disconnect();
         };
     }, []);
-
-    //const printJobStatus = useContext(PrintJobStatesContext).get(order.id.toString()); 
 
     const statusJsx = getStatusJsxForPrintJob(printJobStatus);
 
