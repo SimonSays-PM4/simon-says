@@ -47,8 +47,8 @@ class MenuItemService(
 
     fun deleteMenuItem(menuItemId: Long, eventId: Long) {
         val menuItem = getMenuItemEntity(menuItemId, eventId)
-        if (!menuItem.menus.isNullOrEmpty()) {
-            throw ResourceInUseException("Menu item is used in menus and cannot be deleted")
+        if (!menuItem.menus.isNullOrEmpty() || !menuItem.orderMenuItem.isNullOrEmpty()) {
+            throw ResourceInUseException("Menu item is used in menus or orders and cannot be deleted")
         }
         menuItemRepository.delete(menuItem)
     }

@@ -125,7 +125,16 @@ class MenuItemTest {
         val error = Assertions.assertThrows(
                 ResourceInUseException::class.java)
         { menuItemService.deleteMenuItem(1, getEvent().id!!) }
-        Assertions.assertEquals("Menu item is used in menus and cannot be deleted", error.message)
+        Assertions.assertEquals("Menu item is used in menus or orders and cannot be deleted", error.message)
+    }
+
+    @Test
+    fun `Test delete menuItem still in use exception with order`() {
+        every { menuItemRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenuItem(orderMenuItems = setOf(getOrderMenuItem(order = getOrder()))))
+        val error = Assertions.assertThrows(
+                ResourceInUseException::class.java)
+        { menuItemService.deleteMenuItem(1, getEvent().id!!) }
+        Assertions.assertEquals("Menu item is used in menus or orders and cannot be deleted", error.message)
     }
 
 }

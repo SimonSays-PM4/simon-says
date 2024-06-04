@@ -3,10 +3,7 @@ package ch.zhaw.pm4.simonsays
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
-import ch.zhaw.pm4.simonsays.entity.Event
-import ch.zhaw.pm4.simonsays.entity.Ingredient
-import ch.zhaw.pm4.simonsays.entity.Menu
-import ch.zhaw.pm4.simonsays.entity.MenuItem
+import ch.zhaw.pm4.simonsays.entity.*
 
 
 fun getCreateUpdateMenuItemDTO(
@@ -29,7 +26,8 @@ fun getMenuItem(
     event: Event = getEvent(),
     ingredients: List<Ingredient> = listOf(getTestIngredient1()),
     menus: List<Menu>? = null,
-    price: Double = 1.0
+    price: Double = 1.0,
+    orderMenuItems: Set<OrderMenuItem>? = null,
 ): MenuItem {
     return MenuItem(
         id,
@@ -37,7 +35,8 @@ fun getMenuItem(
         event,
         ingredients,
         price,
-        menus
+        menus,
+        orderMenuItems
     )
 }
 
