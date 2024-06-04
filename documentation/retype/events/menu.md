@@ -5,6 +5,6 @@ order: 50
 ---
 # Beispiel
 
-Ein Menü besteht aus mehreren Produkten. Ein Produkt kann beispielweise ein Burger, ein Getränk oder ein Dessert sein. Das Dropdown-Menü zeigt alle bereits erstellten Menu Items an.
+Ein Menü setzt sich aus mehreren Produkten zusammen. Ein Produkt kann z.B. ein Burger, ein Getränk oder ein Dessert sein. Das Dropdown-Menü zeigt alle bereits angelegten Menüeinträge an.
 
 ![Menü erstellen](assets/menu.gif)

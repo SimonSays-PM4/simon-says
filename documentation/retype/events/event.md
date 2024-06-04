@@ -5,15 +5,15 @@ order: 80
 ---
 # Beispiel
 
-Um einen Event zu erstellen, logge dich im Admin Dashboard ein und klicke auf den Button "Erstellen". Beim Erfassen des Events gibst du den Namen, ein Passwort und die Anzahl Tische ein.
+Um ein Event zu erstellen, logge dich in das Admin Dashboard ein und klicke auf die Schaltfläche "Erstellen". Wenn du den Event erstellst, gibst du einen Namen, ein Passwort und die Anzahl der Tische ein.
 
 ## Event Passwort
-Um Bestellungen zu erfassen oder eine Station anzuzeigen, benötigst du das Event Passwort. Dieses Passwort wird beim Erstellen des Events festgelegt und kann bei Bedarf auch später geändert werden.
-Wähle ein sicheres Passwort, damit nur berechtigte Personen Zugriff auf die Bestellungen haben.
+Um Bestellungen aufzugeben oder eine Station anzusehen, benötigst du das Event Passwort. Dieses Passwort wird beim Erstellen des Events festgelegt und kann später bei Bedarf geändert werden.
+Wähle ein sicheres Passwort, damit nur berechtigte Personen auf die Bestellungen zugreifen können.
 
 ![Event erstellen](assets/create-event.gif)
 
-Sobald dein Event erstellt ist, kannst du Menüs und Produkte hinzufügen. In den nachfolgenden Seiten findest du Anleitungen, wie du Menüs und Produkte erstellst.
+Sobald dein Event erstellt ist, kannst du Menüs und Produkte hinzufügen. Auf den folgenden Seiten findest du eine Anleitung zum Erstellen von Menüs und Produkten.
 
-Den Event kannst du jederzeit bearbeiten oder löschen. Hier können die Anzahl Tische oder das Passwort geändert werden.
+Du kannst das Event jederzeit bearbeiten oder löschen. Hier kannst du die Anzahl der Tische oder das Passwort ändern.
 ![Event bearbeiten](assets/edit-event.png)
