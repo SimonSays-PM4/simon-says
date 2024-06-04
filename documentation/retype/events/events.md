@@ -6,7 +6,7 @@ tags: [events, überblick]
 Vor deinem Event erstellst du im Admin Dashboard von Simon Says deinen Anlass und die dazugehörigen Produkte. 
 In den nachfolgenden Seiten, findest du sämtliche Anleitungen, um einfach und schnell deinen Anlass zu erstellen.
 
-![](overview-events.png "Aufbau")
+![Aufbau](assets/overview-events.png)
 
 Im Bild siehst du den Aufbau des Admin-Dashboards. Wenn du dich anmeldest, erstellst du zuerst einen neuen Event.
 Der Event ist die übergeordnete Kategorie, in der du Menüs und Produkte erstellst. 
