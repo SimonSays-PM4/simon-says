@@ -1,7 +1,8 @@
 ---
 label: Benutzerrollen
+icon: people
 ---
-# Benutzerrollen
+# Benutzerrollen (Micha)
 
 Die Applikation SimonSays unterscheidet zwischen verschiedenen Benutzerrollen. Jede Rolle hat unterschiedliche Berechtigungen und Zugriff auf verschiedene Funktionen der Applikation.
 Um den Zugriff für den Event Staff so einfach wie möglich zu gestalten, reicht ein Event-Passwort, welches der Administrator festlegt. Es müssen keine separaten Benutzerkonten erstellt werden.
@@ -17,4 +18,3 @@ Das Event Staff ist während der Veranstaltung aktiv. Es kann Bestellungen aufne
 Der Event Staff teilt sich in verschiedene Bereiche auf:
 - Küche: Verarbeitet die Bestellungen und gibt sie zur Auslieferung frei
 - Bedienung: Nimmt Bestellungen auf und bearbeitet sie
-

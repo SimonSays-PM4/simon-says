@@ -1,5 +1,6 @@
 ---
-label: Sample
+label: Kontakt
+icon: megaphone
 ---
 # Kontakt
 
