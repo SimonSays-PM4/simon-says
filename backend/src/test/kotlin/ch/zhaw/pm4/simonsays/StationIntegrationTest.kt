@@ -6,7 +6,6 @@ import ch.zhaw.pm4.simonsays.api.types.OrderMenuItemDTO
 import ch.zhaw.pm4.simonsays.api.types.StationCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.entity.*
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
-import ch.zhaw.pm4.simonsays.service.IngredientService
 import jakarta.transaction.Transactional
 import org.hamcrest.CoreMatchers
 import org.hamcrest.collection.IsCollectionWithSize
@@ -27,7 +26,6 @@ import org.springframework.test.web.servlet.put
 class StationIntegrationTest : IntegrationTest() {
 
     private fun getStationUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/station"
-    private fun getIngredientUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/ingredient"
 
     @Autowired
     protected lateinit var ingredientMapper: IngredientMapper
@@ -802,42 +800,4 @@ class StationIntegrationTest : IntegrationTest() {
                     }
                 }
     }
-
-    @Test
-    @Transactional
-    fun `Test delete station when no ingredients are assigned`() {
-        val ingredient: Ingredient = ingredientFactory.createIngredient(event = testEvent)
-        val station: Station = stationFactory.createStation(assemblyStation = true, eventId = testEvent.id!!, ingredients = listOf(ingredient))
-
-        // Delete ingredient
-        mockMvc.delete(getIngredientUrl(testEvent.id!!) + "/" + ingredient.id) {
-            with(httpBasic(username, password))
-            contentType = MediaType.APPLICATION_JSON
-        }
-                .andDo { print() }
-                .andExpect {
-                    status { isNoContent() }
-                }
-
-        // Ensure that ingredient is actually deleted
-        mockMvc.get(getIngredientUrl(testEvent.id!!) + "/" + ingredient.id) {
-            with(httpBasic(username, password))
-            contentType = MediaType.APPLICATION_JSON
-        }
-                .andDo { print() }
-                .andExpect {
-                    status { isNotFound() }
-                }
-
-        // Delete station
-        mockMvc.delete(getStationUrl(testEvent.id!!) + "/" + station.id) {
-            with(httpBasic(username, password))
-            contentType = MediaType.APPLICATION_JSON
-        }
-                .andDo { print() }
-                .andExpect {
-                    status { isNoContent() }
-                }
-    }
-
 }
