@@ -61,7 +61,11 @@ export const useStationView = (): StationAction => {
                 ? url + `/socket-api/v1/event/${eventId}/station/assembly`
                 : url + `/socket-api/v1/event/${eventId}/station/view/${stationId}`;
 
-            const socket = io(socketUrl);
+            const socket = io(socketUrl, {
+                extraHeaders: {
+                    "Authorization": 'Basic ' + btoa(`${loginInfo.userName}:${loginInfo.password}`)
+                }
+            });
 
             socket.connect();
             socket.on("connect", () => {

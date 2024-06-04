@@ -1,11 +1,6 @@
 # Simon Says
 This is the main repository for the Simon Says project - conducted by the PM4 group at the Zurich University of Applied Sciences (ZHAW).
 
-Sonar Cloud Quality Gate Status for Backend:\
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=simonsays-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=simonsays-backend)\
-Sonar Cloud Quality Gate Status for Frontend:\
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=simonsys-frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=simonsys-frontend)
-
 ## Overview
 
 Simon Says is a software system designed to enhance the production cycle within the gastronomy sector, especially
@@ -32,9 +27,9 @@ use the linked README files.
 
 ### Prerequisites
 
-- Java (min. Version 17.x) for the backend.
-- Node.js (min. Version 18.x) and npm for running the frontend applications.
-- Docker Desktop (min. Version 4.x) for the database.
+- Java 17 or newer for the backend.
+- Node.js and npm for running the frontend applications.
+- Docker for the database.
 - Raspberry Pi for the print server.
 
 ### Installation
@@ -94,5 +89,5 @@ You can find the end-user guide [here](https://simonsays-pm4.github.io/simon-say
 If you want to update the documentation, please read more in the [documentation README](documentation/retype/README.md).
 
 ## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-The project is licensed under the MIT License.

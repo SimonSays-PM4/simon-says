@@ -40,7 +40,7 @@ export class Printer {
             console.error(`Failed to resolve printer ip for mac ${this.mac} in arp cache. Starting network scan.`);
             // Attempting network scan
             try { 
-                // timeout the network scan after a certain time
+                // timeout the network scan after a certain time 
                 ip = await this.findPrinterIpWithNetworkScan();
                 if (!ip) {
                     console.error(`Failed to resolve printer ip for mac ${this.mac} in network scan.`);
@@ -98,7 +98,9 @@ export class Printer {
 
         // Dry run the print job if in dry run mode
         if (process.env.DRY_RUN == "true") {
-            return this.dryRun(printJob);
+            this.dryRun(printJob);
+            this.printLock = false;
+            return;
         }
 
         // Print the job
@@ -159,7 +161,7 @@ export class Printer {
             throw new Error(`Failed to print job ${printJob.id} on printer ${this.name} with mac ${this.mac}: ${error}`);
         } finally {
             await this.thermalPrinter!.clear();
-            this.printLock = false
+            this.printLock = false;
         }
     }
 

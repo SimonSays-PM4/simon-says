@@ -11,7 +11,7 @@ import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueJobService
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueService
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
-import ch.zhaw.pm4.simonsays.utils.printer.sendPojo
+import ch.zhaw.pm4.simonsays.utils.sendPojo
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.socket.socketio.server.SocketIoSocket
 import org.json.JSONObject
@@ -158,6 +158,15 @@ class PrintQueueJobsNamespace(
             )
         }
 
+        savePrintQueueJob(socket, printQueueId, jobId, jobJson)
+    }
+
+    fun savePrintQueueJob(
+        socket: SocketIoSocket,
+        printQueueId: PrintQueueId,
+        jobId: PrintQueueJobId?,
+        jobJson: JSONObject
+    ) {
         // set the last update date
         val currentTimeMillis = System.currentTimeMillis()
         jobJson.put("lastUpdateDateTime", currentTimeMillis)
@@ -294,7 +303,7 @@ class PrintQueueJobsNamespace(
         } else {
             val onErrorJobSubscribers = subscribersToSpecificPrintQueueJobs[id] ?: emptySet()
             // check all next pending jobs if they have the same job id and add the subscribers to the list
-            onErrorJobSubscribers + getAffectedNextPrintJobSubscribers(id)
+            subscribersToAllPrintQueueJobs.values.flatten() + onErrorJobSubscribers + getAffectedNextPrintJobSubscribers(id)
         }
         subscribers.forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }
     }

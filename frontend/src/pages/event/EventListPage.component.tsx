@@ -8,7 +8,7 @@ import {Popup} from "../../components/Popup.tsx";
 import {EventCreateUpdateDTO, EventDTO} from "../../gen/api";
 import {ButtonType} from "../../enums/ButtonType.ts";
 import {IoFastFoodOutline} from "react-icons/io5";
-import {PiChargingStationDuotone, PiCookieDuotone, PiHamburgerDuotone, PiReceiptDuotone} from "react-icons/pi";
+import {PiChargingStationDuotone, PiCookieDuotone, PiHamburgerDuotone} from "react-icons/pi";
 import {MdEditSquare} from "react-icons/md";
 import {FaRegTrashAlt} from "react-icons/fa";
 import { TbArrowsJoin } from "react-icons/tb";
@@ -31,10 +31,6 @@ export const EventListPageComponent: React.FC = () => {
 
     const onClickIngredients = (row: EventCreateUpdateDTO) => {
         navigate("../" + row.id + "/ingredients")
-    }
-
-    const onClickOrders = (row: EventCreateUpdateDTO) => {
-        navigate("../../" + row.id + "/order")
     }
 
     const onClickStations = (row: EventCreateUpdateDTO) => {
@@ -94,15 +90,6 @@ export const EventListPageComponent: React.FC = () => {
             buttonType: ButtonType.Secondary,
             children: <PiCookieDuotone/>,
             action: onClickIngredients
-        },
-        {
-            key: "id",
-            name: "Bestellungen",
-            elementKey: "orderAction",
-            type: "action",
-            buttonType: ButtonType.Secondary,
-            children: <PiReceiptDuotone  />,
-            action: onClickOrders
         },
         {
             key: "id",

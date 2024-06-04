@@ -38,4 +38,113 @@ describe("Join", () => {
 
         cy.url().should("not.contain", "/join");
     });
+
+    it("should reach Bestellungen", () => {
+        cy.get("tr").contains("Test-Event").get("#joinAction").click();
+        cy.get("h1").contains("Join Event");
+        cy.get("#userName").type("user");
+        cy.get("#password").type("Test-password");
+        cy.get("form").contains("Join").click();
+
+        cy.wait(500);
+
+        cy.get("h5").contains("Bestellung").click();
+        cy.url().should("include", "/order");
+    });
+
+    it("should create an ingredient", () => {
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
+        cy.wait(500);
+        cy.get("h2").contains("Zutaten").should("exist");
+
+        cy.contains("button", "Erstellen").click();
+
+        cy.url().should("include", "/ingredient/create");
+
+        cy.get("#name").type("Test-Ingredient");
+        cy.get("#mustBeProduced").click();
+        cy.contains("button", "Erstellen").click();
+
+        cy.wait(500);
+
+        cy.url().should("include", "/ingredients");
+    });
+
+    it("should create a station", () => {
+        cy.contains("tr", "Test-Event").contains("button", "Station").click();
+
+        cy.wait(500);
+        cy.get("h2").contains("Stationen").should("exist");
+
+        cy.contains("button", "Erstellen").click();
+
+        cy.url().should("include", "/station/create");
+
+        cy.get("#name").type("Test-Station");
+        cy.get("#ingredientSelector").type("Test-Ingredient\n");
+        cy.contains("button", "Erstellen").click();
+
+        cy.wait(500);
+
+        cy.url().should("include", "/station");
+    });
+
+    it("should reach Station", () => {
+        cy.get("tr").contains("Test-Event").get("#joinAction").click();
+        cy.get("h1").contains("Join Event");
+        cy.get("#userName").type("user");
+        cy.get("#password").type("Test-password");
+        cy.get("form").contains("Join").click();
+
+        cy.wait(500);
+
+        cy.get("h5").contains("Test-Station").click();
+        cy.url().should("include", "/station");
+    });
+
+    it("should delete the ingredient", () => {
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
+        cy.wait(500);
+        cy.get("h2").contains("Zutaten").should("exist");
+
+        cy.get("table")
+            .contains("tr", "Test-Ingredient")
+            .find("td:last-child")
+            .find('button[id="deleteAction"]')
+            .click();
+
+        cy.wait(500); // wait for the popup to show up
+
+        cy.get('div[tabIndex="-1"].modal').should("exist");
+        cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
+
+        cy.wait(500); // wait for the popup to close
+    });
+
+    it("should delete created station", () => {
+        cy.contains("tr", "Test-Event").contains("button", "Station").click();
+
+        cy.wait(500);
+        cy.get("h2").contains("Stationen").should("exist");
+
+        cy.contains("tr", "Test-Station").find("td:last-child").find("button:last-child").click();
+
+        cy.wait(500); // wait for the popup to show up
+
+        cy.get('div[tabIndex="-1"].modal').should("exist");
+        cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
+
+        cy.wait(500); // wait for the popup to close
+
+        cy.url().should("include", "/station");
+    });
+
+    it("should delete created event", () => {
+        cy.contains("tr", "Test-Event").find("td:last-child").find("button:last-child").click();
+
+        cy.wait(500); // wait for the popup to show up
+
+        cy.get('div[tabIndex="-1"].modal').should("exist");
+        cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
+    });
 });
