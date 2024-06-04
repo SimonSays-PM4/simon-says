@@ -11,7 +11,6 @@ In der Vorbereitung auf deinen Event benötigst du eine funktionierende Umgebung
 ## Voraussetzungen
 1. Cloud-Anbieter-Konto (z.B. AWS, Google Cloud, Azure)
 2. Kubernetes-Cluster für das Hosting von Frontend und Backend
-3. MySQL-Datenbankserver
 4. Drucker für die Bestellungsausdrucke
 5. Raspberry Pi als lokales Printing-Gateway
 6. Stabiler Internetzugang am Event-Ort
@@ -19,121 +18,23 @@ In der Vorbereitung auf deinen Event benötigst du eine funktionierende Umgebung
 8. Tablets für die Kitchen Displays
 
 ## Cloud-Setup
+### Schritt 1: Helm Chart deployen
+Das Helm Chart enthält das Frontend, das Backend und die Datenbank. Sämtliche Konfigurationen, Services als auch das Ingress Objekt sind im Chart enthalten.
 
-### Schritt 1: Kubernetes-Cluster erstellen
-1. Melde dich bei deinem Cloud-Anbieter an und erstelle ein neues Kubernetes-Cluster.
-    - [AWS EKS](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html)
-    - [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/quickstart)
-    - [Azure Kubernetes Service](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough)
+Für die Installation des Helm Charts muss folgender Befehl ausgeführt werden:
+```bash
+cd helm
+helm dependency update . 
+helm package . -d output
+package=$(find output -name "*.tgz")
+helm upgrade simon-says $package  -f values.yaml  --set mysql.auth.rootPassword=<<my-secret-password>>  --set mysql.auth.password=<<my-secret-password>> --install -n simon-says --wait
+```
 
-### Schritt 2: MySQL-Datenbank einrichten
-1. Erstelle eine MySQL-Datenbankinstanz in deiner Cloud-Umgebung.
-    - [AWS RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.MySQL.html)
-    - [Google Cloud SQL](https://cloud.google.com/sql/docs/mysql/create-instance)
-    - [Azure Database for MySQL](https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-portal)
+Das `application.yaml` des Backends kann im `values.yaml` ergänzt werden.
 
-2. Notiere dir die Verbindungsdetails (Host, Port, Benutzername, Passwort).
-
-### Schritt 3: Anwendungscode und Docker-Images vorbereiten
-1. Clone das SimonSays Repository:
-   ```bash
-   git clone https://github.com/SimonSays-PM4/simon-says.git
-   cd SimonSays
-   ```
-2. Erstelle Docker-Images für Frontend und Backend:
-   ```bash
-   docker build -t simonsays-frontend ./frontend
-   docker build -t simonsays-backend ./backend
-   ```
-
-### Schritt 4: Docker-Images in eine Container Registry hochladen
-1. Melde dich bei deiner Cloud Container Registry an und lade die Docker-Images hoch:
-    - [Amazon ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/getting-started-cli.html)
-    - [Google Container Registry](https://cloud.google.com/container-registry/docs/pushing-and-pulling)
-    - [Azure Container Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-docker-cli)
-
-   Beispiel für AWS ECR:
-   ```bash
-   aws ecr create-repository --repository-name simonsays-frontend
-   aws ecr create-repository --repository-name simonsays-backend
-   docker tag simonsays-frontend:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/simonsays-frontend:latest
-   docker tag simonsays-backend:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/simonsays-backend:latest
-   docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/simonsays-frontend:latest
-   docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/simonsays-backend:latest
-   ```
-
-### Schritt 5: Kubernetes-Deployments und Services erstellen
-1. Erstelle Kubernetes-Manifestdateien für Frontend, Backend und MySQL-Verbindung (z.B. `frontend-deployment.yaml`, `backend-deployment.yaml`, `mysql-secret.yaml`).
-
-   Beispiel für das Backend-Deployment:
-   ```yaml
-   apiVersion: apps/v1
-   kind: Deployment
-   metadata:
-     name: simonsays-backend
-   spec:
-     replicas: 3
-     selector:
-       matchLabels:
-         app: simonsays-backend
-     template:
-       metadata:
-         labels:
-           app: simonsays-backend
-       spec:
-         containers:
-         - name: backend
-           image: <aws_account_id>.dkr.ecr.<region>.amazonaws.com/simonsays-backend:latest
-           ports:
-           - containerPort: 3000
-           env:
-           - name: MYSQL_HOST
-             valueFrom:
-               secretKeyRef:
-                 name: mysql-secret
-                 key: host
-           - name: MYSQL_USER
-             valueFrom:
-               secretKeyRef:
-                 name: mysql-secret
-                 key: user
-           - name: MYSQL_PASSWORD
-             valueFrom:
-               secretKeyRef:
-                 name: mysql-secret
-                 key: password
-           - name: MYSQL_DATABASE
-             value: "simonsays"
-   ```
-
-2. Erstelle die Ressourcen im Kubernetes-Cluster:
-   ```bash
-   kubectl apply -f mysql-secret.yaml
-   kubectl apply -f backend-deployment.yaml
-   kubectl apply -f frontend-deployment.yaml
-   ```
-
-3. Erstelle Services, um den Zugriff auf Frontend und Backend zu ermöglichen:
-   ```yaml
-   apiVersion: v1
-   kind: Service
-   metadata:
-     name: simonsays-backend-service
-   spec:
-     selector:
-       app: simonsays-backend
-     ports:
-       - protocol: TCP
-         port: 80
-         targetPort: 3000
-     type: LoadBalancer
-   ```
-
-4. Füge alle notwendigen Ingress-Ressourcen hinzu, um den externen Zugriff auf die Applikation zu ermöglichen.
-
-### Schritt 6: Teste die Applikation
+### Schritt 2: Teste die Applikation
 1. Überprüfe die Deployments und Services im Kubernetes-Dashboard oder mit `kubectl get pods`, `kubectl get services`.
-2. Öffne die Anwendung im Browser über die LoadBalancer-IP oder die konfigurierte Domain.
+2. Öffne die Anwendung im Browser über die im Ingress-Objekt definierte URL.
 
 ## Hardware-Aufbau vor Ort
 
