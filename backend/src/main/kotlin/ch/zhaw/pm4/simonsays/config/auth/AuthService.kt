@@ -4,7 +4,7 @@ import ch.zhaw.pm4.simonsays.config.AdminEndpoint
 import ch.zhaw.pm4.simonsays.config.ApplicationProperties
 import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import ch.zhaw.pm4.simonsays.service.EventService
-import org.slf4j.LoggerFactory
+import ch.zhaw.pm4.simonsays.service.OrderService
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -19,12 +19,12 @@ class AuthService(
     val applicationProperties: ApplicationProperties,
     val printerProperties: PrinterProperties,
     val eventService: EventService,
+    val orderService: OrderService,
     requestMappingHandlerMapping: RequestMappingHandlerMapping
 ) {
     private val matcher = AntPathMatcher()
-    private val log = LoggerFactory.getLogger(javaClass)
 
-    final val adminEndpoints: Map<RequestMappingInfo, HandlerMethod> =
+    private final val adminEndpoints: Map<RequestMappingInfo, HandlerMethod> =
         requestMappingHandlerMapping.handlerMethods // Get all handler methods
             .filter { it.value.method.isAnnotationPresent(AdminEndpoint::class.java) } // Filter for methods annotated with @AdminEndpoint
 
@@ -48,9 +48,10 @@ class AuthService(
         val isAdminEndpoint = isAdminEndpoint(method, uri)
         val isEventRelatedEndpoint = isEventRelatedEndpoint(uri)
         val isPrinterRelatedEndpoint = isPrinterRelatedEndpoint(uri)
+        val isPrintJobRelatedEndpoint = isPrintJobRelatedEndpoint(uri)
 
         // In case the request is not targeting any event, admin or printer related endpoint, we allow it
-        if (!isAdminEndpoint && !isEventRelatedEndpoint && !isPrinterRelatedEndpoint) {
+        if (!isAdminEndpoint && !isEventRelatedEndpoint && !isPrinterRelatedEndpoint && !isPrintJobRelatedEndpoint) {
             return Access.ALLOWED_UNRELATED_REQUEST
         }
 
@@ -63,18 +64,13 @@ class AuthService(
             if (isPrinterTokenValid(authorizationHeaderValue)) {
                 return Access.ALLOWED
             }
-            return Access.FORBIDDEN_PRINTER
+            // If the request is a print job related endpoint, the user may still use an event token to authenticate
+            if (!isPrintJobRelatedEndpoint) {
+                return Access.FORBIDDEN_PRINTER
+            }
         }
 
-        if (!authorizationHeaderValue.startsWith(BASIC_AUTH_PREFIX)) {
-            return Access.BAD_REQUEST
-        }
-
-        val (username, password) = try {
-            extractCredentials(authorizationHeaderValue)
-        } catch (exception: Exception) {
-            return Access.BAD_REQUEST
-        }
+        val (username, password) = extractCredentialsOrNull(authorizationHeaderValue) ?: return Access.BAD_REQUEST
 
         // Check for admin authorization
         val isAdmin = isAdmin(username, password)
@@ -88,7 +84,7 @@ class AuthService(
         // If the request is neither a printer nor admin endpoint it has to be an event endpoint.
 
         // In case the event id is not present in the uri, we return forbidden
-        val eventId = getEventIdFromUri(uri) ?: return Access.FORBIDDEN_EVENT
+        val eventId = getEventIdFromUri(uri, isPrintJobRelatedEndpoint) ?: return Access.FORBIDDEN_EVENT
 
         // Admin is allowed to access all events.
         if (isAdmin) {
@@ -149,13 +145,33 @@ class AuthService(
     }
 
     /**
+     * Check if the given request uri is a print job related endpoint
+     */
+    private fun isPrintJobRelatedEndpoint(uri: String): Boolean {
+        return matcher.match(PRINT_JOB_ANT_PATTERN, uri)
+    }
+
+    /**
      * Extracts the credentials from the Authorization header
      */
     private fun extractCredentials(authorizationHeaderValue: String): Pair<String, String> {
+        require(authorizationHeaderValue.startsWith(BASIC_AUTH_PREFIX)) { "Invalid Authorization format." }
         val encodedCredentials = authorizationHeaderValue.substring(BASIC_AUTH_PREFIX.length)
         val decodedCredentials = String(Base64.getDecoder().decode(encodedCredentials))
         val parts = decodedCredentials.split(":", limit = 2)
         return Pair(parts[0], parts[1])
+    }
+
+    /**
+     * Attempts to extract the credentials from the Authorization header or returns null if the format is invalid.
+     * This method uses the similar idea to the string .toIntOrNull() method for example.
+     */
+    private fun extractCredentialsOrNull(authorizationHeaderValue: String): Pair<String, String>? {
+        return try {
+            extractCredentials(authorizationHeaderValue)
+        } catch (exception: Exception) {
+            null
+        }
     }
 
     /**
@@ -175,8 +191,14 @@ class AuthService(
     /**
      * Get the event id from an event related endpoint
      */
-    private fun getEventIdFromUri(requestURI: String): Long? {
-        val match = matcher.extractUriTemplateVariables(EVENT_ANT_PATTERN, requestURI)
+    private fun getEventIdFromUri(uri: String, isPrintJobRelatedEndpoint: Boolean): Long? {
+        if (isPrintJobRelatedEndpoint) {
+            val match = matcher.extractUriTemplateVariables(PRINT_JOB_ANT_PATTERN, uri)
+            val printJobId = match["jobId"] ?: return null
+            val orderId = printJobId.toLongOrNull() ?: return null // The print job id is the order id
+            return orderService.getEventIdForOrder(orderId)
+        }
+        val match = matcher.extractUriTemplateVariables(EVENT_ANT_PATTERN, uri)
         return match["eventId"]?.toLongOrNull()
     }
 
@@ -208,6 +230,8 @@ private const val BASIC_AUTH_PREFIX = "Basic "
 private const val ADMIN_USERNAME = "admin"
 private const val EVENT_ANT_PATTERN = "/*-api/v1/event/{eventId}/**"
 private const val PRINTER_ANT_PATTERN = "/socket-api/v1/printer-servers/**"
+private const val PRINT_JOB_ANT_PATTERN =
+    "/socket-api/v1/printer-servers/{printerServerId}/print-queues/{printQueueId}/jobs/{jobId}"
 
 enum class Access(val allowed: Boolean, val httpStatus: HttpStatus, val message: String) {
     ALLOWED(true, HttpStatus.OK, "Access allowed."), //
@@ -234,7 +258,6 @@ enum class Access(val allowed: Boolean, val httpStatus: HttpStatus, val message:
     ),
     FORBIDDEN_ILLEGAL_USERNAME(
         false, HttpStatus.FORBIDDEN, "Username is not allowed (cannot be admin or empty)"
-    ),
-    FORBIDDEN_UNMATCHED_REQUEST(false, HttpStatus.FORBIDDEN, "Unable to match request to any endpoint.")
+    )
 }
 

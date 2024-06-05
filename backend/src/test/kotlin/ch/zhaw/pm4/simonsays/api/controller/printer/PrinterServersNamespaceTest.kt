@@ -1,9 +1,9 @@
 package ch.zhaw.pm4.simonsays.api.controller.printer
 
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.APPLICATION_ERROR_EVENT
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.CHANGE_EVENT
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.REMOVE_EVENT
-import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDto
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.APPLICATION_ERROR_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.CHANGE_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.REMOVE_EVENT
+import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDTO
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
 import ch.zhaw.pm4.simonsays.testutils.mockSocket
 import ch.zhaw.pm4.simonsays.testutils.testObjectMapper
@@ -121,7 +121,7 @@ class PrinterServersNamespaceTest {
     fun `onRemove should send remove event to specific subscribers`() {
         val printerServerId = "test-printer-server-id"
         val mockSocket = mockSocket("/socket-api/v1/printer-servers/$printerServerId")
-        val mockPrinterServer = mockk<PrinterServerDto>(relaxed = true)
+        val mockPrinterServer = mockk<PrinterServerDTO>(relaxed = true)
         every { mockPrinterServer.id } returns printerServerId
 
         namespace.onConnection(mockSocket) // First, connect the socket
@@ -134,7 +134,7 @@ class PrinterServersNamespaceTest {
     fun `onRemove should send remove event to all subscribers`() {
         val printerServerId = "test-printer-server-id"
         val mockSocket = mockSocket("/socket-api/v1/printer-servers")
-        val mockPrinterServer = mockk<PrinterServerDto>(relaxed = true)
+        val mockPrinterServer = mockk<PrinterServerDTO>(relaxed = true)
         every { mockPrinterServer.id } returns printerServerId
 
         namespace.onConnection(mockSocket) // First, connect the socket
@@ -147,7 +147,7 @@ class PrinterServersNamespaceTest {
     fun `onChange should send change event to specific subscribers`() {
         val printerServerId = "test-printer-server-id"
         val mockSocket = mockSocket("/socket-api/v1/printer-servers/$printerServerId")
-        val mockPrinterServer = mockk<PrinterServerDto>(relaxed = true)
+        val mockPrinterServer = mockk<PrinterServerDTO>(relaxed = true)
         every { mockPrinterServer.id } returns printerServerId
 
         namespace.onConnection(mockSocket) // First, connect the socket
@@ -160,7 +160,7 @@ class PrinterServersNamespaceTest {
     fun `onChange should send change event to all subscribers`() {
         val printerServerId = "test-printer-server-id"
         val mockSocket = mockSocket("/socket-api/v1/printer-servers")
-        val mockPrinterServer = mockk<PrinterServerDto>(relaxed = true)
+        val mockPrinterServer = mockk<PrinterServerDTO>(relaxed = true)
         every { mockPrinterServer.id } returns printerServerId
 
         namespace.onConnection(mockSocket) // First, connect the socket
@@ -173,7 +173,7 @@ class PrinterServersNamespaceTest {
     fun `change event should update database and emited back`() {
         val subscribedPrinterId = "test-printer-server-id"
         val mockSocket = mockSocket("/socket-api/v1/printer-servers/$subscribedPrinterId")
-        val printerServerDto = PrinterServerDto(
+        val printerServerDto = PrinterServerDTO(
             id = "test-printer-server-id",
             name = "test-printer-server-name",
             queues = emptyList(),
@@ -206,7 +206,7 @@ class PrinterServersNamespaceTest {
     fun `change event for non-existing printer server should emit application error`() {
         val subscribedPrinterId = "non-existing-printer-server-id"
         val mockSocket = mockSocket("/socket-api/v1/printer-servers/$subscribedPrinterId")
-        val printerServerDto = PrinterServerDto(
+        val printerServerDto = PrinterServerDTO(
             id = subscribedPrinterId,
             name = "Non-Existing Printer Server",
             queues = emptyList()
@@ -225,7 +225,7 @@ class PrinterServersNamespaceTest {
         val subscribedPrinterId = "subscribed-printer-server-id"
         val differentPrinterServerId = "different-printer-server-id"
         val mockSocket = mockSocket("/socket-api/v1/printer-servers/$subscribedPrinterId")
-        val printerServerDto = PrinterServerDto(
+        val printerServerDto = PrinterServerDTO(
             id = differentPrinterServerId, // ID different from subscribed ID
             name = "Different Printer Server",
             queues = emptyList()
@@ -277,7 +277,7 @@ class PrinterServersNamespaceTest {
         val printerServerJson = JSONObject().put("id", differentPrinterServerId) // Different ID
 
         // Assume the printer server with the different ID exists for this test case
-        every { mockPrinterServerService.getPrinterServerById(differentPrinterServerId) } returns PrinterServerDto(
+        every { mockPrinterServerService.getPrinterServerById(differentPrinterServerId) } returns PrinterServerDTO(
             id = differentPrinterServerId,
             name = "Different Printer Server Name",
             queues = emptyList()
@@ -299,7 +299,7 @@ class PrinterServersNamespaceTest {
         val printerServerJson = JSONObject().put("id", subscribedPrinterId)
 
         // Set up the service to return a specific printer server when queried
-        every { mockPrinterServerService.getPrinterServerById(subscribedPrinterId) } returns PrinterServerDto(
+        every { mockPrinterServerService.getPrinterServerById(subscribedPrinterId) } returns PrinterServerDTO(
             id = subscribedPrinterId,
             name = "Subscribed Printer Server",
             queues = emptyList()

@@ -1,6 +1,6 @@
 package ch.zhaw.pm4.simonsays
 
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace
 import ch.zhaw.pm4.simonsays.api.controller.StationViewNamespace
 import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException

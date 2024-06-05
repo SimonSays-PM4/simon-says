@@ -1,9 +1,9 @@
 package ch.zhaw.pm4.simonsays.service.printer
 
 import ch.zhaw.pm4.simonsays.api.mapper.printer.PrinterServerMapper
-import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueDto
-import ch.zhaw.pm4.simonsays.api.types.printer.PrinterDto
-import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDto
+import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueDTO
+import ch.zhaw.pm4.simonsays.api.types.printer.PrinterDTO
+import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDTO
 import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueRepository
 import ch.zhaw.pm4.simonsays.repository.printer.PrinterServerRepository
@@ -21,12 +21,12 @@ class PrinterServerService(
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    fun getAllPrinterServers(): List<PrinterServerDto> {
+    fun getAllPrinterServers(): List<PrinterServerDTO> {
         val printerServers = printerServerRepository.findAll()
         return printerServers.map { printerServerMapper.mapToPrinterServerDto(it) }
     }
 
-    fun getPrinterServerById(id: String): PrinterServerDto? {
+    fun getPrinterServerById(id: String): PrinterServerDTO? {
         val printerServer = printerServerRepository.findById(id)
         val printerServerDto = printerServer.map { printerServerMapper.mapToPrinterServerDto(it) }
         return printerServerDto.getOrNull()
@@ -36,7 +36,7 @@ class PrinterServerService(
         return printerServerRepository.existsById(id)
     }
 
-    fun savePrinterServer(printerServerDto: PrinterServerDto): PrinterServerDto {
+    fun savePrinterServer(printerServerDto: PrinterServerDTO): PrinterServerDTO {
         // Update existing printer server
         val printerServer = printerServerMapper.mapToPrinterServer(printerServerDto)
         // first save all print queues because they can exist on their own and are not tied to a printer server
@@ -54,37 +54,37 @@ class PrinterServerService(
 
     private final fun createInitialData() {
         val (takeawayPrinter, receiptPrinter) = if (printerProperties.takeawayPrinterMac == printerProperties.receiptPrinterMac) {
-            val printer = PrinterDto(
+            val printer = PrinterDTO(
                 mac = printerProperties.takeawayPrinterMac,
                 name = "All Purpose Printer"
             )
             Pair(printer, printer)
         } else {
-            val takeawayPrinter = PrinterDto(
+            val takeawayPrinter = PrinterDTO(
                 mac = printerProperties.takeawayPrinterMac,
                 name = "Takeaway Printer"
             )
-            val receiptPrinter = PrinterDto(
+            val receiptPrinter = PrinterDTO(
                 mac = printerProperties.receiptPrinterMac,
                 name = "Receipt Printer",
             )
             Pair(takeawayPrinter, receiptPrinter)
         }
-        val takeawayPrintQueue = PrintQueueDto(
+        val takeawayPrintQueue = PrintQueueDTO(
             id = printerProperties.takeawayPrinterQueueId,
             name = "Takeaway Print Queue",
             printers = listOf(
                 takeawayPrinter,
             ),
         )
-        val receiptPrintQueue = PrintQueueDto(
+        val receiptPrintQueue = PrintQueueDTO(
             id = printerProperties.receiptPrinterQueueId,
             name = "Receipt Print Queue",
             printers = listOf(
                 receiptPrinter,
             ),
         )
-        val printerServer = PrinterServerDto(
+        val printerServer = PrinterServerDTO(
             id = printerProperties.printerServerId,
             name = "Printer Server",
             queues = listOf(

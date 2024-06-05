@@ -11,7 +11,8 @@
         "e2e": "npx cypress run --browser chrome",
         "test": "exit 0",
         "lint": "eslint --max-warnings=0 \"src/**/*.{ts,tsx}\"",
-        "api": "openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g typescript-axios -o ./src/gen/api --config api.json"
+        "api": "openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g typescript-axios -o ./src/gen/api --config api.json",
+        "preinstall": "cd ../printer/printer-api-lib && npm install"
     },
     "dependencies": {
         "@headlessui/react": "^1.7.19",
@@ -21,6 +22,7 @@
         "crypto-js": "^4.2.0",
         "openapi-generator": "^0.1.39",
         "postcss": "^8.4.35",
+        "printer-api-lib": "file:../printer/printer-api-lib",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-hook-form": "^7.51.1",

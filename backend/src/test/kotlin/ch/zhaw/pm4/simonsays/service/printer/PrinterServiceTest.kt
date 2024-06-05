@@ -2,7 +2,7 @@ package ch.zhaw.pm4.simonsays.service.printer
 
 import ch.zhaw.pm4.simonsays.api.controller.printer.PrintQueueJobsNamespace
 import ch.zhaw.pm4.simonsays.api.controller.printer.PrinterServersNamespace
-import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
+import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDTO
 import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import ch.zhaw.pm4.simonsays.entity.FoodOrder
 import ch.zhaw.pm4.simonsays.entity.OrderIngredient
@@ -95,7 +95,7 @@ class PrinterServiceTest {
     }
 
     @Test
-    fun `test takeaway order body contains ingredients of a menu item`() {
+    fun `test takeaway order body contains ingredients of a menu item on internal receipt and not on external`() {
         val buns: OrderIngredient = mockk(relaxed = true)
         every { buns.name } returns "Buns"
         val meat: OrderIngredient = mockk(relaxed = true)
@@ -115,10 +115,12 @@ class PrinterServiceTest {
         val printJobs = printerService.printFoodOrder(takeawayOrder)
 
         assertEquals(2, printJobs.size)
+        // External receipt should not contain ingredients
         assertTrue(printJobs[0].body.contains("Buns"))
         assertTrue(printJobs[0].body.contains("Meat"))
-        assertTrue(printJobs[1].body.contains("Buns"))
-        assertTrue(printJobs[1].body.contains("Meat"))
+        // Internal receipt should contain ingredients
+        assertFalse(printJobs[1].body.contains("Buns"))
+        assertFalse(printJobs[1].body.contains("Meat"))
     }
 
     @Test
@@ -147,8 +149,6 @@ class PrinterServiceTest {
         assertTrue(printJobs[0].body.contains("at should be split onto multiple lines)"))
         assertTrue(printJobs[1].body.contains("This is a very long menu item name that"))
         assertTrue(printJobs[1].body.contains("should be split onto multiple lines"))
-        assertTrue(printJobs[1].body.contains("(This is a very long ingredient name th-"))
-        assertTrue(printJobs[1].body.contains("at should be split onto multiple lines)"))
     }
 
     @Test
@@ -220,7 +220,7 @@ class PrinterServiceTest {
     @Test
     fun `print stores job in database and informs namespace`() {
         val order: FoodOrder = mockk(relaxed = true)
-        val printQueueJobDto: PrintQueueJobDto = mockk(relaxed = true)
+        val printQueueJobDto: PrintQueueJobDTO = mockk(relaxed = true)
         every { printerProperties.dryRun } returns false
         every { order.isTakeAway } returns false
         every { printQueueJobService.savePrintQueueJob(any(), any()) } returns printQueueJobDto

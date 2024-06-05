@@ -1,7 +1,7 @@
 package ch.zhaw.pm4.simonsays.service.printer
 
 import ch.zhaw.pm4.simonsays.api.mapper.printer.PrinterServerMapper
-import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDto
+import ch.zhaw.pm4.simonsays.api.types.printer.PrinterServerDTO
 import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import ch.zhaw.pm4.simonsays.entity.printer.PrinterServer
 import ch.zhaw.pm4.simonsays.repository.printer.PrintQueueRepository
@@ -22,7 +22,7 @@ class PrinterServerServiceTest {
     private val printerProperties: PrinterProperties = mockk(relaxed = true)
 
     private val printerServer: PrinterServer = mockk(relaxed = true)
-    private val printerServerDto: PrinterServerDto = mockk(relaxed = true)
+    private val printerServerDto: PrinterServerDTO = mockk(relaxed = true)
     private val printQueueRepository: PrintQueueRepository = mockk(relaxed = true)
 
     @BeforeEach
