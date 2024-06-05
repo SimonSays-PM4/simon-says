@@ -159,7 +159,7 @@ describe("Order CRUD", () => {
         cy.wait(500);
 
         // edit menu
-        cy.contains("div", "Selektierte Menus").find("button", "Bearbeiten").first().click();
+        cy.contains("div", "Selektierte Menüs").find("button", "Bearbeiten").first().click();
         cy.wait(500); // wait for the popup to show up
 
         cy.get("div#headlessui-portal-root").within(() => {
