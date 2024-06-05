@@ -181,7 +181,7 @@ describe("Order CRUD", () => {
         cy.wait(500); // wait for the popup to close
 
         // delete on menu from order
-        cy.contains("div", "Selektierte Menus").within(() => {
+        cy.contains("div", "Selektierte Menüs").within(() => {
             cy.contains("button", "Entfernen").first().click();
         });
         cy.wait(500);
