@@ -14,11 +14,17 @@ export const Header: React.FC = () => {
     const invokeLogout = () => {
         localStorage.removeItem("encryptedCode");
         setLoginInfo(new LoginInfo(false, "-", ""));
-        navigate("/login");
+        if (loginInfo.isAuthenticated) {
+            if (loginInfo.userName!="admin" && eventId>0) {
+                navigate("/"+eventId+"/join");
+            } else {
+                navigate("/login");
+            }
+        }
     };
 
     return (
-        <div className="w-full p-1 border-b border-default-200  justify-between">
+        <div className="w-full p-3 border-b border-default-200  justify-between">
             <div className="flex flex-wrap gap-3 justify-between">
                 <div className=" content-center text-2xl font-bold">
                     <div className="flex gap-4 items-center">

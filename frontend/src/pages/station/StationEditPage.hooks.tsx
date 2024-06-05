@@ -122,7 +122,7 @@ export const useStationEditPage = (): StationCreateReturnProps => {
             })
             .catch((e) => {
                 if (e.response?.data?.message == "An assembly station is already defined for this event") {
-                    appContext.addNotification(NotificationType.ERR, `Es existiert schon ein Assembly Station`);
+                    appContext.addNotification(NotificationType.ERR, `Es existiert bereits ein Assembly Station`);
                 } else {
                     appContext.addNotification(NotificationType.ERR, `Beim ${stationId > 0 ? "Speichern" : "Erstellen"} des Stations ist ein Fehler aufgetreten.`);
                 }

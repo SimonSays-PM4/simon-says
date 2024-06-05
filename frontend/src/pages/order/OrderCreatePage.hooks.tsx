@@ -88,15 +88,17 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
                 if (response.status === 201 || response.status === 200) {
                     navigate("../");
                 } else {
-                    if (response.status === 400) {
-                        console.log(response);
-                        setErrorMessage("Error");
-                    }
                     appContext.addNotification(NotificationType.ERR, `Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
                 }
             })
-            .catch(() => {
-                appContext.addNotification(NotificationType.ERR, `Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
+            .catch((e) => {
+                console.log(e);
+                if (e.response.status === 400) {
+                    setErrorMessage("Error");
+                    appContext.addNotification(NotificationType.ERR, `Die Tischnummer ist ungültig.`);
+                } else {
+                    appContext.addNotification(NotificationType.ERR, `Beim Erstellen der Bestellung ist ein Fehler aufgetreten.`);
+                }
             })
             .finally(() => {
                 setIsSaving(false);

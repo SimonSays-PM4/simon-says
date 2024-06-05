@@ -6,7 +6,7 @@ import { Badge } from "../display/Badge.tsx";
 
 type OrderProps = {
     order: OrderDTO,
-    onClick: () => void,
+    onClick?: () => void,
     onClickMenu: (id: number) => void,
     onClickMenuItem: (id: OrderMenuItemDTO) => void
 }
