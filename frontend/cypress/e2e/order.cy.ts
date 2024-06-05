@@ -146,7 +146,7 @@ describe("Order CRUD", () => {
 
         cy.get("#tableNumber").type("8");
 
-        cy.contains("button", "Menus").click();
+        cy.contains("button", "Menüs").click();
         cy.wait(100);
         cy.contains("div", "Order-Test-Menu").click();
         cy.contains("div", "Order-Test-Menu").click();
