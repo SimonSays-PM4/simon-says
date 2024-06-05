@@ -1,12 +1,20 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { getIngredientService, getMenuItemService } from "../../../api.ts";
-import { useNavigate, useParams } from "react-router-dom";
-import { IngredientDTO, MenuItemCreateUpdateDTO } from "../../../gen/api";
-import { Control, FieldErrors, FieldValues, UseFormGetValues, UseFormHandleSubmit, UseFormRegister, useForm } from "react-hook-form";
-import { EventContext } from "../../../providers/EventContext.tsx";
-import { AppContext } from "../../../providers/AppContext.tsx";
-import { NotificationType } from "../../../enums/NotificationType.ts";
-import { ValueLabel } from "../../../models/ValueLabel.ts";
+import {useCallback, useContext, useEffect, useState} from "react";
+import {getIngredientService, getMenuItemService} from "../../../api.ts";
+import {useNavigate, useParams} from "react-router-dom";
+import {IngredientDTO, MenuItemCreateUpdateDTO} from "../../../gen/api";
+import {
+    Control,
+    FieldErrors,
+    FieldValues,
+    useForm,
+    UseFormGetValues,
+    UseFormHandleSubmit,
+    UseFormRegister
+} from "react-hook-form";
+import {EventContext} from "../../../providers/EventContext.tsx";
+import {AppContext} from "../../../providers/AppContext.tsx";
+import {NotificationType} from "../../../enums/NotificationType.ts";
+import {ValueLabel} from "../../../models/ValueLabel.ts";
 
 type MenuItemEditReturnProps = {
     menuItem: MenuItemCreateUpdateDTO,
@@ -116,20 +124,20 @@ export const useMenuItemEditPage = (): MenuItemEditReturnProps => {
             .then(() => {
                 setIsLoading(false);
                 navigate("../menuItem");
-                appContext.addNotification(NotificationType.OK, "Saved Menu Item \"" + menuItemToSave.name + "\"")
+                appContext.addNotification(NotificationType.OK, "\"" + menuItemToSave.name + "\" wurde gespeichert")
             })
             .catch(() => {
                 setIsLoading(false);
-                appContext.addNotification(NotificationType.ERR, "Failed to save \"" + menuItemToSave.name + "\"");
+                appContext.addNotification(NotificationType.ERR, "Fehler beim Speichern von \"" + menuItemToSave.name + "\"");
             });
     };
 
     const deleteMenuItem = useCallback(() => {
-        menuItemService.deleteMenuItem(eventId, menuItemId).then(response => {
-            if (response.status == 200 || response.status == 201) {
-                navigate("./../");
-                appContext.addNotification(NotificationType.OK, "Deleted Menu Item");
-            }
+        menuItemService.deleteMenuItem(eventId, menuItemId).then(_ => {
+            navigate("./../");
+            appContext.addNotification(NotificationType.OK, "Menu Item wurde gelöscht");
+        }).catch(()=> {
+            appContext.addNotification(NotificationType.ERR, "Menu Item konnte nicht gelöscht werden.")
         })
 
     }, [menuItem])
