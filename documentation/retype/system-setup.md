@@ -1,5 +1,7 @@
 ---
 label: System Setup
+icon: rocket
+order: 900
 ---
 !!! :zap: DRAFT :zap:
 Diese Seite ist noch in Bearbeitung

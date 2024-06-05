@@ -1,6 +1,7 @@
 ---
 label: Einführung
 icon: gear
+order: 1000
 ---
 # Einführung
 
