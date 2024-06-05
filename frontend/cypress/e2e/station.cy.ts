@@ -64,6 +64,24 @@ describe("Station CRUD", () => {
         cy.url().should("include", "/station");
     });
 
+    it("should delete created ingredient", () => {
+        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
+
+        cy.wait(500);
+        cy.get("h2").contains("Zutaten").should("exist");
+
+        cy.contains("tr", "Test-Ingredient").find("td:last-child").find("button:last-child").click();
+
+        cy.wait(500); // wait for the popup to show up
+
+        cy.get('div[tabIndex="-1"].modal').should("exist");
+        cy.get('div[tabIndex="-1"].modal').contains("button", "Löschen").click();
+
+        cy.wait(500); // wait for the popup to close
+
+        cy.url().should("include", "/ingredients");
+    });
+
     it("should delete created station", () => {
         cy.contains("tr", "Test-Event").contains("button", "Station").click();
 
@@ -82,13 +100,13 @@ describe("Station CRUD", () => {
         cy.url().should("include", "/station");
     });
 
-    it("should delete created ingredient", () => {
-        cy.contains("tr", "Test-Event").contains("button", "Zutaten").click();
+    it("should delete created station", () => {
+        cy.contains("tr", "Test-Event").contains("button", "Station").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Zutaten").should("exist");
+        cy.get("h2").contains("Stationen").should("exist");
 
-        cy.contains("tr", "Test-Ingredient").find("td:last-child").find("button:last-child").click();
+        cy.contains("tr", "Test-Station").find("td:last-child").find("button:last-child").click();
 
         cy.wait(500); // wait for the popup to show up
 
@@ -97,7 +115,7 @@ describe("Station CRUD", () => {
 
         cy.wait(500); // wait for the popup to close
 
-        cy.url().should("include", "/ingredients");
+        cy.url().should("include", "/station");
     });
 
     it("should delete created event", () => {
