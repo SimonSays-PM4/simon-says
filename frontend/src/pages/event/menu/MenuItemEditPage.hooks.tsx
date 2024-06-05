@@ -77,7 +77,7 @@ export const useMenuItemEditPage = (): MenuItemEditReturnProps => {
             }
         }
         catch (_) {
-            appContext.addNotification(NotificationType.ERR, "Beim Laden des Menus ist ein Fehler aufgetreten.");
+            appContext.addNotification(NotificationType.ERR, "Beim Laden der Menüpunkte ist ein Fehler aufgetreten.");
         }
     }, []);
 
@@ -116,11 +116,11 @@ export const useMenuItemEditPage = (): MenuItemEditReturnProps => {
             .then(() => {
                 setIsLoading(false);
                 navigate("../menuItem");
-                appContext.addNotification(NotificationType.OK, "Saved Menu Item \"" + menuItemToSave.name + "\"")
+                appContext.addNotification(NotificationType.OK, "Menüpunkt \"" + menuItemToSave.name + "\" wurde gespeichert.")
             })
             .catch(() => {
                 setIsLoading(false);
-                appContext.addNotification(NotificationType.ERR, "Failed to save \"" + menuItemToSave.name + "\"");
+                appContext.addNotification(NotificationType.ERR, "Menüpunkt \"" + menuItemToSave.name + "\" konnte nicht gespeichert werden.");
             });
     };
 
@@ -128,7 +128,7 @@ export const useMenuItemEditPage = (): MenuItemEditReturnProps => {
         menuItemService.deleteMenuItem(eventId, menuItemId).then(response => {
             if (response.status == 200 || response.status == 201) {
                 navigate("./../");
-                appContext.addNotification(NotificationType.OK, "Deleted Menu Item");
+                appContext.addNotification(NotificationType.OK, "Menüpunkt wurde gelöscht.");
             }
         })
 

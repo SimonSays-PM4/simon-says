@@ -80,7 +80,7 @@ export const useStationEditPage = (): StationCreateReturnProps => {
             }
         }
         catch (_) {
-            appContext.addNotification(NotificationType.ERR, "Beim Laden des Stations ist ein Fehler aufgetreten.");
+            appContext.addNotification(NotificationType.ERR, "Beim Laden der Stationen ist ein Fehler aufgetreten.");
         }
     }, []);
 
@@ -117,14 +117,14 @@ export const useStationEditPage = (): StationCreateReturnProps => {
                     navigate("../station");
                     appContext.addNotification(NotificationType.OK, `Station '${stationToSave.name}' wurde erfolgreich ${stationId > 0 ? "bearbeitet" : "erstellt"}.`);
                 } else {
-                    appContext.addNotification(NotificationType.ERR, `Beim ${stationId > 0 ? "Speichern" : "Erstellen"} des Stations ist ein Fehler aufgetreten.`);
+                    appContext.addNotification(NotificationType.ERR, `Beim ${stationId > 0 ? "Speichern" : "Erstellen"} der Station ist ein Fehler aufgetreten.`);
                 }
             })
             .catch((e) => {
                 if (e.response?.data?.message == "An assembly station is already defined for this event") {
-                    appContext.addNotification(NotificationType.ERR, `Es existiert bereits ein Assembly Station`);
+                    appContext.addNotification(NotificationType.ERR, `Es existiert bereits eine Zusammensetzungs-Station`);
                 } else {
-                    appContext.addNotification(NotificationType.ERR, `Beim ${stationId > 0 ? "Speichern" : "Erstellen"} des Stations ist ein Fehler aufgetreten.`);
+                    appContext.addNotification(NotificationType.ERR, `Beim ${stationId > 0 ? "Speichern" : "Erstellen"} der Station ist ein Fehler aufgetreten.`);
                 }
 
             })
@@ -143,7 +143,7 @@ export const useStationEditPage = (): StationCreateReturnProps => {
                     appContext.addNotification(NotificationType.OK, `Station wurde erfolgreich gelöscht.`);
                 })
                 .catch(() => {
-                    appContext.addNotification(NotificationType.ERR, `Beim Löschen des Stations ist ein Fehler aufgetreten.`);
+                    appContext.addNotification(NotificationType.ERR, `Beim Löschen der Station ist ein Fehler aufgetreten.`);
                 })
                 .finally(() => {
                     setIsSaving(false);

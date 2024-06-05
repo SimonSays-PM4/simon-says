@@ -46,7 +46,7 @@ export const useEventListPage = (): EventListPageReturnProps => {
             eventService.deleteEvent(eventToDelete.id).then(() => {
                 setShowDeletePopup(false)
                 setLoading(false);
-                appContext.addNotification(NotificationType.ERR, "Deleted Event")
+                appContext.addNotification(NotificationType.ERR, "Event wurde gelöscht")
             })
         }
     }, [eventToDelete.id])

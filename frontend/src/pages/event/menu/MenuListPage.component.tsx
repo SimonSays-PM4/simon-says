@@ -7,9 +7,9 @@ import { Popup } from "../../../components/Popup.tsx";
 import { useMenuListPage } from "./MenuListPage.hooks.tsx";
 import { MenuDTO } from "../../../gen/api/api.ts";
 import { MenuDisplayModel } from "../../../models/MenuDisplayModel.ts";
-import {MdEditSquare} from "react-icons/md";
-import {FaRegTrashAlt} from "react-icons/fa";
-import {IoFastFoodOutline} from "react-icons/io5";
+import { MdEditSquare } from "react-icons/md";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { IoFastFoodOutline } from "react-icons/io5";
 
 export const MenuListPageComponent: React.FC = () => {
     const { isLoading, menuActions, showDeletePopup, setShowDeletePopup, menuList } = useMenuListPage();
@@ -37,7 +37,7 @@ export const MenuListPageComponent: React.FC = () => {
         },
         {
             key: "menuItemsString",
-            name: "Menu Items",
+            name: "Menüpunkte",
             type: "column"
         },
         {
@@ -45,17 +45,17 @@ export const MenuListPageComponent: React.FC = () => {
             name: "Bearbeiten",
             elementKey: "editAction",
             type: "action",
-            children: <MdEditSquare/>,
-            noText:true,
+            children: <MdEditSquare />,
+            noText: true,
             action: onEditClick
         },
         {
             key: "id",
             name: "Löschen",
-            elementKey:"deleteAction",
+            elementKey: "deleteAction",
             type: "action",
-            children: <FaRegTrashAlt/>,
-            noText:true,
+            children: <FaRegTrashAlt />,
+            noText: true,
             action: onDeleteClick
         },
     ];

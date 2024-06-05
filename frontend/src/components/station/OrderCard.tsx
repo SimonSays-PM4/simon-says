@@ -16,7 +16,7 @@ export const OrderCard: React.FC<OrderProps> = ({ onClick, order, onClickMenuIte
         <a onClick={onClick}
             className="p-2 bg-white border border-gray-200 rounded-lg shadow">
             <div className="flex flex-wrap gap-4 sm:justify-between lg:flex-nowrap">
-                <h1>Order <b>#{order.id}</b></h1><p className="text-xs"><Badge color={order.state == State.Done ? "green" : "yellow"}>{order.state}</Badge></p>
+                <h1>Bestellung <b>#{order.id}</b></h1><p className="text-xs"><Badge color={order.state == State.Done ? "green" : "yellow"}>{order.state}</Badge></p>
             </div>
             <div className="h-2" />
             <div className="grid grid-flow-row-dense grid-cols-2 gap-1">

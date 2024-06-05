@@ -79,7 +79,7 @@ export const StationEditPageComponent: React.FC = () => {
                         <div className="flex">
                             <div className="sm:grid sm:grid-flow-row sm:grid-cols-1 sm:items-end my-4">
                                 <label htmlFor="isAssembly" className="mb-2 block text-sm font-medium text-default-900">
-                                    Assembly Station?
+                                    Ist es eine Zusammensetzungs-Station?
                                 </label>
 
                                 <div className="mt-1 sm:mt-0 sm:col-span-1 stroke-secondaryfont flex flex-row items-center">

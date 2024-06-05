@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FieldValues } from "react-hook-form";
 import { getEventService } from "../../api.ts";
-import {EventCreateUpdateDTO} from "../../gen/api";
+import { EventCreateUpdateDTO } from "../../gen/api";
 import { AppContext } from "../../providers/AppContext.tsx";
 import { NotificationType } from "../../enums/NotificationType.ts";
 import { EventContext } from "../../providers/EventContext.tsx";
@@ -44,7 +44,7 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
                     setIsLoading(false);
                 })
                 .catch(() => {
-                    appContext.addNotification(NotificationType.ERR, `Failed to fetch event with id ${eventId}`);
+                    appContext.addNotification(NotificationType.ERR, "Event konnte nicht geladen werden.");
                     setIsLoading(false);
                 });
         }
@@ -69,22 +69,29 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
                     setIsLoading(false);
                     if (response.status === 201 || response.status === 200) {
                         navigate("../events");
-                        appContext.addNotification(NotificationType.OK, `Successfully saved the event`);
+                        appContext.addNotification(
+                            NotificationType.OK,
+                            `Event wurde ${eventId > 0 ? "gespeichert" : "erstellt"} .`
+                        );
                     } else {
                         appContext.addNotification(
                             NotificationType.ERR,
-                            `Beim Erstellen des Events ist ein Fehler aufgetreten.`
+                            `Beim ${eventId > 0 ? "Speichern" : "Erstellen"}  des Events ist ein Fehler aufgetreten.`
                         );
-                        setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
+                        setErrorMessage(
+                            `Beim ${eventId > 0 ? "Speichern" : "Erstellen"}  des Events ist ein Fehler aufgetreten.`
+                        );
                     }
                 })
                 .catch(() => {
                     setIsLoading(false);
                     appContext.addNotification(
                         NotificationType.ERR,
-                        `Beim Erstellen des Events ist ein Fehler aufgetreten.`
+                        `Beim ${eventId > 0 ? "Speichern" : "Erstellen"}  des Events ist ein Fehler aufgetreten.`
                     );
-                    setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
+                    setErrorMessage(
+                        `Beim ${eventId > 0 ? "Speichern" : "Erstellen"} des Events ist ein Fehler aufgetreten.`
+                    );
                 });
         },
         [event]

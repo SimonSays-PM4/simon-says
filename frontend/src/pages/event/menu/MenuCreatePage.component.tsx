@@ -51,7 +51,7 @@ export const MenuCreatePageComponent: React.FC = () => {
                             validationError={getErrorMessage(nameof<MenuCreateUpdateDTO>(e => e.name))} />
 
                         <label className="mb-2 block text-sm font-medium text-default-900">
-                            Menu Items *
+                            Menüpunkte *
                         </label>
 
                         <Controller
