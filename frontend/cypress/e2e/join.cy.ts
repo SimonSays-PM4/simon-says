@@ -32,7 +32,7 @@ describe("Join", () => {
         cy.get("h1").contains("Event beitreten");
         cy.get("#userName").type("user");
         cy.get("#password").type("Test-password");
-        cy.get("form").contains("Join").click();
+        cy.get("form").contains("Beitreten").click();
 
         cy.wait(500);
 

@@ -110,10 +110,10 @@ describe("Order CRUD", () => {
     });
 
     it("should create a menu", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Menus").click();
+        cy.contains("tr", "UnitTest-Event").contains("button", "Menüs").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menus").should("exist");
+        cy.get("h2").contains("Menüs").should("exist");
 
         cy.contains("button", "Erstellen").click();
 
@@ -224,10 +224,10 @@ describe("Order CRUD", () => {
     });
 
     it("should delete created menu", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Menus").click();
+        cy.contains("tr", "UnitTest-Event").contains("button", "Menüs").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menus").should("exist");
+        cy.get("h2").contains("Menüs").should("exist");
 
         cy.contains("tr", "Order-Test-Menu").find("td:last-child").find("button:last-child").click();
 

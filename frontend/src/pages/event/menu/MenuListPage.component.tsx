@@ -65,7 +65,7 @@ export const MenuListPageComponent: React.FC = () => {
             {isLoading ? (
                 <div className="w-[100px] block mx-auto"><Loader /></div>
             ) : (
-                <DataTable<MenuDisplayModel> title="Menus" icon={<IoFastFoodOutline />} columns={columns} rows={menuList.map((menu) => new MenuDisplayModel(menu.id, menu.name, menu.menuItems, menu.price, menu.menuItems.map((item) => item.name).join(", ")))} onCreateClick={() => navigate(`../menu/create`)} onBackClick={() => navigate("../../events")} />
+                <DataTable<MenuDisplayModel> title="Menüs" icon={<IoFastFoodOutline />} columns={columns} rows={menuList.map((menu) => new MenuDisplayModel(menu.id, menu.name, menu.menuItems, menu.price, menu.menuItems.map((item) => item.name).join(", ")))} onCreateClick={() => navigate(`../menu/create`)} onBackClick={() => navigate("../../events")} />
             )}
 
             <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={menuActions.deleteMenu} modalText={'Menu "' + menuActions.menuToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
