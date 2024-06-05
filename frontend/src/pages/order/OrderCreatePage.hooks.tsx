@@ -78,6 +78,7 @@ export const useOrderCreatePage = (): OrderCreatePageReturnProps => {
 
         if (!isTakeAway && !orderToSave.tableNumber) {
             setErrorMessage("Tischnummer muss angegeben werden");
+            appContext.addNotification(NotificationType.ERR, `Bitte eine Tischnummer angeben.`)
             setIsSaving(false);
             return;
         }

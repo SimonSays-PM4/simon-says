@@ -57,6 +57,7 @@ export const useIngredientListPage = (): IngredientListPageReturnProps => {
                 setIsLoading(true);
 
                 ingredientService.deleteIngredient(ingredientToDelete.id, eventId).then(() => {
+                    appContext.addNotification(NotificationType.OK, `Zutat wurde gelöscht.`);
                     setShowDeletePopup(false);
                 });
             }

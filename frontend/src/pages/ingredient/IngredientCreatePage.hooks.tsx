@@ -1,10 +1,11 @@
-import { IngredientCreateUpdateDTO } from "../../gen/api";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { FieldValues } from "react-hook-form";
-import { EventContext } from "../../providers/EventContext";
-import { getIngredientService } from "../../api";
-import { AppContext } from "../../providers/AppContext";
+import {IngredientCreateUpdateDTO} from "../../gen/api";
+import {useCallback, useContext, useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {FieldValues} from "react-hook-form";
+import {EventContext} from "../../providers/EventContext";
+import {getIngredientService} from "../../api";
+import {AppContext} from "../../providers/AppContext";
+import {NotificationType} from "../../enums/NotificationType.ts";
 
 type IngredientActions = {
     deleteIngredient: () => void;
@@ -21,6 +22,7 @@ type IngredientCreateReturnProps = {
 
 export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
     const { eventId } = useContext(EventContext);
+    const appContext = useContext(AppContext);
     const navigate = useNavigate();
     const { id } = useParams();
     const ingredientId = id ? Number(id) : 0;
@@ -73,11 +75,13 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
                 .then((response) => {
                     if (response.status === 201 || response.status === 200) {
                         navigate("../ingredients");
+                        appContext.addNotification(NotificationType.OK, `Die Zutate wurde ${ingredientId > 0 ? "gespeichert" : "erstellt"}`)
                     } else {
                         setErrorMessage(`Beim ${ingredientId > 0 ? "Speichern" : "Erstellen"} der Zutate ist ein Fehler aufgetreten.`);
                     }
                 })
                 .catch(() => {
+                    appContext.addNotification(NotificationType.ERR, `Beim ${ingredientId > 0 ? "Speichern" : "Erstellen"} der Zutate ist ein Fehler aufgetreten.`)
                     setErrorMessage(`Beim ${ingredientId > 0 ? "Speichern" : "Erstellen"} der Zutate ist ein Fehler aufgetreten.`);
                 })
                 .finally(() => {
@@ -94,8 +98,10 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
             ingredientService.deleteIngredient(ingredientId, eventId)
                 .then(() => {
                     navigate("/ingredients");
+                    appContext.addNotification(NotificationType.OK, `Zutat wurde gelöscht`)
                 })
                 .catch(() => {
+                    appContext.addNotification(NotificationType.ERR, `Beim Löschen der Zutate ist ein Fehler aufgetreten.`)
                     setErrorMessage("Beim Löschen der Zutate ist ein Fehler aufgetreten.");
                 })
                 .finally(() => {

@@ -1,11 +1,11 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FieldValues } from "react-hook-form";
-import { getEventService } from "../../api.ts";
+import {useCallback, useContext, useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {FieldValues} from "react-hook-form";
+import {getEventService} from "../../api.ts";
 import {EventCreateUpdateDTO} from "../../gen/api";
-import { AppContext } from "../../providers/AppContext.tsx";
-import { NotificationType } from "../../enums/NotificationType.ts";
-import { EventContext } from "../../providers/EventContext.tsx";
+import {AppContext} from "../../providers/AppContext.tsx";
+import {NotificationType} from "../../enums/NotificationType.ts";
+import {EventContext} from "../../providers/EventContext.tsx";
 
 type EventActions = {
     deleteEvent: () => void;
@@ -44,7 +44,7 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
                     setIsLoading(false);
                 })
                 .catch(() => {
-                    appContext.addNotification(NotificationType.ERR, `Failed to fetch event with id ${eventId}`);
+                    appContext.addNotification(NotificationType.ERR, `Fehler beim Laden von Event mit id ${eventId}`);
                     setIsLoading(false);
                 });
         }
@@ -69,7 +69,7 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
                     setIsLoading(false);
                     if (response.status === 201 || response.status === 200) {
                         navigate("../events");
-                        appContext.addNotification(NotificationType.OK, `Successfully saved the event`);
+                        appContext.addNotification(NotificationType.OK, `Event wurde gespeichert`);
                     } else {
                         appContext.addNotification(
                             NotificationType.ERR,
@@ -96,6 +96,9 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
             eventService.deleteEvent(eventId).then(() => {
                 setIsLoading(false);
                 navigate("../events");
+                appContext.addNotification(NotificationType.OK, "Event wurde gelöscht.")
+            }).catch(_=> {
+                appContext.addNotification(NotificationType.ERR, "Event konnte nicht gelöscht werden.")
             });
         }
     }, [eventId]);
