@@ -47,7 +47,7 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
                     setIngredient(receivedIngredient);
                 })
                 .catch(() => {
-                    setErrorMessage("Beim Laden der Zutate ist ein Fehler aufgetreten.");
+                    setErrorMessage("Beim Laden der Zutat ist ein Fehler aufgetreten.");
                 })
                 .finally(() => {
                     setIsLoading(false);
@@ -75,14 +75,14 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
                 .then((response) => {
                     if (response.status === 201 || response.status === 200) {
                         navigate("../ingredients");
-                        appContext.addNotification(NotificationType.OK, `Die Zutate wurde ${ingredientId > 0 ? "gespeichert" : "erstellt"}`)
+                        appContext.addNotification(NotificationType.OK, `Die Zutat wurde ${ingredientId > 0 ? "gespeichert" : "erstellt"}`)
                     } else {
-                        setErrorMessage(`Beim ${ingredientId > 0 ? "Speichern" : "Erstellen"} der Zutate ist ein Fehler aufgetreten.`);
+                        setErrorMessage(`Beim ${ingredientId > 0 ? "Speichern" : "Erstellen"} der Zutat ist ein Fehler aufgetreten.`);
                     }
                 })
                 .catch(() => {
-                    appContext.addNotification(NotificationType.ERR, `Beim ${ingredientId > 0 ? "Speichern" : "Erstellen"} der Zutate ist ein Fehler aufgetreten.`)
-                    setErrorMessage(`Beim ${ingredientId > 0 ? "Speichern" : "Erstellen"} der Zutate ist ein Fehler aufgetreten.`);
+                    appContext.addNotification(NotificationType.ERR, `Beim ${ingredientId > 0 ? "Speichern" : "Erstellen"} der Zutat ist ein Fehler aufgetreten.`)
+                    setErrorMessage(`Beim ${ingredientId > 0 ? "Speichern" : "Erstellen"} der Zutat ist ein Fehler aufgetreten.`);
                 })
                 .finally(() => {
                     setIsSaving(false);
@@ -101,8 +101,8 @@ export const useIngredientCreatePage = (): IngredientCreateReturnProps => {
                     appContext.addNotification(NotificationType.OK, `Zutat wurde gelöscht`)
                 })
                 .catch(() => {
-                    appContext.addNotification(NotificationType.ERR, `Beim Löschen der Zutate ist ein Fehler aufgetreten.`)
-                    setErrorMessage("Beim Löschen der Zutate ist ein Fehler aufgetreten.");
+                    appContext.addNotification(NotificationType.ERR, `Beim Löschen der Zutat ist ein Fehler aufgetreten.`)
+                    setErrorMessage("Beim Löschen der Zutat ist ein Fehler aufgetreten.");
                 })
                 .finally(() => {
                     setIsSaving(false);

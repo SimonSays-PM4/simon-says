@@ -63,7 +63,7 @@ export const useIngredientListPage = (): IngredientListPageReturnProps => {
             }
         }
         catch (_) {
-            appContext.addNotification(NotificationType.ERR, `Beim Löschen der Zutate ist ein Fehler aufgetreten.`);
+            appContext.addNotification(NotificationType.ERR, `Beim Löschen der Zutat ist ein Fehler aufgetreten.`);
         }
         finally {
             setIsLoading(false);

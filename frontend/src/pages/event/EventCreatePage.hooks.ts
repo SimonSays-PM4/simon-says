@@ -44,7 +44,7 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
                     setIsLoading(false);
                 })
                 .catch(() => {
-                    appContext.addNotification(NotificationType.ERR, `Fehler beim Laden von Event mit id ${eventId}`);
+                    appContext.addNotification(NotificationType.ERR, `Fehler beim Laden vom Event mit id ${eventId}`);
                     setIsLoading(false);
                 });
         }
