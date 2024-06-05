@@ -100,10 +100,16 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
     const deleteEvent = useCallback(() => {
         if (eventId > 0) {
             setIsLoading(true);
-            eventService.deleteEvent(eventId).then(() => {
-                setIsLoading(false);
-                navigate("../events");
-            });
+            eventService
+                .deleteEvent(eventId)
+                .then(() => {
+                    setIsLoading(false);
+                    navigate("../events");
+                    appContext.addNotification(NotificationType.OK, "Event wurde gelöscht.");
+                })
+                .catch((_) => {
+                    appContext.addNotification(NotificationType.ERR, "Event konnte nicht gelöscht werden.");
+                });
         }
     }, [eventId]);
 

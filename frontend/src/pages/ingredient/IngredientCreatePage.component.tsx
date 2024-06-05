@@ -39,7 +39,7 @@ export const IngredientCreatePageComponent: React.FC = () => {
             {isLoading
                 ? (<div className="w-[100px] block mx-auto"><Loader /></div>)
                 : (<>
-                    <h2 className="text-xl font-semibold text-default-800 mb-4">{isUpdating ? <>Zutat <b>"{ingredient.name}"</b> bearbeiten</> : "Zutate erstellen"}</h2>
+                    <h2 className="text-xl font-semibold text-default-800 mb-4">{isUpdating ? <>Zutat <b>"{ingredient.name}"</b> bearbeiten</> : "Zutat erstellen"}</h2>
 
                     <form onSubmit={handleSubmit(() => ingredientActions.saveIngredient(getValues()), () => ingredientActions.onFormInvalid(getValues()))}>
                         <FormInput id={nameof<IngredientCreateUpdateDTO>(e => e.name)}

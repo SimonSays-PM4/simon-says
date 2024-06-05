@@ -2,7 +2,15 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { getIngredientService, getMenuItemService } from "../../../api.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { IngredientDTO, MenuItemCreateUpdateDTO } from "../../../gen/api";
-import { Control, FieldErrors, FieldValues, UseFormGetValues, UseFormHandleSubmit, UseFormRegister, useForm } from "react-hook-form";
+import {
+    Control,
+    FieldErrors,
+    FieldValues,
+    useForm,
+    UseFormGetValues,
+    UseFormHandleSubmit,
+    UseFormRegister
+} from "react-hook-form";
 import { EventContext } from "../../../providers/EventContext.tsx";
 import { AppContext } from "../../../providers/AppContext.tsx";
 import { NotificationType } from "../../../enums/NotificationType.ts";
@@ -116,20 +124,20 @@ export const useMenuItemEditPage = (): MenuItemEditReturnProps => {
             .then(() => {
                 setIsLoading(false);
                 navigate("../menuItem");
-                appContext.addNotification(NotificationType.OK, "Menüpunkt \"" + menuItemToSave.name + "\" wurde gespeichert.")
+                appContext.addNotification(NotificationType.OK, "Menüpunkt \"" + menuItemToSave.name + "\" wurde gespeichert");
             })
             .catch(() => {
                 setIsLoading(false);
-                appContext.addNotification(NotificationType.ERR, "Menüpunkt \"" + menuItemToSave.name + "\" konnte nicht gespeichert werden.");
+                appContext.addNotification(NotificationType.ERR, "Fehler beim Speichern vom Menüpunkt \"" + menuItemToSave.name + "\"");
             });
     };
 
     const deleteMenuItem = useCallback(() => {
-        menuItemService.deleteMenuItem(eventId, menuItemId).then(response => {
-            if (response.status == 200 || response.status == 201) {
-                navigate("./../");
-                appContext.addNotification(NotificationType.OK, "Menüpunkt wurde gelöscht.");
-            }
+        menuItemService.deleteMenuItem(eventId, menuItemId).then(_ => {
+            navigate("./../");
+            appContext.addNotification(NotificationType.OK, "Menüpunkt wurde gelöscht");
+        }).catch(() => {
+            appContext.addNotification(NotificationType.ERR, "Menüpunkt konnte nicht gelöscht werden.")
         })
 
     }, [menuItem])
