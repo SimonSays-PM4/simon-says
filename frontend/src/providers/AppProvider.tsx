@@ -1,16 +1,17 @@
 import * as React from "react";
-import {AppContext} from "./AppContext";
-import {LoginInfo} from "../models/LoginInfo";
-import {Bounce, toast, ToastContainer} from 'react-toastify';
-import {NotificationType} from "../enums/NotificationType.ts";
+import { AppContext } from "./AppContext";
+import { LoginInfo } from "../models/LoginInfo";
+import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { NotificationType } from "../enums/NotificationType.ts";
 
 export interface IAppProviderProvideProps {
     children: React.ReactNode;
 }
 
 const AppProvider: React.FC<IAppProviderProvideProps> = ({ children }: IAppProviderProvideProps) => {
-    const [loginInfo, setLoginInfo] = React.useState<LoginInfo>(new LoginInfo(false, "-", ""));
-    const addNotification = (type:NotificationType, message:string) => {
+    const [loginInfo, setLoginInfo] = React.useState<LoginInfo>(new LoginInfo(false, "", ""));
+
+    const addNotification = (type: NotificationType, message: string) => {
         if (type === NotificationType.OK) {
             toast.success(message, {
                 position: "top-right",
@@ -68,7 +69,8 @@ const AppProvider: React.FC<IAppProviderProvideProps> = ({ children }: IAppProvi
                 setLoginInfo,
                 addNotification
             }}
-        ><ToastContainer></ToastContainer>
+        >
+            <ToastContainer></ToastContainer>
             <>{children}</>
         </AppContext.Provider>
     );
