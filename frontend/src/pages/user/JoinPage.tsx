@@ -46,7 +46,7 @@ export const JoinPage: React.FC = () => {
                             <FormInput id="userName" label={"Benutzername"} register={register} type="text" />
                             <FormInput id="password" label={"Passwort"} register={register} type="password" />
                             <Button
-                                buttonText="Join"
+                                buttonText="Beitreten"
                                 type="submit"
                                 className="mt-6"
                             />

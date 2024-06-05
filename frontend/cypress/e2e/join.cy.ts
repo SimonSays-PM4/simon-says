@@ -29,7 +29,7 @@ describe("Join", () => {
 
     it("should join an event", () => {
         cy.get("tr").contains("Test-Event").get("#joinAction").click();
-        cy.get("h1").contains("Join Event");
+        cy.get("h1").contains("Event beitreten");
         cy.get("#userName").type("user");
         cy.get("#password").type("Test-password");
         cy.get("form").contains("Join").click();
@@ -41,10 +41,10 @@ describe("Join", () => {
 
     it("should reach Bestellungen", () => {
         cy.get("tr").contains("Test-Event").get("#joinAction").click();
-        cy.get("h1").contains("Join Event");
+        cy.get("h1").contains("Event beitreten");
         cy.get("#userName").type("user");
         cy.get("#password").type("Test-password");
-        cy.get("form").contains("Join").click();
+        cy.get("form").contains("Beitreten").click();
 
         cy.wait(500);
 
@@ -91,10 +91,10 @@ describe("Join", () => {
 
     it("should reach Station", () => {
         cy.get("tr").contains("Test-Event").get("#joinAction").click();
-        cy.get("h1").contains("Join Event");
+        cy.get("h1").contains("Event beitreten");
         cy.get("#userName").type("user");
         cy.get("#password").type("Test-password");
-        cy.get("form").contains("Join").click();
+        cy.get("form").contains("Beitreten").click();
 
         cy.wait(500);
 
