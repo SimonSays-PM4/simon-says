@@ -9,8 +9,8 @@ import { useStationSelectionPage } from "./StationSelectionPage.hooks.ts";
 export const StationSelectionPage: React.FC = () => {
     const { eventId } = useContext(EventContext);
     const navigate = useNavigate();
-    const {stationList, isLoading} = useStationSelectionPage();
-    
+    const { stationList, isLoading } = useStationSelectionPage();
+
     return (
         <div >
             <div className="flex flex-wrap">
@@ -22,16 +22,16 @@ export const StationSelectionPage: React.FC = () => {
                     iconType={<PiReceiptDuotone />}
                 />
                 {isLoading ? (
-                    <p>Loading...</p> 
+                    <p>Laden...</p>
                 ) : (
-                    stationList.map((station) => ( 
+                    stationList.map((station) => (
                         <Card
-                            key={station.id} 
+                            key={station.id}
                             onClick={() => {
                                 navigate(`/${eventId}/station/${station.id}`);
                             }}
-                            title={station.name} 
-                            iconType={<PiChargingStationDuotone />} 
+                            title={station.name}
+                            iconType={<PiChargingStationDuotone />}
                         />
                     ))
                 )}

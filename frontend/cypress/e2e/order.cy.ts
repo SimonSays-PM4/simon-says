@@ -5,10 +5,7 @@ describe("Order CRUD", () => {
         cy.get("#code").type("mysecretpassword");
         cy.get("form").contains("Login").click();
 
-
         cy.wait(500);
-
-
 
         cy.get("h2").contains("Events").should("exist");
 
@@ -69,10 +66,10 @@ describe("Order CRUD", () => {
     });
 
     it("should create a menu item", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Menu Item").click();
+        cy.contains("tr", "UnitTest-Event").contains("button", "Menüpunkte").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menu Items").should("exist");
+        cy.get("h2").contains("Menüpunkte").should("exist");
 
         cy.contains("button", "Erstellen").click();
 
@@ -91,10 +88,10 @@ describe("Order CRUD", () => {
     });
 
     it("should create a menu item II", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Menu Item").click();
+        cy.contains("tr", "UnitTest-Event").contains("button", "Menüpunkte").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menu Items").should("exist");
+        cy.get("h2").contains("Menüpunkte").should("exist");
 
         cy.contains("button", "Erstellen").click();
 
@@ -113,10 +110,10 @@ describe("Order CRUD", () => {
     });
 
     it("should create a menu", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Menus").click();
+        cy.contains("tr", "UnitTest-Event").contains("button", "Menüs").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menus").should("exist");
+        cy.get("h2").contains("Menüs").should("exist");
 
         cy.contains("button", "Erstellen").click();
 
@@ -135,12 +132,12 @@ describe("Order CRUD", () => {
     });
 
     it("should create an order", () => {
-        cy.get("tr").contains("UnitTest-Event").parents("tr").find('#joinAction').click();
-        cy.get("h1").contains("Join Event");
+        cy.get("tr").contains("UnitTest-Event").parents("tr").find("#joinAction").click();
+        cy.get("h1").contains("Event beitreten");
         cy.get("#userName").type("test");
         cy.get("#password").type("Test-password");
         cy.wait(500);
-        cy.get("form").contains("Join").click();
+        cy.get("form").contains("Beitreten").click();
         cy.wait(500);
         cy.contains("h5", "Bestellung").click();
 
@@ -150,13 +147,12 @@ describe("Order CRUD", () => {
 
         cy.get("#tableNumber").type("8");
 
-        cy.contains("button", "Menus").click();
+        cy.contains("button", "Menüs").click();
         cy.wait(100);
         cy.contains("div", "Order-Test-Menu").click();
         cy.contains("div", "Order-Test-Menu").click();
 
-
-        cy.contains("button", "Menu Items").click();
+        cy.contains("button", "Menüpunkte").click();
         cy.wait(100);
         cy.contains("div", "Order-Test-Menu-Item").click();
         cy.contains("div", "Order-Test-Menu-Item").click();
@@ -164,7 +160,7 @@ describe("Order CRUD", () => {
         cy.wait(500);
 
         // edit menu
-        cy.contains("div", "Selektierte Menus").find("button", "Bearbeiten").first().click();
+        cy.contains("div", "Selektierte Menüs").find("button", "Bearbeiten").first().click();
         cy.wait(500); // wait for the popup to show up
 
         cy.get("div#headlessui-portal-root").within(() => {
@@ -175,7 +171,7 @@ describe("Order CRUD", () => {
         cy.wait(500); // wait for the popup to close
 
         // edit menu item
-        cy.contains("div", "Selektierte Menu Items").find("button", "Bearbeiten").first().click();
+        cy.contains("div", "Selektierte Menüpunkte").find("button", "Bearbeiten").first().click();
         cy.wait(500); // wait for the popup to show up
 
         cy.get("div#headlessui-portal-root").within(() => {
@@ -186,13 +182,13 @@ describe("Order CRUD", () => {
         cy.wait(500); // wait for the popup to close
 
         // delete on menu from order
-        cy.contains("div", "Selektierte Menus").within(() => {
+        cy.contains("div", "Selektierte Menüs").within(() => {
             cy.contains("button", "Entfernen").first().click();
         });
         cy.wait(500);
 
         // delete on menu item from order
-        cy.contains("div", "Selektierte Menu Items").within(() => {
+        cy.contains("div", "Selektierte Menüpunkte").within(() => {
             cy.contains("button", "Entfernen").first().click();
         });
         cy.wait(100);
@@ -207,12 +203,12 @@ describe("Order CRUD", () => {
     });
 
     it("should delete newly created order", () => {
-        cy.get("tr").contains("UnitTest-Event").parents("tr").find('#joinAction').click();
-        cy.get("h1").contains("Join Event");
+        cy.get("tr").contains("UnitTest-Event").parents("tr").find("#joinAction").click();
+        cy.get("h1").contains("Event beitreten");
         cy.get("#userName").type("test");
         cy.get("#password").type("Test-password");
         cy.wait(500);
-        cy.get("form").contains("Join").click();
+        cy.get("form").contains("Beitreten").click();
         cy.wait(500);
         cy.contains("h5", "Bestellung").click();
 
@@ -229,10 +225,10 @@ describe("Order CRUD", () => {
     });
 
     it("should delete created menu", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Menus").click();
+        cy.contains("tr", "UnitTest-Event").contains("button", "Menüs").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menus").should("exist");
+        cy.get("h2").contains("Menüs").should("exist");
 
         cy.contains("tr", "Order-Test-Menu").find("td:last-child").find("button:last-child").click();
 
@@ -245,10 +241,10 @@ describe("Order CRUD", () => {
     });
 
     it("should delete created menu item II", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Menu Item").click();
+        cy.contains("tr", "UnitTest-Event").contains("button", "Menüpunkte").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menu Items").should("exist");
+        cy.get("h2").contains("Menüpunkte").should("exist");
 
         cy.contains("tr", "Order-Test-Menu-Item-II").find("td:last-child").find("button:last-child").click();
 
@@ -261,10 +257,10 @@ describe("Order CRUD", () => {
     });
 
     it("should delete created menu item", () => {
-        cy.contains("tr", "UnitTest-Event").contains("button", "Menu Item").click();
+        cy.contains("tr", "UnitTest-Event").contains("button", "Menüpunkte").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menu Items").should("exist");
+        cy.get("h2").contains("Menüpunkte").should("exist");
 
         cy.contains("tr", "Order-Test-Menu-Item").find("td:last-child").find("button:last-child").click();
 

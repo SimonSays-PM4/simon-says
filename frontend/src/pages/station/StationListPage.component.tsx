@@ -1,18 +1,18 @@
 import React from "react";
-import {useStationListPage} from "./StationListPage.hooks.ts";
-import {Loader} from "../../components/Loader.tsx";
-import {DataTable} from "../../components/data-tables/DataTable.tsx";
-import {Popup} from "../../components/Popup.tsx";
-import {useNavigate} from "react-router-dom";
-import {StationDTO} from "../../gen/api";
-import {ColumnType} from "../../models/ColumnType.ts";
-import {MdEditSquare} from "react-icons/md";
-import {FaRegTrashAlt} from "react-icons/fa";
-import {PiChargingStationDuotone} from "react-icons/pi";
-import {ButtonType} from "../../enums/ButtonType.ts";
+import { useStationListPage } from "./StationListPage.hooks.ts";
+import { Loader } from "../../components/Loader.tsx";
+import { DataTable } from "../../components/data-tables/DataTable.tsx";
+import { Popup } from "../../components/Popup.tsx";
+import { useNavigate } from "react-router-dom";
+import { StationDTO } from "../../gen/api";
+import { ColumnType } from "../../models/ColumnType.ts";
+import { MdEditSquare } from "react-icons/md";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { PiChargingStationDuotone } from "react-icons/pi";
+import { ButtonType } from "../../enums/ButtonType.ts";
 
 export const StationListPageComponent: React.FC = () => {
-    const {isLoading,stationList,stationActions,showDeletePopup,setShowDeletePopup,eventId} = useStationListPage();
+    const { isLoading, stationList, stationActions, showDeletePopup, setShowDeletePopup, eventId } = useStationListPage();
     const navigate = useNavigate();
 
     const onEditClick = (row: StationDTO) => {
@@ -25,7 +25,7 @@ export const StationListPageComponent: React.FC = () => {
     };
 
     const onViewStation = (row: StationDTO) => {
-        navigate(`../../../`+eventId+`/station/`+row.id)
+        navigate(`../../../` + eventId + `/station/` + row.id)
     };
 
     const columns: Array<ColumnType<StationDTO>> = [
@@ -36,15 +36,15 @@ export const StationListPageComponent: React.FC = () => {
         },
         {
             key: "assemblyStation",
-            name: "is Assembly Station",
+            name: "Ist Zusammensetzungs-Station",
             type: "boolean"
         },
         {
-            key:"id",
-            elementKey:"viewAction",
-            type:"action",
-            name:"View",
-            buttonType:ButtonType.Secondary,
+            key: "id",
+            elementKey: "viewAction",
+            type: "action",
+            name: "Anzeigen",
+            buttonType: ButtonType.Secondary,
             action: onViewStation
         },
         {
@@ -52,17 +52,17 @@ export const StationListPageComponent: React.FC = () => {
             name: "Bearbeiten",
             elementKey: "editAction",
             type: "action",
-            children: <MdEditSquare/>,
-            noText:true,
+            children: <MdEditSquare />,
+            noText: true,
             action: onEditClick
         },
         {
             key: "id",
             name: "Löschen",
-            elementKey:"deleteAction",
+            elementKey: "deleteAction",
             type: "action",
-            children: <FaRegTrashAlt/>,
-            noText:true,
+            children: <FaRegTrashAlt />,
+            noText: true,
             action: onDeleteClick
         },
     ];
@@ -71,9 +71,9 @@ export const StationListPageComponent: React.FC = () => {
         {isLoading ? (
             <div className="w-[100px] block mx-auto"><Loader /></div>
         ) : (
-            <DataTable<StationDTO> title="Stationen" icon={<PiChargingStationDuotone/>} columns={columns} rows={stationList} onCreateClick={() => navigate(`../station/create`)} onBackClick={() => navigate("../../events")}/>
+            <DataTable<StationDTO> title="Stationen" icon={<PiChargingStationDuotone />} columns={columns} rows={stationList} onCreateClick={() => navigate(`../station/create`)} onBackClick={() => navigate("../../events")} />
         )}
 
-        <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={stationActions.deleteStation} modalText={'Station "' + stationActions.stationToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
+        <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={stationActions.deleteStation} modalText={'Möchten Sie die Station "' + stationActions.stationToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
     </div>
 }

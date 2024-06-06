@@ -46,10 +46,10 @@ describe("MenuItem", () => {
     });
 
     it("should create a menuItem", () => {
-        cy.contains("tr", "Test-Event").contains("button", "Menu Item").click();
+        cy.contains("tr", "Test-Event").contains("button", "Menüpunkte").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menu Items").should("exist");
+        cy.get("h2").contains("Menüpunkte").should("exist");
 
         cy.contains("button", "Erstellen").click();
 
@@ -67,10 +67,10 @@ describe("MenuItem", () => {
     });
 
     it("should delete created menuItem", () => {
-        cy.contains("tr", "Test-Event").contains("button", "Menu Item").click();
+        cy.contains("tr", "Test-Event").contains("button", "Menüpunkte").click();
 
         cy.wait(500);
-        cy.get("h2").contains("Menu Items").should("exist");
+        cy.get("h2").contains("Menüpunkte").should("exist");
 
         cy.contains("tr", "Test-Menu-Item").find("td:last-child").find("button:last-child").click();
 
