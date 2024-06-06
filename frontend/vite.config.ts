@@ -15,6 +15,10 @@ export default defineConfig(({ mode }) => {
         printer_server_id = env.VITE_PRINTER_SERVER_ID ? env.VITE_PRINTER_SERVER_ID : printer_server_id;
         take_away_printer_queue_id = env.VITE_TAKE_AWAY_PRINTER_QUEUE_ID ? env.VITE_TAKE_AWAY_PRINTER_QUEUE_ID : take_away_printer_queue_id;
         receipt_printer_queue_id = env.VITE_RECEIPT_PRINTER_QUEUE_ID ? env.VITE_RECEIPT_PRINTER_QUEUE_ID : receipt_printer_queue_id;
+        console.log(`Using API URL: ${api_url}`);
+        console.log(`Using printer server ID: ${printer_server_id}`);
+        console.log(`Using take away printer queue ID: ${take_away_printer_queue_id}`);
+        console.log(`Using receipt printer queue ID: ${receipt_printer_queue_id}`);
     }
 
     return {
