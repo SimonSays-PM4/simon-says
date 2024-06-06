@@ -37,7 +37,8 @@ export class SocketApi<OnConnectType, OnChangeType> {
             autoConnect: false, 
             extraHeaders: {
                 "Authorization": this.authorizationHeader
-            }
+            },
+            transports: ['polling']
         });
         this.socket.on('initial-data', onInitialData);
         this.socket.on('change', onChange);
