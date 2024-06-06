@@ -1,7 +1,8 @@
 package ch.zhaw.pm4.simonsays.api.controller
 
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace
 import ch.zhaw.pm4.simonsays.api.types.OrderDTO
-import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
+import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDTO
 import ch.zhaw.pm4.simonsays.entity.FoodOrder
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
@@ -83,7 +84,7 @@ class AssemblyViewNamespace(
         subscribers?.forEach { it.sendPojo(SocketIoNamespace.CHANGE_EVENT, data) }
     }
 
-    override fun onApplicationError(id: Long?, error: ApplicationErrorDto) {
+    override fun onApplicationError(id: Long?, error: ApplicationErrorDTO) {
         if(id == null){
             // send to all
             subscribeToAssemblyStationEvents.forEach { it.value.forEach{ onApplicationError(it, error) } }

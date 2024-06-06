@@ -1,5 +1,5 @@
-import ch.zhaw.pm4.simonsays.api.controller.SocketIo
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace
+package ch.zhaw.pm4.simonsays.api.controller.socketio
+
 import ch.zhaw.pm4.simonsays.config.ApplicationProperties
 import ch.zhaw.pm4.simonsays.config.auth.Access
 import ch.zhaw.pm4.simonsays.config.auth.AuthService

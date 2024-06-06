@@ -2,8 +2,8 @@ package ch.zhaw.pm4.simonsays.service.printer
 
 import ch.zhaw.pm4.simonsays.api.controller.printer.PrintQueueJobsNamespace
 import ch.zhaw.pm4.simonsays.api.controller.printer.PrinterServersNamespace
-import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDto
-import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
+import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDTO
+import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDTO
 import ch.zhaw.pm4.simonsays.config.PrinterProperties
 import ch.zhaw.pm4.simonsays.entity.FoodOrder
 import ch.zhaw.pm4.simonsays.entity.OrderMenu
@@ -42,7 +42,7 @@ class PrinterService(
      *
      * @return a list with one entry for table receipts and two entries for take away
      */
-    fun printFoodOrder(foodOrder: FoodOrder): List<PrintQueueJobDto> {
+    fun printFoodOrder(foodOrder: FoodOrder): List<PrintQueueJobDTO> {
         return if (foodOrder.isTakeAway) {
             printTakeAwayReceipt(foodOrder)
         } else {
@@ -50,19 +50,19 @@ class PrinterService(
         }
     }
 
-    private fun printTakeAwayReceipt(foodOrder: FoodOrder): List<PrintQueueJobDto> {
+    private fun printTakeAwayReceipt(foodOrder: FoodOrder): List<PrintQueueJobDTO> {
         val title = "Takeaway #${foodOrder.getTakeAwayNr().toString()}"
         return listOf(
             printInternalTakeAwayReceipt(foodOrder, title), printNormalReceiptWithCustomTitle(foodOrder, title)
         )
     }
 
-    private fun printNormalReceipt(foodOrder: FoodOrder): PrintQueueJobDto {
+    private fun printNormalReceipt(foodOrder: FoodOrder): PrintQueueJobDTO {
         val title = "Tisch #${foodOrder.tableNumber}"
         return printNormalReceiptWithCustomTitle(foodOrder, title)
     }
 
-    private fun printNormalReceiptWithCustomTitle(foodOrder: FoodOrder, title: String): PrintQueueJobDto {
+    private fun printNormalReceiptWithCustomTitle(foodOrder: FoodOrder, title: String): PrintQueueJobDTO {
         val receiptDecoration = ReceiptDecoration(
             header = printerProperties.receiptHeader,
             qrCode = printerProperties.receiptQrCodeContent,
@@ -71,9 +71,9 @@ class PrinterService(
         )
         return print(
             orderId = foodOrder.id!!,
-            isTakeaway = foodOrder.isTakeAway,
+            isInternal = false, // This is the normal receipt from the takeaway
             title = title,
-            body = getBodyForFoodOrder(foodOrder),
+            body = getBodyForFoodOrder(foodOrder, showIngredients = false),
             receiptDecoration = receiptDecoration,
         )
     }
@@ -81,21 +81,22 @@ class PrinterService(
     /**
      * Print a receipt that is to be used internally in the kitchen. No fancy QR codes or anything
      */
-    fun printInternalTakeAwayReceipt(foodOrder: FoodOrder, title: String): PrintQueueJobDto {
+    fun printInternalTakeAwayReceipt(foodOrder: FoodOrder, title: String): PrintQueueJobDTO {
         return print(
             orderId = foodOrder.id!!,
-            isTakeaway = foodOrder.isTakeAway,
+            isInternal = true, // This is the internal receipt for the kitchen only for takeaways
             title = title,
-            body = getBodyForFoodOrder(foodOrder)
+            body = getBodyForFoodOrder(foodOrder, showIngredients = true)
         )
     }
 
     private fun print(
-        orderId: Long, isTakeaway: Boolean, title: String, body: String, receiptDecoration: ReceiptDecoration? = null
-    ): PrintQueueJobDto {
+        orderId: Long, isInternal: Boolean, title: String, body: String, receiptDecoration: ReceiptDecoration? = null
+    ): PrintQueueJobDTO {
         val currentMs = Instant.now().toEpochMilli()
-        val printQueueJobDto = PrintQueueJobDto(
-            id = orderId.toString(),
+        val printJobId = orderId.toString() + if (isInternal) INTERNAL_PRINT_JOB_SUFFIX else ""
+        val printQueueJobDto = PrintQueueJobDTO(
+            id = printJobId,
             title = title,
             body = body,
             base64PngLogoImage = receiptDecoration?.base64PngLogoImage,
@@ -104,10 +105,10 @@ class PrinterService(
             footer = receiptDecoration?.footer,
             creationDateTime = currentMs,
             lastUpdateDateTime = currentMs,
-            status = JobStatusDto.PENDING
+            status = JobStatusDTO.PENDING
         )
 
-        val printerQueueId = if (isTakeaway) {
+        val printerQueueId = if (isInternal) {
             printerProperties.takeawayPrinterQueueId
         } else {
             printerProperties.receiptPrinterQueueId
@@ -147,15 +148,19 @@ class PrinterService(
     | Total                  10.20 |
     +------------------------------+
      */
-    private fun getBodyForFoodOrder(foodOrder: FoodOrder): String {
+    private fun getBodyForFoodOrder(foodOrder: FoodOrder, showIngredients: Boolean = false): String {
         var body = ""
 
         // Add list of ordered menus
-        body += foodOrder.menus?.joinToString("\n") { getTextForOrderMenu(it) }
+        body += foodOrder.menus?.joinToString("\n") { getTextForOrderMenu(it, showIngredients) }
         body += "\n"
 
         // Add list of ordered items
-        body += foodOrder.menuItems?.joinToString("\n") { getTextForOrderMenuItem(it) }
+        body += foodOrder.menuItems?.joinToString("\n") {
+            getTextForOrderMenuItem(
+                it, showIngredients = showIngredients
+            )
+        }
         body += "\n"
 
         // Add total
@@ -165,7 +170,7 @@ class PrinterService(
         return body
     }
 
-    private fun getTextForOrderMenu(oderMenu: OrderMenu): String {
+    private fun getTextForOrderMenu(oderMenu: OrderMenu, showIngredients: Boolean = false): String {
         val price = formatPriceWithStartPadding(oderMenu.price)
         val menuNameLines = splitPricedItemTextOntoMultipleLinesIfNecessary(oderMenu.name)
 
@@ -182,7 +187,11 @@ class PrinterService(
         }
 
         menuText += "\n"
-        menuText += oderMenu.orderMenuItems.joinToString("\n") { getTextForOrderMenuItem(it, "  ", showPrice = false) }
+        menuText += oderMenu.orderMenuItems.joinToString("\n") {
+            getTextForOrderMenuItem(
+                it, "  ", showPrice = false, showIngredients = showIngredients
+            )
+        }
         return menuText
     }
 
@@ -190,6 +199,7 @@ class PrinterService(
         orderMenuItem: OrderMenuItem,
         indent: String = "",
         showPrice: Boolean = true,
+        showIngredients: Boolean = false,
     ): String {
         var menuItemText = if (showPrice) {
             // print price always with two decimal places
@@ -212,14 +222,17 @@ class PrinterService(
             return menuItemText
         }
 
-        // add the ingredients
-        menuItemText += "\n"
+        if (showIngredients) {
+            // add the ingredients
+            menuItemText += "\n"
 
-        var ingredientsText = orderMenuItem.orderIngredients.joinToString(", ") { it.name }
-        // put brackets around it
-        ingredientsText = "($ingredientsText)"
-        ingredientsText = splitPricedItemTextOntoMultipleLinesIfNecessary(ingredientsText, indent).joinToString("\n")
-        menuItemText += ingredientsText
+            var ingredientsText = orderMenuItem.orderIngredients.joinToString(", ") { it.name }
+            // put brackets around it
+            ingredientsText = "($ingredientsText)"
+            ingredientsText =
+                splitPricedItemTextOntoMultipleLinesIfNecessary(ingredientsText, indent).joinToString("\n")
+            menuItemText += ingredientsText
+        }
 
         return menuItemText
     }
@@ -262,7 +275,7 @@ class PrinterService(
     /**
      * Dry run the print job. This will not actually print the job but only log the output.
      */
-    private fun dryRun(printerQueueId: String, printJob: PrintQueueJobDto) {
+    private fun dryRun(printerQueueId: String, printJob: PrintQueueJobDTO) {
         val virtualPaperWidth = printerProperties.receiptMaxCharactersPerLine
 
         fun center(text: String): String {
@@ -318,6 +331,7 @@ $virtualPaper
     }
 
     companion object {
+        private const val INTERNAL_PRINT_JOB_SUFFIX = "_INTERNAL"
         private const val PRICE_COLUMN_WIDTH = 10
 
         internal data class ReceiptDecoration(

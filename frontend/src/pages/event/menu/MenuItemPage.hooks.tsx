@@ -56,9 +56,11 @@ export const useMenuItemPage = (): MenuItemReturnParams => {
     const deleteMenuItem = useCallback(() => {
         setLoading(true);
         menuItemService.deleteMenuItem(eventId, menuItemToDelete.id).then(() => {
-            appContext.addNotification(NotificationType.OK, "Deleted Menu Item");
+            appContext.addNotification(NotificationType.OK, "Menu Item wurde gelöscht.");
             setShowDeletePopup(false);
             setLoading(false);
+        }).catch(_ => {
+            appContext.addNotification(NotificationType.ERR, "Menu Item konnte nicht gelöscht werden.");
         });
     }, [eventId, menuItemToDelete]);
 

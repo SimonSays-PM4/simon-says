@@ -8,6 +8,7 @@ import { Popup } from "../../components/Popup.tsx";
 import { useOrderListPage } from "./OrderListPage.hooks.tsx";
 import {FaRegTrashAlt} from "react-icons/fa";
 import {PiReceiptDuotone} from "react-icons/pi";
+import { PrintJobStatusIndicator } from "../../components/PrintJobStatusIndicator.tsx";
 
 export const OrderListPageComponent: React.FC = () => {
     const { isLoading, orderActions, showDeletePopup, setShowDeletePopup, data } = useOrderListPage();
@@ -46,6 +47,13 @@ export const OrderListPageComponent: React.FC = () => {
             name: "Status",
             type: "column",
             formatter: (order) => `${order.state === State.InProgress ? "In Arbeit" : "Abgeschlossen"}`,
+        },
+        {
+            key: "id",
+            elementKey: "printStatus",
+            name: "Druckstatus",
+            type: "column",
+            formatter: (order) => <PrintJobStatusIndicator order={order}/>,
         },
         {
             key: "id",

@@ -57,7 +57,11 @@ export const useMenuListPage = (): MenuListPageReturnProps => {
                 setIsLoading(true);
 
                 menuService.deleteMenu(eventId, menuToDelete.id).then(() => {
+                    appContext.addNotification(NotificationType.ERR, `Beim Löschen der Zutat ist ein Fehler aufgetreten.`)
+
                     setShowDeletePopup(false);
+                }).catch(_ => {
+                    appContext.addNotification(NotificationType.ERR, `Beim Löschen der Zutat ist ein Fehler aufgetreten.`)
                 });
             }
         }

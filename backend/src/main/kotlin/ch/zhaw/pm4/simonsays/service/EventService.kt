@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class EventService(
-        private val eventRepository: EventRepository,
-        private val eventMapper: EventMapper
+    private val eventRepository: EventRepository,
+    private val eventMapper: EventMapper
 ) {
 
     fun getEvents(): MutableList<EventDTO> {
@@ -25,13 +25,13 @@ class EventService(
 
     fun getEvent(eventId: Long): EventDTO {
         val event = eventRepository.findById(eventId)
-                .orElseThrow { ResourceNotFoundException("Event not found with ID: $eventId") }
+            .orElseThrow { ResourceNotFoundException("Event not found with ID: $eventId") }
         return eventMapper.mapToEventDTO(event)
     }
 
     fun getEventEntity(eventId: Long): Event {
         val event = eventRepository.findById(eventId)
-                .orElseThrow { ResourceNotFoundException("Event not found with ID: $eventId") }
+            .orElseThrow { ResourceNotFoundException("Event not found with ID: $eventId") }
         return event
     }
 

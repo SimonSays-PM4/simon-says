@@ -66,10 +66,9 @@ class MenuTest {
             menuItems = listOf(
                 getMenuItem(),
                 getMenuItem(id = 2, price = 3.0)
-            )
+            ),
+            price = 1.0
         )
-
-        every { menuItemRepository.getReferenceById(any()) } returns getMenuItem()
 
         val menuCreateUpdateDto = getCreateUpdateMenuDTO()
         Assertions.assertEquals(
@@ -80,11 +79,11 @@ class MenuTest {
 
     @Test
     fun `Test menu update`() {
-        every { menuRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getMenu())
-        every { menuRepository.save(any()) } returns getMenu(name = "updated name")
+        every { menuRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getMenu(price = 1.0))
+        every { menuRepository.save(any()) } returns getMenu(name = "updated name", price = 1.0)
         val menuCreateUpdateDto = getCreateUpdateMenuDTO(name = "updated name")
         Assertions.assertEquals(
-            getMenuDTO(name = "updated name"),
+            getMenuDTO(name = "updated name", price = 1.0),
             menuService.createUpdateMenu(menuCreateUpdateDto, getEvent().id!!)
         )
     }
@@ -113,7 +112,7 @@ class MenuTest {
 
     @Test
     fun `Test menu get`() {
-        every { menuRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenu())
+        every { menuRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenu(price = 1.0))
         Assertions.assertEquals(
             getMenuDTO(), menuService.getMenu(1, getEvent().id!!)
         )

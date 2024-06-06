@@ -82,10 +82,10 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                                 })}
 
 
-                                                <td className="flex place-content-end min-h-[60px] ml-auto">
+                                                <td className="flex place-content-end ml-auto py-1">
                                                     {columns.filter((column) => column.type == "action" && column.action).map((column) => {
                                                         // @ts-ignore
-                                                        return <Button id={column.elementKey} key={column.elementKey} className="my-2 mx-2" buttonType={column.buttonType} buttonText={column.noText?"":column.name} onClick={(() => column.action(row)) || console.log}>{column.children}</Button>
+                                                        return <Button id={column.elementKey} key={column.elementKey} className="m-2 h-[42px]" buttonType={column.buttonType} buttonText={column.noText?"":column.name} onClick={(() => column.action(row)) || console.log}>{column.children}</Button>
                                                     })}
                                                 </td>
                                             </tr>

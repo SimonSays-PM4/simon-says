@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client';
-import { ApplicationErrorDto, PrinterServerDto, PrinterServersDto, PrintQueueDto, PrintQueueJobDto, PrintQueueJobsDto } from './dtos';
+import { ApplicationErrorDto, PrinterServerDto, PrinterServersDto, PrintQueueJobDto, PrintQueueJobsDto } from './dtos';
 
 export class SocketApi<OnConnectType, OnChangeType> {
     readonly socketUrl: string;
@@ -68,7 +68,7 @@ export class SocketApi<OnConnectType, OnChangeType> {
         await this.socket.emit('change', data);
     }
 
-    async sendRemove<T>(data: Partial<OnChangeType>): Promise<void> {
+    async sendRemove(data: Partial<OnChangeType>): Promise<void> {
         console.debug('Sending remove to %s', this.socketUrl, data);
         await this.socket.emit('remove', data);
     }

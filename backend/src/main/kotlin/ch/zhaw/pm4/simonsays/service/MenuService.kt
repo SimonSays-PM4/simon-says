@@ -38,6 +38,9 @@ class MenuService(
         } else {
             menuMapper.mapCreateDTOToMenu(menu, event, menuItems)
         }
+        if(menuToBeSaved.price == null) {
+            menuToBeSaved.price = menuToBeSaved.menuItems.sumOf { it.price }
+        }
         val savedMenu = menuRepository.save(menuToBeSaved)
         return menuMapper.mapToMenuDTO(savedMenu, menu.menuItems.sumOf { it.price })
     }
@@ -57,6 +60,7 @@ class MenuService(
         menuToSave.name = menu.name!!
         menuToSave.event = eventService.getEventEntity(eventId)
         menuToSave.menuItems = menuItems
+        menuToSave.price = menu.price
         return menuToSave
     }
 

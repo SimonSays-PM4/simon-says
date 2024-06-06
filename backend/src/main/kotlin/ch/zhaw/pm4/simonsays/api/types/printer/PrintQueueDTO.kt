@@ -19,7 +19,7 @@ Terminology:
     cause unknown behavior on simultaneous prints.
 */
 @Schema(description = "A queue of print jobs for a specific printer.")
-data class PrintQueueDto(
+data class PrintQueueDTO(
     @Schema(description = "The unique identifier of the print queue.")
     val id: String,
 
@@ -27,5 +27,5 @@ data class PrintQueueDto(
     val name: String,
 
     @Schema(description = "The printers that are connected to this queue.")
-    val printers: List<PrinterDto>
+    val printers: List<PrinterDTO>
 )

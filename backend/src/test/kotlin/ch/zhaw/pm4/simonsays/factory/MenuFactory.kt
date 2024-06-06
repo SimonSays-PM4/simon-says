@@ -15,10 +15,11 @@ class MenuFactory(
     fun createMenu(
         name: String = "Default Menu Name",
         eventId: Long = 1,
-        menuItems: List<MenuItem> = listOf()
+        menuItems: List<MenuItem> = listOf(),
+        price: Double = 1.0
     ): Menu {
         val event = eventRepository.findById(eventId).orElse(null) // Fetch the Event by ID
-        val menu = Menu(name = name, event = event, menuItems = menuItems) // Use the Event entity
+        val menu = Menu(name = name, event = event, menuItems = menuItems, price = price) // Use the Event entity
         return menuRepository.save(menu)
     }
 }

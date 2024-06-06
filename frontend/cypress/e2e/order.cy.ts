@@ -123,6 +123,7 @@ describe("Order CRUD", () => {
         cy.url().should("include", "/menu/create");
 
         cy.get("#name").type("Order-Test-Menu");
+        cy.get("#price").type("34.03");
         cy.get("#menuItemSelector").type("Order-Test-Menu-Item\n");
         cy.get("#menuItemSelector").type("Order-Test-Menu-Item-II\n");
 
@@ -196,7 +197,7 @@ describe("Order CRUD", () => {
         });
         cy.wait(100);
 
-        cy.contains("p", "Preis: 36.00 CHF");
+        cy.contains("p", "Preis: 46.03 CHF");
 
         cy.contains("button", "Bestellung aufgeben").click();
 
