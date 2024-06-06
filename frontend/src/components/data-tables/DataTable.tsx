@@ -91,7 +91,7 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                         );
                                     }) :
                                     (<div className="whitespace-nowrap px-5 py-3 text-center text-sm text-default-800">
-                                        No Items
+                                        Keine Einträge
                                     </div>)}
                             </tbody>
                         </table>
