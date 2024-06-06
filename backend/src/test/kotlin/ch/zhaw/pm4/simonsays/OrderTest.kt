@@ -128,6 +128,22 @@ class OrderTest {
     }
 
     @Test
+    fun `test get event ID for order`() {
+        val orderId = 1L
+        val expectedEventId = 100L
+
+        // Mocking the repository to return an expected event ID when queried with a specific order ID
+        every { orderRepository.findEventIdByOrderId(orderId) } returns expectedEventId
+
+        // Call the method under test
+        val actualEventId = orderService.getEventIdForOrder(orderId)
+
+        // Assert that the returned event ID matches the expected ID
+        Assertions.assertEquals(expectedEventId, actualEventId, "The event ID should match the expected value")
+    }
+
+
+    @Test
     fun `test create order`() {
         every { eventService.getEvent(any()) } returns getTestEventDTO()
         every { menuRepository.findAllByEventId(any()) } returns listOf(getMenu())

@@ -73,6 +73,10 @@ class OrderService(
         return order
     }
 
+    fun getEventIdForOrder(orderId: Long): Long? {
+        return orderRepository.findEventIdByOrderId(orderId)
+    }
+
     fun deleteOrder(orderId: Long, eventId: Long) {
         val order = orderRepository.findByIdAndEventId(orderId, eventId).orElseThrow {
             ResourceNotFoundException("Order not found with ID: $orderId")
@@ -156,5 +160,4 @@ class OrderService(
         orderToSave.totalPrice = totalPrice
         return orderToSave
     }
-
 }
