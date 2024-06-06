@@ -21,12 +21,12 @@ class MenuService(
     fun listMenus(eventId: Long): MutableList<MenuDTO> {
         val menus: List<Menu> = menuRepository.findAllByEventId(eventId)
         return menus.map { menu ->
-            menuMapper.mapToMenuDTO(menu, menu.menuItems.sumOf { it.price })
+            menuMapper.mapToMenuDTO(menu)
         }.toMutableList()
     }
     fun getMenu(menuId: Long, eventId: Long): MenuDTO {
         val menu = getMenuEntity(menuId, eventId)
-        return menuMapper.mapToMenuDTO(menu, menu.menuItems.sumOf { it.price })
+        return menuMapper.mapToMenuDTO(menu)
     }
 
     fun createUpdateMenu(menu: MenuCreateUpdateDTO, eventId: Long): MenuDTO {
@@ -42,7 +42,7 @@ class MenuService(
             menuToBeSaved.price = menuToBeSaved.menuItems.sumOf { it.price }
         }
         val savedMenu = menuRepository.save(menuToBeSaved)
-        return menuMapper.mapToMenuDTO(savedMenu, menu.menuItems.sumOf { it.price })
+        return menuMapper.mapToMenuDTO(savedMenu)
     }
 
     fun deleteMenu(menuId: Long, eventId: Long) {

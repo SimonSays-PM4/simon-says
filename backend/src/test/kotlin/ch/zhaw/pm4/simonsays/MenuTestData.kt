@@ -34,8 +34,8 @@ fun getMenu(
         name,
         event,
         menuItems,
-        price = price
-        orderMenu
+        price = price,
+        orderMenu = orderMenu
     )
 }
 
