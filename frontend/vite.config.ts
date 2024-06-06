@@ -12,9 +12,9 @@ export default defineConfig(({ mode }) => {
     let receipt_printer_queue_id = "6f7c2fa6-9401-457e-8a86-618e810b103a";
     if (mode != "development") {
         api_url = JSON.stringify(env.VITE_API_URL);
-        printer_server_id = env.VITE_PRINTER_SERVER_ID ?? printer_server_id;
-        take_away_printer_queue_id = env.VITE_TAKE_AWAY_PRINTER_QUEUE_ID ?? take_away_printer_queue_id;
-        receipt_printer_queue_id = env.VITE_RECEIPT_PRINTER_QUEUE_ID ?? receipt_printer_queue_id;
+        printer_server_id = env.VITE_PRINTER_SERVER_ID ? env.VITE_PRINTER_SERVER_ID : printer_server_id;
+        take_away_printer_queue_id = env.VITE_TAKE_AWAY_PRINTER_QUEUE_ID ? env.VITE_TAKE_AWAY_PRINTER_QUEUE_ID : take_away_printer_queue_id;
+        receipt_printer_queue_id = env.VITE_RECEIPT_PRINTER_QUEUE_ID ? env.VITE_RECEIPT_PRINTER_QUEUE_ID : receipt_printer_queue_id;
     }
 
     return {
