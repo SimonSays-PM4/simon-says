@@ -102,7 +102,6 @@ export const useMenuCreatePage = (): MenuCreateReturnProps => {
 
         const formMenuItems = data.menuItems as ValueLabel[];
         const menuToSave = data as MenuCreateUpdateDTO;
-        console.log(menuToSave.price)
 
         menuToSave.id = menuId > 0 ? menuId : undefined;
         menuToSave.menuItems = menuItems.filter((item) => formMenuItems.some((selected) => selected.value === item.id));
