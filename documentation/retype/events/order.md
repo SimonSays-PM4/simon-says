@@ -13,13 +13,13 @@ Um eine Bestellung aufzugeben, gehe auf die Seite "Bestellungen" und klicke auf 
 Zuerst musst du auswählen, ob es sich hier um eine Takeawaybestellung handelt. Sollte dies nicht der Fall sein, kannst du hier die Tischnummer eintragen.
 Wird eine Takeawaybestellung aufgegeben, wird auf der Quittung die Takeawaynummer angezeigt.
 
-//TODO Lukas: Screenshot vo nere Quitting mit de Takeawaynummer
+![cheesbuger-quittung-mit-alles](assets/cheesbuger-quittung-mit-alles.jpg)
 
-Anschliessend kannst du die gewünschten Menus und Menu Items auswählen. 
+Anschliessend kannst du die gewünschten Menus und Menu Items auswählen.
 Du kannst die selektieren Menus / Menu Items auch wieder entfernen, oder die Bestellung individuell anpassen (z.B. Tomaten entfernen).
 Solche Anpassungen werden auf der Quittung vermerkt.
 
-//TODO Lukas: Screenshot von der Bestellung mit den Anpassungen
+![cheesbuger-quittung-ohne-tomate](assets/cheesbuger-quittung-ohne-tomate.jpg)
 
 ![Bestellung aufgeben](assets/create-order.gif)
 

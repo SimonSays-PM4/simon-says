@@ -41,12 +41,12 @@ Das `application.yaml` des Backends kann im `values.yaml` ergänzt werden.
 ## Hardware-Aufbau vor Ort
 
 ### Schritt 1: Drucker einrichten
-Stelle sicher, dass der Drucker korrekt installiert und konfiguriert ist. Verbinde ihn mit dem Raspberry Pi, der als lokales Printing-Gateway dient.
+Stelle sicher, dass der Drucker korrekt installiert und konfiguriert ist. Verbinde ihn mit dem selben netzwerk wie mit dem Raspberry Pi, der als lokales Printing-Gateway dient.
 
 ### Schritt 2: Raspberry Pi konfigurieren
 1. Installiere das Betriebssystem auf dem Raspberry Pi.
-2. Verbinde den Raspberry Pi mit dem Drucker.
-3. Installiere die notwendigen Drucker-Treiber und richte das Netzwerk-Printing ein.
+2. Installiere Docker und Docker-Compose auf dem Raspberry Pi.
+3. Starten des Druck-Servers auf dem Raspberry Pi mit dem [Docker Compose File](../../printer/compose.yaml).
 4. Stelle sicher, dass der Raspberry Pi mit dem Internet verbunden ist und der Druckserver läuft.
 
 ### Schritt 3: Internetzugang sichern
