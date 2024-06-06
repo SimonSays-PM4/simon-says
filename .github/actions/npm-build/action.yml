@@ -38,11 +38,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |-
-          VITE_API_URL=${{ inputs.api-url }} \
-          VITE_PRINTER_SERVER_ID=${{ inputs.printer-server-id }} \
-          VITE_TAKE_AWAY_PRINTER_QUEUE_ID=${{ inputs.take-away-printer-queue-id }} \
-          VITE_RECEIPT_PRINTER_QUEUE_ID=${{ inputs.receipt-printer-queue-id }} \ 
-          npm run build:staging
+          VITE_API_URL=${{ inputs.api-url }} VITE_PRINTER_SERVER_ID=${{ inputs.printer-server-id }} VITE_TAKE_AWAY_PRINTER_QUEUE_ID=${{ inputs.take-away-printer-queue-id }} VITE_RECEIPT_PRINTER_QUEUE_ID=${{ inputs.receipt-printer-queue-id }} npm run build:staging
     - name: npm test
       working-directory: ${{ inputs.working-directory }}
       shell: bash
