@@ -39,14 +39,14 @@ export const JoinPage: React.FC = () => {
             <div className="w-full flex items-center justify-center h-[90%] min-h-[450px]">
                 <div className="w-[500px] h-fit grid justify-center items-center">
                     <h1 className="font-bold flex items-center justify-center text-[42px] sm:text-[46px] xl:text-[52px] mb-8 leading-snug">
-                        Join Event
+                        Event beitreten
                     </h1>
                     <div className="grid h-fit mt-6">
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <FormInput id="userName" label={"Benutzername"} register={register} type="text" />
                             <FormInput id="password" label={"Passwort"} register={register} type="password" />
                             <Button
-                                buttonText="Join"
+                                buttonText="Beitreten"
                                 type="submit"
                                 className="mt-6"
                             />

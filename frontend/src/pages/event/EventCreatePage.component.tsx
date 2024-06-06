@@ -5,8 +5,8 @@ import { FormInput } from "../../components/form/FormInput";
 import { Popup } from "../../components/Popup.tsx";
 import { useEventCreatePage } from "./EventCreatePage.hooks.ts";
 import { EventCreateUpdateDTO } from "../../gen/api";
-import {ButtonType} from "../../enums/ButtonType.ts";
-import {useNavigate} from "react-router-dom";
+import { ButtonType } from "../../enums/ButtonType.ts";
+import { useNavigate } from "react-router-dom";
 
 export const EventCreatePageComponent: React.FC = () => {
     const { event, errorMessage, eventActions, setShowDeleteModal, showDeleteModal } = useEventCreatePage();
@@ -72,7 +72,7 @@ export const EventCreatePageComponent: React.FC = () => {
                 </div>
             </form>
 
-            <Popup modalText="Willst du diesen Event löschen?" show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={eventActions.deleteEvent} closeText="Abbrechen" acceptText="Löschen" />
+            <Popup modalText="Möchten Sie diesen Event löschen?" show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={eventActions.deleteEvent} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }

@@ -1,16 +1,16 @@
 import React from "react";
-import {DataTable} from "../../components/data-tables/DataTable";
-import {ColumnType} from "../../models/ColumnType";
-import {Loader} from "../../components/Loader";
-import {useNavigate} from "react-router-dom";
-import {useEventListPage} from "./EventListPage.hooks.tsx";
-import {Popup} from "../../components/Popup.tsx";
-import {EventCreateUpdateDTO, EventDTO} from "../../gen/api";
-import {ButtonType} from "../../enums/ButtonType.ts";
-import {IoFastFoodOutline} from "react-icons/io5";
-import {PiChargingStationDuotone, PiCookieDuotone, PiHamburgerDuotone} from "react-icons/pi";
-import {MdEditSquare} from "react-icons/md";
-import {FaRegTrashAlt} from "react-icons/fa";
+import { DataTable } from "../../components/data-tables/DataTable";
+import { ColumnType } from "../../models/ColumnType";
+import { Loader } from "../../components/Loader";
+import { useNavigate } from "react-router-dom";
+import { useEventListPage } from "./EventListPage.hooks.tsx";
+import { Popup } from "../../components/Popup.tsx";
+import { EventCreateUpdateDTO, EventDTO } from "../../gen/api";
+import { ButtonType } from "../../enums/ButtonType.ts";
+import { IoFastFoodOutline } from "react-icons/io5";
+import { PiChargingStationDuotone, PiCookieDuotone, PiHamburgerDuotone } from "react-icons/pi";
+import { MdEditSquare } from "react-icons/md";
+import { FaRegTrashAlt } from "react-icons/fa";
 import { TbArrowsJoin } from "react-icons/tb";
 
 export const EventListPageComponent: React.FC = () => {
@@ -57,25 +57,24 @@ export const EventListPageComponent: React.FC = () => {
         {
             key: "numberOfTables",
             name: "Anzahl Tische",
-            center:true,
+            center: true,
             formatter: (row) => {
                 return <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">{row.numberOfTables}</span>
             },
-
             type: "column",
         },
         {
             key: "id",
-            name: "Menus",
+            name: "Menüs",
             elementKey: "menuAction",
             type: "action",
             buttonType: ButtonType.Secondary,
-            children:<IoFastFoodOutline/>,
+            children: <IoFastFoodOutline />,
             action: onClickMenu
         },
         {
             key: "id",
-            name: "Menu Item",
+            name: "Menüpunkte",
             elementKey: "menuItemAction",
             type: "action",
             buttonType: ButtonType.Secondary,
@@ -88,7 +87,7 @@ export const EventListPageComponent: React.FC = () => {
             elementKey: "ingredientAction",
             type: "action",
             buttonType: ButtonType.Secondary,
-            children: <PiCookieDuotone/>,
+            children: <PiCookieDuotone />,
             action: onClickIngredients
         },
         {
@@ -97,34 +96,34 @@ export const EventListPageComponent: React.FC = () => {
             elementKey: "stationAction",
             type: "action",
             buttonType: ButtonType.Secondary,
-            children:<PiChargingStationDuotone/>,
+            children: <PiChargingStationDuotone />,
             action: onClickStations
         },
         {
             key: "id",
-            name: "Join Event",
-            elementKey:"joinAction",
+            name: "Event beitreten",
+            elementKey: "joinAction",
             type: "action",
-            children: <TbArrowsJoin/>,
-            noText:true,
+            children: <TbArrowsJoin />,
+            noText: true,
             action: onJoinClick
         },
         {
             key: "id",
-            name: "Edit",
+            name: "Bearbeiten",
             elementKey: "editAction",
             type: "action",
-            children: <MdEditSquare/>,
-            noText:true,
+            children: <MdEditSquare />,
+            noText: true,
             action: onEditClick
         },
         {
             key: "id",
-            name: "Delete",
-            elementKey:"deleteAction",
+            name: "Löschen",
+            elementKey: "deleteAction",
             type: "action",
-            children: <FaRegTrashAlt/>,
-            noText:true,
+            children: <FaRegTrashAlt />,
+            noText: true,
             action: onDeleteClick
         },
     ];
@@ -137,7 +136,7 @@ export const EventListPageComponent: React.FC = () => {
             ) : (
                 <DataTable<EventDTO> title="Events" columns={columns} rows={data} onCreateClick={() => navigate("../event/create")} />
             )}
-            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteEvent} modalText={'Delete "' + eventActions.eventToDelete.name + '"'} closeText="Abbrechen" acceptText="Löschen" />
+            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={eventActions.deleteEvent} modalText={'Möchten Sie den Event "' + eventActions.eventToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }

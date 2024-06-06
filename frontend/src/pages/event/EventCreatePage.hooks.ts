@@ -1,11 +1,11 @@
-import {useCallback, useContext, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {FieldValues} from "react-hook-form";
-import {getEventService} from "../../api.ts";
-import {EventCreateUpdateDTO} from "../../gen/api";
-import {AppContext} from "../../providers/AppContext.tsx";
-import {NotificationType} from "../../enums/NotificationType.ts";
-import {EventContext} from "../../providers/EventContext.tsx";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FieldValues } from "react-hook-form";
+import { getEventService } from "../../api.ts";
+import { EventCreateUpdateDTO } from "../../gen/api";
+import { AppContext } from "../../providers/AppContext.tsx";
+import { NotificationType } from "../../enums/NotificationType.ts";
+import { EventContext } from "../../providers/EventContext.tsx";
 
 type EventActions = {
     deleteEvent: () => void;
@@ -44,7 +44,7 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
                     setIsLoading(false);
                 })
                 .catch(() => {
-                    appContext.addNotification(NotificationType.ERR, `Fehler beim Laden vom Event mit id ${eventId}`);
+                    appContext.addNotification(NotificationType.ERR, "Event konnte nicht geladen werden.");
                     setIsLoading(false);
                 });
         }
@@ -69,22 +69,29 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
                     setIsLoading(false);
                     if (response.status === 201 || response.status === 200) {
                         navigate("../events");
-                        appContext.addNotification(NotificationType.OK, `Event wurde gespeichert`);
+                        appContext.addNotification(
+                            NotificationType.OK,
+                            `Event wurde ${eventId > 0 ? "gespeichert" : "erstellt"} .`
+                        );
                     } else {
                         appContext.addNotification(
                             NotificationType.ERR,
-                            `Beim Erstellen des Events ist ein Fehler aufgetreten.`
+                            `Beim ${eventId > 0 ? "Speichern" : "Erstellen"}  des Events ist ein Fehler aufgetreten.`
                         );
-                        setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
+                        setErrorMessage(
+                            `Beim ${eventId > 0 ? "Speichern" : "Erstellen"}  des Events ist ein Fehler aufgetreten.`
+                        );
                     }
                 })
                 .catch(() => {
                     setIsLoading(false);
                     appContext.addNotification(
                         NotificationType.ERR,
-                        `Beim Erstellen des Events ist ein Fehler aufgetreten.`
+                        `Beim ${eventId > 0 ? "Speichern" : "Erstellen"}  des Events ist ein Fehler aufgetreten.`
                     );
-                    setErrorMessage("Beim Erstellen des Events ist ein Fehler aufgetreten.");
+                    setErrorMessage(
+                        `Beim ${eventId > 0 ? "Speichern" : "Erstellen"} des Events ist ein Fehler aufgetreten.`
+                    );
                 });
         },
         [event]
@@ -93,13 +100,16 @@ export const useEventCreatePage = (): EventCreateReturnProps => {
     const deleteEvent = useCallback(() => {
         if (eventId > 0) {
             setIsLoading(true);
-            eventService.deleteEvent(eventId).then(() => {
-                setIsLoading(false);
-                navigate("../events");
-                appContext.addNotification(NotificationType.OK, "Event wurde gelöscht.")
-            }).catch(_=> {
-                appContext.addNotification(NotificationType.ERR, "Event konnte nicht gelöscht werden.")
-            });
+            eventService
+                .deleteEvent(eventId)
+                .then(() => {
+                    setIsLoading(false);
+                    navigate("../events");
+                    appContext.addNotification(NotificationType.OK, "Event wurde gelöscht.");
+                })
+                .catch((_) => {
+                    appContext.addNotification(NotificationType.ERR, "Event konnte nicht gelöscht werden.");
+                });
         }
     }, [eventId]);
 

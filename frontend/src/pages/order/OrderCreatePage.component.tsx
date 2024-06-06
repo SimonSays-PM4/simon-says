@@ -153,7 +153,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                                         )
                                     }
                                 >
-                                    Menus
+                                    Menüs
                                 </Tab>
                                 <Tab
                                     className={({ selected }) =>
@@ -165,7 +165,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                                         )
                                     }
                                 >
-                                    Menu Items
+                                    Menüpunkte
                                 </Tab>
                             </Tab.List>
                             <Tab.Panels>
@@ -215,7 +215,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                         </Tab.Group>
 
                         <div className="grid w-full border-2 rounded-lg p-2 mb-6">
-                            <p>Selektierte Menus</p>
+                            <p>Selektierte Menüs</p>
                             {selectedMenus.map((menu) => {
                                 return (
                                     <div key={menu.index + menu.id} className="w-full flex my-2 border-t-2 pt-2">
@@ -247,7 +247,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                         </div>
 
                         <div className="grid w-full border-2 rounded-lg p-2 mb-12">
-                            <p>Selektierte Menu Items</p>
+                            <p>Selektierte Menüpunkte</p>
                             {selectedMenuItems.map((menuItem) => {
                                 return (
                                     <div key={menuItem.id + menuItem.index} className="w-full flex my-2 border-t-2 pt-2">
@@ -281,7 +281,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                 </>)
             }
 
-            <Dialog title={`Menu "${menuToEdit?.name}" bearbeiten`}
+            <Dialog title={`Menü "${menuToEdit?.name}" bearbeiten`}
                 isOpen={isEditMenuDialogOpen}
                 cancelAction={() => setIsEditMenuDialogOpen(false)}
                 cancelText="Abbrechen"
@@ -326,7 +326,7 @@ export const OrderCreatePageComponent: React.FC = () => {
                 </>
             </Dialog>
 
-            <Dialog title={`Menu Item "${menuItemToEdit?.name}" bearbeiten`}
+            <Dialog title={`Menüpunkte "${menuItemToEdit?.name}" bearbeiten`}
                 isOpen={isEditMenuItemDialogOpen}
                 cancelAction={() => setIsEditMenuItemDialogOpen(false)}
                 cancelText="Abbrechen"

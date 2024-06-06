@@ -8,12 +8,11 @@ export interface IEventProviderProps {
 
 const EventProvider: React.FC<IEventProviderProps> = ({ children }) => {
     const { eventId } = useParams();
-    // TODO: what if no eventId is provided??
 
     return (
         <EventContext.Provider
             value={{
-                eventId: eventId as unknown as number, // TODO: ugly code, fix this
+                eventId: eventId as unknown as number,
             }}
         >
             <>{children}</>

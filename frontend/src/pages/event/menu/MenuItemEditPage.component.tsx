@@ -36,7 +36,7 @@ export const MenuItemEditPage: React.FC = () => {
     {isLoading
       ? (<div className="w-[100px] block mx-auto"><Loader /></div>)
       : (<>
-        <h2 className="text-xl font-semibold text-default-800 mb-4">{menuItem.id && menuItem.id > 0 ? "Edit Menu Item" : "Menu Item erstellen"}</h2>
+        <h2 className="text-xl font-semibold text-default-800 mb-4">{menuItem.id && menuItem.id > 0 ? "Menüpunkt bearbeiten" : "Menüpunkt erstellen"}</h2>
         <form onSubmit={handleSubmit(() => menuItemActions.saveMenuItem(formGetValues()), () => menuItemActions.onFormInvalid(formGetValues()))} >
           <FormInput id={nameof<MenuItemCreateUpdateDTO>(e => e.name)}
             defaultValue={menuItem.name}
@@ -50,7 +50,7 @@ export const MenuItemEditPage: React.FC = () => {
 
           <FormInput id={nameof<MenuItemCreateUpdateDTO>(e => e.price)}
             defaultValue={"" + menuItem.price}
-            label={"Price"}
+            label={"Preis"}
             type="number"
             step={0.01}
             min={1}
@@ -60,7 +60,7 @@ export const MenuItemEditPage: React.FC = () => {
           />
 
           <label className="mb-2 block text-sm font-medium text-default-900">
-            Ingredients *
+            Zutaten *
           </label>
           <Controller
             name={nameof<MenuItemCreateUpdateDTO>(e => e.ingredients)}
@@ -89,7 +89,7 @@ export const MenuItemEditPage: React.FC = () => {
           </div>
 
         </form>
-        <Popup show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={menuItemActions.deleteMenuItem} modalText={"Do you want to delete this menu item?"} acceptText={"Yes"} closeText={"No"} />
+        <Popup show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={menuItemActions.deleteMenuItem} modalText={"Möchten Sie diesen Menüpunkt löschen?"} acceptText={"Ja"} closeText={"Nein"} />
       </>)}
   </div>)
 }
