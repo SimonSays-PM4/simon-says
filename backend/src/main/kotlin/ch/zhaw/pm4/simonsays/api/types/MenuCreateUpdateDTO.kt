@@ -1,10 +1,7 @@
 package ch.zhaw.pm4.simonsays.api.types
 
 import io.swagger.v3.oas.annotations.media.Schema
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Size
+import jakarta.validation.constraints.*
 import org.hibernate.validator.constraints.Length
 
 data class MenuCreateUpdateDTO (
@@ -20,4 +17,7 @@ data class MenuCreateUpdateDTO (
     @field:NotNull(message = "Menu item list must be provided")
     @field:Size(min = 1, message = "A menu must have at least one menu item")
     val menuItems: List<MenuItemDTO>?,
+
+    @field:Schema(description = "Price of the menu item")
+    var price: Double?
 )
