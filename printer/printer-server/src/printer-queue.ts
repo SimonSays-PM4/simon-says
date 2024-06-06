@@ -12,7 +12,7 @@ export class PrinterQueue {
         this.printServerId = printServerId;
         this.printQueueDto = printQueueDto;
         for (let printer of printQueueDto.printers) {
-            this.printers.push(new Printer(printer.mac, printer.name));
+            this.printers.push(Printer.getOrCreateInstance(printer.mac, printer.name));
         }
         this.nextPrintQueueJobConnection = SocketApi.connectToPrintQueueNextJob(
             process.env.PRINTER_QUEUE_SERVER_BASE_URL!,
