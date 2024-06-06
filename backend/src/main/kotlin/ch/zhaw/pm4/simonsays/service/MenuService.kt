@@ -5,6 +5,7 @@ import ch.zhaw.pm4.simonsays.api.types.MenuCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuDTO
 import ch.zhaw.pm4.simonsays.entity.Menu
 import ch.zhaw.pm4.simonsays.entity.MenuItem
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
 import ch.zhaw.pm4.simonsays.repository.MenuRepository
@@ -24,8 +25,7 @@ class MenuService(
         }.toMutableList()
     }
     fun getMenu(menuId: Long, eventId: Long): MenuDTO {
-        val menu = menuRepository.findByIdAndEventId(menuId, eventId)
-            .orElseThrow { ResourceNotFoundException("Menu not found with ID: $menuId") }
+        val menu = getMenuEntity(menuId, eventId)
         return menuMapper.mapToMenuDTO(menu)
     }
 
@@ -46,8 +46,9 @@ class MenuService(
     }
 
     fun deleteMenu(menuId: Long, eventId: Long) {
-        val menu = menuRepository.findByIdAndEventId(menuId, eventId).orElseThrow {
-            ResourceNotFoundException("Menu not found with ID: $menuId")
+        val menu = getMenuEntity(menuId, eventId)
+        if (!menu.orderMenu.isNullOrEmpty()) {
+            throw ResourceInUseException("Menu is used in orders and cannot be deleted")
         }
         menuRepository.delete(menu)
     }
@@ -63,4 +64,8 @@ class MenuService(
         return menuToSave
     }
 
+    private fun getMenuEntity(menuId: Long, eventId: Long): Menu {
+        return menuRepository.findByIdAndEventId(menuId, eventId)
+                .orElseThrow { ResourceNotFoundException("Menu not found with ID: $menuId") }
+    }
 }

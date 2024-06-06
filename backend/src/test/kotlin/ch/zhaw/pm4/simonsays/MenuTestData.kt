@@ -6,6 +6,7 @@ import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
 import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.entity.Menu
 import ch.zhaw.pm4.simonsays.entity.MenuItem
+import ch.zhaw.pm4.simonsays.entity.OrderMenu
 
 
 fun getCreateUpdateMenuDTO(
@@ -25,14 +26,16 @@ fun getMenu(
     name: String = "Menu Test",
     event: Event = getEvent(),
     menuItems: List<MenuItem> = listOf(getMenuItem()),
-    price: Double = 0.0
+    price: Double = 0.0,
+    orderMenu: Set<OrderMenu>? = null
 ): Menu {
     return Menu(
         id,
         name,
         event,
         menuItems,
-        price = price
+        price = price,
+        orderMenu = orderMenu
     )
 }
 

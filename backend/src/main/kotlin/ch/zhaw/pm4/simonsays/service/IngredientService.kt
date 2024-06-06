@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.types.IngredientCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import org.springframework.stereotype.Service
@@ -20,14 +21,13 @@ class IngredientService(
     }
 
     fun getIngredient(id: Long, eventId: Long): IngredientDTO {
-        return ingredientMapper.mapToIngredientDTO(ingredientRepository.findByIdAndEventId(id, eventId).orElseThrow {
-            ResourceNotFoundException("Ingredient not found with ID: $id")
-        })
+        return ingredientMapper.mapToIngredientDTO(getIngredientEntity(id, eventId))
     }
 
     fun deleteIngredient(id: Long, eventId: Long) {
-        ingredientRepository.findByIdAndEventId(id, eventId).orElseThrow {
-            ResourceNotFoundException("Ingredient not found with ID: $id")
+        val ingredient = getIngredientEntity(id, eventId)
+        if (!ingredient.menuItems.isNullOrEmpty()) {
+            throw ResourceInUseException("Ingredient is used in menu items and cannot be deleted")
         }
         ingredientRepository.deleteById(id)
     }
@@ -54,6 +54,12 @@ class IngredientService(
         ingredientToSave.name = ingredient.name!!
         ingredientToSave.mustBeProduced = ingredient.mustBeProduced!!
         return ingredientToSave
+    }
+
+    private fun getIngredientEntity(id: Long, eventId: Long): Ingredient {
+        return ingredientRepository.findByIdAndEventId(id, eventId).orElseThrow {
+            ResourceNotFoundException("Ingredient not found with ID: $id")
+        }
     }
 
 

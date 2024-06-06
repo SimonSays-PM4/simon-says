@@ -8,6 +8,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.OrderMapper
 import ch.zhaw.pm4.simonsays.api.mapper.StationMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
 import ch.zhaw.pm4.simonsays.api.types.StationDTO
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.*
 import ch.zhaw.pm4.simonsays.service.*
@@ -154,7 +155,7 @@ class StationTest {
 
     @Test
     fun `Test station deletion`() {
-        every { stationRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getStation())
+        every { stationRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getStation(ingredients = listOf()))
         Assertions.assertEquals(
                 Unit, stationService.deleteStation(1, getEvent().id!!))
     }
@@ -182,5 +183,16 @@ class StationTest {
                 stationService.getStationView(1, 1)
         )
     }
+
+       @Test
+       fun `Test delete Station still in use exception`() {
+           every { stationRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getStation(ingredients = listOf(getTestIngredient1())))
+           val error = Assertions.assertThrows(
+                   ResourceInUseException::class.java)
+           { stationService.deleteStation(1, getEvent().id!!) }
+           Assertions.assertEquals("Station is used in ingredients and cannot be deleted", error.message)
+       }
+
+
 
 }
