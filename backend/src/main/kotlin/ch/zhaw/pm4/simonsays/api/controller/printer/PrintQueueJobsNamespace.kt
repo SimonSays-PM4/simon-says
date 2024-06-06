@@ -1,13 +1,13 @@
 package ch.zhaw.pm4.simonsays.api.controller.printer
 
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.APPLICATION_ERROR_EVENT
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.CHANGE_EVENT
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.INITIAL_DATA_EVENT
-import ch.zhaw.pm4.simonsays.api.controller.SocketIoNamespace.Companion.REMOVE_EVENT
-import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
-import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDto
-import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDto
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.APPLICATION_ERROR_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.CHANGE_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.INITIAL_DATA_EVENT
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace.Companion.REMOVE_EVENT
+import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDTO
+import ch.zhaw.pm4.simonsays.api.types.printer.JobStatusDTO
+import ch.zhaw.pm4.simonsays.api.types.printer.PrintQueueJobDTO
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueJobService
 import ch.zhaw.pm4.simonsays.service.printer.PrintQueueService
 import ch.zhaw.pm4.simonsays.service.printer.PrinterServerService
@@ -29,7 +29,7 @@ class PrintQueueJobsNamespace(
     private val printQueueService: PrintQueueService,
     private val printQueueJobService: PrintQueueJobService,
     private val objectMapper: ObjectMapper,
-) : SocketIoNamespace<String, PrintQueueJobDto> {
+) : SocketIoNamespace<String, PrintQueueJobDTO> {
     companion object {
         /**
          * Regex pattern to match the namespace. The first group is the printer server id, the second group is the print queue id and the third group is the job id.
@@ -64,7 +64,7 @@ class PrintQueueJobsNamespace(
     /**
      * A map of all queues and their current next pending print job
      */
-    internal val nextPendingPrintQueueJobs = mutableMapOf<PrintQueueId, PrintQueueJobDto?>()
+    internal val nextPendingPrintQueueJobs = mutableMapOf<PrintQueueId, PrintQueueJobDTO?>()
     override fun isPartOfNamespace(requestedNamespace: String): Boolean {
         // check if matches the namespace pattern
         val matchResult = namespacePattern.matches(requestedNamespace)
@@ -178,7 +178,7 @@ class PrintQueueJobsNamespace(
             jobJson.put("creationDateTime", currentTimeMillis)
             // Attempt to convert json to data class
             val printQueueJobDto = try {
-                objectMapper.convertValue(jobJson, PrintQueueJobDto::class.java)
+                objectMapper.convertValue(jobJson, PrintQueueJobDTO::class.java)
             } catch (error: Error) {
                 return onApplicationError(
                     socket,
@@ -193,7 +193,7 @@ class PrintQueueJobsNamespace(
                 socket, "PRINT_QUEUE_JOB_NOT_FOUND", "Print queue job with id $jobId not found."
             )
             val updatedPrintQueueJobDto = existingPrintQueueJob.copy(
-                status = if (jobJson.has("status")) JobStatusDto.valueOf(jobJson.getString("status")) else existingPrintQueueJob.status,
+                status = if (jobJson.has("status")) JobStatusDTO.valueOf(jobJson.getString("status")) else existingPrintQueueJob.status,
                 statusMessage = if (jobJson.has("statusMessage")) jobJson.getString("statusMessage") else existingPrintQueueJob.statusMessage,
             )
             // warn client if they want to change something else than status or status message
@@ -297,7 +297,7 @@ class PrintQueueJobsNamespace(
         }
     }
 
-    override fun onApplicationError(id: PrintQueueJobId?, error: ApplicationErrorDto) {
+    override fun onApplicationError(id: PrintQueueJobId?, error: ApplicationErrorDTO) {
         val subscribers = if (id == null) {
             subscribersToAllPrintQueueJobs.values.flatten() + subscribersToNextPrintQueueJob.values.flatten() + subscribersToSpecificPrintQueueJobs.values.flatten()
         } else {
@@ -308,7 +308,7 @@ class PrintQueueJobsNamespace(
         subscribers.forEach { it.sendPojo(APPLICATION_ERROR_EVENT, error) }
     }
 
-    override fun onRemove(data: PrintQueueJobDto) {
+    override fun onRemove(data: PrintQueueJobDTO) {
         val jobId = data.id
         val printQueueId = printQueueJobService.getPrintQueueIdForJob(jobId)
         val subscribers =
@@ -318,13 +318,13 @@ class PrintQueueJobsNamespace(
         subscribers.forEach { it.sendPojo(REMOVE_EVENT, data) }
     }
 
-    override fun onChange(data: PrintQueueJobDto) {
+    override fun onChange(data: PrintQueueJobDTO) {
         val jobId = data.id
         val printQueueId = try {
             printQueueJobService.getPrintQueueIdForJob(jobId)
         } catch (e: Exception) {
             return onApplicationError(
-                jobId, ApplicationErrorDto(
+                jobId, ApplicationErrorDTO(
                     "UNABLE_TO_FIND_PRINT_QUEUE_ID", "Unable to find print queue id for job $jobId. Error: ${e.message}"
                 )
             )

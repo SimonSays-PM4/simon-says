@@ -1,7 +1,8 @@
 package ch.zhaw.pm4.simonsays.api.controller
 
+import ch.zhaw.pm4.simonsays.api.controller.socketio.SocketIoNamespace
 import ch.zhaw.pm4.simonsays.api.types.OrderIngredientDTO
-import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDto
+import ch.zhaw.pm4.simonsays.api.types.printer.ApplicationErrorDTO
 import ch.zhaw.pm4.simonsays.entity.Station
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.EventRepository
@@ -94,7 +95,7 @@ class StationViewNamespace(
         }
     }
 
-    override fun onApplicationError(id: Pair<Long, Long>?, error: ApplicationErrorDto) {
+    override fun onApplicationError(id: Pair<Long, Long>?, error: ApplicationErrorDTO) {
         if(id == null){
             // send to all
             subscribeToSpecificStation.forEach { it.value.forEach{ onApplicationError(it, error) } }

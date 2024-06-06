@@ -3,6 +3,7 @@ package ch.zhaw.pm4.simonsays.config
 import ch.zhaw.pm4.simonsays.api.types.EventDTO
 import ch.zhaw.pm4.simonsays.config.auth.AuthService
 import ch.zhaw.pm4.simonsays.service.EventService
+import ch.zhaw.pm4.simonsays.service.OrderService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.every
 import io.mockk.mockk
@@ -31,6 +32,7 @@ class AuthTest {
     private lateinit var response: HttpServletResponse
     private lateinit var filterChain: FilterChain
     private lateinit var eventService: EventService
+    private lateinit var orderService: OrderService
     private lateinit var applicationProperties: ApplicationProperties
     private lateinit var printerProperties: PrinterProperties
 
@@ -45,6 +47,7 @@ class AuthTest {
         applicationProperties = mockk(relaxed = true)
         printerProperties = mockk(relaxed = true)
         eventService = mockk(relaxed = true)
+        orderService = mockk(relaxed = true)
         val requestMappingHandlerMapping: RequestMappingHandlerMapping = mockk(relaxed = true)
         val objectMapper = jacksonObjectMapper()
 
@@ -52,7 +55,13 @@ class AuthTest {
         every { applicationProperties.adminToken } returns adminToken
 
         authService =
-            AuthService(applicationProperties, printerProperties, eventService, requestMappingHandlerMapping)
+            AuthService(
+                applicationProperties,
+                printerProperties,
+                eventService,
+                orderService,
+                requestMappingHandlerMapping
+            )
         authFilter = AuthFilter(authService, objectMapper)
         request = mockk(relaxed = true)
         response = mockk(relaxed = true)
@@ -141,6 +150,45 @@ class AuthTest {
 
         verify(exactly = 0) { filterChain.doFilter(request, response) }
         verify(exactly = 1) { response.status = HttpStatus.FORBIDDEN.value() }
+    }
+
+    @Test
+    fun `Print job related endpoint should allow access with valid printer token a`() {
+        val printerToken = "myprintertokenb"
+        every { printerProperties.printerAccessTokenB } returns printerToken
+        setupRequest(printerToken, "GET", "/socket-api/v1/printer-servers/1/print-queues/2/jobs/2")
+
+        authFilter.doFilterInternal(request, response, filterChain)
+
+        verify(exactly = 1) { filterChain.doFilter(request, response) }
+    }
+
+    @Test
+    fun `Print job related endpoint should allow access with valid event token`() {
+        val validAdminUsername = "admin";
+        val validPassword = "correctpassword";
+        every { applicationProperties.adminToken } returns validPassword // Mock the admin token to match the valid password
+
+        setupRequest("Basic ${getBasicAuthToken(validAdminUsername, validPassword)}", "GET", "/socket-api/v1/printer-servers/1/print-queues/1/jobs/123")
+        authFilter.doFilterInternal(request, response, filterChain)
+
+        // Verify that the filter chain is invoked, allowing the request to proceed
+        verify(exactly = 1) { filterChain.doFilter(request, response) }
+    }
+
+    @Test
+    fun `Print job related endpoint should deny access with invalid credentials`() {
+        val validAdminUsername = "admin";
+        val invalidPassword = "wrongpassword";
+        every { applicationProperties.adminToken } returns "correctpassword" // Mock the correct admin token which does not match the invalid password
+
+        setupRequest("Basic ${getBasicAuthToken(validAdminUsername, invalidPassword)}", "GET", "/socket-api/v1/printer-servers/1/print-queues/1/jobs/123")
+        authFilter.doFilterInternal(request, response, filterChain)
+
+        // Verify that the filter chain is not invoked, blocking the request
+        verify(exactly = 0) { filterChain.doFilter(request, response) }
+        // Ensure that the response status is set to FORBIDDEN
+        verify { response.status = HttpStatus.FORBIDDEN.value() }
     }
 
     private fun createMockEventDTO(id: Long, name: String, password: String, numberOfTables: Long): EventDTO {

@@ -20,13 +20,13 @@ class MenuService(
     fun listMenus(eventId: Long): MutableList<MenuDTO> {
         val menus: List<Menu> = menuRepository.findAllByEventId(eventId)
         return menus.map { menu ->
-            menuMapper.mapToMenuDTO(menu, menu.menuItems.sumOf { it.price })
+            menuMapper.mapToMenuDTO(menu)
         }.toMutableList()
     }
     fun getMenu(menuId: Long, eventId: Long): MenuDTO {
         val menu = menuRepository.findByIdAndEventId(menuId, eventId)
             .orElseThrow { ResourceNotFoundException("Menu not found with ID: $menuId") }
-        return menuMapper.mapToMenuDTO(menu, menu.menuItems.sumOf { it.price })
+        return menuMapper.mapToMenuDTO(menu)
     }
 
     fun createUpdateMenu(menu: MenuCreateUpdateDTO, eventId: Long): MenuDTO {
@@ -38,8 +38,11 @@ class MenuService(
         } else {
             menuMapper.mapCreateDTOToMenu(menu, event, menuItems)
         }
+        if(menuToBeSaved.price == null) {
+            menuToBeSaved.price = menuToBeSaved.menuItems.sumOf { it.price }
+        }
         val savedMenu = menuRepository.save(menuToBeSaved)
-        return menuMapper.mapToMenuDTO(savedMenu, menu.menuItems.sumOf { it.price })
+        return menuMapper.mapToMenuDTO(savedMenu)
     }
 
     fun deleteMenu(menuId: Long, eventId: Long) {
@@ -56,6 +59,7 @@ class MenuService(
         menuToSave.name = menu.name!!
         menuToSave.event = eventService.getEventEntity(eventId)
         menuToSave.menuItems = menuItems
+        menuToSave.price = menu.price
         return menuToSave
     }
 

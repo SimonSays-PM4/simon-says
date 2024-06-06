@@ -6,8 +6,9 @@ import { OrderDTO, State } from "../../gen/api";
 import { useNavigate } from "react-router-dom";
 import { Popup } from "../../components/Popup.tsx";
 import { useOrderListPage } from "./OrderListPage.hooks.tsx";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { PiReceiptDuotone } from "react-icons/pi";
+import {FaRegTrashAlt} from "react-icons/fa";
+import {PiReceiptDuotone} from "react-icons/pi";
+import { PrintJobStatusIndicator } from "../../components/PrintJobStatusIndicator.tsx";
 
 export const OrderListPageComponent: React.FC = () => {
     const { isLoading, orderActions, showDeletePopup, setShowDeletePopup, data } = useOrderListPage();
@@ -49,11 +50,18 @@ export const OrderListPageComponent: React.FC = () => {
         },
         {
             key: "id",
+            elementKey: "printStatus",
+            name: "Druckstatus",
+            type: "column",
+            formatter: (order) => <PrintJobStatusIndicator order={order}/>,
+        },
+        {
+            key: "id",
             name: "Löschen",
-            elementKey: "deleteAction",
+            elementKey:"deleteAction",
             type: "action",
-            children: <FaRegTrashAlt />,
-            noText: true,
+            children: <FaRegTrashAlt/>,
+            noText:true,
             action: onDeleteClick
         },
     ];

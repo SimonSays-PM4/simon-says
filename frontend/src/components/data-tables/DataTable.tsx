@@ -41,18 +41,19 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                     <div className="overflow-hidden">
                         <table className="min-w-full divide-y divide-default-200">
                             <thead className="bg-default-400/10">
-                                <tr>
-                                    {columns.map((column) => {
-                                        return column.type == "column" || column.type == "boolean" ? <th
-                                            key={column.key as string}
-                                            scope="col"
-                                            className="whitespace-nowrap px-5 py-3 text-start text-xs font-medium uppercase text-default-500"
-                                        >
-                                            {column.name}
-                                        </th> : <></>
-                                    })}
-                                    <th></th>
-                                </tr>
+                            <tr>
+                                {columns.map((column) => {
+
+                                    return column.type == "column" || column.type == "boolean" ? <th
+                                        key={column.key as string}
+                                        scope="col"
+                                        className="whitespace-nowrap px-5 py-3 text-start text-xs font-medium uppercase text-default-500"
+                                    >
+                                        {column.name}
+                                    </th>:<></>
+                                })}
+                                <th></th>
+                            </tr>
                             </thead>
                             <tbody className="divide-y divide-default-200">
                                 {rows.length > 0
@@ -64,7 +65,7 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
 
                                                     if (column.formatter) {
 
-                                                        let curr = "whitespace-nowrap px-5 py-3 text-sm" + (column.center ? " text-center" : "") + " text-default-800";
+                                                        let curr = "whitespace-nowrap px-5 py-3 text-sm"+(column.center?" text-center":"")+" text-default-800";
                                                         return (
                                                             <td key={idx} className={curr}>
                                                                 {column.formatter(row)}
@@ -90,7 +91,7 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                         );
                                     }) :
                                     (<div className="whitespace-nowrap px-5 py-3 text-center text-sm text-default-800">
-                                        Keine Einträge
+                                        No Items
                                     </div>)}
                             </tbody>
                         </table>
