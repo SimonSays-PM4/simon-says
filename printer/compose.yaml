@@ -9,6 +9,7 @@ services:
     network_mode: host
     environment:
       PRINTER_SERVER_ID: "eb6c2108-82c2-4260-93b7-6a0937cf73ef"
+      PRINTER_AUTH_TOKEN: "x"
       PRINTER_QUEUE_SERVER_BASE_URL: "http://192.168.1.172:8080"
       DRY_RUN: "false"
       DRY_RUN_PRINTER_MAC_ADDRESS: "00:00:00:00:00:01"

@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.EventMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuItemMapper
 import ch.zhaw.pm4.simonsays.api.mapper.MenuMapperImpl
 import ch.zhaw.pm4.simonsays.api.types.MenuDTO
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
 import ch.zhaw.pm4.simonsays.repository.MenuRepository
@@ -65,10 +66,9 @@ class MenuTest {
             menuItems = listOf(
                 getMenuItem(),
                 getMenuItem(id = 2, price = 3.0)
-            )
+            ),
+            price = 1.0
         )
-
-        every { menuItemRepository.getReferenceById(any()) } returns getMenuItem()
 
         val menuCreateUpdateDto = getCreateUpdateMenuDTO()
         Assertions.assertEquals(
@@ -79,11 +79,11 @@ class MenuTest {
 
     @Test
     fun `Test menu update`() {
-        every { menuRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getMenu())
-        every { menuRepository.save(any()) } returns getMenu(name = "updated name")
+        every { menuRepository.findByIdAndEventId(any(), any()) } returns Optional.of(getMenu(price = 1.0))
+        every { menuRepository.save(any()) } returns getMenu(name = "updated name", price = 1.0)
         val menuCreateUpdateDto = getCreateUpdateMenuDTO(name = "updated name")
         Assertions.assertEquals(
-            getMenuDTO(name = "updated name"),
+            getMenuDTO(name = "updated name", price = 1.0),
             menuService.createUpdateMenu(menuCreateUpdateDto, getEvent().id!!)
         )
     }
@@ -112,7 +112,7 @@ class MenuTest {
 
     @Test
     fun `Test menu get`() {
-        every { menuRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenu())
+        every { menuRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenu(price = 1.0))
         Assertions.assertEquals(
             getMenuDTO(), menuService.getMenu(1, getEvent().id!!)
         )
@@ -142,5 +142,14 @@ class MenuTest {
             ResourceNotFoundException::class.java,
         ) { menuService.getMenu(1, getEvent().id!!) }
         Assertions.assertEquals("Menu not found with ID: 1", error.message)
+    }
+
+    @Test
+    fun `Test delete menu still in use exception with order`() {
+        every { menuRepository.findByIdAndEventId(1, getEvent().id!!) } returns Optional.of(getMenu(orderMenu = setOf(getOrderMenu(order = getOrder()))))
+        val error = Assertions.assertThrows(
+                ResourceInUseException::class.java)
+        { menuService.deleteMenu(1, getEvent().id!!) }
+        Assertions.assertEquals("Menu is used in orders and cannot be deleted", error.message)
     }
 }

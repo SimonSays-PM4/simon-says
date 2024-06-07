@@ -63,7 +63,7 @@ export const useStationView = (): StationAction => {
 
             const socket = io(socketUrl, {
                 extraHeaders: {
-                    "Authorization": 'Basic ' + btoa(`${loginInfo.userName}:${loginInfo.password}`)
+                    Authorization: "Basic " + btoa(`${loginInfo.userName}:${loginInfo.password}`)
                 }
             });
 
@@ -160,7 +160,7 @@ export const useStationView = (): StationAction => {
                     setStation(response.data);
                 })
                 .catch(() => {
-                    addNotification(NotificationType.ERR, "Failed to load station");
+                    addNotification(NotificationType.ERR, "Stationen konnten nicht geladen werden");
                 })
                 .finally(() => {
                     setIsLoading(false);

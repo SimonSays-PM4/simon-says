@@ -5,6 +5,7 @@ import ch.zhaw.pm4.simonsays.api.types.MenuItemCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.MenuItemDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
 import ch.zhaw.pm4.simonsays.entity.MenuItem
+import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
 import ch.zhaw.pm4.simonsays.repository.MenuItemRepository
@@ -27,8 +28,7 @@ class MenuItemService(
     }
 
     fun getMenuItem(menuItemId: Long, eventId: Long): MenuItemDTO {
-        val menuItem = menuItemRepository.findByIdAndEventId(menuItemId, eventId)
-            .orElseThrow { ResourceNotFoundException("Menu item not found with ID: $menuItemId") }
+        val menuItem = getMenuItemEntity(menuItemId, eventId)
         return menuItemMapper.mapToMenuItemDTO(menuItem)
     }
 
@@ -45,6 +45,13 @@ class MenuItemService(
         return menuItemMapper.mapToMenuItemDTO(savedMenuItem)
     }
 
+    fun deleteMenuItem(menuItemId: Long, eventId: Long) {
+        val menuItem = getMenuItemEntity(menuItemId, eventId)
+        if (!menuItem.menus.isNullOrEmpty() || !menuItem.orderMenuItem.isNullOrEmpty()) {
+            throw ResourceInUseException("Menu item is used in menus or orders and cannot be deleted")
+        }
+        menuItemRepository.delete(menuItem)
+    }
 
     private fun makeMenuItemReadyForUpdate(menuItem: MenuItemCreateUpdateDTO, eventId: Long, ingredients: List<Ingredient>): MenuItem {
         val menuItemToSave = menuItemRepository.findById(menuItem.id!!).orElseThrow {
@@ -57,11 +64,9 @@ class MenuItemService(
         return menuItemToSave
     }
 
-    fun deleteMenuItem(menuItemId: Long, eventId: Long) {
-        val menuItem = menuItemRepository.findByIdAndEventId(menuItemId, eventId).orElseThrow {
-            ResourceNotFoundException("Menu item not found with ID: $menuItemId")
-        }
-        menuItemRepository.delete(menuItem)
+    private fun getMenuItemEntity(menuItemId: Long, eventId: Long): MenuItem {
+        return menuItemRepository.findByIdAndEventId(menuItemId, eventId)
+                .orElseThrow { ResourceNotFoundException("Menu item not found with ID: $menuItemId") }
     }
 
 }

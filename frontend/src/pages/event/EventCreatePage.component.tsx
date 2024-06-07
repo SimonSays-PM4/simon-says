@@ -5,12 +5,14 @@ import { FormInput } from "../../components/form/FormInput";
 import { Popup } from "../../components/Popup.tsx";
 import { useEventCreatePage } from "./EventCreatePage.hooks.ts";
 import { EventCreateUpdateDTO } from "../../gen/api";
+import { ButtonType } from "../../enums/ButtonType.ts";
+import { useNavigate } from "react-router-dom";
 
 export const EventCreatePageComponent: React.FC = () => {
     const { event, errorMessage, eventActions, setShowDeleteModal, showDeleteModal } = useEventCreatePage();
     const fieldRequiredMessage = "Dieses Feld ist erforderlich.";
     const fieldLengthMessage = "Die Eingabe muss zwischen 5 und 64 Zeichen sein.";
-
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
@@ -65,11 +67,12 @@ export const EventCreatePageComponent: React.FC = () => {
                 {errorMessage ? <p className="py-2 text-primary">{errorMessage}</p> : <></>}
                 <div className="flex min-h-[60px] items-end ml-auto">
                     <Button buttonText={event.id != undefined && event.id > 0 ? "Speichern" : "Erstellen"} className="my-2" type="submit" />
-                    {event.id != undefined && event.id > 0 && <Button buttonText="Delete" className="my-2 mx-2" onClick={() => setShowDeleteModal(true)} />}
+                    {event.id != undefined && event.id > 0 && <Button buttonText="Löschen" className="my-2 mx-2" onClick={() => setShowDeleteModal(true)} />}
+                    <Button buttonText="Abbrechen" className="my-2 ml-2" onClick={() => navigate("../events")} buttonType={ButtonType.Secondary} />
                 </div>
             </form>
 
-            <Popup modalText="Willst du diesen Event löschen?" show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={eventActions.deleteEvent} closeText="Abbrechen" acceptText="Löschen" />
+            <Popup modalText="Möchten Sie diesen Event löschen?" show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onAccept={eventActions.deleteEvent} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }

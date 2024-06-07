@@ -98,4 +98,13 @@ class ExceptionControllerAdvice {
         return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)
     }
 
+    @ExceptionHandler(ResourceInUseException::class)
+    fun handleResourceInUseException(ex: RuntimeException): ResponseEntity<ErrorMessageModel> {
+        val errorMessage = ErrorMessageModel(
+            HttpStatus.BAD_REQUEST.value(),
+            ex.message
+        )
+        return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)
+    }
+
 }

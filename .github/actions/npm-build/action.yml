@@ -10,6 +10,15 @@ inputs:
   api-url:
     default: https://simonsays-backend-stage.pm4.init-lab.ch
     description: URL for backend
+  printer-server-id:
+    default: "a35e6a08-35ef-42c1-9a09-39d32fc2a5d6"
+    description: The id of the printer server
+  take-away-printer-queue-id:
+    default: "ef084926-d2be-4a03-9538-c8dd44f19e04"
+    description: The id of the take away printer queue
+  receipt-printer-queue-id:
+    default: "6f7c2fa6-9401-457e-8a86-618e810b103a"
+    description: The id of the receipt printer queue
 
 runs:
   using: "composite"
@@ -29,7 +38,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |-
-          VITE_API_URL=${{ inputs.api-url }} npm run build:staging
+          VITE_API_URL=${{ inputs.api-url }} VITE_PRINTER_SERVER_ID=${{ inputs.printer-server-id }} VITE_TAKE_AWAY_PRINTER_QUEUE_ID=${{ inputs.take-away-printer-queue-id }} VITE_RECEIPT_PRINTER_QUEUE_ID=${{ inputs.receipt-printer-queue-id }} npm run build:staging
     - name: npm test
       working-directory: ${{ inputs.working-directory }}
       shell: bash

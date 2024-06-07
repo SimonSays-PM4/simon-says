@@ -6,7 +6,7 @@ import { Loader } from "../../../components/Loader.tsx";
 import { ButtonType } from "../../../enums/ButtonType.ts";
 import { LoadingButton } from "../../../components/LoadingButton.tsx";
 import { useMenuCreatePage } from "./MenuCreatePage.hooks.tsx";
-import { MenuCreateUpdateDTO } from "../../../gen/api/api.ts";
+import {MenuCreateUpdateDTO, MenuItemCreateUpdateDTO} from "../../../gen/api/api.ts";
 import Select from "react-select";
 import { Controller } from "react-hook-form";
 
@@ -50,8 +50,19 @@ export const MenuCreatePageComponent: React.FC = () => {
                             onChange={(e) => { menu.name = e.target.value }}
                             validationError={getErrorMessage(nameof<MenuCreateUpdateDTO>(e => e.name))} />
 
+                        <FormInput id={nameof<MenuCreateUpdateDTO>(e => e.price)}
+                                   defaultValue={"" + menu.price}
+                                   label={"Price"}
+                                   type="number"
+                                   step={0.01}
+                                   min={1}
+                                   register={formRegister}
+                                   isRequired={true}
+                                   validationError={getErrorMessage(nameof<MenuItemCreateUpdateDTO>(e => e.price))}
+                        />
+
                         <label className="mb-2 block text-sm font-medium text-default-900">
-                            Menu Items *
+                            Menüpunkte *
                         </label>
 
                         <Controller

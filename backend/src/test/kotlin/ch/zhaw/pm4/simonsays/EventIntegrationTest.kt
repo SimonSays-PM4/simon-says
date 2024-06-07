@@ -254,21 +254,4 @@ class EventIntegrationTest : IntegrationTest() {
             }
     }
 
-    @Test
-    @Transactional
-    fun `Test delete event should succeed when items are still linked`() {
-        val event: Event = eventFactory.createEvent("test", "test", 0)
-        menuItemFactory.createMenuItem(eventId = event.id!!)
-        ingredientFactory.createIngredient(event = event)
-        stationFactory.createStation(eventId = event.id!!)
-        mockMvc.delete("/rest-api/v1/event/${event.id}") {
-            with(httpBasic(username, password))
-            contentType = MediaType.APPLICATION_JSON
-        }
-                .andDo { print() }
-                .andExpect {
-                    status { isNoContent() }
-                }
-    }
-
 }

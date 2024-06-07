@@ -22,7 +22,7 @@ export const useEventListPage = (): EventListPageReturnProps => {
     const [showDeletePopup, setShowDeletePopup] = useState(false)
     const [data, setData] = useState<EventDTO[]>([])
 
-    const appContext = useContext(AppContext)
+    const appContext = useContext(AppContext);
     const eventService = getEventService(appContext.loginInfo.userName, appContext.loginInfo.password);
 
     useEffect(() => {
@@ -46,7 +46,7 @@ export const useEventListPage = (): EventListPageReturnProps => {
             eventService.deleteEvent(eventToDelete.id).then(() => {
                 setShowDeletePopup(false)
                 setLoading(false);
-                appContext.addNotification(NotificationType.ERR, "Deleted Event")
+                appContext.addNotification(NotificationType.ERR, "Event wurde gelöscht")
             })
         }
     }, [eventToDelete.id])

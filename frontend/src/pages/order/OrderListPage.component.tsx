@@ -8,6 +8,7 @@ import { Popup } from "../../components/Popup.tsx";
 import { useOrderListPage } from "./OrderListPage.hooks.tsx";
 import {FaRegTrashAlt} from "react-icons/fa";
 import {PiReceiptDuotone} from "react-icons/pi";
+import { PrintJobStatusIndicator } from "../../components/PrintJobStatusIndicator.tsx";
 
 export const OrderListPageComponent: React.FC = () => {
     const { isLoading, orderActions, showDeletePopup, setShowDeletePopup, data } = useOrderListPage();
@@ -49,6 +50,13 @@ export const OrderListPageComponent: React.FC = () => {
         },
         {
             key: "id",
+            elementKey: "printStatus",
+            name: "Druckstatus",
+            type: "column",
+            formatter: (order) => <PrintJobStatusIndicator order={order}/>,
+        },
+        {
+            key: "id",
             name: "Löschen",
             elementKey:"deleteAction",
             type: "action",
@@ -63,10 +71,10 @@ export const OrderListPageComponent: React.FC = () => {
             {isLoading ? (
                 <div className="w-[100px] block mx-auto"><Loader /></div>
             ) : (
-                <DataTable<OrderDTO> title="Bestellungen" onBackClick={()=>navigate("./..")} icon={<PiReceiptDuotone/>} columns={columns} rows={data} onCreateClick={() => navigate(`../create`)}/>
+                <DataTable<OrderDTO> title="Bestellungen" onBackClick={() => navigate("./..")} icon={<PiReceiptDuotone />} columns={columns} rows={data} onCreateClick={() => navigate(`../create`)} />
             )}
 
-            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={orderActions.deleteOrder} modalText={'Bestellung löschen?'} closeText="Abbrechen" acceptText="Löschen" />
+            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={orderActions.deleteOrder} modalText={'Möchten Sie die Bestellung löschen?'} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }

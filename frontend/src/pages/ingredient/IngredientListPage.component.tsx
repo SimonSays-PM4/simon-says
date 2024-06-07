@@ -62,7 +62,7 @@ export const IngredientListPageComponent: React.FC = () => {
                 <DataTable<IngredientDTO> icon={<PiCookieDuotone />} title="Zutaten" columns={columns} rows={data} onCreateClick={() => navigate(`../ingredient/create`)} onBackClick={() => navigate("../../events")} />
             )}
 
-            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={ingredientActions.deleteIngredient} modalText={'Zutate "' + ingredientActions.ingredientToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
+            <Popup show={showDeletePopup} onClose={() => setShowDeletePopup(false)} onAccept={ingredientActions.deleteIngredient} modalText={'Möchten Sie die Zutate "' + ingredientActions.ingredientToDelete.name + '" löschen?'} closeText="Abbrechen" acceptText="Löschen" />
         </div>
     );
 }

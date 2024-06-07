@@ -18,9 +18,37 @@ export class Printer {
     */
     printLock = false
 
-    constructor(mac: string, name: string) {
+    /**
+     * To prevent having multiple instances of the same printer (physically only one) we use a static map
+     * that maps the mac address to the printer instance. We need to do this to prevent that two queues may print at
+     * the same time to the same printer
+     * 
+     * The key is the mac address of the printer
+    */
+    private static printers: Map<string, Printer> = new Map();
+
+    /**
+     * Private constructur to prevent free instationation. Use the getOrCreateInstance method instead.
+     * @param mac The mac address of the printer, also the identifier of the printer.
+     * @param name The name of the printer.
+     */
+    private constructor(mac: string, name: string) {
         this.mac = mac;
         this.name = name;
+    }
+
+    /**
+     * Get the printer instance for the given mac address. If the printer does not exist yet it will be created.
+     * @param mac The mac address of the printer, also the identifier of the printer.
+     * @param name The name of the printer.
+     */
+    static getOrCreateInstance(mac: string, name: string) : Printer {
+        if (this.printers.has(mac)) {
+            return this.printers.get(mac)!!;
+        }
+        const printer = new Printer(mac, name);
+        this.printers.set(mac, printer);
+        return printer;
     }
 
     /**
@@ -39,7 +67,7 @@ export class Printer {
         if (!ip) {
             console.error(`Failed to resolve printer ip for mac ${this.mac} in arp cache. Starting network scan.`);
             // Attempting network scan
-            try { 
+            try {
                 // timeout the network scan after a certain time 
                 ip = await this.findPrinterIpWithNetworkScan();
                 if (!ip) {
@@ -172,7 +200,7 @@ export class Printer {
             if (!networkName.startsWith("eth") && !networkName.startsWith("wlan") && !networkName.startsWith("Ethernet") && !networkName.startsWith("Wi-Fi")) {
                 continue;
             }
-            
+
             const network = networks[networkName];
 
             // skip all internal networks
@@ -184,7 +212,7 @@ export class Printer {
                 if (networkInterface.family === "IPv4") {
                     const cidr = networkInterface.cidr;
                     // If cidr is not available we skip this network
-                    if(!cidr) {
+                    if (!cidr) {
                         console.warn(`Skipping network ${networkName} because no cidr is available`);
                         continue;
                     }
@@ -192,7 +220,7 @@ export class Printer {
                     // if the network is bigger than /24 we skip it since it would take too long to scan
                     try {
                         const networkSize = parseInt(cidr.split("/")[1]);
-                        if(networkSize > 24) {
+                        if (networkSize > 24) {
                             console.warn('Skipping network %s because it is bigger than /24', networkName);
                             continue;
                         }
@@ -213,7 +241,7 @@ export class Printer {
                         useCache: false,
                         debug: true
                     })
-            
+
                     const result = await arrping.searchByMacAddress([this.mac])
                     if (result.hosts.length === 0) {
                         console.log(`No host found in network ${networkName} with mac ${this.mac}`);
@@ -285,7 +313,7 @@ export class Printer {
                 return text;
             }
         }
-        
+
         let virtualPaper = "\n";
         if (printJob.base64PngLogoImage) {
             virtualPaper += center("<LOGO>");

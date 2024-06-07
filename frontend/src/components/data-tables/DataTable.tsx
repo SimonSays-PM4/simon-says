@@ -1,8 +1,8 @@
-import {ColumnType} from "../../models/ColumnType"
-import {Button} from "../Button"
-import {ButtonType} from "../../enums/ButtonType.ts";
-import {IoIosArrowBack, IoMdAdd} from "react-icons/io";
-import {ReactElement} from "react";
+import { ColumnType } from "../../models/ColumnType"
+import { Button } from "../Button"
+import { ButtonType } from "../../enums/ButtonType.ts";
+import { IoIosArrowBack, IoMdAdd } from "react-icons/io";
+import { ReactElement } from "react";
 
 type IDataTableTypeProps = {}
 
@@ -12,22 +12,22 @@ type IDataTableProps<T> = {
     title: string,
     icon?: string | ReactElement | (string | ReactElement)[],
     onCreateClick: () => void,
-    onBackClick?: ()=> void,
+    onBackClick?: () => void,
 }
 
-export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows, title, onCreateClick, onBackClick,icon}: IDataTableProps<DataType>) => {
+export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows, title, onCreateClick, onBackClick, icon }: IDataTableProps<DataType>) => {
     return (
         <div className="overflow-hidden rounded-lg border border-default-100">
             <div className="overflow-hidden p-6 ">
                 <div className="flex flex-wrap gap-4 sm:justify-between lg:flex-nowrap">
                     <div className="flex flex-wrap items-center gap-4">
-                        {onBackClick?<Button onClick={onBackClick} buttonType={ButtonType.Primary}><IoIosArrowBack/></Button>:<></>}
-                    <div className="items-center gap-4">
-                        <h2 className="text-xl font-semibold">{title}</h2>
-                    </div>
+                        {onBackClick ? <Button onClick={onBackClick} buttonType={ButtonType.Primary}><IoIosArrowBack /></Button> : <></>}
+                        <div className="items-center gap-4">
+                            <h2 className="text-xl font-semibold">{title}</h2>
+                        </div>
                         <div className="flex flex-wrap">
                             <div className="text-xl font-semibold whitespace-nowrap">
-                                    {icon}
+                                {icon}
                             </div>
                         </div>
                     </div>
@@ -74,25 +74,24 @@ export const DataTable = <DataType extends IDataTableTypeProps>({ columns, rows,
                                                     }
                                                     else {
                                                         return (column.type == "column" || column.type == "boolean" ?
-                                                                <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
-                                                                    {column.type == "column" ? tableData:<input type="checkbox" checked={Boolean(tableData)} disabled/>}
-                                                                </td> :<></>
+                                                            <td key={idx} className="whitespace-nowrap px-5 py-3 text-sm text-default-800">
+                                                                {column.type == "column" ? tableData : <input type="checkbox" checked={Boolean(tableData)} disabled />}
+                                                            </td> : <></>
                                                         );
                                                     }
                                                 })}
 
-
                                                 <td className="flex place-content-end min-h-[60px] ml-auto">
                                                     {columns.filter((column) => column.type == "action" && column.action).map((column) => {
                                                         // @ts-ignore
-                                                        return <Button id={column.elementKey} key={column.elementKey} className="my-2 mx-2" buttonType={column.buttonType} buttonText={column.noText?"":column.name} onClick={(() => column.action(row)) || console.log}>{column.children}</Button>
+                                                        return <Button id={column.elementKey} key={column.elementKey} className="my-2 mx-2" buttonType={column.buttonType} buttonText={column.noText ? "" : column.name} onClick={(() => column.action(row)) || console.log}>{column.children}</Button>
                                                     })}
                                                 </td>
                                             </tr>
                                         );
                                     }) :
                                     (<div className="whitespace-nowrap px-5 py-3 text-center text-sm text-default-800">
-                                        No Items
+                                        Keine Einträge
                                     </div>)}
                             </tbody>
                         </table>

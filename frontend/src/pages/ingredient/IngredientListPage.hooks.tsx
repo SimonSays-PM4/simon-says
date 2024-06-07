@@ -27,8 +27,7 @@ export const useIngredientListPage = (): IngredientListPageReturnProps => {
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [data, setData] = useState<IngredientDTO[]>([]);
 
-    const { loginInfo } = useContext(AppContext);
-    const ingredientService = getIngredientService(loginInfo.userName, loginInfo.password);
+    const ingredientService = getIngredientService(appContext.loginInfo.userName, appContext.loginInfo.password);
 
     useEffect(() => {
         if (!showDeletePopup) {
@@ -57,12 +56,13 @@ export const useIngredientListPage = (): IngredientListPageReturnProps => {
                 setIsLoading(true);
 
                 ingredientService.deleteIngredient(ingredientToDelete.id, eventId).then(() => {
+                    appContext.addNotification(NotificationType.OK, `Zutat wurde gelöscht.`);
                     setShowDeletePopup(false);
                 });
             }
         }
         catch (_) {
-            appContext.addNotification(NotificationType.ERR, `Beim Löschen der Zutate ist ein Fehler aufgetreten.`);
+            appContext.addNotification(NotificationType.ERR, `Beim Löschen der Zutat ist ein Fehler aufgetreten.`);
         }
         finally {
             setIsLoading(false);

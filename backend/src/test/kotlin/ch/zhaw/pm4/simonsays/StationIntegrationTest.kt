@@ -357,7 +357,7 @@ class StationIntegrationTest : IntegrationTest() {
 
     @Test
     @Transactional
-    fun `Delete station should succeed`() {
+    fun `Delete station should fail`() {
         val station: Station = stationFactory.createStation(name = "teststation", eventId = testEvent.id!!, ingredients = listOf(testIngredient))
         mockMvc.delete("${getStationUrl(testEvent.id!!)}/${station.id}") {
             with(httpBasic(username, password))
@@ -365,8 +365,22 @@ class StationIntegrationTest : IntegrationTest() {
         }
                 .andDo { print() }
                 .andExpect {
-                    status { isNoContent() }
+                    status { isBadRequest() }
                 }
+    }
+
+    @Test
+    @Transactional
+    fun `Delete station should succeed`() {
+        val station: Station = stationFactory.createStation(name = "teststation", eventId = testEvent.id!!)
+        mockMvc.delete("${getStationUrl(testEvent.id!!)}/${station.id}") {
+            with(httpBasic(username, password))
+            contentType = MediaType.APPLICATION_JSON
+        }
+            .andDo { print() }
+            .andExpect {
+                status { isNoContent() }
+            }
     }
 
     @Test

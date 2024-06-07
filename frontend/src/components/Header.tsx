@@ -15,8 +15,8 @@ export const Header: React.FC = () => {
         localStorage.removeItem("encryptedCode");
         setLoginInfo(new LoginInfo(false, "-", ""));
         if (loginInfo.isAuthenticated) {
-            if (loginInfo.userName!="admin" && eventId>0) {
-                navigate("/"+eventId+"/join");
+            if (loginInfo.userName != "admin" && eventId > 0) {
+                navigate("/" + eventId + "/join");
             } else {
                 navigate("/login");
             }

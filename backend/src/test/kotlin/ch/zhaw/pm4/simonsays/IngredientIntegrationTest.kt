@@ -4,7 +4,10 @@ import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import jakarta.transaction.Transactional
 import org.hamcrest.CoreMatchers
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.web.servlet.delete

@@ -14,7 +14,7 @@ interface MenuMapper {
     @Mappings(
         Mapping(target = "name", source = "menu.name"),
     )
-    fun mapToMenuDTO(menu: Menu, price: Double): MenuDTO
+    fun mapToMenuDTO(menu: Menu): MenuDTO
 
     @Mappings(
         Mapping(target = "id", ignore = true),
