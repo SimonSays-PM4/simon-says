@@ -15,8 +15,8 @@ workspace "Simon Says" "This workspace illustrates the software system designed 
             webAppBackend = container "Web Application Backend" "The backend of the web application, built with Kotlin. Handles business logic, data processing, and server-side tasks. Dependencies: Spring Boot Starter Web, Springdoc OpenAPI" "Spring Boot"
             database = container "Database" "Stores event, menu, station, and order data." "MySQL Database" "Database"
             printServer = container "Print Server" "Manages printing of orders and receipts." "Raspberry Pi"
+            printer = container "Printer" "prints receipts for customer and kitchen"
         }
-
 
         kitchenStaff -> kitchenDisplay "Views and completes tasks using"
         webAppBackend -> database "Reads from and writes to" "JPA"
@@ -26,29 +26,13 @@ workspace "Simon Says" "This workspace illustrates the software system designed 
         webAppBackend -> printServer "Sends print jobs to" "Socket.io"
         waiter -> waiterView "Places orders and logs in using"
         organizer -> adminDashboard "Configures events, menus, and stations using"
-
-
-
-        printer = element "Printer" {
-            description "Prints receipts for easy handling in the kitchen."
-            tags "External"
-        }
-
-        printerSystem = softwareSystem "Printer" {
-            description "Prints receipts for easy handling in the kitchen."
-            tags "External"
-            printer1 = container "Printer1" "Prints receipts for easy handling in the kitchen."
-
-        }
-        printServer -> printer1 "Sends print jobs to" "IPP"
-        softwareSystem -> printer "Sends print jobs to"
-
+        printServer -> printer "Sends print jobs"
 
     }
 
     views {
         systemContext softwareSystem "SystemContext" {
-            include softwareSystem organizer kitchenStaff waiter printer
+            include softwareSystem organizer kitchenStaff waiter
             autoLayout
         }
 
@@ -61,18 +45,20 @@ workspace "Simon Says" "This workspace illustrates the software system designed 
             element "Database" {
                 shape Cylinder
             }
-            element "Tablet"{
+            element "Tablet" {
                 shape WebBrowser
             }
-            element "Smartphone"{
+            element "Smartphone" {
                 shape MobileDeviceLandscape
             }
-            element "Dashboard"{
+            element "Dashboard" {
                 shape WebBrowser
             }
         }
         theme default
     }
 
-
+    configuration {
+        scope softwaresystem
+    }
 }
