@@ -1,6 +1,7 @@
 ---
 label: Benutzerrollen
-icon: people
+icon: ":technologist:"
+order: 5
 ---
 # Benutzerrollen
 

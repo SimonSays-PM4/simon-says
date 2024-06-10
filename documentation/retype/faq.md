@@ -1,7 +1,7 @@
 ---
 label: FAQ
-icon: question
-order: 10
+icon: ":question:"
+order: 2
 ---
 # FAQ
 ==- Für wen ist "Simon Says" gedacht?

@@ -1,6 +1,6 @@
 ---
 label: System Setup
-icon: rocket
+icon: ":building_construction:"
 order: 900
 ---
 !!! :zap: DRAFT :zap:
