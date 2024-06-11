@@ -1,7 +1,7 @@
 ---
 label: Fehlerbehebung
-icon: pulse
-order: 50
+icon: ":hammer_and_wrench:"
+order: 1
 ---
 # Fehlerbehebung
 
