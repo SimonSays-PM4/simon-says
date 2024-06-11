@@ -5,8 +5,10 @@ branding:
   title: Simon Says
   label: Docs
 links:
-- text: Hilfe
-  link: https://retype.com/guides/getting-started/
+- text: Demo ansehen
+  link: https://simonsays-stage.pm4.init-lab.ch/
+  icon: ":hamburger:"
+  target: blank
 footer:
   copyright: "ZHAW PM4 - {{ year }}"
   links:

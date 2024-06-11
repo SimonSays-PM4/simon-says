@@ -4,7 +4,7 @@ This is the main repository for the Simon Says project - conducted by the PM4 gr
 ## Overview
 
 Simon Says is a software system designed to enhance the production cycle within the gastronomy sector, especially
-tailored for festivals for CEVI Effretikon. The system simplifies managing events, menus, and orders, enabling efficient
+tailored for festivals for Cevi Effretikon. The system simplifies managing events, menus, and orders, enabling efficient
 operation through a collection of applications tailored for organizers, kitchen staff, and waiters.
 
 Container Diagram:
@@ -72,8 +72,6 @@ use the linked README files.
 The local development environment can be accessed at the following URLs:
 
 - **Admin Dashboard**: http://localhost:3000
-- **Kitchen Display**: http://localhost:3000/kitchen (tbd)
-- **Waiter View**: http://localhost:3000/waiter (tbd)
 - **Backend Swagger UI**: http://localhost:8080/swagger-ui/index.html
 
 Staging environment can be accessed at the following URLs:
