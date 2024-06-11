@@ -10,4 +10,4 @@ Zum Beispiel muss ein Burger Patty produziert werden, während ein Burger Bun ni
 
 ![Zutaten erstellen](assets/ingredient.gif)
 
-Hier würdest du auch Getränke erfassen. 
+Hier kannst du auch Getränke erfassen. 

@@ -3,9 +3,6 @@ label: System Setup
 icon: ":building_construction:"
 order: 900
 ---
-!!! :zap: DRAFT :zap:
-Diese Seite ist noch in Bearbeitung
-!!!
 # System Setup
 
 In der Vorbereitung auf deinen Event benötigst du eine funktionierende Umgebung. Hier findest du eine Anleitung, wie du die notwendigen Tools installierst und konfigurierst. Wir stellen die Applikation SimonSays in einer Cloud-Umgebung zur Verfügung.
@@ -20,10 +17,10 @@ In der Vorbereitung auf deinen Event benötigst du eine funktionierende Umgebung
 8. Tablets für die Kitchen Displays
 
 ## Cloud-Setup
-### Schritt 1: Helm Chart deployen
-Das Helm Chart enthält das Frontend, das Backend und die Datenbank. Sämtliche Konfigurationen, Services als auch das Ingress Objekt sind im Chart enthalten.
+### Schritt 1: Helm Chart bereitstellen
+Das Helm-Chart enthält das Frontend, das Backend und die Datenbank. Sämtliche Konfigurationen, Services als auch das Ingress Objekt sind im Chart enthalten.
 
-Für die Installation des Helm Charts muss folgender Befehl ausgeführt werden:
+Für die Installation des Helm-Charts muss folgender Befehl ausgeführt werden:
 ```bash
 cd helm
 helm dependency update . 
@@ -41,16 +38,16 @@ Das `application.yaml` des Backends kann im `values.yaml` ergänzt werden.
 ## Hardware-Aufbau vor Ort
 
 ### Schritt 1: Drucker einrichten
-Stelle sicher, dass der Drucker korrekt installiert und konfiguriert ist. Verbinde ihn mit dem selben netzwerk wie mit dem Raspberry Pi, der als lokales Printing-Gateway dient.
+Stelle sicher, dass der Drucker korrekt installiert und konfiguriert ist. Verbinde ihn mit demselben Netzwerk wie den Raspberry Pi, der als lokales Printing-Gateway dient.
 
 ### Schritt 2: Raspberry Pi konfigurieren
 1. Installiere das Betriebssystem auf dem Raspberry Pi.
 2. Installiere Docker und Docker-Compose auf dem Raspberry Pi.
-3. Starten des Druck-Servers auf dem Raspberry Pi mit dem [Docker Compose File](../../printer/compose.yaml).
+3. Starten des Druck-Servers auf dem Raspberry Pi mit dem [Docker Compose File](https://github.com/SimonSays-PM4/simon-says/blob/main/printer/compose.yaml).
 4. Stelle sicher, dass der Raspberry Pi mit dem Internet verbunden ist und der Druckserver läuft.
 
 ### Schritt 3: Internetzugang sichern
-1. Teste die Internetverbindung am Event-Ort.
+1. Teste die Internetverbindung am Veranstaltungsort.
 2. Stelle sicher, dass der Router und alle benötigten Netzwerkkomponenten funktionsfähig sind.
 3. Richte gegebenenfalls einen separaten Netzwerkbereich für die Applikation ein, um Stabilität und Sicherheit zu gewährleisten.
 
@@ -59,8 +56,8 @@ Stelle sicher, dass der Drucker korrekt installiert und konfiguriert ist. Verbin
 2. Teste die Verbindung zu der Applikation und den Druckern.
 
 ### Schritt 5: Tablets für Kitchen Displays konfigurieren
-1. Installiere die SimonSays-Applikation auf den Tablets.
+1. Öffne die SimonSays-Applikation auf den Tablets.
 2. Platziere die Tablets in der Küche an gut sichtbaren Orten.
 3. Teste die Anzeige und Funktionalität der Applikation auf den Tablets.
 
-Durch diese Schritte stellst du sicher, dass die Applikation SimonSays reibungslos während des Events läuft und alle notwendigen Hardware-Komponenten korrekt eingerichtet sind.
+Mit diesen Schritten stellst du sicher, dass die SimonSays-Applikation während der Veranstaltung reibungslos läuft und alle notwendigen Hardware-Komponenten korrekt konfiguriert sind.
