@@ -10,12 +10,13 @@ Um den Zugriff für den Event Staff so einfach wie möglich zu gestalten, reicht
 Der Event Staff hat dadurch nur Zugriff auf die Bestellungen des aktuellen Events und kann keine anderen Events oder Menüs einsehen.
 
 ## Rollen
-Es werden folgende Benutzerrollen unterschieden:
+Folgende Benutzerrollen werden unterschieden:
+
 ### Administrator
-Der Administrator ist besonders im Vorfeld der Veranstaltungen aktiv. Er kann Events und Menüs erstellen und bearbeiten. Der Administrator legt zudem das Event-Passwort fest.
+Der Administrator ist vor allem im Vorfeld von Veranstaltungen aktiv. Er kann Evemts und Menüs anlegen und bearbeiten. Der Administrator legt auch das Veranstaltungspasswort fes
 
 ### Event Staff
 Das Event Staff ist während der Veranstaltung aktiv. Es kann Bestellungen aufnehmen und bearbeiten. Das Event Staff hat Zugriff auf die Bestellübersicht und kann Bestellungen abschliessen.
 Der Event Staff teilt sich in verschiedene Bereiche auf:
-- Küche: Verarbeitet die Bestellungen und gibt sie zur Auslieferung frei
-- Bedienung: Nimmt Bestellungen auf und bearbeitet sie
+- **Küche**: Verarbeitet die Bestellungen und gibt sie zur Auslieferung frei
+- **Bedienung**: Nimmt Bestellungen entgegen und bearbeitet sie
