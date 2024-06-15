@@ -1,7 +1,7 @@
 ---
 label: Bestellungen
 tags: [order, events]
-order: 99
+order: 89
 icon: ":clipboard:"
 ---
 # Bestellungen
