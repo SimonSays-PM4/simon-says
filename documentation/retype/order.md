@@ -24,6 +24,10 @@ Solche Anpassungen werden auf der Quittung vermerkt.
 
 ![Bestellung aufgeben](assets/create-order.gif)
 
+### Druckerstatus prüfen und Quittung neu drucken
+Auf der Übersichtsseite aller Bestellungen siehst du den Druckerstatus der jeweiligen Bestellung. Dau kannst eine Quittung neu drucken, indem du auf "Neu ausdrucken" klickst.
+![Druckerstatus prüfen und Quittung neu drucken](assets/orders-printer-status.png)
+
 ## Bestellung löschen
 Um eine Bestellung zu löschen, gehe auf die Seite "Bestellungen" und klicke auf die Schaltfläche "Löschen". Bestätige die Löschung, indem du auf "Löschen" klickst.
 Das Modifizieren einer Bestellung ist nicht möglich. Du musst die Bestellung löschen und eine neue Bestellung aufgeben.
