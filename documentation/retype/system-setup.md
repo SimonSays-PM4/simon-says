@@ -7,6 +7,10 @@ order: 900
 
 In der Vorbereitung auf deinen Event benötigst du eine funktionierende Umgebung. Hier findest du eine Anleitung, wie du die notwendigen Tools installierst und konfigurierst. Wir stellen die Applikation SimonSays in einer Cloud-Umgebung zur Verfügung.
 
+!!!
+Diese Anleitung beschreibt das technische Setup und ist für technisch versierte Personen gedacht. Wenn du Unterstützung benötigst, kannst du dich gerne [per Mail](mailto:hello@simonsays.ch) an uns wenden.
+!!!
+
 ## Voraussetzungen
 1. Cloud-Anbieter-Konto (z.B. AWS, Google Cloud, Azure)
 2. Kubernetes-Cluster für das Hosting von Frontend und Backend
