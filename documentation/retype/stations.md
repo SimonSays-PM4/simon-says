@@ -7,7 +7,7 @@ icon: ":desktop_computer:"
 # Stationen
 
 Eine Station ist ein Ort, an dem Zutaten produziert oder fertige Bestellungen zusammengestellt werden. Beispielsweise kann eine Station ein Grill, eine Bar oder eine Ausgabe sein.
-Die Ansicht der Station kann auf einem Tablet aufgerufen werden, um die Bestellungen zu sehen und abzuarbeiten. Um Bestellungen abzuarbeiten, müssen die Zutaten bzw. die Menu Items doppelt angeklickt werden.
+Die Ansicht der Station kann auf einem Tablet aufgerufen werden, um die Bestellungen zu sehen und abzuarbeiten. Um Bestellungen abzuarbeiten, müssen die Zutaten bzw. die Menüpunkte doppelt angeklickt werden.
 
 ## Arten von Stationen
 
