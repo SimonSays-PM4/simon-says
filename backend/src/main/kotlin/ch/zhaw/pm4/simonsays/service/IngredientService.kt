@@ -30,6 +30,7 @@ class IngredientService(
             throw ResourceInUseException("Ingredient is used in menu items and cannot be deleted")
         }
         ingredientRepository.deleteById(id)
+        ingredientRepository.flush()
     }
 
     fun createUpdateIngredient(ingredient: IngredientCreateUpdateDTO, eventId: Long): IngredientDTO {

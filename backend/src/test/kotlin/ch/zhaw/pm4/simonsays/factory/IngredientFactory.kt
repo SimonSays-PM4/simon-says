@@ -23,7 +23,7 @@ class IngredientFactory(
             menuItems = null,
             stations = null
         )
-        return ingredientRepository.save(ingredient)
+        return ingredientRepository.saveAndFlush(ingredient)
     }
 
 }
