@@ -41,6 +41,10 @@ class StationService(
         return stationMapper.mapToStationDTO(station)
     }
 
+    fun updateStationEntity(station: Station):Station {
+        return stationRepository.saveAndFlush(station)
+    }
+
     fun createUpdateStation(station: StationCreateUpdateDTO, eventId: Long): StationDTO {
         val event = eventService.getEvent(eventId)
         var ingredients: List<Ingredient> = listOf()
