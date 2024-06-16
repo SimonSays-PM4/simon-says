@@ -20,3 +20,8 @@ exclude:
   - "README.md"
 locale: de
 favicon: static/favicon.ico
+search:
+  preload: true
+generator:
+  directoryIndex:
+    append: true
