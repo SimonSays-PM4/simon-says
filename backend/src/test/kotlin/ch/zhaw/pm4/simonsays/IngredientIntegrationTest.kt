@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.entity.Event
 import ch.zhaw.pm4.simonsays.exception.ErrorMessageModel
 import jakarta.transaction.Transactional
 import org.hamcrest.CoreMatchers
+import org.hamcrest.collection.IsCollectionWithSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.put
 class IngredientIntegrationTest : IntegrationTest() {
 
     private fun getIngredientsUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/ingredient"
+    private fun getStationUrl(eventId: Long) = "/rest-api/v1/event/${eventId}/station"
 
     private fun getIngredientUrl(eventId: Long, ingredientId: Long) = "${getIngredientsUrl(eventId)}/${ingredientId}"
 
@@ -184,6 +186,55 @@ class IngredientIntegrationTest : IntegrationTest() {
                     jsonPath("$.mustBeProduced", CoreMatchers.equalTo(false))
                 }
             }
+    }
+
+    @Test
+    fun `should remove ingredient`() {
+        val event = eventFactory.createEvent(name = "Test-Event", password = "Test-password", numberOfTables = 12)
+        val ingredient = ingredientFactory.createIngredient(name = "Test-Ingredient", event = event)
+        val station = stationFactory.createStation(name = "Test-Station", ingredients = listOf(ingredient), eventId = event.id!!)
+
+        // Validate that ingredient is linked with station
+        mockMvc.get(getStationUrl(event.id!!) + "/" + station.id) {
+            with(httpBasic(username, password))
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        jsonPath("$.ingredients", IsCollectionWithSize.hasSize<Any>(1))
+                        jsonPath("$.ingredients[0].name", CoreMatchers.equalTo("Test-Ingredient"))
+                        jsonPath("$.ingredients[0].id", CoreMatchers.equalTo((ingredient.id!!).toInt()))
+                    }
+                }
+
+        mockMvc.delete(getIngredientUrl(ingredient.event.id!!, ingredient.id!!)){
+            with(httpBasic(username, password))
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isNoContent() }
+
+                }
+
+        mockMvc.get(getIngredientUrl(ingredient.event.id!!, ingredient.id!!)){
+            with(httpBasic(username, password))
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+
+                }
+
+        mockMvc.delete(getStationUrl(event.id!!) + "/" + station.id){
+            with(httpBasic(username, password))
+        }
+                .andDo { print() }
+                .andExpect {
+                    status { isNoContent() }
+
+                }
     }
 
 }

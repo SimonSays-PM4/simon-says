@@ -4,6 +4,7 @@ import ch.zhaw.pm4.simonsays.api.mapper.IngredientMapper
 import ch.zhaw.pm4.simonsays.api.types.IngredientCreateUpdateDTO
 import ch.zhaw.pm4.simonsays.api.types.IngredientDTO
 import ch.zhaw.pm4.simonsays.entity.Ingredient
+import ch.zhaw.pm4.simonsays.entity.Station
 import ch.zhaw.pm4.simonsays.exception.ResourceInUseException
 import ch.zhaw.pm4.simonsays.exception.ResourceNotFoundException
 import ch.zhaw.pm4.simonsays.repository.IngredientRepository
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Service
 class IngredientService(
     private val ingredientRepository: IngredientRepository,
     private val ingredientMapper: IngredientMapper,
-    private val eventService: EventService
+    private val eventService: EventService,
+    private val stationService: StationService
 ) {
 
     fun listIngredients(eventId: Long): List<IngredientDTO> {
@@ -29,7 +31,13 @@ class IngredientService(
         if (!ingredient.menuItems.isNullOrEmpty()) {
             throw ResourceInUseException("Ingredient is used in menu items and cannot be deleted")
         }
+        val stations: List<Station> = stationService.getStationAssociatedWithIngredient(ingredientId = id)
+        stations.forEach { station ->
+            station.ingredients = station.ingredients.filter { ingredient -> ingredient.id != id }
+            stationService.updateStationEntity(station)
+        }
         ingredientRepository.deleteById(id)
+        ingredientRepository.flush()
     }
 
     fun createUpdateIngredient(ingredient: IngredientCreateUpdateDTO, eventId: Long): IngredientDTO {
