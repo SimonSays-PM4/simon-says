@@ -10,7 +10,7 @@ plugins {
     kotlin("plugin.noarg") version "1.7.10"
     kotlin("kapt") version "1.9.10"
     jacoco
-    id("org.sonarqube") version "5.0.0.4638"
+    id("org.sonarqube") version "5.1.0.4882"
     id("io.gitlab.arturbosch.detekt") version "1.23.5"
 }
 
