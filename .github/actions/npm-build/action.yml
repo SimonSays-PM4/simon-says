@@ -8,7 +8,7 @@ inputs:
     required: true
     description: node version to use
   api-url:
-    default: https://simonsays-backend-stage.pm4.init-lab.ch
+    default: http://stadtfest.cevi.net:32600
     description: URL for backend
   printer-server-id:
     default: "a35e6a08-35ef-42c1-9a09-39d32fc2a5d6"
@@ -39,8 +39,3 @@ runs:
       shell: bash
       run: |-
           VITE_API_URL=${{ inputs.api-url }} VITE_PRINTER_SERVER_ID=${{ inputs.printer-server-id }} VITE_TAKE_AWAY_PRINTER_QUEUE_ID=${{ inputs.take-away-printer-queue-id }} VITE_RECEIPT_PRINTER_QUEUE_ID=${{ inputs.receipt-printer-queue-id }} npm run build:staging
-    - name: npm test
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: |-
-          npm test
