@@ -34,7 +34,7 @@ runs:
       working-directory: ${{ inputs.backend-working-directory }}
       shell: bash
       run: |-
-        docker-compose up -d db
+        docker compose up -d db
         sleep 5
     - name: start backend application
       working-directory: ${{ inputs.backend-working-directory }}
@@ -63,7 +63,7 @@ runs:
       shell: bash
       working-directory: ${{ inputs.backend-working-directory }}
       run: |-
-        docker-compose down
+        docker compose down
         docker volume prune -f
         # stop gradle
         pkill -f 'gradle'
