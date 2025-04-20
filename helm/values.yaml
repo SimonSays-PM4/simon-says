@@ -27,6 +27,7 @@ backend:
   #      level:
   #        root: INFO
   ingress:
+    createIngress: false
     host: simonsays-backend-prod.pm4.init-lab.ch
     ingressClassName: "traefik"
     path: /
@@ -67,6 +68,7 @@ frontend:
     targetPort: 8080
     port: 8080
   ingress:
+    createIngress: false
     host: simonsays.pm4.init-lab.ch
     ingressClassName: "traefik"
     path: /
