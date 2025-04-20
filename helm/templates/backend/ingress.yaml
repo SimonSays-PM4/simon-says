@@ -1,3 +1,4 @@
+{{- if .Values.backend.ingress.createIngress}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -15,3 +16,4 @@ spec:
                   number: {{ .Values.backend.service.port }}
             path: {{ .Values.backend.ingress.path }}
             pathType: {{ .Values.backend.ingress.pathType }}
+{{- end}}

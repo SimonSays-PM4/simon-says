@@ -1,5 +1,5 @@
 # Ensure docker compose is installed on your machine
-# Run `docker-compose up -d` to start the printer server
+# Run `docker compose up -d` to start the printer server
 
 version: '3.8'
 

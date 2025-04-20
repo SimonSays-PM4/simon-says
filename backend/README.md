@@ -29,7 +29,7 @@ service: contains all services which are handling the communication between repo
 ## Running the application
 To run the application you need to have a running mysql database. You can start the database and the app with the following command:
 ```shell
-docker-compose up -d
+docker compose up -d
 ```
 After that you can start the application with the following command:
 ```shell
