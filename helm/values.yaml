@@ -21,11 +21,6 @@ backend:
     name: simonsays-backend
     targetPort: 8080
     port: 8080
-  #config:
-  #  applicationConfig:
-  #    logging:
-  #      level:
-  #        root: INFO
   ingress:
     createIngress: false
     host: simonsays-backend-prod.pm4.init-lab.ch

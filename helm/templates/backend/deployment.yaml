@@ -31,9 +31,9 @@ spec:
             - name: SPRING_CONFIG_LOCATION
               value: 'classpath:/,file:/config/'
           {{- end }}
-        {{- if .Values.backend.config.activeProfiles }}
+        {{- if .Values.backend.config.applicationConfig }}
             - name: SPRING_PROFILES_ACTIVE
-              value: {{ .Values.backend.config.activeProfiles }}
+              value: environment-config
         {{- end }}
         {{- if .Values.backend.config.applicationConfig }}
           volumeMounts:
