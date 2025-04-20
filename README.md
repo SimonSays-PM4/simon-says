@@ -44,7 +44,7 @@ use the linked README files.
 2. **Set up the backend (Database Container, Spring Boot)**
    ```bash
    cd backend
-   docker-compose up -d
+   docker compose up -d
    ./gradlew bootRun --args='--spring.profiles.active=dev'
    ``` 
    For further information, see the [backend README](backend/README.md).
