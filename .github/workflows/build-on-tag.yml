@@ -54,7 +54,7 @@ jobs:
         with:
           working-directory: ${{ env.FRONTEND_DIRECTORY }}
           node-version: ${{ env.NODE_VERSION }}
-          api-url: https://simonsays-backend.pm4.init-lab.ch
+          api-url: http://stadtfest.cevi.net:32600
       - name: image-build
         uses: ./.github/actions/image-build
         with:
